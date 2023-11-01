@@ -194,7 +194,7 @@ const TableProduct: React.FC = () => {
               >
                 <MenuItem
                   value={"Điện thoại"}
-                  onClick={() => onClick("/phone")}
+                  onClick={() => onClick("/smartPhone")}
                 >
                   Điện thoại
                 </MenuItem>

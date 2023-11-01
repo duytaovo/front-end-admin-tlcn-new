@@ -53,38 +53,25 @@ const removeSpecialCharacter = (str: string) =>
     ""
   );
 
+export function formatCurrency(currency: number) {
+  return new Intl.NumberFormat("de-DE").format(currency);
+}
+
+export function formatNumberToSocialStyle(value: number) {
+  return new Intl.NumberFormat("en", {
+    notation: "compact",
+    maximumFractionDigits: 1,
+  })
+    .format(value)
+    .replace(".", ",")
+    .toLowerCase();
+}
+
+export const rateSale = (original: number, sale: number) =>
+  Math.round(((original - sale) / original) * 100) + "%";
+
 export const generateNameId = ({ name, id }: { name: string; id: string }) => {
   return removeSpecialCharacter(name).replace(/\s/g, "-") + `-i-${id}`;
 };
-
-export const getIdFromNameId = (name: string) => {
-  const arr = name?.split("-i-");
-  return arr[arr?.length - 1];
-};
 export const getAvatarUrl = (avatarName?: string) =>
   avatarName ? `${config.baseUrl}images/${avatarName}` : "";
-
-//////////// routes
-// export const showPlayerInfo = (value: boolean) => {
-//   const dispatch = useAppDispatch()
-//   document.body.style.overflowY = value ? "hidden" : "scroll"
-
-//   dispatch(togglePlayerInfo(value))
-// }
-
-// export const showPlayer = (value: boolean) => {
-//   const dispatch = useAppDispatch()
-
-//   dispatch(togglePlayer(value))
-// }
-// interface IPlaySongProps {
-//   id: string
-//   idPlayList?: string
-// }
-// export const playSong = ({ id = "" }: IPlaySongProps) => {
-//   const { isLoading,idPlayList } = useAppSelector((state) => state.audio)
-
-//   showPlayer(true)
-//   showPlayerInfo(true)
-//   // setSong({ id, idPlayList })
-// }

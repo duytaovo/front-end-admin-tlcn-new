@@ -1,11 +1,9 @@
 import TablePhone from "./TablesPhone";
 
-export default function ListProduct() {
+export default function ListPhone() {
   return (
     <div>
-      <div>
-        <TablePhone />
-      </div>
+      <TablePhone />
     </div>
   );
 }

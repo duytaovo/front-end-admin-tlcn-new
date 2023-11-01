@@ -1,70 +1,79 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import smartPhoneApi from "src/api/product/smartPhone/smart-phone-api";
 import { payloadCreator } from "src/utils/utils";
 
-import productApi from "src/api/product/product.api";
-
-export const getProducts = createAsyncThunk(
-  "product/getProducts",
-  payloadCreator(productApi.getProducts)
+export const getSmartPhones = createAsyncThunk(
+  "smartPhone/getSmartPhones",
+  payloadCreator(smartPhoneApi.getSmartPhones)
 );
 
-export const getDetailProduct = createAsyncThunk(
-  "product/getDetailProduct",
-  payloadCreator(productApi.getDetailProduct)
-);
-export const addProduct = createAsyncThunk(
-  "product/addProduct",
-  payloadCreator(productApi.addProduct)
-);
-export const uploadImageProduct = createAsyncThunk(
-  "product/uploadImageProduct",
-  payloadCreator(productApi.uploadImageProduct)
-);
-export const uploadImagesProduct = createAsyncThunk(
-  "product/uploadImagesProduct",
-  payloadCreator(productApi.uploadImagesProduct)
-);
-export const updateProduct = createAsyncThunk(
-  "product/updateProduct",
-  payloadCreator(productApi.updateProduct)
+export const getSmartPhonesWithPageNumber = createAsyncThunk(
+  "smartPhone/getSmartPhonesWithPageNumber",
+  payloadCreator(smartPhoneApi.getSmartPhonesWithPageNumber)
 );
 
-export const deleteProduct = createAsyncThunk(
-  "product/deleteProduct",
-  payloadCreator(productApi.deleteProduct)
+export const getSmartPhonesWithPageNumberSize = createAsyncThunk(
+  "smartPhone/getSmartPhonesWithPageNumberSize",
+  payloadCreator(smartPhoneApi.getSmartPhonesWithPageNumberSize)
+);
+
+export const getDetailPhone = createAsyncThunk(
+  "smartPhone/getDetailPhone",
+  payloadCreator(smartPhoneApi.getDetailSmartPhone)
+);
+export const addSmartPhone = createAsyncThunk(
+  "smartPhone/addSmartPhone",
+  payloadCreator(smartPhoneApi.addSmartPhone)
+);
+// export const uploadImageProduct = createAsyncThunk(
+//   "smartPhone/uploadImageProduct",
+//   payloadCreator(smartPhoneApi.)
+// );
+// export const uploadImagesProduct = createAsyncThunk(
+//   "smartPhone/uploadImagesProduct",
+//   payloadCreator(smartPhoneApi.uploadImagesProduct)
+// );
+export const updateSmartPhone = createAsyncThunk(
+  "smartPhone/updateSmartPhone",
+  payloadCreator(smartPhoneApi.updateSmartPhone)
+);
+
+export const deleteSmartPhone = createAsyncThunk(
+  "smartPhone/deleteSmartPhone",
+  payloadCreator(smartPhoneApi.deleteSmartPhone)
 );
 
 interface IProudct {
-  product: any;
-  productDetail: any;
+  smartPhone: any;
+  smartPhoneDetail: any;
 }
 
 const initialState: IProudct = {
-  product: [],
-  productDetail: {},
+  smartPhone: [],
+  smartPhoneDetail: {},
 };
-const productSlice = createSlice({
-  name: "product",
+const smartPhoneSlice = createSlice({
+  name: "smartPhone",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(addProduct.fulfilled, (state, { payload }) => {
-      state.product = payload.data;
+    builder.addCase(addSmartPhone.fulfilled, (state, { payload }) => {
+      state.smartPhone = payload.data;
     });
-    builder.addCase(getProducts.fulfilled, (state, { payload }) => {
-      state.product = payload.data.data;
+    builder.addCase(getSmartPhones.fulfilled, (state, { payload }) => {
+      state.smartPhone = payload.data.data;
     });
-    // builder.addCase(getDetailProduct.fulfilled, (state, { payload }) => {
-    //   state.productDetail = payload.data;
+    // builder.addCase(getDetailsmartPhone.fulfilled, (state, { payload }) => {
+    //   state.smartPhoneDetail = payload.data;
     // });
-    // builder.addCase(updateProduct.fulfilled, (state, { payload }) => {
-    //   [state.productDetail, ...payload.data];
+    // builder.addCase(updatesmartPhone.fulfilled, (state, { payload }) => {
+    //   [state.smartPhoneDetail, ...payload.data];
     // });
-    // builder.addCase(deleteProduct.fulfilled, (state, { payload }) => {
-    //   state.product = payload.data;
+    // builder.addCase(deletesmartPhone.fulfilled, (state, { payload }) => {
+    //   state.smartPhone = payload.data;
     // });
   },
 });
 
-const productReducer = productSlice.reducer;
-export default productReducer;
+const smartPhoneReducer = smartPhoneSlice.reducer;
+export default smartPhoneReducer;

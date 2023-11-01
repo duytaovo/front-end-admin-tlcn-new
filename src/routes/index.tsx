@@ -17,11 +17,16 @@ const UpdateBrand = lazy(() => import("src/pages/Brand/UpdateBrand"));
 const UpdateCategory = lazy(() => import("src/pages/Category/UpdateCategory"));
 const NewCategory = lazy(() => import("src/pages/Category/NewCategory"));
 const NewBrand = lazy(() => import("src/pages/Brand/NewBrand"));
+const ListPhone = lazy(() => import("src/pages/Product/List/ListPhone"));
 
 export const routeMain = [
   {
     path: path.home,
     Component: Home,
+  },
+  {
+    path: path.smartPhone,
+    Component: ListPhone,
   },
   {
     path: path.orders,
