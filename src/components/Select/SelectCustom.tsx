@@ -20,17 +20,17 @@ export default function SelectCustom({
   ...props
 }: any) {
   const renderSelectOption = () => {
-    return options.map((item: any, index: number) => {
+    return options?.map((item: any, index: number) => {
       return (
         <MenuItem
           onClick={() => {
-            handleChange(item);
+            handleChange(item.id);
           }}
-          value={item}
-          key={index}
+          value={item.id}
+          key={item.id}
           className="text-black"
         >
-          {item}
+          {item.name}
         </MenuItem>
       );
     });

@@ -107,23 +107,23 @@ export const schemaAddUser = yup.object({
 });
 
 export const schemaProductSmartPhone = yup.object({
-  brand: yup.string().required("Hãng sản xuất là bắt buộc"),
-  category: yup.string().required("Loại sản phẩm là bắt buộc"),
-  characteristic: yup.string().required("Đặc điểm là bắt buộc"),
-  name: yup.string().required("Tên sản phẩm là bắt buộc"),
-  description: yup.string().required("Mô tả sản phẩm là bắt buộc"),
+  brand: yup.string(),
+  category: yup.string(),
+  characteristic: yup.string(),
+  name: yup.string(),
+  description: yup.string(),
   design: yup.string(),
   dimension: yup.string(),
   mass: yup.string(),
   launchTime: yup.date(),
   accessories: yup.string(),
   productStatus: yup.number(),
-  ram: yup.string().required("Ram sản phẩm là bắt buộc"),
-  storageCapacity: yup.string().required("Rom sản phẩm là bắt buộc"),
-  color: yup.string().required("Màu sản phẩm là bắt buộc"),
-  price: yup.string().required("Giá sản phẩm là bắt buộc"),
+  ram: yup.string(),
+  storageCapacity: yup.string(),
+  color: yup.string(),
+  price: yup.string(),
   salePrice: yup.string(),
-  monitor: yup.string().required("Màn hình sản phẩm là bắt buộc"),
+  monitor: yup.string(),
   operatingSystem: yup.string(),
   frontCamera: yup.string(),
   rearCamera: yup.string(),
@@ -132,7 +132,7 @@ export const schemaProductSmartPhone = yup.object({
   battery: yup.string(),
   charging: yup.string(),
   networkSupport: yup.string(),
-  images: yup.string().required("Upload ảnh là bắt buộc"),
+  images: yup.string(),
 });
 
 export const schemaLaptop = yup.object({

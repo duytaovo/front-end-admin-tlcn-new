@@ -7,7 +7,7 @@ import {
 import appReducer from "src/app.slice";
 import userReducer from "./user/userSlice";
 import orderReducer from "./order/ordersSlice";
-import smartPhoneReducer from "./product/productSlice";
+import smartPhoneReducer from "./product/smartPhoneSlice";
 import categoryReducer from "./category/categorySlice";
 import brandReducer from "./brand/brandSlice";
 

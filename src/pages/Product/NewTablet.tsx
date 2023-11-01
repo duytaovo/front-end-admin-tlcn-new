@@ -18,7 +18,10 @@ import SelectCustom from "src/components/Select";
 import Textarea from "src/components/Textarea";
 import { getCategorys } from "src/store/category/categorySlice";
 import { getBrands } from "src/store/brand/brandSlice";
-import { addSmartPhone, getSmartPhones } from "src/store/product/productSlice";
+import {
+  addSmartPhone,
+  getSmartPhones,
+} from "src/store/product/smartPhoneSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {

@@ -13,10 +13,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { SelectChangeEvent } from "@mui/material/Select";
 import path from "src/constants/path";
 import React, { useEffect, useState } from "react";
-import { Button, Space, Table, Typography } from "antd";
+import { Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { getSmartPhones } from "src/store/product/productSlice";
+import { getSmartPhones } from "src/store/product/smartPhoneSlice";
 import ProductPhone from "./Table/Product/ProductPhone";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 export type SmartPhone = {
   id: number;
@@ -38,7 +39,6 @@ const TablePhone: React.FC = () => {
   const dispatch = useAppDispatch();
   const { smartPhone } = useAppSelector((state) => state.smartPhone);
   const navigate = useNavigate();
-  console.log("smartPhone" + smartPhone);
   useEffect(() => {
     dispatch(getSmartPhones(""));
   }, []);
@@ -61,7 +61,6 @@ const TablePhone: React.FC = () => {
   };
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 

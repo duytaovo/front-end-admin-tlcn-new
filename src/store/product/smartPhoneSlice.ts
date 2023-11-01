@@ -57,11 +57,11 @@ const smartPhoneSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(addSmartPhone.fulfilled, (state, { payload }) => {
-      state.smartPhone = payload.data;
-    });
+    // builder.addCase(addSmartPhone.fulfilled, (state, { payload }) => {
+    //   state.smartPhone = payload.data;
+    // });
     builder.addCase(getSmartPhones.fulfilled, (state, { payload }) => {
-      state.smartPhone = payload.data.data;
+      state.smartPhone = payload.data.data.data;
     });
     // builder.addCase(getDetailsmartPhone.fulfilled, (state, { payload }) => {
     //   state.smartPhoneDetail = payload.data;
