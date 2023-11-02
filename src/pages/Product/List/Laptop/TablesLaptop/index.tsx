@@ -15,9 +15,8 @@ import path from "src/constants/path";
 import React, { useEffect, useState } from "react";
 import { Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { getSmartPhones } from "src/store/product/smartPhoneSlice";
-import ProductPhone from "./Table/Product/ProductPhone";
-import { unwrapResult } from "@reduxjs/toolkit";
+import { getLaptop } from "src/store/product/laptopSlice ";
+import ProductLaptop from "./Table/Product/ProductLaptop";
 
 export type SmartPhone = {
   id: number;
@@ -30,24 +29,25 @@ export type SmartPhone = {
     color: string;
     price: number;
     salePrice: number;
-  };
+  }[];
   star: number;
   totalReview: number;
 };
 
-const TablePhone: React.FC = () => {
+const TableLaptop: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { smartPhone } = useAppSelector((state) => state.smartPhone);
+  const { laptop } = useAppSelector((state) => state.laptop);
   const navigate = useNavigate();
   useEffect(() => {
-    dispatch(getSmartPhones(""));
+    dispatch(getLaptop(""));
   }, []);
   const [status, setStatus] = React.useState<string>("");
 
   const handleChange = (event: SelectChangeEvent) => {
     setStatus(event.target.value);
   };
-  console.log(smartPhone);
+  console.log(laptop);
+  laptop;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -79,18 +79,18 @@ const TablePhone: React.FC = () => {
     navigate(value);
   };
   const originData: any[] = [];
-  for (let i = 0; i < smartPhone?.length; i++) {
+  for (let i = 0; i < laptop?.length; i++) {
     originData.push({
-      id: smartPhone[i].id,
-      name: smartPhone[i].name,
-      lstImageUrl: smartPhone[i].lstImageUrl,
-      ram: smartPhone[i].lstProductTypeAndPrice.ram,
-      storageCapacity: smartPhone[i].lstProductTypeAndPrice.storageCapacity,
-      color: smartPhone[i].lstProductTypeAndPrice.color,
-      price: smartPhone[i].lstProductTypeAndPrice.price,
-      salePrice: smartPhone[i].lstProductTypeAndPrice.salePrice,
-      star: smartPhone[i].star,
-      totalReview: smartPhone[i].totalReview,
+      id: laptop[i].id,
+      name: laptop[i].name,
+      lstImageUrl: laptop[i].lstImageUrl,
+      ram: laptop[i].lstProductTypeAndPrice.ram,
+      storageCapacity: laptop[i].lstProductTypeAndPrice.storageCapacity,
+      color: laptop[i].lstProductTypeAndPrice.color,
+      price: laptop[i].lstProductTypeAndPrice.price,
+      salePrice: laptop[i].lstProductTypeAndPrice.salePrice,
+      star: laptop[i].star,
+      totalReview: laptop[i].totalReview,
     });
   }
   const columns: ColumnsType<any> = [
@@ -128,7 +128,7 @@ const TablePhone: React.FC = () => {
       key: "x",
       render: () => (
         <Space>
-          <Link to={path.productsDetail}>
+          <Link to={path.laptopDetail}>
             {" "}
             <IconButton className="text-mainColor">
               <EditIcon
@@ -198,7 +198,7 @@ const TablePhone: React.FC = () => {
           </div>
         </div>
         <Link
-          to={path.productNew}
+          to={path.laptopNew}
           className="no-underline text-green-500 text-lg font-medium border-[1px] border-solid border-[green] p-3 rounded cursor-pointer"
         >
           Thêm mới
@@ -215,9 +215,9 @@ const TablePhone: React.FC = () => {
         dataSource={originData}
       /> */}
       <div className="mt-6 grid grid-cols-6 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {smartPhone?.map((_smartPhone: any) => (
-          <div className="col-span-1" key={_smartPhone.id}>
-            <ProductPhone product={_smartPhone} />
+        {laptop?.map((_laptop: any) => (
+          <div className="col-span-1" key={_laptop.id}>
+            <ProductLaptop product={_laptop} />
           </div>
         ))}
       </div>
@@ -225,4 +225,4 @@ const TablePhone: React.FC = () => {
   );
 };
 
-export default TablePhone;
+export default TableLaptop;

@@ -40,15 +40,15 @@ const brandSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(addBrand.fulfilled, (state, { payload }) => {
-      state.brand = payload.data;
-    });
+    // builder.addCase(addBrand.fulfilled, (state, { payload }) => {
+    //   state.brand = payload.data;
+    // });
     builder.addCase(getBrands.fulfilled, (state, { payload }) => {
       state.brand = payload.data.data.data.content;
     });
-    builder.addCase(getDetailbrand.fulfilled, (state, { payload }) => {
-      state.brandDetail = payload.data;
-    });
+    // builder.addCase(getDetailbrand.fulfilled, (state, { payload }) => {
+    //   state.brandDetail = payload.data;
+    // });
     // builder.addCase(updatebrand.fulfilled, (state, { payload }) => {
     //   [state.brandDetail, ...payload.data];
     // });

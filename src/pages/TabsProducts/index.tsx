@@ -3,11 +3,11 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import NewPhone from "../Product/NewPhone";
-import NewLaptop from "../Product/NewLaptop";
-import NewSmartWatch from "../Product/NewSmartWatch";
-import NewAcces from "../Product/NewAcces";
-import NewTablet from "../Product/NewTablet";
+import NewSmartWatch from "../Product/Create/NewSmartWatch";
+import NewPhone from "../Product/Create/NewPhone";
+import NewTablet from "../Product/Create/NewTablet";
+import NewLaptop from "../Product/Create/NewLaptop";
+import NewAcces from "../Product/Create/NewAcces";
 
 interface TabPanelProps {
   children?: React.ReactNode;

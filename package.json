@@ -25,7 +25,9 @@
     "@tailwindcss/line-clamp": "^0.4.4",
     "@tippyjs/react": "^4.2.6",
     "@types/autosuggest-highlight": "^3.2.0",
+    "@types/dompurify": "^3.0.4",
     "@types/firebase": "^3.2.1",
+    "@types/html-to-text": "^9.0.3",
     "@types/lodash": "^4.14.198",
     "@types/react-scroll": "^1.8.7",
     "@types/react-slick": "^0.23.10",
@@ -40,8 +42,10 @@
     "clear": "^0.1.0",
     "clsx": "^2.0.0",
     "decode": "^0.3.0",
+    "dompurify": "^3.0.6",
     "firebase": "^10.3.1",
     "flowbite-react": "^0.5.0",
+    "html-to-text": "^9.0.5",
     "i18next": "^23.4.1",
     "jquery": "^3.7.0",
     "jwt-decode": "^3.1.2",
@@ -96,5 +100,6 @@
     "tailwindcss": "^3.3.3",
     "typescript": "^5.0.2",
     "vite": "^4.4.5"
-  }
+  },
+  "proxy": "http://localhost:8081/api/manage"
 }

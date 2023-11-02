@@ -54,8 +54,12 @@ const removeSpecialCharacter = (str: string) =>
   );
 
 export function formatCurrency(currency: number) {
-  return new Intl.NumberFormat("de-DE").format(currency);
+  return new Intl.NumberFormat("de-DE").format(Number(currency));
 }
+export const getIdFromNameId = (nameId: string) => {
+  const arr = nameId.split("-i-");
+  return arr[arr.length - 1];
+};
 
 export function formatNumberToSocialStyle(value: number) {
   return new Intl.NumberFormat("en", {

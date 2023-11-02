@@ -1,20 +1,19 @@
-import { PlusOutlined } from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { Button, Form, Upload } from "antd";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
-import { addUser, getUser } from "src/store/user/userSlice";
 import { ErrorResponse } from "src/types/utils.type";
 import { schemaProductSmartPhone } from "src/utils/rules";
 import {
   generateRandomString,
   getAvatarUrl,
+  getIdFromNameId,
   isAxiosUnprocessableEntityError,
 } from "src/utils/utils";
 import SelectCustom from "src/components/Select";
@@ -24,9 +23,12 @@ import { getCategorys } from "src/store/category/categorySlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import {
   addSmartPhone,
+  getDetailPhone,
   getSmartPhones,
 } from "src/store/product/smartPhoneSlice";
 import InputFile from "src/components/InputFile";
+import axios from "axios";
+import { SmartPhone } from "../List/SmartPhone/TablesPhone";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -64,7 +66,7 @@ const MenuProps = {
     },
   },
 };
-const FormDisabledDemo: React.FC = () => {
+const UpdatePhone: React.FC = () => {
   const [componentDisabled, setComponentDisabled] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
@@ -77,14 +79,47 @@ const FormDisabledDemo: React.FC = () => {
   } = useForm({
     resolver: yupResolver(schemaProductSmartPhone),
   });
+  const [data, setData] = useState<any>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { category } = useAppSelector((state) => state.category);
+  const { nameId } = useParams();
+  const id = getIdFromNameId(nameId as string);
   const { brand } = useAppSelector((state) => state.brand);
   useEffect(() => {
     dispatch(getCategorys(""));
     dispatch(getBrands(""));
   }, []);
+  const [smartPhoneDetail, setSmartPhoneDetail] = useState<any>();
+  useEffect(() => {
+    dispatch(getDetailPhone(id))
+      .then(unwrapResult)
+      .then((res) => {
+        setSmartPhoneDetail(res.data.data);
+      });
+  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         "http://localhost:8081/api/manage/brand"
+  //       ); // Thay đổi URL API của bạn
+  //       fetch("http://localhost:8081/api/manage/brand", {
+  //         method: "get",
+  //         mode: "same-origin",
+  //         headers: {
+  //           Accept: "application/json",
+  //           "Content-Type": "application/json",
+  //         },
+  //       });
+  //       // setData(response.data);
+  //     } catch (error) {
+  //       console.error("Lỗi khi gọi API:", error);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
   const [file, setFile] = useState<File[]>();
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
 
@@ -96,8 +131,8 @@ const FormDisabledDemo: React.FC = () => {
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue("ram", "");
-    setValue("accessories", "");
+    setValue("ram", smartPhoneDetail?.lstProductTypeAndPrice[0].ram);
+    setValue("accessories", smartPhoneDetail?.accessories);
     setValue("battery", "");
     setValue("charging", "");
     setValue("chip", "");
@@ -186,32 +221,14 @@ const FormDisabledDemo: React.FC = () => {
       setIsSubmitting(false);
     }
   });
-  const onClickHuy = () => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("battery", "");
-    setValue("charging", "");
-    setValue("chip", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("sim", "");
-    setValue("salePrice", "");
-    setValue("rearCamera", "");
-    setValue("price", "");
-    setValue("frontCamera", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("images", "");
-  };
+  const onClickHuy = () => {};
   const avatar = watch("images");
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
   return (
     <div className="bg-white shadow ">
-      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm điện thoại</h2>
+      <h2 className="font-bold m-4 text-2xl">Sửa sản phẩm điện thoại</h2>
       <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
@@ -310,7 +327,7 @@ const FormDisabledDemo: React.FC = () => {
             // placeholder="Màn hinh"
           />
         </Form.Item>
-        <Form.Item label="Màn hình" name="mass" rules={[{ required: true }]}>
+        <Form.Item label="Khối lượng" name="mass" rules={[{ required: true }]}>
           <Input
             name="mass"
             register={register}
@@ -599,4 +616,4 @@ const FormDisabledDemo: React.FC = () => {
   );
 };
 
-export default () => <FormDisabledDemo />;
+export default () => <UpdatePhone />;

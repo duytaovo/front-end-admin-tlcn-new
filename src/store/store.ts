@@ -10,6 +10,7 @@ import orderReducer from "./order/ordersSlice";
 import smartPhoneReducer from "./product/smartPhoneSlice";
 import categoryReducer from "./category/categorySlice";
 import brandReducer from "./brand/brandSlice";
+import laptopReducer from "./product/laptopSlice ";
 
 export const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore({
     user: userReducer,
     orders: orderReducer,
     smartPhone: smartPhoneReducer,
+    laptop: laptopReducer,
     category: categoryReducer,
     brand: brandReducer,
   },

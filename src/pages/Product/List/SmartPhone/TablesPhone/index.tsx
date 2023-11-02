@@ -12,140 +12,42 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { SelectChangeEvent } from "@mui/material/Select";
 import path from "src/constants/path";
-
 import React, { useEffect, useState } from "react";
-import { Button, Space, Table, Typography } from "antd";
+import { Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import SelectCustom from "src/components/Select";
+import { getSmartPhones } from "src/store/product/smartPhoneSlice";
+import ProductPhone from "./Table/Product/ProductPhone";
+import { unwrapResult } from "@reduxjs/toolkit";
 
-interface DataType {
-  key: React.Key;
+export type SmartPhone = {
+  id: number;
   name: string;
-  brand: string;
-  price: string;
-  mota: string;
-  status?: any;
-  action?: any;
-  sale: string;
-  description: string;
-  loaiSp: string;
-}
+  lstImageUrl: string[];
+  lstProductTypeAndPrice: {
+    typeId: number;
+    ram: string;
+    storageCapacity: string;
+    color: string;
+    price: number;
+    salePrice: number;
+  }[];
+  star: number;
+  totalReview: number;
+};
 
-const columns: ColumnsType<DataType> = [
-  { title: "Loại sản phẩm", dataIndex: "loaiSp", key: "loaiSp" },
-  { title: "Tên sản phẩm", dataIndex: "name", key: "name" },
-  { title: "Tên thương hiệu", dataIndex: "brand", key: "brand" },
-  { title: "Giá sản phẩm", dataIndex: "price", key: "price" },
-  { title: "Mô tả", dataIndex: "mota", key: "mota" },
-  { title: "Khuyến mãi", dataIndex: "sale", key: "sale" },
-  {
-    title: "Trạng thái",
-    dataIndex: "status",
-    key: "status",
-    render: () => {
-      // const handleChangeStatus = (e: any) => {};
-      return (
-        <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-          <InputLabel id="demo-select-small-label">Trạng thái</InputLabel>
-          <Select
-            labelId="demo-select-small-label"
-            id="demo-select-small"
-            value={status}
-            label="Status"
-            // onChange={handleChange}
-          >
-            <MenuItem value={0}>Not verify</MenuItem>
-            <MenuItem value={1}>Verify</MenuItem>
-            <MenuItem value={2}>Disable</MenuItem>
-            <MenuItem value={3}>Enable</MenuItem>
-          </Select>
-        </FormControl>
-      );
-    },
-  },
-  {
-    title: "Action",
-    dataIndex: "",
-    key: "x",
-    render: () => (
-      <Space>
-        <Link to={"/"}>
-          {" "}
-          <IconButton className="text-mainColor">
-            <EditIcon
-              className="text-mainColor"
-              sx={{
-                color: "",
-              }}
-            />
-          </IconButton>
-        </Link>
-        <Link to={path.users}>
-          <Tooltip title="Thay đổi trạng thái " className="disabled:bg-white">
-            <IconButton>
-              <DeleteIcon className="text-red-700" />
-            </IconButton>
-          </Tooltip>
-        </Link>
-      </Space>
-    ),
-  },
-];
-// const originData: DataType[] = [];
-// for (let i = 0; i < 100; i++) {
-//   originData.push({
-//     key: i.toString(),
-//     name: `Edward ${i}`,
-//     age: 32,
-//     address: `London Park no. ${i}`,
-//   });
-// }
-const data: DataType[] = [
-  {
-    key: 1,
-    loaiSp: "Điện thoại",
-    brand: "Apple",
-    name: "Iphone 15 Plus",
-    price: "34.500.000",
-    sale: "235.000",
-    mota: "Iphone 15 Plus được ra mắt ....",
-    description: "Mô tả chi tiết ở đây",
-  },
-  {
-    key: 2,
-    loaiSp: "Điện thoại",
-    brand: "Apple",
-    name: "Iphone 15 Plus",
-    price: "34.500.000",
-    sale: "235.000",
-    mota: "Iphone 15 Plus được ra mắt ....",
-    description: "Mô tả chi tiết ở đây",
-  },
-  {
-    key: 3,
-    loaiSp: "Điện thoại",
-    brand: "Apple",
-    name: "Iphone 15 Plus",
-    price: "34.500.000",
-    sale: "235.000",
-    mota: "Iphone 15 Plus được ra mắt ....",
-    description: "Mô tả chi tiết ở đây",
-  },
-];
-
-const TableProduct: React.FC = () => {
+const TablePhone: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { user } = useAppSelector((state) => state.user);
+  const { smartPhone } = useAppSelector((state) => state.smartPhone);
   const navigate = useNavigate();
   useEffect(() => {
-    // dispatch(getCars(""));
+    dispatch(getSmartPhones(""));
   }, []);
   const [status, setStatus] = React.useState<string>("");
 
   const handleChange = (event: SelectChangeEvent) => {
     setStatus(event.target.value);
   };
-
+  console.log(smartPhone);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -159,7 +61,6 @@ const TableProduct: React.FC = () => {
   };
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
@@ -177,6 +78,78 @@ const TableProduct: React.FC = () => {
   const onClick = (value: string) => {
     navigate(value);
   };
+  const originData: any[] = [];
+  for (let i = 0; i < smartPhone?.length; i++) {
+    originData.push({
+      id: smartPhone[i].id,
+      name: smartPhone[i].name,
+      lstImageUrl: smartPhone[i].lstImageUrl,
+      ram: smartPhone[i].lstProductTypeAndPrice.ram,
+      storageCapacity: smartPhone[i].lstProductTypeAndPrice.storageCapacity,
+      color: smartPhone[i].lstProductTypeAndPrice.color,
+      price: smartPhone[i].lstProductTypeAndPrice.price,
+      salePrice: smartPhone[i].lstProductTypeAndPrice.salePrice,
+      star: smartPhone[i].star,
+      totalReview: smartPhone[i].totalReview,
+    });
+  }
+  const columns: ColumnsType<any> = [
+    { title: "Tên sản phẩm", dataIndex: "name", key: "name" },
+    { title: "Giá sản phẩm", dataIndex: "price", key: "price" },
+    { title: "Khuyến mãi", dataIndex: "salePrice", key: "salePrice" },
+    // {
+    //   title: "Trạng thái",
+    //   dataIndex: "status",
+    //   key: "status",
+    //   render: () => {
+    //     // const handleChangeStatus = (e: any) => {};
+    //     return (
+    //       <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+    //         <InputLabel id="demo-select-small-label">Trạng thái</InputLabel>
+    //         <Select
+    //           labelId="demo-select-small-label"
+    //           id="demo-select-small"
+    //           value={status}
+    //           label="Status"
+    //           // onChange={handleChange}
+    //         >
+    //           <MenuItem value={0}>Not verify</MenuItem>
+    //           <MenuItem value={1}>Verify</MenuItem>
+    //           <MenuItem value={2}>Disable</MenuItem>
+    //           <MenuItem value={3}>Enable</MenuItem>
+    //         </Select>
+    //       </FormControl>
+    //     );
+    //   },
+    // },
+    {
+      title: "Action",
+      dataIndex: "",
+      key: "x",
+      render: () => (
+        <Space>
+          <Link to={path.smartPhoneDetail}>
+            {" "}
+            <IconButton className="text-mainColor">
+              <EditIcon
+                className="text-mainColor"
+                sx={{
+                  color: "",
+                }}
+              />
+            </IconButton>
+          </Link>
+          <Link to={path.smartPhone}>
+            <Tooltip title="Thay đổi trạng thái " className="disabled:bg-white">
+              <IconButton>
+                <DeleteIcon className="text-red-700" />
+              </IconButton>
+            </Tooltip>
+          </Link>
+        </Space>
+      ),
+    },
+  ];
   return (
     <div className="mx-6">
       <div className="w-full text-[24px] text-gray-500 mb-[10px] flex items-center justify-between">
@@ -194,7 +167,7 @@ const TableProduct: React.FC = () => {
               >
                 <MenuItem
                   value={"Điện thoại"}
-                  onClick={() => onClick("/smartPhone")}
+                  onClick={() => onClick("/phone")}
                 >
                   Điện thoại
                 </MenuItem>
@@ -224,12 +197,12 @@ const TableProduct: React.FC = () => {
             </span>
           </div>
         </div>
-        {/* <Link
-          to={path.productNew}
+        <Link
+          to={path.smartPhoneNew}
           className="no-underline text-green-500 text-lg font-medium border-[1px] border-solid border-[green] p-3 rounded cursor-pointer"
         >
           Thêm mới
-        </Link> */}
+        </Link>
       </div>
       {/* <Table
         columns={columns}
@@ -239,10 +212,17 @@ const TableProduct: React.FC = () => {
           ),
           rowExpandable: (record) => record?.name !== "Not Expandable",
         }}
-        dataSource={data}
+        dataSource={originData}
       /> */}
+      <div className="mt-6 grid grid-cols-6 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        {smartPhone?.map((_smartPhone: any) => (
+          <div className="col-span-1" key={_smartPhone.id}>
+            <ProductPhone product={_smartPhone} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
 
-export default TableProduct;
+export default TablePhone;

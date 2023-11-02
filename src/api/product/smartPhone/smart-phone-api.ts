@@ -3,7 +3,7 @@ import http from "src/utils/http";
 
 const smartPhoneApi = {
   addSmartPhone(data: any) {
-    return http.post("/product/smartphone", data);
+    return http.post("/product/smartphone/create", data);
   },
   getSmartPhones() {
     return http.get<SuccessResponse<any>>("/product/smartphone");
