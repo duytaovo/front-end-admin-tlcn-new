@@ -13,7 +13,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { SelectChangeEvent } from "@mui/material/Select";
 import path from "src/constants/path";
 import React, { useEffect, useState } from "react";
-import { Space } from "antd";
+import { Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { getSmartPhones } from "src/store/product/smartPhoneSlice";
 import ProductPhone from "./Table/Product/ProductPhone";
@@ -47,7 +47,7 @@ const TablePhone: React.FC = () => {
   const handleChange = (event: SelectChangeEvent) => {
     setStatus(event.target.value);
   };
-
+  console.log(smartPhone);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -93,36 +93,35 @@ const TablePhone: React.FC = () => {
       totalReview: smartPhone[i].totalReview,
     });
   }
-  const columns: ColumnsType<SmartPhone> = [
+  const columns: ColumnsType<any> = [
     { title: "Tên sản phẩm", dataIndex: "name", key: "name" },
     { title: "Giá sản phẩm", dataIndex: "price", key: "price" },
-    { title: "Mô tả", dataIndex: "mota", key: "mota" },
-    { title: "Khuyến mãi", dataIndex: "sale", key: "sale" },
-    {
-      title: "Trạng thái",
-      dataIndex: "status",
-      key: "status",
-      render: () => {
-        // const handleChangeStatus = (e: any) => {};
-        return (
-          <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-            <InputLabel id="demo-select-small-label">Trạng thái</InputLabel>
-            <Select
-              labelId="demo-select-small-label"
-              id="demo-select-small"
-              value={status}
-              label="Status"
-              // onChange={handleChange}
-            >
-              <MenuItem value={0}>Not verify</MenuItem>
-              <MenuItem value={1}>Verify</MenuItem>
-              <MenuItem value={2}>Disable</MenuItem>
-              <MenuItem value={3}>Enable</MenuItem>
-            </Select>
-          </FormControl>
-        );
-      },
-    },
+    { title: "Khuyến mãi", dataIndex: "salePrice", key: "salePrice" },
+    // {
+    //   title: "Trạng thái",
+    //   dataIndex: "status",
+    //   key: "status",
+    //   render: () => {
+    //     // const handleChangeStatus = (e: any) => {};
+    //     return (
+    //       <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+    //         <InputLabel id="demo-select-small-label">Trạng thái</InputLabel>
+    //         <Select
+    //           labelId="demo-select-small-label"
+    //           id="demo-select-small"
+    //           value={status}
+    //           label="Status"
+    //           // onChange={handleChange}
+    //         >
+    //           <MenuItem value={0}>Not verify</MenuItem>
+    //           <MenuItem value={1}>Verify</MenuItem>
+    //           <MenuItem value={2}>Disable</MenuItem>
+    //           <MenuItem value={3}>Enable</MenuItem>
+    //         </Select>
+    //       </FormControl>
+    //     );
+    //   },
+    // },
     {
       title: "Action",
       dataIndex: "",
@@ -213,10 +212,10 @@ const TablePhone: React.FC = () => {
           ),
           rowExpandable: (record) => record?.name !== "Not Expandable",
         }}
-        dataSource={data}
+        dataSource={originData}
       /> */}
-      <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {smartPhone?.data?.map((_smartPhone: any) => (
+      <div className="mt-6 grid grid-cols-6 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        {smartPhone?.map((_smartPhone: any) => (
           <div className="col-span-1" key={_smartPhone.id}>
             <ProductPhone product={_smartPhone} />
           </div>

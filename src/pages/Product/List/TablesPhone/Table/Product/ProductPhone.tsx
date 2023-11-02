@@ -13,6 +13,7 @@ interface Props {
 }
 
 export default function ProductPhone({ product }: Props) {
+  console.log(product);
   return (
     <Link
       to={`${path.smartPhone}${generateNameId({
