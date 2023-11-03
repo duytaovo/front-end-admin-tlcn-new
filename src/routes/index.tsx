@@ -3,10 +3,7 @@ import path from "src/constants/path";
 
 const Home = lazy(() => import("src/pages/Home/Home"));
 const TableProduct = lazy(() => import("src/pages/Product/Tables"));
-const SmartPhoneDetail = lazy(
-  () => import("src/pages/Product/Detail/SmartPhone_Detail")
-);
-const UpdatePhone = lazy(() => import("src/pages/Product/Update/UpdatePhone"));
+
 const Orders = lazy(() => import("src/pages/Order"));
 const NotFound = lazy(() => import("src/pages/NotFound/NotFound"));
 const ListUser = lazy(() => import("src/pages/ListUser/ListUser"));
@@ -14,18 +11,31 @@ const AddUser = lazy(() => import("src/pages/ListUser/NewUser"));
 const UpdateUser = lazy(() => import("src/pages/ListUser/UpdateUser"));
 const Categorys = lazy(() => import("src/pages/Category"));
 const Brands = lazy(() => import("src/pages/Brand"));
-const NewPhone = lazy(() => import("src/pages/Product/Create/NewPhone"));
-const UpdateProduct = lazy(
-  () => import("src/pages/Product/Update/UpdatePhone")
-);
+
 const UpdateBrand = lazy(() => import("src/pages/Brand/UpdateBrand"));
 const UpdateCategory = lazy(() => import("src/pages/Category/UpdateCategory"));
 const NewCategory = lazy(() => import("src/pages/Category/NewCategory"));
 const NewBrand = lazy(() => import("src/pages/Brand/NewBrand"));
+
+//Product
 const ListPhone = lazy(
   () => import("src/pages/Product/List/SmartPhone/ListPhone")
 );
-
+const NewPhone = lazy(() => import("src/pages/Product/Create/NewPhone"));
+const UpdatePhone = lazy(() => import("src/pages/Product/Update/UpdatePhone"));
+const SmartPhoneDetail = lazy(
+  () => import("src/pages/Product/Detail/SmartPhone_Detail")
+);
+const NewLaptop = lazy(() => import("src/pages/Product/Create/NewLaptop"));
+const LaptopDetail = lazy(
+  () => import("src/pages/Product/Detail/Laptop_Detail")
+);
+const ListLaptop = lazy(
+  () => import("src/pages/Product/List/Laptop/ListLaptop")
+);
+const UpdateLaptop = lazy(
+  () => import("src/pages/Product/Update/UpdateLaptop")
+);
 export const routeMain = [
   {
     path: path.home,
@@ -67,6 +77,22 @@ export const routeMain = [
   {
     path: path.smartPhoneUpdate,
     Component: UpdatePhone,
+  },
+  {
+    path: path.laptop,
+    Component: ListLaptop,
+  },
+  {
+    path: path.laptopNew,
+    Component: NewLaptop,
+  },
+  {
+    path: path.laptopDetail,
+    Component: LaptopDetail,
+  },
+  {
+    path: path.laptopUpdate,
+    Component: UpdateLaptop,
   },
   {
     path: path.categories,

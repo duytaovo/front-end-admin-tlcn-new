@@ -12,7 +12,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import { convert } from "html-to-text";
-import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
+import { useAppDispatch } from "src/hooks/useRedux";
 import {
   getDetailPhone,
   getSmartPhones,
@@ -21,46 +21,49 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { Rate } from "antd";
 import DOMPurify from "dompurify";
 
-export default function SmartPhoneDetail() {
+export default function LaptopDetail() {
   // const { t } = useTranslation(["product"]);
   const [buyCount, setBuyCount] = useState(1);
   const { nameId } = useParams();
   const dispatch = useAppDispatch();
-  const { smartPhoneDetail } = useAppSelector((state) => state.smartPhone);
 
   const id = getIdFromNameId(nameId as string);
+  const [product, setProduct] = useState<any>();
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5]);
   const [activeImage, setActiveImage] = useState("");
   const imageRef = useRef<HTMLImageElement>(null);
   const currentImages = useMemo(
-    () =>
-      smartPhoneDetail?.productInfo?.lstProductImageUrl
-        ? smartPhoneDetail?.productInfo?.lstProductImageUrl.slice(
-            ...currentIndexImages
-          )
-        : [],
-    [smartPhoneDetail, currentIndexImages]
+    () => (product ? product.images.slice(...currentIndexImages) : []),
+    [product, currentIndexImages]
   );
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (
-      smartPhoneDetail &&
-      smartPhoneDetail?.productInfo?.lstProductImageUrl?.length > 0
-    ) {
-      setActiveImage(smartPhoneDetail?.productInfo?.lstProductImageUrl[0]);
-    }
-  }, [smartPhoneDetail]);
+  // useEffect(() => {
+  //   if (product && product.images.length > 0) {
+  //     setActiveImage(product.images[0]);
+  //   }
+  // }, [product]);
 
   useEffect(() => {
-    dispatch(getDetailPhone(id));
+    dispatch(getDetailPhone(id))
+      .then(unwrapResult)
+      .then((res) => {
+        res.data.images = res.data.images.map(
+          (image: string, index: number) => {
+            return {
+              url: image,
+              id: index,
+            };
+          }
+        );
+        setActiveImage(product.images[0]);
+        setProduct(res.data);
+      });
   }, [id, dispatch]);
+
   const next = () => {
-    if (
-      currentIndexImages[1] <
-      smartPhoneDetail?.productInfo.lstProductImageUrl.length
-    ) {
+    if (currentIndexImages[1] < product.images.length) {
       setCurrentIndexImages((prev) => [prev[0] + 1, prev[1] + 1]);
     }
   };
@@ -79,7 +82,10 @@ export default function SmartPhoneDetail() {
     const rect = event.currentTarget.getBoundingClientRect();
     const image = imageRef.current as HTMLImageElement;
     const { naturalHeight, naturalWidth } = image;
+    // Cách 1: Lấy offsetX, offsetY đơn giản khi chúng ta đã xử lý được bubble event
+    // const { offsetX, offsetY } = event.nativeEvent
 
+    // Cách 2: Lấy offsetX, offsetY khi chúng ta không xử lý được bubble event
     const offsetX = event.pageX - (rect.x + window.scrollX);
     const offsetY = event.pageY - (rect.y + window.scrollY);
 
@@ -96,16 +102,16 @@ export default function SmartPhoneDetail() {
     imageRef.current?.removeAttribute("style");
   };
 
-  if (!smartPhoneDetail) return null;
+  if (!product) return null;
   return (
     <div className="bg-gray-200 py-6">
       <Helmet>
-        <title>{smartPhoneDetail?.productInfo?.name}</title>
+        <title>{product.name}</title>
         <meta
           name="description"
-          content={convert(smartPhoneDetail?.productInfo?.description, {
+          content={convert(product.description, {
             limits: {
-              maxInputLength: 1500,
+              maxInputLength: 150,
             },
           })}
         />
@@ -121,7 +127,7 @@ export default function SmartPhoneDetail() {
               >
                 <img
                   src={activeImage}
-                  alt={smartPhoneDetail?.productInfo?.name}
+                  alt={product.name}
                   className="absolute left-0 top-0 h-full w-full bg-white object-cover"
                   ref={imageRef}
                 />
@@ -146,7 +152,7 @@ export default function SmartPhoneDetail() {
                     />
                   </svg>
                 </button>
-                {currentImages?.map((img: any) => {
+                {currentImages.map((img: any) => {
                   const isActive = img === activeImage;
                   return (
                     <div
@@ -156,7 +162,7 @@ export default function SmartPhoneDetail() {
                     >
                       <img
                         src={img}
-                        alt={smartPhoneDetail?.productInfo?.name}
+                        alt={product.name}
                         className="absolute left-0 top-0 h-full w-full cursor-pointer bg-white object-cover"
                       />
                       {isActive && (
@@ -187,52 +193,29 @@ export default function SmartPhoneDetail() {
               </div>
             </div>
             <div className="col-span-7">
-              <h1 className="text-xl font-medium uppercase">
-                {smartPhoneDetail?.productInfo?.name}
-              </h1>
+              <h1 className="text-xl font-medium uppercase">{product.name}</h1>
               <div className="mt-8 flex items-center">
                 <div className="flex items-center">
                   <span className="mr-1 border-b border-b-orange text-orange">
-                    {smartPhoneDetail?.productInfo?.star}
+                    {product.rating}
                   </span>
-                  <Rate
-                    allowHalf
-                    defaultValue={smartPhoneDetail?.productInfo?.star || 4.5}
-                    disabled
-                  />
-                  ;
+                  <Rate allowHalf defaultValue={product.star} />;
                 </div>
                 <div className="mx-4 h-4 w-[1px] bg-gray-300"></div>
                 <div>
-                  <span>
-                    {formatNumberToSocialStyle(
-                      smartPhoneDetail?.productInfo?.totalReview || 1520
-                    )}
-                  </span>
-                  <span className="ml-1 text-gray-500">Đã xem</span>
+                  <span>{formatNumberToSocialStyle(product.sold)}</span>
+                  <span className="ml-1 text-gray-500">Đã bán</span>
                 </div>
               </div>
               <div className="mt-8 flex items-center bg-gray-50 px-5 py-4">
                 <div className="text-gray-500 line-through">
-                  ₫
-                  {formatCurrency(
-                    smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]
-                      .salePrice
-                  )}
+                  ₫{formatCurrency(product.price_before_discount)}
                 </div>
                 <div className="ml-3 text-3xl font-medium text-orange">
-                  ₫
-                  {formatCurrency(
-                    smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]
-                      .price
-                  )}
+                  ₫{formatCurrency(product.price)}
                 </div>
                 <div className="ml-4 rounded-sm bg-orange px-1 py-[2px] text-xs font-semibold uppercase text-white">
-                  {rateSale(
-                    smartPhoneDetail?.productInfo?.star,
-                    smartPhoneDetail?.productInfo?.lstProductTypeAndPrice?.price
-                  )}{" "}
-                  giảm
+                  {rateSale(product.price_before_discount, product.price)} giảm
                 </div>
               </div>
             </div>
@@ -248,9 +231,7 @@ export default function SmartPhoneDetail() {
             <div className="mx-4 mb-4 mt-12 text-sm leading-loose">
               <div
                 dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(
-                    smartPhoneDetail?.productInfo?.description
-                  ),
+                  __html: DOMPurify.sanitize(product.description),
                 }}
               />
             </div>

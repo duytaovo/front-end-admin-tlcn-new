@@ -11,6 +11,10 @@ import smartPhoneReducer from "./product/smartPhoneSlice";
 import categoryReducer from "./category/categorySlice";
 import brandReducer from "./brand/brandSlice";
 import laptopReducer from "./product/laptopSlice ";
+import processorReducer from "./processor/processorSlice";
+import ramReducer from "./ram/ramSlice";
+import romReducer from "./rom/romSlice";
+import cardGraphicReducer from "./cardGrap/cardGraphicSlice";
 
 export const store = configureStore({
   reducer: {
@@ -21,6 +25,10 @@ export const store = configureStore({
     laptop: laptopReducer,
     category: categoryReducer,
     brand: brandReducer,
+    processor: processorReducer,
+    ram: ramReducer,
+    rom: romReducer,
+    cardGraphic: cardGraphicReducer,
   },
   devTools: process.env.NODE_ENV === "development",
   middleware: (getDefaultMiddleware) => [

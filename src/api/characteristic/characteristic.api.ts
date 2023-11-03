@@ -1,28 +1,30 @@
 import { SuccessResponse } from "src/types/utils.type";
 import http from "src/utils/http";
 
-const brandApi = {
-  addBrand(data: any) {
-    return http.post("/brand/create", data);
+const characterApi = {
+  addCharacter(data: any) {
+    return http.post("/character/create", data);
   },
-  getBrands() {
-    return http.get<SuccessResponse<any>>("/brand");
+  getCharacters() {
+    return http.get<SuccessResponse<any>>("/character");
   },
-  getDetailBrand(params: any) {
-    return http.get<SuccessResponse<any[]>>(`/brand/${params}`);
+  getDetailcharacter(params: any) {
+    return http.get<SuccessResponse<any[]>>(`/character/${params}`);
   },
-  updateBrand({ _id, body }: any) {
-    return http.post<SuccessResponse<any>>(`/brand/update/${_id}`, body);
+  updateCharacter({ _id, body }: any) {
+    return http.post<SuccessResponse<any>>(`/character/update/${_id}`, body);
   },
-  deleteBrand(idBrand: string[]) {
-    return http.post<SuccessResponse<any>>(`/brand/delete/${idBrand}`);
+  deleteCharacter(idcharacter: string[]) {
+    return http.post<SuccessResponse<any>>(`/character/delete/${idcharacter}`);
   },
-  getBrandWithPageNumber(pageNumber: number) {
-    return http.get<SuccessResponse<any>>(`/brand/${pageNumber}`);
+  getCharacterWithPageNumber(pageNumber: number) {
+    return http.get<SuccessResponse<any>>(`/character/${pageNumber}`);
   },
-  getBrandWithPageNumberSize(pageNumber: number, pageSize: number) {
-    return http.get<SuccessResponse<any>>(`/brand/${pageNumber}/${pageSize}`);
+  getCharacterWithPageNumberSize(pageNumber: number, pageSize: number) {
+    return http.get<SuccessResponse<any>>(
+      `/character/${pageNumber}/${pageSize}`
+    );
   },
 };
 
-export default brandApi;
+export default characterApi;

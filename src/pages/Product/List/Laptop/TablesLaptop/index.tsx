@@ -46,7 +46,6 @@ const TableLaptop: React.FC = () => {
   const handleChange = (event: SelectChangeEvent) => {
     setStatus(event.target.value);
   };
-  console.log(laptop);
   laptop;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [loading, setLoading] = useState(false);

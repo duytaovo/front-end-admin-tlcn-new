@@ -16,6 +16,7 @@ import {
 } from "src/store/product/smartPhoneSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
+import { deleteLaptop } from "src/store/product/laptopSlice ";
 
 interface Props {
   product: SmartPhone;
@@ -44,7 +45,8 @@ interface IProps {
 const OptionWrapper: React.FC<IProps> = ({ children }) => {
   return <div className="flex h-17 items-end py-1">{children}</div>;
 };
-export default function ProductPhone({ product }: Props) {
+export default function ProductLaptop({ product }: Props) {
+  console.log("laptop" + product);
   const iRef = useRef<HTMLTextAreaElement>(null);
   const cRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -66,7 +68,7 @@ export default function ProductPhone({ product }: Props) {
       title: "Sửa",
       callback: () => {
         navigate(
-          `${"/smartPhone/detail/update"}/${generateNameId({
+          `${"/laptop/detail/update"}/${generateNameId({
             name: product.name,
             id: product.id.toString(),
           })}`
@@ -81,7 +83,7 @@ export default function ProductPhone({ product }: Props) {
       title: "Xóa",
       callback: () => {
         const handleDelete = async () => {
-          const res = await dispatch(deleteSmartPhone([product.id.toString()]));
+          const res = await dispatch(deleteLaptop(product.id.toString()));
           unwrapResult(res);
           const d = res?.payload;
           if (d?.status !== 200) return toast.error(d?.message);

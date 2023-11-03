@@ -63,9 +63,10 @@ const smartPhoneSlice = createSlice({
     builder.addCase(getSmartPhones.fulfilled, (state, { payload }) => {
       state.smartPhone = payload.data.data.data;
     });
-    // builder.addCase(getDetailsmartPhone.fulfilled, (state, { payload }) => {
-    //   state.smartPhoneDetail = payload.data;
-    // });
+    builder.addCase(getDetailPhone.fulfilled, (state, { payload }) => {
+      console.log(payload.data.data);
+      state.smartPhoneDetail = payload.data.data;
+    });
     // builder.addCase(updatesmartPhone.fulfilled, (state, { payload }) => {
     //   [state.smartPhoneDetail, ...payload.data];
     // });

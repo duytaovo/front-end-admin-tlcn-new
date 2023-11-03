@@ -20,13 +20,13 @@ const smartPhoneApi = {
     return http.get<SuccessResponse<any[]>>(`/product/smartphone/${params}`);
   },
   updateSmartPhone({ _id, body }: any) {
-    return http.put<SuccessResponse<any>>(
+    return http.post<SuccessResponse<any>>(
       `/product/smartphone/update/${_id}`,
       body
     );
   },
   deleteSmartPhone(idSmartPhone: string[]) {
-    return http.delete<SuccessResponse<any>>(
+    return http.post<SuccessResponse<any>>(
       `/product/smartphone/delete/${idSmartPhone}`
     );
   },

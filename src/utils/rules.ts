@@ -132,6 +132,14 @@ export const schemaProductSmartPhone = yup.object({
   battery: yup.string(),
   charging: yup.string(),
   networkSupport: yup.string(),
+  gateway: yup.string(),
+  special: yup.string(),
+  maximumRam: yup.string(),
+  maximumRom: yup.string(),
+  processor: yup.string(),
+  ramId: yup.string(),
+  romId: yup.string(),
+  graphicsCard: yup.string(),
   images: yup.string(),
 });
 
