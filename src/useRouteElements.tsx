@@ -6,7 +6,6 @@ import CommonLayout from "./layouts/CommonLayout";
 import Login from "./pages/Login";
 import AuthenticatedGuard from "./guards/AuthenticatedGuard";
 import UnAuthenticatedGuard from "./guards/UnAuthenticatedGuard";
-import Products from "./pages/Product";
 import { typeProduct } from "./formSource";
 
 export default function useRouteElements() {
