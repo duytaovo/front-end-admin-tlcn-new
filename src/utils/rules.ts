@@ -140,6 +140,7 @@ export const schemaProductSmartPhone = yup.object({
   ramId: yup.string(),
   romId: yup.string(),
   graphicsCard: yup.string(),
+  lstProductTypeAndPrice: yup.array(),
   images: yup.string(),
 });
 
