@@ -4,7 +4,6 @@ import { Paper } from "@mui/material";
 import "./styles.css";
 import { Link } from "react-router-dom";
 import path from "src/constants/path";
-// import PaginationCustom from '../Pagination'
 interface Props {
   rows: any;
   columns: any;
@@ -43,10 +42,6 @@ const DataTable = ({
           pageSizeOptions={[5, 10]}
           // checkboxSelection
         />
-      </div>
-      <div className="">
-        {/* <p className=''>{`Total: ${totalItems}`}</p> */}
-        {/* <PaginationCustom totalPages={totalPages} handleOnChange={handleOnChange} /> */}
       </div>
     </Paper>
   );

@@ -1,37 +1,33 @@
-import { PlusOutlined } from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Form, Upload } from "antd";
+import { Button, Form } from "antd";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
-import { addUser, getUser } from "src/store/user/userSlice";
 import { ErrorResponse } from "src/types/utils.type";
-import { schemaProductSmartPhone } from "src/utils/rules";
+import { schemaLaptop, schemaProductSmartPhone } from "src/utils/rules";
 import {
   generateRandomString,
   getAvatarUrl,
   isAxiosUnprocessableEntityError,
 } from "src/utils/utils";
 import SelectCustom from "src/components/Select";
-
 import Textarea from "src/components/Textarea";
 import { getCategorys } from "src/store/category/categorySlice";
 import { getBrands } from "src/store/brand/brandSlice";
-import {
-  addSmartPhone,
-  getSmartPhones,
-} from "src/store/product/smartPhoneSlice";
+
 import InputFile from "src/components/InputFile";
-import axios from "axios";
 import { getCardGraphic } from "src/store/cardGrap/cardGraphicSlice";
 import { getRams } from "src/store/ram/ramSlice";
 import { getRoms } from "src/store/rom/romSlice";
 import { getProcessor } from "src/store/processor/processorSlice";
+import { getCharacters } from "src/store/characteristic/characteristicSlice";
+import { addLaptop, getLaptop } from "src/store/product/laptopSlice ";
+import { PlusOutlined } from "@ant-design/icons";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -49,9 +45,9 @@ interface FormData {
   design: string | undefined;
   dimension: string | undefined;
   mass: string | undefined;
-  launchTime: Date | undefined;
+  launchTime: string | undefined;
   accessories: string | undefined;
-  productStatus: number | undefined;
+  productStatus: string | undefined;
   ram: string;
   storageCapacity: string;
   color: string;
@@ -59,19 +55,37 @@ interface FormData {
   salePrice: string | undefined;
   monitor: string;
 }
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
+
+type brand = {
+  id: number;
+  name: string;
 };
-const FormDisabledDemo: React.FC = () => {
-  const [componentDisabled, setComponentDisabled] = useState<boolean>(false);
+
+const brandLaptop: brand[] = [
+  {
+    id: 1,
+    name: "Apple",
+  },
+  {
+    id: 2,
+    name: "Lenovo",
+  },
+  {
+    id: 3,
+    name: "Dell",
+  },
+  {
+    id: 4,
+    name: "Asus",
+  },
+  {
+    id: 5,
+    name: "HP",
+  },
+];
+const NewLaptop: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const {
     handleSubmit,
     formState: { errors },
@@ -79,10 +93,10 @@ const FormDisabledDemo: React.FC = () => {
     register,
     setValue,
     watch,
+    control,
   } = useForm({
-    resolver: yupResolver(schemaProductSmartPhone),
+    resolver: yupResolver(schemaLaptop),
   });
-  const [data, setData] = useState<any>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { category } = useAppSelector((state) => state.category);
@@ -91,40 +105,23 @@ const FormDisabledDemo: React.FC = () => {
   const { ram } = useAppSelector((state) => state.ram);
   const { rom } = useAppSelector((state) => state.rom);
   const { processor } = useAppSelector((state) => state.processor);
+  const { character } = useAppSelector((state) => state.character);
+  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
+    {
+      control, // control props comes from useForm (optional: if you are using FormContext)
+      name: "lstProductTypeAndPrice", // unique name for your Field Array
+    }
+  );
   useEffect(() => {
     dispatch(getCategorys(""));
-    dispatch(getBrands(""));
+    dispatch(getCharacters(""));
+    // dispatch(getBrands(""));
     dispatch(getCardGraphic(""));
     dispatch(getRams(""));
     dispatch(getRoms(""));
     dispatch(getProcessor(""));
   }, []);
-  console.log(cardGraphic);
-  console.log(ram);
-  console.log(rom);
-  console.log(processor);
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         "http://localhost:8081/api/manage/brand"
-  //       ); // Thay đổi URL API của bạn
-  //       fetch("http://localhost:8081/api/manage/brand", {
-  //         method: "get",
-  //         mode: "same-origin",
-  //         headers: {
-  //           Accept: "application/json",
-  //           "Content-Type": "application/json",
-  //         },
-  //       });
-  //       // setData(response.data);
-  //     } catch (error) {
-  //       console.error("Lỗi khi gọi API:", error);
-  //     }
-  //   };
 
-  //   fetchData();
-  // }, []);
   const [file, setFile] = useState<File[]>();
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
 
@@ -157,7 +154,7 @@ const FormDisabledDemo: React.FC = () => {
     setValue("maximumRam", "");
     setValue("maximumRom", "");
     setValue("networkSupport", "");
-    setValue("images", "");
+    setValue("urlImages", []);
   }, []);
 
   const onSubmit = handleSubmit(async (data) => {
@@ -174,27 +171,25 @@ const FormDisabledDemo: React.FC = () => {
         brandId: Number(data.brand),
         categoryId: Number(data.category),
         productId: null,
-        characteristicId: 1,
+        characteristicId: Number(data.characteristic),
         productCode: generateRandomString(10),
         name: data.name,
         description: data.description,
         design: data.design,
         dimension: data.dimension,
         mass: Number(data.mass),
-        launchTime: data.launchTime,
+        launchTime: Number(data.launchTime),
         accessories: data.accessories,
         productStatus: 100,
-        lstProductTypeAndPrice: [
-          {
-            typeId: null,
-            ram: data.ram,
-            storageCapacity: data.storageCapacity,
-            color: data.color,
-            price: Number(data.price),
-            salePrice: Number(data.salePrice),
-          },
-        ],
-        lstProductImageUrl: data.images,
+        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
+          typeId: null,
+          ram: item?.ram,
+          storageCapacity: item?.storageCapacity,
+          color: item?.color,
+          price: Number(item?.price),
+          salePrice: Number(item?.salePrice),
+        })),
+        lstProductImageUrl: data.urlImages,
       },
       monitor: data.monitor,
       operatingSystem: data.operatingSystem,
@@ -216,20 +211,20 @@ const FormDisabledDemo: React.FC = () => {
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(addSmartPhone(body));
+      const res = await dispatch(addLaptop(body));
       unwrapResult(res);
-      const d = res?.payload?.data;
-      if (d?.status !== 200) return toast.error(d?.message);
-      await toast.success("Thêm thành công ");
-      await dispatch(getSmartPhones(""));
-      await navigate(path.smartPhone);
+      // const d = res?.payload?.data;
+      // if (d?.status !== 200) return toast.error(d?.message);
+      await toast.success("Thêm sp laptop thành công ");
+      await dispatch(getLaptop(""));
+      await navigate(path.laptop);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
         if (formError) {
           Object.keys(formError).forEach((key) => {
             setError(key as keyof FormData, {
-              // message: formError[key as keyof FormData],
+              message: formError[key as keyof FormData],
               type: "Server",
             });
           });
@@ -261,9 +256,9 @@ const FormDisabledDemo: React.FC = () => {
     setValue("maximumRam", "");
     setValue("maximumRom", "");
     setValue("networkSupport", "");
-    setValue("images", "");
+    setValue("urlImages", []);
   };
-  const avatar = watch("images");
+  const avatar = watch("urlImages");
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
@@ -274,12 +269,16 @@ const FormDisabledDemo: React.FC = () => {
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
         layout="horizontal"
-        style={{ maxWidth: 700, padding: 6 }}
+        style={{ maxWidth: 800, padding: 6 }}
         autoComplete="off"
         noValidate
         onSubmitCapture={onSubmit}
       >
-        <Form.Item label="Loại sản phẩm" name="" rules={[{ required: true }]}>
+        <Form.Item
+          label="Danh mục sản phẩm"
+          name=""
+          rules={[{ required: true }]}
+        >
           <SelectCustom
             className={"flex-1 text-black"}
             id="category"
@@ -288,7 +287,6 @@ const FormDisabledDemo: React.FC = () => {
             defaultValue={""}
             options={category}
             register={register}
-            isBrand={true}
           >
             {errors.category?.message}
           </SelectCustom>
@@ -304,177 +302,11 @@ const FormDisabledDemo: React.FC = () => {
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
-            options={brand}
+            options={brandLaptop}
             register={register}
-            isBrand={true}
           >
             {errors.brand?.message}
           </SelectCustom>
-        </Form.Item>
-        {/* <Form.Item
-          label="Đặc điểm sản phẩm"
-          name="characteristic"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="characteristic"
-            // label="Hãng xe"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            // options={characteristic}
-            register={register}
-            isBrand={true}
-          >
-            {errors.characteristic?.message}
-          </SelectCustom>
-        </Form.Item> */}
-        <Form.Item
-          label="Tên sản phẩm"
-          name="name"
-          rules={[{ required: true }]}
-        >
-          <Input
-            // placeholder="Iphone 15 Plus"
-            name="name"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.name?.message}
-          />
-        </Form.Item>
-
-        <Form.Item label="Thiết kế" name="design" rules={[{ required: true }]}>
-          <Input
-            name="design"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.design?.message}
-            // placeholder="Màn hinh"
-          />
-        </Form.Item>
-        <Form.Item
-          label="Kích thước"
-          name="dimension"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="dimension"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.dimension?.message}
-            // placeholder="Màn hinh"
-          />
-        </Form.Item>
-        <Form.Item label="Khối lượng" name="mass" rules={[{ required: true }]}>
-          <Input
-            name="mass"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.mass?.message}
-            // placeholder="Màn hinh"
-          />
-        </Form.Item>
-        <Form.Item
-          label="Năm ra mắt"
-          name="launchTime"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="launchTime"
-            register={register}
-            type="date"
-            className=""
-            errorMessage={errors.launchTime?.message}
-            // placeholder="Màn hinh"
-          />
-        </Form.Item>
-        <Form.Item
-          label="Phụ kiện"
-          name="accessories"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="accessories"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.accessories?.message}
-            // placeholder="Màn hinh"
-          />
-        </Form.Item>
-        <Form.Item label="Ram" name="ram" rules={[{ required: true }]}>
-          <Input
-            name="ram"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.ram?.message}
-            // placeholder="Màn hinh"
-          />
-        </Form.Item>
-        <Form.Item
-          label="Rom"
-          name="storageCapacity"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="storageCapacity"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.storageCapacity?.message}
-            // placeholder="Màn hinh"
-          />
-        </Form.Item>
-        <Form.Item label="Màu sắc" name="color" rules={[{ required: true }]}>
-          <Input
-            name="color"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.color?.message}
-            // placeholder="Màn hinh"
-          />
-        </Form.Item>
-
-        <Form.Item label="Giá" name="price" rules={[{ required: true }]}>
-          <Input
-            name="price"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.price?.message}
-            // placeholder="Màn hinh"
-          />
-        </Form.Item>
-        <Form.Item
-          label="Giá khuyến mãi"
-          name="salePrice"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="salePrice"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.salePrice?.message}
-            // placeholder="Màn hinh"
-          />
-        </Form.Item>
-
-        <Form.Item label="Màn hình" name="monitor" rules={[{ required: true }]}>
-          <Input
-            name="monitor"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.monitor?.message}
-            // placeholder="Màn hinh"
-          />
         </Form.Item>
         <Form.Item
           label="Hệ điều hành"
@@ -488,17 +320,229 @@ const FormDisabledDemo: React.FC = () => {
             placeholder="Vui lòng chọn"
             defaultValue={""}
             options={[
-              { id: 1, name: "iOS" },
-              { id: 2, name: "android" },
+              { id: "macOs", name: "macOs" },
+              { id: "Windows", name: "Windows" },
             ]}
             register={register}
-            isBrand={true}
           >
             {errors.operatingSystem?.message}
           </SelectCustom>
         </Form.Item>
         <Form.Item
-          label="Camera trước"
+          label="Đặc điểm sản phẩm"
+          name="characteristic"
+          rules={[{ required: true }]}
+        >
+          <SelectCustom
+            className={"flex-1 text-black"}
+            id="characteristic"
+            // label="Hãng xe"
+            placeholder="Vui lòng chọn"
+            defaultValue={""}
+            options={character}
+            register={register}
+          >
+            {errors.characteristic?.message}
+          </SelectCustom>
+        </Form.Item>
+        <Form.Item
+          label="Tên sản phẩm"
+          name="name"
+          rules={[{ required: true }]}
+        >
+          <Input
+            placeholder="MacBook Air 15 inch M2 2023"
+            name="name"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.name?.message}
+          />
+        </Form.Item>
+        {/* 
+        <Form.Item label="Thiết kế" name="design" rules={[{ required: true }]}>
+          <Input
+            name="design"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.design?.message}
+            placeholder="Nguyên khối"
+          />
+        </Form.Item> */}
+        <Form.Item
+          label="Kích thước"
+          name="dimension"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="dimension"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.dimension?.message}
+            placeholder="Dài 159.9 mm - Ngang 76.7 mm - Dày 8.25 mm "
+          />
+        </Form.Item>
+        <Form.Item label="Khối lượng" name="mass" rules={[{ required: true }]}>
+          <Input
+            name="mass"
+            register={register}
+            type="number"
+            className=""
+            errorMessage={errors.mass?.message}
+            placeholder=" 1.51 "
+          />
+        </Form.Item>
+        <Form.Item
+          label="Năm ra mắt"
+          name="launchTime"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="launchTime"
+            register={register}
+            type="number"
+            className=""
+            errorMessage={errors.launchTime?.message}
+            placeholder="2023"
+          />
+        </Form.Item>
+        <Form.Item
+          label="Phụ kiện"
+          name="accessories"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="accessories"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.accessories?.message}
+            placeholder="Tai nghe, sạc"
+          />
+        </Form.Item>
+        <Form.Item
+          label="Loại sản phẩm"
+          name="lstProductTypeAndPrice"
+          rules={[{ required: true }]}
+        >
+          <ul>
+            {fields.map((item, index) => (
+              <li key={item.id}>
+                <div className="flex justify-between space-x-1">
+                  <Form.Item
+                    label="Ram"
+                    name={`lstProductTypeAndPrice.${index}.ram`}
+                    rules={[{ required: true }]}
+                  >
+                    <Input
+                      name={`lstProductTypeAndPrice.${index}.ram`}
+                      key={item.id} // important to include key with field's id
+                      register={register}
+                      placeholder="8Gb"
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Bộ nhớ trong"
+                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
+                    rules={[{ required: true }]}
+                  >
+                    <Input
+                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
+                      key={item.id} // important to include key with field's id
+                      register={register}
+                      placeholder="1TB"
+                    />
+                  </Form.Item>
+                </div>
+                <div className="flex justify-between space-x-1">
+                  <Form.Item
+                    label="Giá"
+                    name={`lstProductTypeAndPrice.${index}.price`}
+                    rules={[{ required: true }]}
+                  >
+                    <Input
+                      name={`lstProductTypeAndPrice.${index}.price`}
+                      key={item.id} // important to include key with field's id
+                      register={register}
+                      placeholder="45000000"
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Giá khuyến mãi"
+                    name={`lstProductTypeAndPrice.${index}.salePrice`}
+                    rules={[{ required: true }]}
+                  >
+                    <Input
+                      name={`lstProductTypeAndPrice.${index}.salePrice`}
+                      key={item.id} // important to include key with field's id
+                      register={register}
+                      placeholder="44000000"
+                    />
+                  </Form.Item>
+                </div>
+                <div>
+                  <Form.Item
+                    label="Màu"
+                    name={`lstProductTypeAndPrice.${index}.color`}
+                    rules={[{ required: true }]}
+                  >
+                    <Input
+                      name={`lstProductTypeAndPrice.${index}.color`}
+                      key={item.id} // important to include key with field's id
+                      register={register}
+                      placeholder="Titan tự nhiên"
+                    />
+                  </Form.Item>
+                </div>
+                <Form.Item>
+                  <Button
+                    type="default"
+                    onClick={() => remove(index)}
+                    block
+                    icon={<PlusOutlined />}
+                  >
+                    Xóa trường này
+                  </Button>
+                </Form.Item>
+                {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
+              </li>
+            ))}
+            <Form.Item>
+              <Button
+                type="dashed"
+                onClick={() =>
+                  append({
+                    storageCapacity: "",
+                    ram: "",
+                    color: "",
+                    price: "",
+                    salePrice: "",
+                  })
+                }
+                block
+                icon={<PlusOutlined />}
+              >
+                Thêm trường này
+              </Button>
+            </Form.Item>
+          </ul>
+        </Form.Item>
+
+        <Form.Item label="Màn hình" name="monitor" rules={[{ required: true }]}>
+          <Input
+            name="monitor"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.monitor?.message}
+            placeholder="15.3 inch"
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Camera"
           name="frontCamera"
           rules={[{ required: true }]}
         >
@@ -508,10 +552,10 @@ const FormDisabledDemo: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.frontCamera?.message}
-            // placeholder="Màn hinh"
+            placeholder="12 MP"
           />
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           label="Camera sau"
           name="rearCamera"
           rules={[{ required: true }]}
@@ -522,9 +566,9 @@ const FormDisabledDemo: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.rearCamera?.message}
-            // placeholder="Màn hinh"
+            placeholder="Chính 48 MP & Phụ 12 MP, 12 MP"
           />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item label="Chip" name="chip" rules={[{ required: true }]}>
           <Input
             name="chip"
@@ -532,19 +576,19 @@ const FormDisabledDemo: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.chip?.message}
-            // placeholder="Màn hinh"
+            placeholder="Apple M2"
           />
         </Form.Item>
-        <Form.Item label="Sim" name="sim" rules={[{ required: true }]}>
+        {/* <Form.Item label="Sim" name="sim" rules={[{ required: true }]}>
           <Input
             name="sim"
             register={register}
             type="text"
             className=""
             errorMessage={errors.sim?.message}
-            // placeholder="Màn hinh"
+            placeholder="1 Nano SIM & 1 eSIM"
           />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item label="Pin" name="battery" rules={[{ required: true }]}>
           <Input
             name="battery"
@@ -552,7 +596,7 @@ const FormDisabledDemo: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.battery?.message}
-            // placeholder="Màn hinh"
+            placeholder="Lên đến 18 giờ "
           />
         </Form.Item>
         <Form.Item
@@ -566,10 +610,10 @@ const FormDisabledDemo: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.charging?.message}
-            // placeholder="Màn hinh"
+            placeholder="35 W"
           />
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           label="Hỗ trợ mạng"
           name="networkSupport"
           rules={[{ required: true }]}
@@ -580,9 +624,9 @@ const FormDisabledDemo: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.networkSupport?.message}
-            // placeholder="Màn hinh"
+            placeholder="5G"
           />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item
           label="Cổng kết nối"
           name="gateway"
@@ -594,7 +638,7 @@ const FormDisabledDemo: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.gateway?.message}
-            // placeholder="Màn hinh"
+            placeholder="MagSafe 3"
           />
         </Form.Item>
         <Form.Item
@@ -608,7 +652,7 @@ const FormDisabledDemo: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.special?.message}
-            // placeholder="Màn hinh"
+            placeholder="Bảo mật vân tay"
           />
         </Form.Item>
         <Form.Item
@@ -622,7 +666,7 @@ const FormDisabledDemo: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.maximumRam?.message}
-            // placeholder="Màn hinh"
+            placeholder="16GB"
           />
         </Form.Item>
         <Form.Item
@@ -636,7 +680,7 @@ const FormDisabledDemo: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.maximumRom?.message}
-            // placeholder="Màn hinh"
+            placeholder="512GB"
           />
         </Form.Item>
         <Form.Item
@@ -652,12 +696,11 @@ const FormDisabledDemo: React.FC = () => {
             defaultValue={""}
             options={processor}
             register={register}
-            isBrand={true}
           >
             {errors.processor?.message}
           </SelectCustom>
         </Form.Item>
-        <Form.Item label="Ram Id" name="ramId" rules={[{ required: true }]}>
+        <Form.Item label="Loại ram" name="ramId" rules={[{ required: true }]}>
           <SelectCustom
             className={"flex-1 text-black"}
             id="ramId"
@@ -666,12 +709,15 @@ const FormDisabledDemo: React.FC = () => {
             defaultValue={""}
             options={ram}
             register={register}
-            isBrand={true}
           >
             {errors.ramId?.message}
           </SelectCustom>
         </Form.Item>
-        <Form.Item label="Rom Id" name="romId" rules={[{ required: true }]}>
+        <Form.Item
+          label="Loại ổ cứng"
+          name="romId"
+          rules={[{ required: true }]}
+        >
           <SelectCustom
             className={"flex-1 text-black"}
             id="romId"
@@ -680,7 +726,6 @@ const FormDisabledDemo: React.FC = () => {
             defaultValue={""}
             options={rom}
             register={register}
-            isBrand={true}
           >
             {errors.romId?.message}
           </SelectCustom>
@@ -698,12 +743,10 @@ const FormDisabledDemo: React.FC = () => {
             defaultValue={""}
             options={cardGraphic}
             register={register}
-            isBrand={true}
           >
             {errors.graphicsCard?.message}
           </SelectCustom>
         </Form.Item>
-
         <Form.Item
           name="file"
           // rules={[{ required: true }]}
@@ -717,7 +760,7 @@ const FormDisabledDemo: React.FC = () => {
                 return (
                   <img
                     key={index}
-                    src={imageUrl || getAvatarUrl(avatar)}
+                    src={imageUrl}
                     className="h-full rounded-md w-full  object-cover"
                     alt="avatar"
                   />
@@ -750,18 +793,24 @@ const FormDisabledDemo: React.FC = () => {
             textAlign={"left"}
           />
         </Form.Item>
+
         <div className="flex justify-start">
-          <Form.Item label="" className="ml-[115px] mb-2">
-            <Button className="w-[100px]" onClick={onSubmit}>
+          <Form.Item label="" className="ml-[135px] mb-2 bg-green-300">
+            <Button className="w-[100px]" onClick={onSubmit} type="default">
               Lưu
             </Button>
           </Form.Item>
-          <Form.Item label="" className="ml-[50px] mb-2">
-            <Button className="w-[100px]" onClick={onClickHuy}>
+          <Form.Item label="" className="ml-[70px] mb-2">
+            <Button
+              className="w-[100px] bg-blue-300"
+              onClick={onClickHuy}
+              type="dashed"
+              color="red"
+            >
               Đặt lại
             </Button>
           </Form.Item>
-          <Form.Item label="" className="ml-[50px] mb-2">
+          <Form.Item label="" className="ml-[70px] mb-2 bg-red-300">
             <Button
               className="w-[100px]"
               onClick={() => {
@@ -777,4 +826,4 @@ const FormDisabledDemo: React.FC = () => {
   );
 };
 
-export default () => <FormDisabledDemo />;
+export default () => <NewLaptop />;

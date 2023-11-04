@@ -5,7 +5,6 @@ import {
   formatNumberToSocialStyle,
   generateNameId,
 } from "src/utils/utils";
-import { SmartPhone } from "../..";
 import { Rate } from "antd";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { Button } from "@mui/material";
@@ -16,9 +15,10 @@ import {
 } from "src/store/product/smartPhoneSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
+import { ListSmartPhone } from "src/types/allProductsType.interface";
 
 interface Props {
-  product: SmartPhone;
+  product: ListSmartPhone;
 }
 interface IBody {
   setEnable: React.Dispatch<React.SetStateAction<boolean>>;
@@ -26,14 +26,6 @@ interface IBody {
 interface IiOffset {
   w: number;
   h: number;
-}
-
-interface Iprops {
-  id: string;
-  tag: keyof JSX.IntrinsicElements;
-  className?: string;
-  content: string;
-  style?: React.CSSProperties;
 }
 
 interface IProps {
@@ -45,7 +37,6 @@ const OptionWrapper: React.FC<IProps> = ({ children }) => {
   return <div className="flex h-17 items-end py-1">{children}</div>;
 };
 export default function ProductPhone({ product }: Props) {
-  const iRef = useRef<HTMLTextAreaElement>(null);
   const cRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const [iOffset, setIOffset] = useState<IiOffset>({

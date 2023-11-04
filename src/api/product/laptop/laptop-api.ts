@@ -20,13 +20,13 @@ const laptopApi = {
     return http.get<SuccessResponse<any[]>>(`/product/laptop/${params}`);
   },
   updateLaptop({ _id, body }: any) {
-    return http.put<SuccessResponse<any>>(
+    return http.post<SuccessResponse<any>>(
       `/product/laptop/update/${_id}`,
       body
     );
   },
   deleteLaptop(idlaptop: string[]) {
-    return http.delete<SuccessResponse<any>>(
+    return http.post<SuccessResponse<any>>(
       `/product/laptop/delete/${idlaptop}`
     );
   },

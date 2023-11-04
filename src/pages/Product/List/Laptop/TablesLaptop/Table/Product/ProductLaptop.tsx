@@ -1,25 +1,21 @@
 import { Link, useNavigate } from "react-router-dom";
-import path from "src/constants/path";
 import {
   formatCurrency,
   formatNumberToSocialStyle,
   generateNameId,
 } from "src/utils/utils";
-import { SmartPhone } from "../..";
 import { Rate } from "antd";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { Button } from "@mui/material";
 import { useAppDispatch } from "src/hooks/useRedux";
-import {
-  deleteSmartPhone,
-  getSmartPhones,
-} from "src/store/product/smartPhoneSlice";
+import { getSmartPhones } from "src/store/product/smartPhoneSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
-import { deleteLaptop } from "src/store/product/laptopSlice ";
+import { deleteLaptop, getLaptop } from "src/store/product/laptopSlice ";
+import { ListSmartPhone } from "src/types/allProductsType.interface";
 
 interface Props {
-  product: SmartPhone;
+  product: ListSmartPhone;
 }
 interface IBody {
   setEnable: React.Dispatch<React.SetStateAction<boolean>>;
@@ -46,7 +42,6 @@ const OptionWrapper: React.FC<IProps> = ({ children }) => {
   return <div className="flex h-17 items-end py-1">{children}</div>;
 };
 export default function ProductLaptop({ product }: Props) {
-  console.log("laptop" + product);
   const iRef = useRef<HTMLTextAreaElement>(null);
   const cRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -88,7 +83,7 @@ export default function ProductLaptop({ product }: Props) {
           const d = res?.payload;
           if (d?.status !== 200) return toast.error(d?.message);
           await toast.success("Xóa sản phẩm thành công ");
-          await dispatch(getSmartPhones(""));
+          await dispatch(getLaptop(""));
         };
         handleDelete();
         hidden();
@@ -106,7 +101,7 @@ export default function ProductLaptop({ product }: Props) {
   return (
     <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <Link
-        to={`${"/smartPhone/detail"}/${generateNameId({
+        to={`${"/laptop/detail"}/${generateNameId({
           name: product.name,
           id: product.id.toString(),
         })}`}

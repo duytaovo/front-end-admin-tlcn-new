@@ -1,39 +1,11 @@
-import {
-  FormControl,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
-  Tooltip,
-} from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { SelectChangeEvent } from "@mui/material/Select";
-import path from "src/constants/path";
-import React, { useEffect, useState } from "react";
-import { Space, Table } from "antd";
-import type { ColumnsType } from "antd/es/table";
+import React, { useEffect } from "react";
 import { getSmartPhones } from "src/store/product/smartPhoneSlice";
 import ProductPhone from "./Table/Product/ProductPhone";
-import { unwrapResult } from "@reduxjs/toolkit";
-
-export type SmartPhone = {
-  id: number;
-  name: string;
-  lstImageUrl: string[];
-  lstProductTypeAndPrice: {
-    typeId: number;
-    ram: string;
-    storageCapacity: string;
-    color: string;
-    price: number;
-    salePrice: number;
-  }[];
-  star: number;
-  totalReview: number;
-};
+import path from "src/constants/path";
 
 const TablePhone: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -42,33 +14,7 @@ const TablePhone: React.FC = () => {
   useEffect(() => {
     dispatch(getSmartPhones(""));
   }, []);
-  const [status, setStatus] = React.useState<string>("");
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setStatus(event.target.value);
-  };
-  console.log(smartPhone);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  const start = () => {
-    setLoading(true);
-    // ajax request after empty completing
-    setTimeout(() => {
-      setSelectedRowKeys([]);
-      setLoading(false);
-    }, 1000);
-  };
-
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
-  const hasSelected = selectedRowKeys.length > 0;
   const [product, setProduct] = React.useState("");
 
   const handleChangeProduct = (event: SelectChangeEvent) => {
@@ -78,78 +24,7 @@ const TablePhone: React.FC = () => {
   const onClick = (value: string) => {
     navigate(value);
   };
-  const originData: any[] = [];
-  for (let i = 0; i < smartPhone?.length; i++) {
-    originData.push({
-      id: smartPhone[i].id,
-      name: smartPhone[i].name,
-      lstImageUrl: smartPhone[i].lstImageUrl,
-      ram: smartPhone[i].lstProductTypeAndPrice.ram,
-      storageCapacity: smartPhone[i].lstProductTypeAndPrice.storageCapacity,
-      color: smartPhone[i].lstProductTypeAndPrice.color,
-      price: smartPhone[i].lstProductTypeAndPrice.price,
-      salePrice: smartPhone[i].lstProductTypeAndPrice.salePrice,
-      star: smartPhone[i].star,
-      totalReview: smartPhone[i].totalReview,
-    });
-  }
-  const columns: ColumnsType<any> = [
-    { title: "Tên sản phẩm", dataIndex: "name", key: "name" },
-    { title: "Giá sản phẩm", dataIndex: "price", key: "price" },
-    { title: "Khuyến mãi", dataIndex: "salePrice", key: "salePrice" },
-    // {
-    //   title: "Trạng thái",
-    //   dataIndex: "status",
-    //   key: "status",
-    //   render: () => {
-    //     // const handleChangeStatus = (e: any) => {};
-    //     return (
-    //       <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-    //         <InputLabel id="demo-select-small-label">Trạng thái</InputLabel>
-    //         <Select
-    //           labelId="demo-select-small-label"
-    //           id="demo-select-small"
-    //           value={status}
-    //           label="Status"
-    //           // onChange={handleChange}
-    //         >
-    //           <MenuItem value={0}>Not verify</MenuItem>
-    //           <MenuItem value={1}>Verify</MenuItem>
-    //           <MenuItem value={2}>Disable</MenuItem>
-    //           <MenuItem value={3}>Enable</MenuItem>
-    //         </Select>
-    //       </FormControl>
-    //     );
-    //   },
-    // },
-    {
-      title: "Action",
-      dataIndex: "",
-      key: "x",
-      render: () => (
-        <Space>
-          <Link to={path.smartPhoneDetail}>
-            {" "}
-            <IconButton className="text-mainColor">
-              <EditIcon
-                className="text-mainColor"
-                sx={{
-                  color: "",
-                }}
-              />
-            </IconButton>
-          </Link>
-          <Link to={path.smartPhone}>
-            <Tooltip title="Thay đổi trạng thái " className="disabled:bg-white">
-              <IconButton>
-                <DeleteIcon className="text-red-700" />
-              </IconButton>
-            </Tooltip>
-          </Link>
-        </Space>
-      ),
-    },
-  ];
+
   return (
     <div className="mx-6">
       <div className="w-full text-[24px] text-gray-500 mb-[10px] flex items-center justify-between">
@@ -167,11 +42,11 @@ const TablePhone: React.FC = () => {
               >
                 <MenuItem
                   value={"Điện thoại"}
-                  onClick={() => onClick("/phone")}
+                  onClick={() => onClick(path.smartPhone)}
                 >
                   Điện thoại
                 </MenuItem>
-                <MenuItem value={"Laptop"} onClick={() => onClick("/laptop")}>
+                <MenuItem value={"Laptop"} onClick={() => onClick(path.laptop)}>
                   Laptop
                 </MenuItem>
                 <MenuItem value={"Tablet"} onClick={() => onClick("/tablet")}>
@@ -192,28 +67,10 @@ const TablePhone: React.FC = () => {
                 {/* <MenuItem value={30}></MenuItem> */}
               </Select>
             </FormControl>
-            <span style={{ marginLeft: 8 }}>
-              {hasSelected ? `Selected ${selectedRowKeys.length} items` : ""}
-            </span>
           </div>
         </div>
-        <Link
-          to={path.smartPhoneNew}
-          className="no-underline text-green-500 text-lg font-medium border-[1px] border-solid border-[green] p-3 rounded cursor-pointer"
-        >
-          Thêm mới
-        </Link>
       </div>
-      {/* <Table
-        columns={columns}
-        expandable={{
-          expandedRowRender: (record) => (
-            <p style={{ margin: 0 }}>{record?.description}</p>
-          ),
-          rowExpandable: (record) => record?.name !== "Not Expandable",
-        }}
-        dataSource={originData}
-      /> */}
+
       <div className="mt-6 grid grid-cols-6 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {smartPhone?.map((_smartPhone: any) => (
           <div className="col-span-1" key={_smartPhone.id}>

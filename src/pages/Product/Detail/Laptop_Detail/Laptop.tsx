@@ -1,69 +1,63 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
-import { toast } from "react-toastify";
-
 import {
   formatCurrency,
   formatNumberToSocialStyle,
   getIdFromNameId,
   rateSale,
 } from "src/utils/utils";
-import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import { convert } from "html-to-text";
-import { useAppDispatch } from "src/hooks/useRedux";
-import {
-  getDetailPhone,
-  getSmartPhones,
-} from "src/store/product/smartPhoneSlice";
-import { unwrapResult } from "@reduxjs/toolkit";
-import { Rate } from "antd";
+import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
+import { getDetailPhone } from "src/store/product/smartPhoneSlice";
+import { Button, Rate } from "antd";
 import DOMPurify from "dompurify";
+import { getDetailLaptop } from "src/store/product/laptopSlice ";
 
-export default function LaptopDetail() {
+export default function SmartPhoneDetail() {
   // const { t } = useTranslation(["product"]);
-  const [buyCount, setBuyCount] = useState(1);
   const { nameId } = useParams();
   const dispatch = useAppDispatch();
-
+  const { laptopDetail } = useAppSelector((state) => state.laptop);
+  console.log(laptopDetail);
   const id = getIdFromNameId(nameId as string);
-  const [product, setProduct] = useState<any>();
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5]);
   const [activeImage, setActiveImage] = useState("");
   const imageRef = useRef<HTMLImageElement>(null);
+  const [price, setPrice] = useState(
+    laptopDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice
+  );
+  const [salePrice, setSalePrice] = useState(
+    laptopDetail?.productInfo?.lstProductTypeAndPrice[0].price
+  );
   const currentImages = useMemo(
-    () => (product ? product.images.slice(...currentIndexImages) : []),
-    [product, currentIndexImages]
+    () =>
+      laptopDetail?.productInfo?.lstProductImageUrl
+        ? laptopDetail?.productInfo?.lstProductImageUrl.slice(
+            ...currentIndexImages
+          )
+        : [],
+    [laptopDetail, currentIndexImages]
   );
 
   const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   if (product && product.images.length > 0) {
-  //     setActiveImage(product.images[0]);
-  //   }
-  // }, [product]);
+  useEffect(() => {
+    if (
+      laptopDetail &&
+      laptopDetail?.productInfo?.lstProductImageUrl?.length > 0
+    ) {
+      setActiveImage(laptopDetail?.productInfo?.lstProductImageUrl[0]);
+    }
+  }, [laptopDetail]);
 
   useEffect(() => {
-    dispatch(getDetailPhone(id))
-      .then(unwrapResult)
-      .then((res) => {
-        res.data.images = res.data.images.map(
-          (image: string, index: number) => {
-            return {
-              url: image,
-              id: index,
-            };
-          }
-        );
-        setActiveImage(product.images[0]);
-        setProduct(res.data);
-      });
+    dispatch(getDetailLaptop(id));
   }, [id, dispatch]);
-
   const next = () => {
-    if (currentIndexImages[1] < product.images.length) {
+    if (
+      currentIndexImages[1] <
+      laptopDetail?.productInfo.lstProductImageUrl.length
+    ) {
       setCurrentIndexImages((prev) => [prev[0] + 1, prev[1] + 1]);
     }
   };
@@ -78,14 +72,30 @@ export default function LaptopDetail() {
     setActiveImage(img);
   };
 
+  const onClickChangeColor = (ram: string, rom: string, color: string) => {
+    if (
+      ram === laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram &&
+      rom ===
+        laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.storageCapacity &&
+      color === laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.color
+    ) {
+      setPrice(laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.price);
+      setSalePrice(
+        laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
+      );
+    } else {
+      setPrice(laptopDetail?.productInfo?.lstProductTypeAndPrice[1]?.price);
+      setSalePrice(
+        laptopDetail?.productInfo?.lstProductTypeAndPrice[1]?.salePrice
+      );
+    }
+  };
+
   const handleZoom = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const rect = event.currentTarget.getBoundingClientRect();
     const image = imageRef.current as HTMLImageElement;
     const { naturalHeight, naturalWidth } = image;
-    // Cách 1: Lấy offsetX, offsetY đơn giản khi chúng ta đã xử lý được bubble event
-    // const { offsetX, offsetY } = event.nativeEvent
 
-    // Cách 2: Lấy offsetX, offsetY khi chúng ta không xử lý được bubble event
     const offsetX = event.pageX - (rect.x + window.scrollX);
     const offsetY = event.pageY - (rect.y + window.scrollY);
 
@@ -102,16 +112,16 @@ export default function LaptopDetail() {
     imageRef.current?.removeAttribute("style");
   };
 
-  if (!product) return null;
+  if (!laptopDetail) return null;
   return (
     <div className="bg-gray-200 py-6">
       <Helmet>
-        <title>{product.name}</title>
+        <title>{laptopDetail?.productInfo?.name}</title>
         <meta
           name="description"
-          content={convert(product.description, {
+          content={convert(laptopDetail?.productInfo?.description, {
             limits: {
-              maxInputLength: 150,
+              maxInputLength: 50000,
             },
           })}
         />
@@ -127,7 +137,7 @@ export default function LaptopDetail() {
               >
                 <img
                   src={activeImage}
-                  alt={product.name}
+                  alt={laptopDetail?.productInfo?.name}
                   className="absolute left-0 top-0 h-full w-full bg-white object-cover"
                   ref={imageRef}
                 />
@@ -152,7 +162,7 @@ export default function LaptopDetail() {
                     />
                   </svg>
                 </button>
-                {currentImages.map((img: any) => {
+                {currentImages?.map((img: any) => {
                   const isActive = img === activeImage;
                   return (
                     <div
@@ -162,7 +172,7 @@ export default function LaptopDetail() {
                     >
                       <img
                         src={img}
-                        alt={product.name}
+                        alt={laptopDetail?.productInfo?.name}
                         className="absolute left-0 top-0 h-full w-full cursor-pointer bg-white object-cover"
                       />
                       {isActive && (
@@ -193,30 +203,78 @@ export default function LaptopDetail() {
               </div>
             </div>
             <div className="col-span-7">
-              <h1 className="text-xl font-medium uppercase">{product.name}</h1>
+              <h1 className="text-xl font-medium uppercase">
+                {laptopDetail?.productInfo?.name}
+              </h1>
               <div className="mt-8 flex items-center">
                 <div className="flex items-center">
                   <span className="mr-1 border-b border-b-orange text-orange">
-                    {product.rating}
+                    {laptopDetail?.productInfo?.star}
                   </span>
-                  <Rate allowHalf defaultValue={product.star} />;
+                  <Rate
+                    allowHalf
+                    defaultValue={
+                      Number(laptopDetail?.productInfo?.star) || 4.5
+                    }
+                    disabled
+                  />
+                  ;
                 </div>
                 <div className="mx-4 h-4 w-[1px] bg-gray-300"></div>
                 <div>
-                  <span>{formatNumberToSocialStyle(product.sold)}</span>
-                  <span className="ml-1 text-gray-500">Đã bán</span>
+                  <span>
+                    {formatNumberToSocialStyle(
+                      Number(laptopDetail?.productInfo?.totalReview) || 1520
+                    )}
+                  </span>
+                  <span className="ml-1 text-gray-500">Đã xem</span>
                 </div>
               </div>
               <div className="mt-8 flex items-center bg-gray-50 px-5 py-4">
                 <div className="text-gray-500 line-through">
-                  ₫{formatCurrency(product.price_before_discount)}
+                  ₫{formatCurrency(salePrice || 15000000)}
                 </div>
                 <div className="ml-3 text-3xl font-medium text-orange">
-                  ₫{formatCurrency(product.price)}
+                  ₫{formatCurrency(price || 14000000)}
                 </div>
                 <div className="ml-4 rounded-sm bg-orange px-1 py-[2px] text-xs font-semibold uppercase text-white">
-                  {rateSale(product.price_before_discount, product.price)} giảm
+                  {rateSale(Number(laptopDetail?.productInfo?.star), price)}{" "}
+                  giảm
                 </div>
+              </div>
+              <div className="space-x-3">
+                <Button
+                  className="w-[100px] bg-pink-300"
+                  onClick={() =>
+                    onClickChangeColor(
+                      laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram,
+                      laptopDetail?.productInfo?.lstProductTypeAndPrice[0]
+                        ?.storageCapacity,
+                      laptopDetail?.productInfo?.lstProductTypeAndPrice[0]
+                        ?.color
+                    )
+                  }
+                  type="dashed"
+                  color="red"
+                >
+                  {laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.color}
+                </Button>
+                <Button
+                  className="w-[100px] bg-black/30"
+                  onClick={() =>
+                    onClickChangeColor(
+                      laptopDetail?.productInfo?.lstProductTypeAndPrice[1]?.ram,
+                      laptopDetail?.productInfo?.lstProductTypeAndPrice[1]
+                        ?.storageCapacity,
+                      laptopDetail?.productInfo?.lstProductTypeAndPrice[1]
+                        ?.color
+                    )
+                  }
+                  type="dashed"
+                  color="red"
+                >
+                  {laptopDetail?.productInfo?.lstProductTypeAndPrice[1]?.color}
+                </Button>
               </div>
             </div>
           </div>
@@ -231,7 +289,9 @@ export default function LaptopDetail() {
             <div className="mx-4 mb-4 mt-12 text-sm leading-loose">
               <div
                 dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(product.description),
+                  __html: DOMPurify.sanitize(
+                    laptopDetail?.productInfo?.description
+                  ),
                 }}
               />
             </div>

@@ -18,7 +18,7 @@ import {
   getSmartPhones,
 } from "src/store/product/smartPhoneSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Rate } from "antd";
+import { Button, Rate } from "antd";
 import DOMPurify from "dompurify";
 
 export default function SmartPhoneDetail() {
@@ -32,6 +32,12 @@ export default function SmartPhoneDetail() {
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5]);
   const [activeImage, setActiveImage] = useState("");
   const imageRef = useRef<HTMLImageElement>(null);
+  const [price, setPrice] = useState(
+    smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice
+  );
+  const [salePrice, setSalePrice] = useState(
+    smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].price
+  );
   const currentImages = useMemo(
     () =>
       smartPhoneDetail?.productInfo?.lstProductImageUrl
@@ -43,7 +49,7 @@ export default function SmartPhoneDetail() {
   );
 
   const navigate = useNavigate();
-
+  console.log(smartPhoneDetail);
   useEffect(() => {
     if (
       smartPhoneDetail &&
@@ -73,6 +79,26 @@ export default function SmartPhoneDetail() {
 
   const chooseActive = (img: string) => {
     setActiveImage(img);
+  };
+
+  const onClickChangeColor = (ram: string, rom: string, color: string) => {
+    if (
+      ram === smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram &&
+      rom ===
+        smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]
+          ?.storageCapacity &&
+      color === smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.color
+    ) {
+      setPrice(smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.price);
+      setSalePrice(
+        smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
+      );
+    } else {
+      setPrice(smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[1]?.price);
+      setSalePrice(
+        smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[1]?.salePrice
+      );
+    }
   };
 
   const handleZoom = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -105,7 +131,7 @@ export default function SmartPhoneDetail() {
           name="description"
           content={convert(smartPhoneDetail?.productInfo?.description, {
             limits: {
-              maxInputLength: 1500,
+              maxInputLength: 50000,
             },
           })}
         />
@@ -197,7 +223,9 @@ export default function SmartPhoneDetail() {
                   </span>
                   <Rate
                     allowHalf
-                    defaultValue={smartPhoneDetail?.productInfo?.star || 4.5}
+                    defaultValue={
+                      Number(smartPhoneDetail?.productInfo?.star) || 4.5
+                    }
                     disabled
                   />
                   ;
@@ -206,7 +234,7 @@ export default function SmartPhoneDetail() {
                 <div>
                   <span>
                     {formatNumberToSocialStyle(
-                      smartPhoneDetail?.productInfo?.totalReview || 1520
+                      Number(smartPhoneDetail?.productInfo.totalReview) || 1520
                     )}
                   </span>
                   <span className="ml-1 text-gray-500">Đã xem</span>
@@ -214,26 +242,52 @@ export default function SmartPhoneDetail() {
               </div>
               <div className="mt-8 flex items-center bg-gray-50 px-5 py-4">
                 <div className="text-gray-500 line-through">
-                  ₫
-                  {formatCurrency(
-                    smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]
-                      .salePrice
-                  )}
+                  ₫{formatCurrency(salePrice)}
                 </div>
                 <div className="ml-3 text-3xl font-medium text-orange">
-                  ₫
-                  {formatCurrency(
-                    smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]
-                      .price
-                  )}
+                  ₫{}
+                  {formatCurrency(price)}
                 </div>
                 <div className="ml-4 rounded-sm bg-orange px-1 py-[2px] text-xs font-semibold uppercase text-white">
-                  {rateSale(
-                    smartPhoneDetail?.productInfo?.star,
-                    smartPhoneDetail?.productInfo?.lstProductTypeAndPrice?.price
-                  )}{" "}
+                  {rateSale(Number(smartPhoneDetail?.productInfo?.star), price)}{" "}
                   giảm
                 </div>
+              </div>
+              <div className="space-x-3">
+                <Button
+                  className="w-[100px] bg-pink-300"
+                  onClick={() =>
+                    onClickChangeColor(
+                      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]
+                        ?.ram,
+                      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]
+                        ?.storageCapacity,
+                      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]
+                        ?.color
+                    )
+                  }
+                  type="dashed"
+                  color="red"
+                >
+                  Hồng nhạt
+                </Button>
+                <Button
+                  className="w-[100px] bg-black/30"
+                  onClick={() =>
+                    onClickChangeColor(
+                      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[1]
+                        ?.ram,
+                      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[1]
+                        ?.storageCapacity,
+                      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[1]
+                        ?.color
+                    )
+                  }
+                  type="dashed"
+                  color="red"
+                >
+                  Đen
+                </Button>
               </div>
             </div>
           </div>

@@ -24,6 +24,7 @@ import {
   getSmartPhones,
 } from "src/store/product/smartPhoneSlice";
 import InputFile from "src/components/InputFile";
+import { getCharacters } from "src/store/characteristic/characteristicSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -41,33 +42,17 @@ interface FormData {
   design: string | undefined;
   dimension: string | undefined;
   mass: string | undefined;
-  launchTime: Date | undefined;
+  launchTime: string | undefined;
   accessories: string | undefined;
-  productStatus: number | undefined;
+  productStatus: string | undefined;
   ram: string;
   storageCapacity: string;
   color: string;
   price: string;
   salePrice: string | undefined;
   monitor: string;
-  lstProductTypeAndPrice: {
-    ram: string;
-    storageCapacity: string;
-    color: string;
-    price: string;
-    salePrice: string | undefined;
-  }[];
 }
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
+
 type brand = {
   id: number;
   name: string;
@@ -96,7 +81,6 @@ const brandSmartPhone: brand[] = [
   },
 ];
 const NewPhone: React.FC = () => {
-  const [componentDisabled, setComponentDisabled] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     handleSubmit,
@@ -104,19 +88,18 @@ const NewPhone: React.FC = () => {
     setError,
     register,
     setValue,
-    getValues,
     control,
     watch,
   } = useForm({
     resolver: yupResolver(schemaProductSmartPhone),
   });
-  const [data, setData] = useState<any>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { category } = useAppSelector((state) => state.category);
-  const { brand } = useAppSelector((state) => state.brand);
+  const { character } = useAppSelector((state) => state.character);
   useEffect(() => {
     dispatch(getCategorys(""));
+    dispatch(getCharacters(""));
     // dispatch(getBrands(""));
   }, []);
 
@@ -147,7 +130,7 @@ const NewPhone: React.FC = () => {
     setValue("frontCamera", "");
     setValue("design", "");
     setValue("dimension", "");
-    setValue("images", "");
+    setValue("urlImages", []);
   }, []);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
@@ -158,10 +141,10 @@ const NewPhone: React.FC = () => {
   const onSubmit = handleSubmit(async (data) => {
     const body = JSON.stringify({
       productInfo: {
-        brandId: 1,
+        brandId: Number(data.brand),
         categoryId: Number(data.category),
         productId: null,
-        characteristicId: 1,
+        characteristicId: Number(data.characteristic),
         productCode: generateRandomString(10),
         name: data.name,
         description: data?.description,
@@ -199,7 +182,7 @@ const NewPhone: React.FC = () => {
       unwrapResult(res);
       // const d = res?.payload?.data;
       // if (d?.code !== 201) return toast.error(d?.message);
-      await toast.success("Thêm sp điện thoại thành công ");
+      await toast.success("Thêm sản phẩm điện thoại thành công ");
       await dispatch(getSmartPhones(""));
       await navigate(path.smartPhone);
     } catch (error: any) {
@@ -208,7 +191,7 @@ const NewPhone: React.FC = () => {
         if (formError) {
           Object.keys(formError).forEach((key) => {
             setError(key as keyof FormData, {
-              // message: formError[key as keyof FormData],
+              message: formError[key as keyof FormData],
               type: "Server",
             });
           });
@@ -235,9 +218,9 @@ const NewPhone: React.FC = () => {
     setValue("frontCamera", "");
     setValue("design", "");
     setValue("dimension", "");
-    setValue("images", "");
+    setValue("urlImages", []);
   };
-  const avatar = watch("images");
+  const avatar = watch("urlImages");
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
@@ -311,7 +294,7 @@ const NewPhone: React.FC = () => {
             {errors.operatingSystem?.message}
           </SelectCustom>
         </Form.Item>
-        {/* <Form.Item
+        <Form.Item
           label="Đặc điểm sản phẩm"
           name="characteristic"
           rules={[{ required: true }]}
@@ -322,13 +305,13 @@ const NewPhone: React.FC = () => {
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
-            // options={characteristic}
+            options={character}
             register={register}
             isBrand={true}
           >
             {errors.characteristic?.message}
           </SelectCustom>
-        </Form.Item> */}
+        </Form.Item>
         <Form.Item
           label="Tên sản phẩm"
           name="name"
@@ -625,7 +608,7 @@ const NewPhone: React.FC = () => {
                 return (
                   <img
                     key={index}
-                    src={imageUrl || getAvatarUrl(avatar)}
+                    src={imageUrl}
                     className="h-full rounded-md w-full  object-cover"
                     alt="avatar"
                   />

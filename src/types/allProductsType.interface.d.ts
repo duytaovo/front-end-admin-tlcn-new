@@ -1,196 +1,96 @@
-export interface IPhoneDocument {
-  title: string;
-  imgCover: string;
-  colors: string[];
-  storage: number[];
-  price: number;
-  prices: number[];
-  type: string;
-  firm: string;
-  ratingQuantity: number;
-  ratingAverage: number;
-  category: string;
-  slug: string;
-  discount: { discount: number; code: string }[];
-  promotion: Array<string> | string;
-  otherVersions: string[];
-  imgColorsCover: string[];
-  generalInformation: string[];
-  imgs: {
-    imgHighlights: string[];
-    imgConfiguration: string[];
-    imgGeneralInformation: string[];
-    [key: string]: string[];
-  };
-  reviews: {
-    _id: string;
-    review: string;
-    rating: number;
-    photo?: string;
-    phone: string;
-    user: { _id: string; name: string };
-  }[];
-  _id: string;
-  configuration: {
-    monitor: {
-      type: string;
-      inch: number;
-      technology: string;
-      resolution: string;
-      wideScreen: string;
-      broadScreen: string;
-      maximumLight: number;
-      introductionGlass: string;
-    };
-    operatingSystem: {
-      type: string;
-      cpuSpeed: number;
-      gpu: string;
-      version: number;
-      number: number;
-    };
-    rearCam: {
-      quantity: number;
-      quality: number;
-      film: string[];
-      haveFlash: boolean;
-      features: string[];
-    };
-    frontCam: {
-      camQuantity?: number;
-      features: string[];
-      quality: number;
-    };
-    chip: {
-      type: string;
-      number: string;
-      technology: string;
-    };
-    ram: number;
-    residualMemory: number;
-    contacts: "limited" | number;
-    internalMemory: number;
-    sim: {
-      quantity: number;
-      type: string;
-    };
-    battery: {
-      volume: number;
-      capacity: number;
-      charge: number;
-      W: number;
-      type: string;
-    };
+export type LaptopDetail = {
+  id: number;
+  gateway: string;
+  operatingSystem: string;
+  monitor: string;
+  special: string;
+  maximumRam: number;
+  maximumRom: number;
+  processorId: number;
+  processorName: string;
+  ramId: number;
+  ramName: string;
+  romId: number;
+  romName: string;
+  graphicsCardId: number;
+  graphicsCardName: string;
+  productInfo: {
+    brandId: number;
+    categoryId: number;
+    productId: number;
+    characteristicId: number;
+    productCode: string;
+    name: string;
+    description: string;
     design: string;
-    material: string;
-
-    launchTime: string;
-    size: {
-      length: number;
-      width: number;
-    };
-    volume: {
-      depth: number;
-      weight: number;
-    };
+    dimension: string;
+    mass: number;
+    launchTime: number;
+    accessories: string;
+    productStatus: number;
+    lstProductTypeAndPrice: {
+      typeId: number;
+      ram: string;
+      storageCapacity: string;
+      color: string;
+      price: number;
+      salePrice: number;
+    }[];
+    lstProductImageUrl: string[];
   };
-}
+};
 
-export interface ILaptopDocument {
-  title: string;
-  imgCover: string;
-  colors: string[];
-  firm: string;
-  storage: number[];
-  ratingQuantity: number;
-  ratingAverage: number;
-  slug: string;
-  price: number;
-  type: string;
-
-  generalInformation: Array<string>;
-  discount: { discount: number; code: string }[];
-  otherVersions: string[];
-  imgColorsCover: string[];
-  imgs: {
-    imgHighlights: string[];
-    imgConfiguration: string[];
-    imgGeneralInformation: string[];
-    [key: string]: string[];
+export type SmartPhoneDetail = {
+  id: number | string;
+  monitor: string;
+  operatingSystem: string;
+  rearCamera: string;
+  frontCamera: string;
+  chip: string;
+  sim: string;
+  battery: string;
+  charging: string;
+  networkSupport: string;
+  productInfo: {
+    brandId: number | string;
+    categoryId: number | string;
+    totalReview: number | string;
+    star: number | string;
+    productId: number | string;
+    characteristicId: number | string;
+    productCode: string;
+    name: string;
+    design: string;
+    dimension: string;
+    mass: number | string;
+    launchTime: number | string;
+    accessories: string;
+    productStatus: number | string;
+    description: string;
+    lstProductTypeAndPrice: {
+      typeId: number;
+      ram: string;
+      storageCapacity: string;
+      color: string;
+      price: number;
+      salePrice: number;
+    }[];
+    lstProductImageUrl: string[];
   };
-  reviews: {
-    _id: string;
-    review: string;
-    rating: number;
-    photo?: string;
-    phone: string;
-    user: { _id: string; name: string };
+};
+
+export type ListSmartPhone = {
+  id: number;
+  name: string;
+  lstImageUrl: string[];
+  lstProductTypeAndPrice: {
+    typeId: number;
+    ram: string;
+    storageCapacity: string;
+    color: string;
+    price: number;
+    salePrice: number;
   }[];
-  _id: string;
-  prices: number[];
-  category: string;
-  promotion: string[];
-  configuration: {
-    cpu: {
-      type: string;
-      version: string;
-    };
-
-    operatingSystem: {
-      type: string;
-      cpuSpeed: number;
-      gpu: string;
-      version: number;
-    };
-    imgs: Object;
-    special: string;
-    design: {
-      type: string;
-    };
-    screen: {
-      inch: number;
-      technology: string;
-      width: string;
-      height: string;
-    };
-    cardScreen: {
-      type: string;
-    };
-
-    ram: number;
-    residualMemory: number;
-    internalMemory: number;
-
-    battery: {
-      capacity: number;
-      charge: number;
-      type: string;
-    };
-
-    launchTime: string;
-    size: {
-      length: number;
-      width: number;
-    };
-    volume: {
-      depth: number;
-      weight: number;
-    };
-  };
-}
-export interface IProductDocument {
-  title: string;
-  price: number;
-  ratingAverage: number;
-  ratingQuantity: number;
-  imgCover: string;
-  category: string;
-  slug: string;
-  original: boolean;
-  recommend: boolean;
-  _id: string;
-}
-
-export interface IProductType {
-  currentProduct: ILaptopDocument | IPhoneDocument;
-}
+  star: number;
+  totalReview: number;
+};
