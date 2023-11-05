@@ -82,7 +82,7 @@ const NewBrand: React.FC = () => {
       const res = await dispatch(addBrand(body));
       unwrapResult(res);
       const d = res?.payload?.data;
-      // if (d?.status !== 200) return toast.error(d?.message);
+      if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Thêm nhãn hiệu thành công ");
       await dispatch(getBrands(""));
       await navigate(path.brand);

@@ -8,9 +8,10 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Input from "src/components/Input";
+import SelectCustom from "src/components/Select";
 import path from "src/constants/path";
 import { useAppDispatch } from "src/hooks/useRedux";
-import { addUser, getUser } from "src/store/user/userSlice";
+import { addUser, getUsers } from "src/store/user/userSlice";
 import { ErrorResponse } from "src/types/utils.type";
 import { schemaAddUser } from "src/utils/rules";
 import { isAxiosUnprocessableEntityError } from "src/utils/utils";
@@ -22,10 +23,14 @@ const normFile = (e: any) => {
   return e?.fileList;
 };
 interface FormData {
+  gender: string | undefined;
+  phoneNumber: string;
   name: string;
+  email: string;
+  password: string;
+  fullName: string | undefined;
   address: string;
-  phone: string;
-  image: string;
+  imageUrl: string | undefined;
 }
 const FormDisabledDemo: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,30 +49,42 @@ const FormDisabledDemo: React.FC = () => {
   });
   useEffect(() => {
     setValue("address", "");
-    setValue("gioitinh", "");
-    setValue("image", "");
+    setValue("imageUrl", "");
+    setValue("email", "");
+    setValue("password", "");
+    setValue("imageUrl", "");
     setValue("name", "");
-    setValue("phone", "");
+    setValue("phoneNumber", "");
   }, []);
 
   const onSubmit = handleSubmit(async (data) => {
-    const body = JSON.stringify({});
-    if (file) {
-      const form = new FormData();
-      form.append("file", file[0]);
-      form.append("image", file[0]);
-    } else {
-      toast.warning("Cần chọn ảnh");
-    }
+    const body = JSON.stringify({
+      email: data.email,
+      address: data.address,
+      password: data.password,
+      name: data.name,
+      phoneNumber: data.phoneNumber,
+      fullname: data.fullName,
+    });
+    // if (file) {
+    //   const form = new FormData();
+    //   form.append("file", file[0]);
+    //   form.append("image", file[0]);
+    //   const res = await dispatch(uploadAvatar(uploadAvatar));
+    //   unwrapResult(res);
+    // } else {
+    //   toast.warning("Cần chọn ảnh");
+    // }
 
     try {
       setIsSubmitting(true);
       const res = await dispatch(addUser(body));
       unwrapResult(res);
-      const d = res?.payload?.data;
-      if (d?.status !== 200) return toast.error(d?.message);
-      await toast.success("Thêm thành công ");
-      await dispatch(getUser(""));
+      console.log(res);
+      const d = res?.payload;
+      if (d?.code !== 200) return toast.error(d?.message);
+      await toast.success("Thêm người dùng thành công ");
+      await dispatch(getUsers(""));
       await navigate(path.users);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
@@ -87,10 +104,12 @@ const FormDisabledDemo: React.FC = () => {
   });
   const onClickHuy = () => {
     setValue("address", "");
-    setValue("gioitinh", "");
-    setValue("image", "");
+    setValue("imageUrl", "");
+    setValue("email", "");
+    setValue("password", "");
+    setValue("imageUrl", "");
     setValue("name", "");
-    setValue("phone", "");
+    setValue("phoneNumber", "");
   };
 
   return (
@@ -105,20 +124,65 @@ const FormDisabledDemo: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
-        {/* <Form.Item label="Giới tính">
-          <Radio.Group>
-            <Radio value="apple"> Nam </Radio>
-            <Radio value="pear"> Nữ </Radio>
-          </Radio.Group>
-        </Form.Item> */}
-
-        <Form.Item name="name" label="Họ Tên" rules={[{ required: true }]}>
+        <Form.Item label="Giới tính" name="gender" rules={[{ required: true }]}>
+          <SelectCustom
+            className={"flex-1 text-black"}
+            id="gender"
+            // label="Hãng xe"
+            placeholder="Vui lòng chọn"
+            defaultValue={""}
+            options={[
+              { id: 1, name: "Nam" },
+              { id: 2, name: "Nữ" },
+            ]}
+            register={register}
+            isBrand={true}
+          >
+            {errors.gender?.message}
+          </SelectCustom>
+        </Form.Item>
+        <Form.Item name="email" label="Email" rules={[{ required: true }]}>
+          <Input
+            name="email"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.email?.message}
+          />
+        </Form.Item>
+        <Form.Item
+          name="password"
+          label="Password"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="password"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.password?.message}
+          />
+        </Form.Item>
+        <Form.Item name="name" label="Tên" rules={[{ required: true }]}>
           <Input
             name="name"
             register={register}
             type="text"
             className=""
             errorMessage={errors.name?.message}
+          />
+        </Form.Item>
+        <Form.Item
+          name="fullname"
+          label="Họ và Tên"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="fullName"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.fullName?.message}
           />
         </Form.Item>
         <Form.Item label="Địa chỉ" name="address">
@@ -131,32 +195,18 @@ const FormDisabledDemo: React.FC = () => {
           />
         </Form.Item>
         <Form.Item
-          name="phone"
+          name="phoneNumber"
           label="Số điện thoại"
           rules={[{ required: true }]}
         >
           <Input
-            name="phone"
+            name="phoneNumber"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.phone?.message}
+            errorMessage={errors.phoneNumber?.message}
           />
         </Form.Item>
-        {/* <Form.Item label="TreeSelect">
-          <TreeSelect
-            treeData={[
-              {
-                title: "Light",
-                value: "light",
-                children: [{ title: "Bamboo", value: "bamboo" }],
-              },
-            ]}
-          />
-        </Form.Item> */}
-        {/* <Form.Item label="InputNumber">
-          <InputNumber />
-        </Form.Item> */}
         <Form.Item
           name="file"
           label="Upload"

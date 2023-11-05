@@ -6,7 +6,7 @@ const path = {
   orders: "/orders",
   users: "/users",
   usersNew: "/users/new",
-  usersDetail: "/user/detail",
+  usersDetail: "/user/detail/:id",
   products: "/products",
   smartPhone: "/smartPhone",
   smartPhoneDetail: "/smartPhone/detail/:nameId",

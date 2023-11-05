@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
-import { addUser, getUser } from "src/store/user/userSlice";
+import { addUser, getUsers } from "src/store/user/userSlice";
 import { ErrorResponse } from "src/types/utils.type";
 import { schemaProductSmartPhone } from "src/utils/rules";
 import { isAxiosUnprocessableEntityError } from "src/utils/utils";
@@ -151,7 +151,7 @@ const FormDisabledDemo: React.FC = () => {
       const res = await dispatch(addSmartPhone(body));
       unwrapResult(res);
       const d = res?.payload?.data;
-      if (d?.status !== 200) return toast.error(d?.message);
+      if (d?.code !== 201) return toast.error(d?.message);
       await toast.success("Thêm thành công ");
       await dispatch(getSmartPhones(""));
       await navigate(path.users);

@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch } from "src/hooks/useRedux";
-import { addUser, getUser } from "src/store/user/userSlice";
+import { addUser, getUsers } from "src/store/user/userSlice";
 import { ErrorResponse } from "src/types/utils.type";
 import { isAxiosUnprocessableEntityError } from "src/utils/utils";
 import SelectCustom from "src/components/Select";
@@ -93,9 +93,9 @@ const FormDisabledDemo: React.FC = () => {
       const res = await dispatch(addUser(body));
       unwrapResult(res);
       const d = res?.payload?.data;
-      if (d?.status !== 200) return toast.error(d?.message);
+      if (d?.code !== 201) return toast.error(d?.message);
       await toast.success("Thêm thành công ");
-      await dispatch(getUser(""));
+      await dispatch(getUsers(""));
       await navigate(path.users);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {

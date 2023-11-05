@@ -12,14 +12,18 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { login } from "src/store/user/userSlice";
 import { isAxiosUnprocessableEntityError } from "src/utils/utils";
-import { getAccessTokenFromLS, setAccessTokenToLS } from "src/utils/auth";
+import {
+  getAccessTokenFromLS,
+  setAccessTokenToLS,
+  setRefreshTokenToLS,
+} from "src/utils/auth";
 import { Helmet } from "react-helmet-async";
 import { Spin } from "antd";
 import { CircularProgress } from "@mui/material";
 import logo from "./logo-main.png";
 
-type FormData = Pick<Schema, "email" | "password">;
-const loginSchema = schema.pick(["email", "password"]);
+type FormData = Pick<Schema, "phone" | "password">;
+const loginSchema = schema.pick(["phone", "password"]);
 
 const Login = () => {
   const dispatch = useAppDispatch();
@@ -37,26 +41,20 @@ const Login = () => {
 
   const onSubmit = handleSubmit(async (data) => {
     const body = {
-      email: data.email,
+      phoneNumber: data.phone,
       password: data.password,
     };
     try {
-      setIsSubmitting(true);
-      // const res = await dispatch(login(body));
-      // unwrapResult(res);
-      // const d = res?.payload?.data;
-      // if (d?.result == 0) return toast.error(d?.message);
-      // await setAccessTokenToLS(d?.accessToken);
-      // await getAccessTokenFromLS();
-      // await setIsAuthenticated(true);
-      if (body.email === "admin" && body.password === "123456") {
-        await toast.success("Đăng nhập thành công ");
-        setTimeout(async () => {
-          await navigate("/");
-        }, 1000);
-      } else {
-        await toast.error("Email hoặc mật khẩu sai!! ");
-      }
+      await setIsSubmitting(true);
+      const res = await dispatch(login(body));
+      unwrapResult(res);
+      const d = res?.payload.data;
+      console.log("first" + d);
+      if (d?.code !== 200) return toast.error("Lỗi đăng nhập");
+      await setAccessTokenToLS(d?.data.accessToken);
+      await setRefreshTokenToLS(d?.data.token);
+      await setIsAuthenticated(true);
+      await navigate("/");
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
@@ -94,12 +92,12 @@ const Login = () => {
           </div>
 
           <Input
-            name="email"
+            name="phone"
             register={register}
             type="text"
             className="mt-8"
-            errorMessage={errors.email?.message}
-            placeholder="User name"
+            errorMessage={errors.phone?.message}
+            placeholder="Số điện thoại"
           />
           <Input
             name="password"
@@ -119,7 +117,7 @@ const Login = () => {
             >
               {isSubmitting ? (
                 <CircularProgress
-                  sx={{ width: "50px", height: "50px" }}
+                  sx={{ width: "20px", height: "20px" }}
                   disableShrink
                 />
               ) : (

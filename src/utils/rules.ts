@@ -70,10 +70,9 @@ const handleConfirmPasswordYup = (refString: string) => {
 };
 
 export const schema = yup.object({
-  email: yup
+  phone: yup
     .string()
-    .required("Email là bắt buộc")
-    .email("Email không đúng định dạng")
+    .required("Số điện thoại là bắt buộc")
     .min(5, "Độ dài từ 5 - 160 ký tự")
     .max(160, "Độ dài từ 5 - 160 ký tự"),
   password: yup
@@ -91,9 +90,11 @@ export const userSchema = yup.object({
   new_password: schema.fields["password"],
   confirm_password: handleConfirmPasswordYup("new_password"),
 });
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const schemaAddUser = yup.object({
-  gioitinh: yup.string(),
-  phone: yup
+  gender: yup.string(),
+  phoneNumber: yup
     .string()
     .required("Số điện thoại là bắt buộc")
     .min(10, "Độ dài từ 10 chữ số")
@@ -101,9 +102,12 @@ export const schemaAddUser = yup.object({
       /(84|0[3|5|7|8|9])+([0-9]{8})\b/g,
       "Số điện thoại không đúng định dạng"
     ),
-  name: yup.string().required("Họ Tên là bắt buộc"),
+  name: yup.string(),
+  fullName: yup.string().required("Họ Tên là bắt buộc"),
+  email: yup.string().required("Email là bắt buộc"),
+  password: yup.string().required("Password là bắt buộc"),
   address: yup.string().required("Địa chỉ là bắt buộc"),
-  image: yup.string(),
+  imageUrl: yup.string(),
 });
 
 export const schemaProductSmartPhone = yup.object({

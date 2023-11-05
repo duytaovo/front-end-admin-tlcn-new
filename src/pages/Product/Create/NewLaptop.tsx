@@ -213,8 +213,8 @@ const NewLaptop: React.FC = () => {
       setIsSubmitting(true);
       const res = await dispatch(addLaptop(body));
       unwrapResult(res);
-      // const d = res?.payload?.data;
-      // if (d?.status !== 200) return toast.error(d?.message);
+      const d = res?.payload?.data;
+      if (d?.code !== 201) return toast.error(d?.message);
       await toast.success("Thêm sp laptop thành công ");
       await dispatch(getLaptop(""));
       await navigate(path.laptop);
