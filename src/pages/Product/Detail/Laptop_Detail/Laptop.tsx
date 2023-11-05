@@ -209,24 +209,13 @@ export default function SmartPhoneDetail() {
               <div className="mt-8 flex items-center">
                 <div className="flex items-center">
                   <span className="mr-1 border-b border-b-orange text-orange">
-                    {laptopDetail?.productInfo?.star}
+                    {/* {laptopDetail?.productInfo?.star} */}
                   </span>
-                  <Rate
-                    allowHalf
-                    defaultValue={
-                      Number(laptopDetail?.productInfo?.star) || 4.5
-                    }
-                    disabled
-                  />
-                  ;
+                  <Rate allowHalf defaultValue={4.5} disabled />;
                 </div>
                 <div className="mx-4 h-4 w-[1px] bg-gray-300"></div>
                 <div>
-                  <span>
-                    {formatNumberToSocialStyle(
-                      Number(laptopDetail?.productInfo?.totalReview) || 1520
-                    )}
-                  </span>
+                  <span>{formatNumberToSocialStyle(1520)}</span>
                   <span className="ml-1 text-gray-500">Đã xem</span>
                 </div>
               </div>
@@ -238,8 +227,7 @@ export default function SmartPhoneDetail() {
                   ₫{formatCurrency(price || 14000000)}
                 </div>
                 <div className="ml-4 rounded-sm bg-orange px-1 py-[2px] text-xs font-semibold uppercase text-white">
-                  {rateSale(Number(laptopDetail?.productInfo?.star), price)}{" "}
-                  giảm
+                  {rateSale(Number(5), price)} giảm
                 </div>
               </div>
               <div className="space-x-3">
