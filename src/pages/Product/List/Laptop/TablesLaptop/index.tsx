@@ -15,8 +15,6 @@ const TableLaptop: React.FC = () => {
     dispatch(getLaptop(""));
   }, []);
 
-  console.log(laptop);
-
   const [product, setProduct] = React.useState("");
 
   const handleChangeProduct = (event: SelectChangeEvent) => {

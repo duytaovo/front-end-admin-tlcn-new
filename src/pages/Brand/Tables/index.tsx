@@ -12,81 +12,21 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { SelectChangeEvent } from "@mui/material/Select";
 import path from "src/constants/path";
-
 import React, { useEffect, useState } from "react";
 import { Button, Space, Table, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import { deleteBrand, getBrands } from "src/store/brand/brandSlice";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 
 interface DataType {
   key: React.Key;
   name: string;
-  mota: any;
-  status?: any;
   action?: any;
-  description: any;
-  loaiSp: string;
+  address: string;
+  category?: string;
 }
 
-const columns: ColumnsType<DataType> = [
-  { title: "Loại sản phẩm", dataIndex: "loaiSp", key: "loaiSp" },
-  { title: "Tên thương hiệu", dataIndex: "name", key: "name" },
-  // { title: "Tên thương hiệu", dataIndex: "brand", key: "brand" },
-  // { title: "Giá sản phẩm", dataIndex: "price", key: "price" },
-  { title: "Mô tả", dataIndex: "mota", key: "mota" },
-  // { title: "Khuyến mãi", dataIndex: "sale", key: "sale" },
-  {
-    title: "Trạng thái",
-    dataIndex: "status",
-    key: "status",
-    render: () => {
-      // const handleChangeStatus = (e: any) => {};
-      return (
-        <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-          <InputLabel id="demo-select-small-label">Trạng thái</InputLabel>
-          <Select
-            labelId="demo-select-small-label"
-            id="demo-select-small"
-            value={status}
-            label="Status"
-            // onChange={handleChange}
-          >
-            <MenuItem value={0}>Not verify</MenuItem>
-            <MenuItem value={1}>Verify</MenuItem>
-            <MenuItem value={2}>Disable</MenuItem>
-            <MenuItem value={3}>Enable</MenuItem>
-          </Select>
-        </FormControl>
-      );
-    },
-  },
-  {
-    title: "Action",
-    dataIndex: "",
-    key: "x",
-    render: () => (
-      <Space>
-        <Link to={path.brandDetail}>
-          {" "}
-          <IconButton className="text-mainColor">
-            <EditIcon
-              className="text-mainColor"
-              sx={{
-                color: "",
-              }}
-            />
-          </IconButton>
-        </Link>
-        <Link to={path.users}>
-          <Tooltip title="Thay đổi trạng thái " className="disabled:bg-white">
-            <IconButton>
-              <DeleteIcon className="text-red-700" />
-            </IconButton>
-          </Tooltip>
-        </Link>
-      </Space>
-    ),
-  },
-];
 // const originData: DataType[] = [];
 // for (let i = 0; i < 100; i++) {
 //   originData.push({
@@ -96,65 +36,67 @@ const columns: ColumnsType<DataType> = [
 //     address: `London Park no. ${i}`,
 //   });
 // }
-const data: DataType[] = [
-  {
-    key: 1,
-    loaiSp: "Điện thoại",
-    name: "Apple",
-    mota: "Apple được ra mắt ....",
-    description: "Mô tả ở đây",
-  },
-  {
-    key: 2,
-    loaiSp: "Điện thoại",
-    name: "Apple",
-    mota: "Apple được ra mắt ....",
-    description: "Mô tả chi tiết ở đây",
-  },
-  {
-    key: 3,
-    loaiSp: "Điện thoại",
-    name: "Apple",
-    mota: "Iphone 15 Plus được ra mắt ....",
-    description: "Mô tả chi tiết ở đây",
-  },
-];
 
 const TableBrand: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { user } = useAppSelector((state) => state.user);
-
+  const { brand } = useAppSelector((state) => state.brand);
+  const columns: ColumnsType<DataType> = [
+    { title: "Loại sản phẩm", dataIndex: "category", key: "category" },
+    { title: "Tên thương hiệu", dataIndex: "name", key: "name" },
+    { title: "Địa chỉ", dataIndex: "address", key: "address" },
+    {
+      title: "Action",
+      dataIndex: "",
+      key: "x",
+      render: (params) => {
+        const { key, id } = params;
+        const handleDelete = async () => {
+          const res = await dispatch(deleteBrand([id]));
+          unwrapResult(res);
+          const d = res?.payload;
+          if (d?.status !== 200) return toast.error(d?.message);
+          await toast.success("Xóa nhãn hiệu thành công ");
+          await dispatch(getBrands(""));
+        };
+        return (
+          <Space>
+            <Link to={`${path.brandDetail}/${id}`}>
+              {" "}
+              <IconButton className="text-mainColor">
+                <EditIcon
+                  className="text-mainColor"
+                  sx={{
+                    color: "",
+                  }}
+                />
+              </IconButton>
+            </Link>
+            {/* <Link to={path.users}> */}
+            <Tooltip title="Thay đổi trạng thái" className="disabled:bg-white">
+              <IconButton onClick={handleDelete}>
+                <DeleteIcon className="text-red-700" />
+              </IconButton>
+            </Tooltip>
+            {/* </Link> */}
+          </Space>
+        );
+      },
+    },
+  ];
   useEffect(() => {
-    // dispatch(getCars(""));
+    dispatch(getBrands(""));
   }, []);
-  const [status, setStatus] = React.useState<string>("");
-
-  const handleChange = (event: SelectChangeEvent) => {
-    setStatus(event.target.value);
-  };
-
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const originData: DataType[] = [];
+  for (let i = 0; i < brand.length; i++) {
+    originData.push({
+      key: i.toString(),
+      name: brand[i].name,
+      address: brand[i].address,
+    });
+  }
+  console.log(brand);
   const [loading, setLoading] = useState(false);
 
-  const start = () => {
-    setLoading(true);
-    // ajax request after empty completing
-    setTimeout(() => {
-      setSelectedRowKeys([]);
-      setLoading(false);
-    }, 1000);
-  };
-
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
-  const hasSelected = selectedRowKeys.length > 0;
   return (
     <div className="mx-6">
       <div className="w-full text-[24px] text-gray-500 mb-[10px] flex items-center justify-between">
@@ -166,29 +108,8 @@ const TableBrand: React.FC = () => {
           Thêm mới
         </Link>
       </div>
-      <div style={{ marginBottom: 16 }}>
-        <Button
-          type="primary"
-          onClick={start}
-          disabled={!hasSelected}
-          loading={loading}
-        >
-          Reload
-        </Button>
-        <span style={{ marginLeft: 8 }}>
-          {hasSelected ? `Selected ${selectedRowKeys.length} items` : ""}
-        </span>
-      </div>
-      <Table
-        columns={columns}
-        expandable={{
-          expandedRowRender: (record) => (
-            <p style={{ margin: 0 }}>{record?.description}</p>
-          ),
-          rowExpandable: (record) => record?.name !== "Not Expandable",
-        }}
-        dataSource={data}
-      />
+
+      <Table columns={columns} dataSource={originData} />
     </div>
   );
 };

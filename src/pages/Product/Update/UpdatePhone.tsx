@@ -179,7 +179,7 @@ const UpdatePhone: React.FC = () => {
     setValue("dimension", smartPhoneDetail?.productInfo?.dimension);
     setValue("category", smartPhoneDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("urlImages", smartPhoneDetail?.productInfo.lstProductImageUrl);
+    setValue("imageUrl", smartPhoneDetail?.productInfo.lstProductImageUrl);
   }, [smartPhoneDetail]);
 
   const onSubmit = handleSubmit(async (data) => {
@@ -207,7 +207,7 @@ const UpdatePhone: React.FC = () => {
           salePrice: Number(item?.salePrice),
         })),
 
-        lstProductImageUrl: data?.urlImages?.map((item) => ({
+        lstProductImageUrl: data?.imageUrl?.map((item) => ({
           typeId: null,
           ram: item?.ram,
           storageCapacity: item?.storageCapacity,
@@ -298,9 +298,9 @@ const UpdatePhone: React.FC = () => {
     setValue("dimension", smartPhoneDetail?.productInfo?.dimension);
     setValue("category", smartPhoneDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("urlImages", smartPhoneDetail?.productInfo.lstProductImageUrl);
+    setValue("imageUrl", smartPhoneDetail?.productInfo.lstProductImageUrl);
   };
-  const avatar = watch("urlImages");
+  const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };

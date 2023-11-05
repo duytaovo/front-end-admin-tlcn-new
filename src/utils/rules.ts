@@ -133,7 +133,7 @@ export const schemaProductSmartPhone = yup.object({
   charging: yup.string(),
   networkSupport: yup.string().required("Trường này là bắt buộc"),
   lstProductTypeAndPrice: yup.array().required("Trường này là bắt buộc"),
-  urlImages: yup.array(),
+  imageUrl: yup.array(),
 });
 
 export const schemaLaptop = yup.object({
@@ -171,7 +171,13 @@ export const schemaLaptop = yup.object({
   ramId: yup.string(),
   romId: yup.string(),
   graphicsCard: yup.string(),
-  urlImages: yup.array(),
+  imageUrl: yup.array(),
+});
+
+export const schemaBrand = yup.object({
+  name: yup.string().required("Tên nhãn hiệu là bắt buộc"),
+  address: yup.string(),
+  imageUrl: yup.string(),
 });
 
 export const schemaSmartWatch = yup.object({

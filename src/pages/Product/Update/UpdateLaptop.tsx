@@ -172,7 +172,7 @@ const NewLaptop: React.FC = () => {
     setValue("category", laptopDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
     setValue("gateway", laptopDetail?.gateway);
-    setValue("urlImages", laptopDetail?.productInfo?.lstProductImageUrl);
+    setValue("imageUrl", laptopDetail?.productInfo?.lstProductImageUrl);
   }, [laptopDetail]);
 
   const onSubmit = handleSubmit(async (data) => {
@@ -207,7 +207,7 @@ const NewLaptop: React.FC = () => {
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
         })),
-        lstProductImageUrl: data.urlImages,
+        lstProductImageUrl: data.imageUrl,
       },
       monitor: data.monitor,
       operatingSystem: data.operatingSystem,
@@ -282,9 +282,9 @@ const NewLaptop: React.FC = () => {
     setValue("dimension", laptopDetail?.productInfo?.dimension);
     setValue("category", laptopDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("urlImages", laptopDetail?.productInfo?.lstProductImageUrl);
+    setValue("imageUrl", laptopDetail?.productInfo?.lstProductImageUrl);
   };
-  const avatar = watch("urlImages");
+  const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };

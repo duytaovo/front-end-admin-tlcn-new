@@ -20,7 +20,7 @@ const path = {
   category: "/category/detail",
   categoryNew: "/category/new",
   brand: "/brand",
-  brandDetail: "/brand/detail",
+  brandDetail: "/brand/detail/:id",
   brandNew: "/brand/new",
 } as const;
 

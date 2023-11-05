@@ -9,7 +9,7 @@ import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
-import { schemaLaptop, schemaProductSmartPhone } from "src/utils/rules";
+import { schemaLaptop } from "src/utils/rules";
 import {
   generateRandomString,
   getAvatarUrl,
@@ -97,10 +97,10 @@ const NewLaptop: React.FC = () => {
   } = useForm({
     resolver: yupResolver(schemaLaptop),
   });
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { category } = useAppSelector((state) => state.category);
-  const { brand } = useAppSelector((state) => state.brand);
   const { cardGraphic } = useAppSelector((state) => state.cardGraphic);
   const { ram } = useAppSelector((state) => state.ram);
   const { rom } = useAppSelector((state) => state.rom);
@@ -154,7 +154,7 @@ const NewLaptop: React.FC = () => {
     setValue("maximumRam", "");
     setValue("maximumRom", "");
     setValue("networkSupport", "");
-    setValue("urlImages", []);
+    setValue("imageUrl", []);
   }, []);
 
   const onSubmit = handleSubmit(async (data) => {
@@ -189,7 +189,7 @@ const NewLaptop: React.FC = () => {
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
         })),
-        lstProductImageUrl: data.urlImages,
+        lstProductImageUrl: data.imageUrl,
       },
       monitor: data.monitor,
       operatingSystem: data.operatingSystem,
@@ -256,9 +256,9 @@ const NewLaptop: React.FC = () => {
     setValue("maximumRam", "");
     setValue("maximumRom", "");
     setValue("networkSupport", "");
-    setValue("urlImages", []);
+    setValue("imageUrl", []);
   };
-  const avatar = watch("urlImages");
+  const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
