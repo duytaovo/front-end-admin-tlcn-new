@@ -19,7 +19,6 @@ export default function SmartPhoneDetail() {
   const { nameId } = useParams();
   const dispatch = useAppDispatch();
   const { laptopDetail } = useAppSelector((state) => state.laptop);
-  console.log(laptopDetail);
   const id = getIdFromNameId(nameId as string);
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5]);
   const [activeImage, setActiveImage] = useState("");
