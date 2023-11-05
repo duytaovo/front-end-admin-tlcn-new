@@ -225,7 +225,7 @@ const TableProduct: React.FC = () => {
           </div>
         </div>
         {/* <Link
-          to={path.productNew}
+          to={path.smartPhoneNew}
           className="no-underline text-green-500 text-lg font-medium border-[1px] border-solid border-[green] p-3 rounded cursor-pointer"
         >
           Thêm mới

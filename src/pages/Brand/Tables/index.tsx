@@ -41,7 +41,7 @@ const TableBrand: React.FC = () => {
   const dispatch = useAppDispatch();
   const { brand } = useAppSelector((state) => state.brand);
   const columns: ColumnsType<DataType> = [
-    { title: "Loại sản phẩm", dataIndex: "category", key: "category" },
+    // { title: "Loại sản phẩm", dataIndex: "category", key: "category" },
     { title: "Tên thương hiệu", dataIndex: "name", key: "name" },
     { title: "Địa chỉ", dataIndex: "address", key: "address" },
     {
@@ -51,7 +51,7 @@ const TableBrand: React.FC = () => {
       render: (params) => {
         const { key, id } = params;
         const handleDelete = async () => {
-          const res = await dispatch(deleteBrand([id]));
+          const res = await dispatch(deleteBrand(id));
           unwrapResult(res);
           const d = res?.payload;
           if (d?.status !== 200) return toast.error(d?.message);
@@ -87,15 +87,13 @@ const TableBrand: React.FC = () => {
     dispatch(getBrands(""));
   }, []);
   const originData: DataType[] = [];
-  for (let i = 0; i < brand.length; i++) {
+  for (let i = 0; i < brand?.length; i++) {
     originData.push({
       key: i.toString(),
       name: brand[i].name,
       address: brand[i].address,
     });
   }
-  console.log(brand);
-  const [loading, setLoading] = useState(false);
 
   return (
     <div className="mx-6">

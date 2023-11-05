@@ -11,12 +11,7 @@ import Input from "src/components/Input";
 import SelectCustom from "src/components/Select";
 import path from "src/constants/path";
 import { useAppDispatch } from "src/hooks/useRedux";
-import {
-  addUser,
-  getDetailUser,
-  getUsers,
-  updateUser,
-} from "src/store/user/userSlice";
+import { getDetailUser, getUsers, updateUser } from "src/store/user/userSlice";
 import { ErrorResponse } from "src/types/utils.type";
 import { schemaAddUser } from "src/utils/rules";
 import { isAxiosUnprocessableEntityError } from "src/utils/utils";

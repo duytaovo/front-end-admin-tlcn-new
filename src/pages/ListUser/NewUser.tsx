@@ -80,9 +80,8 @@ const FormDisabledDemo: React.FC = () => {
       setIsSubmitting(true);
       const res = await dispatch(addUser(body));
       unwrapResult(res);
-      console.log(res);
       const d = res?.payload;
-      if (d?.code !== 200) return toast.error(d?.message);
+      if (d?.code !== 201) return toast.error(d?.message);
       await toast.success("Thêm người dùng thành công ");
       await dispatch(getUsers(""));
       await navigate(path.users);

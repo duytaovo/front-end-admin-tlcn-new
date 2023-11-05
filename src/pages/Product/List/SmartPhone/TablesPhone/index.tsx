@@ -1,5 +1,5 @@
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { SelectChangeEvent } from "@mui/material/Select";
 import React, { useEffect } from "react";
@@ -37,7 +37,7 @@ const TablePhone: React.FC = () => {
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 value={product}
-                label="Age"
+                label="Product"
                 onChange={handleChangeProduct}
               >
                 <MenuItem
@@ -69,6 +69,12 @@ const TablePhone: React.FC = () => {
             </FormControl>
           </div>
         </div>
+        <Link
+          to={path.smartPhoneNew}
+          className="no-underline text-green-500 text-lg font-medium border-[1px] border-solid border-[green] p-3 rounded cursor-pointer"
+        >
+          Thêm mới
+        </Link>
       </div>
 
       <div className="mt-6 grid grid-cols-6 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">

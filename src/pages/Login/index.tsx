@@ -12,13 +12,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { login } from "src/store/user/userSlice";
 import { isAxiosUnprocessableEntityError } from "src/utils/utils";
-import {
-  getAccessTokenFromLS,
-  setAccessTokenToLS,
-  setRefreshTokenToLS,
-} from "src/utils/auth";
+import { setAccessTokenToLS, setRefreshTokenToLS } from "src/utils/auth";
 import { Helmet } from "react-helmet-async";
-import { Spin } from "antd";
 import { CircularProgress } from "@mui/material";
 import logo from "./logo-main.png";
 
@@ -49,12 +44,12 @@ const Login = () => {
       const res = await dispatch(login(body));
       unwrapResult(res);
       const d = res?.payload.data;
-      console.log("first" + d);
       if (d?.code !== 200) return toast.error("Lỗi đăng nhập");
       await setAccessTokenToLS(d?.data.accessToken);
       await setRefreshTokenToLS(d?.data.token);
       await setIsAuthenticated(true);
       await navigate("/");
+      location.reload();
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
@@ -116,10 +111,7 @@ const Login = () => {
               className="flex w-full items-center justify-center mt-2 rounded-[30px] bg-mainColor py-3 px-2 text-sm uppercase text-white hover:opacity-80"
             >
               {isSubmitting ? (
-                <CircularProgress
-                  sx={{ width: "20px", height: "20px" }}
-                  disableShrink
-                />
+                "Loading..."
               ) : (
                 <span className="text-2xl mt-4">Đăng nhập</span>
               )}
