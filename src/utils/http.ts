@@ -55,7 +55,6 @@ export class Http {
         const { url } = response.config;
         if (url === URL_LOGIN || url === URL_REGISTER) {
           const data = response.data as AuthResponse;
-          console.log(data);
           this.accessToken = data.data.accessToken;
           this.refreshToken = data.data.token;
           setAccessTokenToLS(this.accessToken);

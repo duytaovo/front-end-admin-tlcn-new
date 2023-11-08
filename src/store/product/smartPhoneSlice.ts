@@ -96,10 +96,7 @@ const data = {
         salePrice: 28000000.0,
       },
     ],
-    lstProductImageUrl: [
-      "https://cdn.tgdd.vn/Products/Images/42/303891/iphone-15-plus-128gb-hong-2.jpg",
-      "https://cdn.tgdd.vn/Products/Images/42/303891/iphone-15-plus-128gb-hong-3.jpg",
-    ],
+    lstProductImageUrl: [],
   },
 };
 const initialState: IProudct = {

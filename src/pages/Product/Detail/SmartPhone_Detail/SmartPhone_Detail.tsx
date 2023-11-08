@@ -61,7 +61,7 @@ export default function SmartPhoneDetail() {
 
   useEffect(() => {
     dispatch(getDetailPhone(id));
-  }, [id, dispatch]);
+  }, []);
   const next = () => {
     if (
       currentIndexImages[1] <
