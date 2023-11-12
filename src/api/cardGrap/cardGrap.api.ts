@@ -5,8 +5,8 @@ const cardGraphicApi = {
   addCardGraphic(data: any) {
     return http.post("/product/graphics-card/create", data);
   },
-  getCardGraphics() {
-    return http.get<SuccessResponse<any>>("/product/graphics-card");
+  getCardGraphics(params: any) {
+    return http.get<SuccessResponse<any>>("/product/graphics-card", { params });
   },
   getDetailCardGraphic(params: any) {
     return http.get<SuccessResponse<any[]>>(`/product/graphics-card/${params}`);

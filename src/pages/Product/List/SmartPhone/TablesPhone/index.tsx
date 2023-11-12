@@ -108,12 +108,14 @@ const TablePhone: React.FC = () => {
           </div>
         ))}
       </div>
-      <Pagination
-        current={currentPage + 1}
-        pageSize={pageSize}
-        total={smartPhone?.data?.totalElements}
-        onChange={handlePageChange}
-      />
+      <div className="fixed bottom-12 left-auto">
+        <Pagination
+          current={currentPage + 1}
+          pageSize={pageSize}
+          total={smartPhone?.data?.totalElements}
+          onChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 };

@@ -108,12 +108,14 @@ const TableRom: React.FC = () => {
           </div>
         ))}
       </div>
-      <Pagination
-        current={currentPage + 1}
-        pageSize={pageSize}
-        total={rom?.data?.totalElements}
-        onChange={handlePageChange}
-      />
+      <div className="fixed bottom-12 left-auto">
+        <Pagination
+          current={currentPage + 1}
+          pageSize={pageSize}
+          total={rom?.data?.totalElements}
+          onChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 };

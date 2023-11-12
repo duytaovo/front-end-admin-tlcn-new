@@ -28,6 +28,7 @@ import { getProcessor } from "src/store/processor/processorSlice";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { addLaptop, getLaptop } from "src/store/product/laptopSlice ";
 import { PlusOutlined } from "@ant-design/icons";
+import { getdepots } from "src/store/depot/depotSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -56,33 +57,6 @@ interface FormData {
   monitor: string;
 }
 
-type brand = {
-  id: number;
-  name: string;
-};
-
-const brandLaptop: brand[] = [
-  {
-    id: 1,
-    name: "Apple",
-  },
-  {
-    id: 2,
-    name: "Lenovo",
-  },
-  {
-    id: 3,
-    name: "Dell",
-  },
-  {
-    id: 4,
-    name: "Asus",
-  },
-  {
-    id: 5,
-    name: "HP",
-  },
-];
 const NewLaptop: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -103,9 +77,12 @@ const NewLaptop: React.FC = () => {
   const { category } = useAppSelector((state) => state.category);
   const { cardGraphic } = useAppSelector((state) => state.cardGraphic);
   const { ram } = useAppSelector((state) => state.ram);
+  const { depot } = useAppSelector((state) => state.depot);
   const { rom } = useAppSelector((state) => state.rom);
   const { processor } = useAppSelector((state) => state.processor);
   const { character } = useAppSelector((state) => state.character);
+  const { brand } = useAppSelector((state) => state.brand);
+
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
       control, // control props comes from useForm (optional: if you are using FormContext)
@@ -113,15 +90,15 @@ const NewLaptop: React.FC = () => {
     }
   );
   useEffect(() => {
-    dispatch(getCategorys(""));
-    dispatch(getCharacters(""));
-    // dispatch(getBrands(""));
-    dispatch(getCardGraphic(""));
-    dispatch(getRams(""));
-    dispatch(getRoms(""));
-    dispatch(getProcessor(""));
+    dispatch(getCategorys({ pageSize: 100 }));
+    dispatch(getCharacters({ pageSize: 100 }));
+    dispatch(getBrands({ pageSize: 100 }));
+    dispatch(getdepots({ pageSize: 100 }));
+    dispatch(getCardGraphic({ pageSize: 100 }));
+    dispatch(getRams({ pageSize: 100 }));
+    dispatch(getRoms({ pageSize: 100 }));
+    dispatch(getProcessor({ pageSize: 100 }));
   }, []);
-
   const [file, setFile] = useState<File[]>();
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
 
@@ -285,7 +262,7 @@ const NewLaptop: React.FC = () => {
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
-            options={category}
+            options={category?.data}
             register={register}
           >
             {errors.category?.message}
@@ -299,10 +276,9 @@ const NewLaptop: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="brand"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
-            options={brandLaptop}
+            options={brand?.data?.data}
             register={register}
           >
             {errors.brand?.message}
@@ -318,7 +294,6 @@ const NewLaptop: React.FC = () => {
             id="operatingSystem"
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
-            defaultValue={""}
             options={[
               { id: "macOs", name: "macOs" },
               { id: "Windows", name: "Windows" },
@@ -339,7 +314,7 @@ const NewLaptop: React.FC = () => {
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
-            options={character}
+            options={character?.data}
             register={register}
           >
             {errors.characteristic?.message}
@@ -359,17 +334,7 @@ const NewLaptop: React.FC = () => {
             errorMessage={errors.name?.message}
           />
         </Form.Item>
-        {/* 
-        <Form.Item label="Thiết kế" name="design" rules={[{ required: true }]}>
-          <Input
-            name="design"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.design?.message}
-            placeholder="Nguyên khối"
-          />
-        </Form.Item> */}
+
         <Form.Item
           label="Kích thước"
           name="dimension"
@@ -472,7 +437,6 @@ const NewLaptop: React.FC = () => {
                   <Form.Item
                     label="Giá khuyến mãi"
                     name={`lstProductTypeAndPrice.${index}.salePrice`}
-                    rules={[{ required: true }]}
                   >
                     <Input
                       name={`lstProductTypeAndPrice.${index}.salePrice`}
@@ -482,7 +446,36 @@ const NewLaptop: React.FC = () => {
                     />
                   </Form.Item>
                 </div>
-                <div>
+                <Form.Item
+                  label="Kho hàng"
+                  name={`lstProductTypeAndPrice.${index}.depot`}
+                  rules={[{ required: true }]}
+                >
+                  <SelectCustom
+                    className={"flex-1 text-black"}
+                    id={`lstProductTypeAndPrice.${index}.depot`}
+                    // label="Hãng xe"
+                    placeholder="Vui lòng chọn"
+                    defaultValue={1}
+                    options={depot?.data?.data}
+                    register={register}
+                  >
+                    {errors.depot?.message}
+                  </SelectCustom>
+                </Form.Item>
+                <div className="flex justify-between space-x-1">
+                  <Form.Item
+                    label="Số lượng sản phẩm"
+                    name={`lstProductTypeAndPrice.${index}.quantity`}
+                    rules={[{ required: true }]}
+                  >
+                    <Input
+                      name={`lstProductTypeAndPrice.${index}.quantity`}
+                      key={item.id} // important to include key with field's id
+                      register={register}
+                      placeholder="1000"
+                    />
+                  </Form.Item>
                   <Form.Item
                     label="Màu"
                     name={`lstProductTypeAndPrice.${index}.color`}
@@ -555,20 +548,6 @@ const NewLaptop: React.FC = () => {
             placeholder="12 MP"
           />
         </Form.Item>
-        {/* <Form.Item
-          label="Camera sau"
-          name="rearCamera"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="rearCamera"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.rearCamera?.message}
-            placeholder="Chính 48 MP & Phụ 12 MP, 12 MP"
-          />
-        </Form.Item> */}
         <Form.Item label="Chip" name="chip" rules={[{ required: true }]}>
           <Input
             name="chip"
@@ -579,16 +558,6 @@ const NewLaptop: React.FC = () => {
             placeholder="Apple M2"
           />
         </Form.Item>
-        {/* <Form.Item label="Sim" name="sim" rules={[{ required: true }]}>
-          <Input
-            name="sim"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.sim?.message}
-            placeholder="1 Nano SIM & 1 eSIM"
-          />
-        </Form.Item> */}
         <Form.Item label="Pin" name="battery" rules={[{ required: true }]}>
           <Input
             name="battery"
@@ -613,20 +582,6 @@ const NewLaptop: React.FC = () => {
             placeholder="35 W"
           />
         </Form.Item>
-        {/* <Form.Item
-          label="Hỗ trợ mạng"
-          name="networkSupport"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="networkSupport"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.networkSupport?.message}
-            placeholder="5G"
-          />
-        </Form.Item> */}
         <Form.Item
           label="Cổng kết nối"
           name="gateway"
@@ -694,7 +649,7 @@ const NewLaptop: React.FC = () => {
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
-            options={processor}
+            options={processor?.data?.data}
             register={register}
           >
             {errors.processor?.message}
@@ -704,10 +659,9 @@ const NewLaptop: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="ramId"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
-            options={ram}
+            options={ram?.data?.data}
             register={register}
           >
             {errors.ramId?.message}
@@ -721,10 +675,9 @@ const NewLaptop: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="romId"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
-            options={rom}
+            options={rom?.data?.data}
             register={register}
           >
             {errors.romId?.message}
@@ -738,10 +691,9 @@ const NewLaptop: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="graphicsCard"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
-            options={cardGraphic}
+            options={cardGraphic?.data?.data}
             register={register}
           >
             {errors.graphicsCard?.message}
@@ -749,7 +701,6 @@ const NewLaptop: React.FC = () => {
         </Form.Item>
         <Form.Item
           name="file"
-          // rules={[{ required: true }]}
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}

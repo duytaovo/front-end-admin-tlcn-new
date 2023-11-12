@@ -74,10 +74,10 @@ const NewPhone: React.FC = () => {
   const { depot } = useAppSelector((state) => state.depot);
   const { brand } = useAppSelector((state) => state.brand);
   useEffect(() => {
-    dispatch(getCategorys(""));
-    dispatch(getCharacters(""));
-    dispatch(getBrands(""));
-    dispatch(getdepots(""));
+    dispatch(getCategorys({ pageSize: 100 }));
+    dispatch(getCharacters({ pageSize: 100 }));
+    dispatch(getBrands({ pageSize: 100 }));
+    dispatch(getdepots({ pageSize: 100 }));
   }, []);
 
   const [file, setFile] = useState<File[]>();
@@ -223,12 +223,12 @@ const NewPhone: React.FC = () => {
           rules={[{ required: true }]}
         >
           <SelectCustom
-            className={"flex-1 text-black"}
+            className={"flex-1 text-black "}
             id="category"
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
-            options={category}
+            options={category?.data}
             register={register}
             isBrand={true}
           >
@@ -241,12 +241,12 @@ const NewPhone: React.FC = () => {
           rules={[{ required: true }]}
         >
           <SelectCustom
-            className={"flex-1 text-black"}
+            className={"flex-1 text-black  "}
             id="brand"
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
-            options={brand}
+            options={brand?.data?.data}
             register={register}
             isBrand={true}
           >
@@ -285,7 +285,7 @@ const NewPhone: React.FC = () => {
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
-            options={character}
+            options={character?.data}
             register={register}
             isBrand={true}
           >
@@ -440,7 +440,7 @@ const NewPhone: React.FC = () => {
                     // label="Hãng xe"
                     placeholder="Vui lòng chọn"
                     defaultValue={1}
-                    options={depot}
+                    options={depot?.data?.data}
                     register={register}
                   >
                     {errors.depot?.message}

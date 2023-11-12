@@ -5,8 +5,8 @@ const categoryApi = {
   addCategory(data: any) {
     return http.post("/category/create", data);
   },
-  getCategorys() {
-    return http.get<SuccessResponse<any>>("/category");
+  getCategorys(params: any) {
+    return http.get<SuccessResponse<any>>("/category", { params });
   },
   getDetailCategory(params: any) {
     return http.get<SuccessResponse<any[]>>(`/category/${params}`, {

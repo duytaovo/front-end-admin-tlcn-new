@@ -44,7 +44,7 @@ const categorySlice = createSlice({
       state.category = payload.data;
     });
     builder.addCase(getCategorys.fulfilled, (state, { payload }) => {
-      state.category = payload.data.data;
+      state.category = payload.data;
     });
     builder.addCase(getDetailCategory.fulfilled, (state, { payload }) => {
       state.categoryDetail = payload.data;

@@ -44,7 +44,7 @@ const characterSlice = createSlice({
       state.character = payload.data;
     });
     builder.addCase(getCharacters.fulfilled, (state, { payload }) => {
-      state.character = payload.data.data;
+      state.character = payload.data;
     });
     builder.addCase(getDetailCharacter.fulfilled, (state, { payload }) => {
       state.characterDetail = payload.data;

@@ -117,12 +117,14 @@ const TableUser: React.FC = () => {
       </div>
 
       <Table columns={columns} dataSource={originData} pagination={false} />
-      <Pagination
-        current={currentPage + 1}
-        pageSize={pageSize}
-        total={user?.data?.totalElements}
-        onChange={handlePageChange}
-      />
+      <div className="bottom-14 fixed">
+        <Pagination
+          current={currentPage + 1}
+          pageSize={pageSize}
+          total={user?.data?.totalElements}
+          onChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 };

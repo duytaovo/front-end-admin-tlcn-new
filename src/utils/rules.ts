@@ -209,6 +209,7 @@ export const schemaLaptop = yup.object({
   mass: yup.string(),
   launchTime: yup.string(),
   accessories: yup.string(),
+  depot: yup.string(),
   productStatus: yup.number(),
   ram: yup.string(),
   storageCapacity: yup.string(),

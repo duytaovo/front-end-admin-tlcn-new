@@ -10,7 +10,7 @@ import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
-import { schemaProductRam, schemaProductSmartPhone } from "src/utils/rules";
+import { schemaProductRam } from "src/utils/rules";
 import {
   generateRandomString,
   isAxiosUnprocessableEntityError,
@@ -18,10 +18,6 @@ import {
 import SelectCustom from "src/components/Select";
 import Textarea from "src/components/Textarea";
 import { getCategorys } from "src/store/category/categorySlice";
-import {
-  addSmartPhone,
-  getSmartPhones,
-} from "src/store/product/smartPhoneSlice";
 import InputFile from "src/components/InputFile";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
@@ -75,10 +71,10 @@ const NewCardGraphic: React.FC = () => {
   const { depot } = useAppSelector((state) => state.depot);
   const { brand } = useAppSelector((state) => state.brand);
   useEffect(() => {
-    dispatch(getCategorys(""));
-    dispatch(getCharacters(""));
-    dispatch(getBrands(""));
-    dispatch(getdepots(""));
+    dispatch(getCategorys({ pageSize: 100 }));
+    dispatch(getCharacters({ pageSize: 100 }));
+    dispatch(getBrands({ pageSize: 100 }));
+    dispatch(getdepots({ pageSize: 100 }));
   }, []);
 
   const [file, setFile] = useState<File[]>();
@@ -204,14 +200,13 @@ const NewCardGraphic: React.FC = () => {
     setValue("powerCapacity", "");
     setValue("maximumResolution", "");
   };
-  const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
 
   return (
     <div className="bg-white shadow ">
-      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm điện thoại</h2>
+      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm card đồ họa</h2>
       <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
@@ -221,24 +216,6 @@ const NewCardGraphic: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
-        <Form.Item
-          label="Danh mục sản phẩm"
-          name=""
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="category"
-            // label="Hãng xe"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={category}
-            register={register}
-            isBrand={true}
-          >
-            {errors.category?.message}
-          </SelectCustom>
-        </Form.Item>
         <Form.Item
           label="Hãng sản xuất"
           name="brand"
@@ -250,59 +227,20 @@ const NewCardGraphic: React.FC = () => {
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
-            options={brand}
+            options={brand?.data?.data}
             register={register}
             isBrand={true}
           >
             {errors.brand?.message}
           </SelectCustom>
         </Form.Item>
-        <Form.Item
-          label="Hệ điều hành"
-          name="operatingSystem"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="operatingSystem"
-            // label="Hãng xe"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={[
-              { id: "iOS", name: "iOS" },
-              { id: "Android", name: "android" },
-            ]}
-            register={register}
-            isBrand={true}
-          >
-            {errors.operatingSystem?.message}
-          </SelectCustom>
-        </Form.Item>
-        <Form.Item
-          label="Đặc điểm sản phẩm"
-          name="characteristic"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="characteristic"
-            // label="Hãng xe"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={character}
-            register={register}
-            isBrand={true}
-          >
-            {errors.characteristic?.message}
-          </SelectCustom>
-        </Form.Item>
+
         <Form.Item
           label="Tên sản phẩm"
           name="name"
           rules={[{ required: true }]}
         >
           <Input
-            placeholder="Điện thoại iPhone 15 Pro Max 1TB"
             name="name"
             register={register}
             type="text"
@@ -311,40 +249,6 @@ const NewCardGraphic: React.FC = () => {
           />
         </Form.Item>
 
-        <Form.Item label="Thiết kế" name="design" rules={[{ required: true }]}>
-          <Input
-            name="design"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.design?.message}
-            placeholder="Nguyên khối"
-          />
-        </Form.Item>
-        <Form.Item
-          label="Kích thước"
-          name="dimension"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="dimension"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.dimension?.message}
-            placeholder="Dài 159.9 mm - Ngang 76.7 mm - Dày 8.25 mm "
-          />
-        </Form.Item>
-        <Form.Item label="Khối lượng" name="mass" rules={[{ required: true }]}>
-          <Input
-            name="mass"
-            register={register}
-            type="number"
-            className=""
-            errorMessage={errors.mass?.message}
-            placeholder=" 221 "
-          />
-        </Form.Item>
         <Form.Item
           label="Năm ra mắt"
           name="launchTime"
@@ -359,25 +263,8 @@ const NewCardGraphic: React.FC = () => {
             placeholder="2023"
           />
         </Form.Item>
-        <Form.Item
-          label="Phụ kiện"
-          name="accessories"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="accessories"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.accessories?.message}
-            placeholder="Tai nghe, sạc"
-          />
-        </Form.Item>
-        <Form.Item
-          label="Loại sản phẩm"
-          name="lstProductTypeAndPrice"
-          rules={[{ required: true }]}
-        >
+
+        <Form.Item label="Loại sản phẩm" name="lstProductTypeAndPrice">
           <ul>
             {fields.map((item, index) => (
               <li key={item.id}>
@@ -385,7 +272,6 @@ const NewCardGraphic: React.FC = () => {
                   <Form.Item
                     label="Ram"
                     name={`lstProductTypeAndPrice.${index}.ram`}
-                    rules={[{ required: true }]}
                   >
                     <Input
                       name={`lstProductTypeAndPrice.${index}.ram`}
@@ -397,7 +283,6 @@ const NewCardGraphic: React.FC = () => {
                   <Form.Item
                     label="Bộ nhớ trong"
                     name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                    rules={[{ required: true }]}
                   >
                     <Input
                       name={`lstProductTypeAndPrice.${index}.storageCapacity`}
@@ -423,7 +308,6 @@ const NewCardGraphic: React.FC = () => {
                   <Form.Item
                     label="Giá khuyến mãi"
                     name={`lstProductTypeAndPrice.${index}.salePrice`}
-                    rules={[{ required: true }]}
                   >
                     <Input
                       name={`lstProductTypeAndPrice.${index}.salePrice`}
@@ -466,7 +350,6 @@ const NewCardGraphic: React.FC = () => {
                   <Form.Item
                     label="Màu"
                     name={`lstProductTypeAndPrice.${index}.color`}
-                    rules={[{ required: true }]}
                   >
                     <Input
                       name={`lstProductTypeAndPrice.${index}.color`}

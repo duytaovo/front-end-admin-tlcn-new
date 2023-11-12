@@ -13,7 +13,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { SelectChangeEvent } from "@mui/material/Select";
 import path from "src/constants/path";
 import React, { useEffect, useState } from "react";
-import { Button, Space, Table } from "antd";
+import { Button, Pagination, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { getCategorys } from "src/store/category/categorySlice";
 
@@ -27,48 +27,25 @@ interface DataType {
 const TableProduct: React.FC = () => {
   const dispatch = useAppDispatch();
   const { category } = useAppSelector((state) => state.category);
-
+  const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
+  const pageSize = 10; // Số phần tử trên mỗi trang
   const columns: ColumnsType<DataType> = [
     { title: "Tên danh mục", dataIndex: "name", key: "name" },
-    // {
-    //   title: "Action",
-    //   dataIndex: "",
-    //   key: "x",
-    //   render: () => (
-    //     <Space>
-    //       <Link to={path.category}>
-    //         {" "}
-    //         <IconButton className="text-mainColor">
-    //           <EditIcon
-    //             className="text-mainColor"
-    //             sx={{
-    //               color: "",
-    //             }}
-    //           />
-    //         </IconButton>
-    //       </Link>
-    //       <Link to={path.users}>
-    //         <Tooltip title="Thay đổi trạng thái " className="disabled:bg-white">
-    //           <IconButton>
-    //             <DeleteIcon className="text-red-700" />
-    //           </IconButton>
-    //         </Tooltip>
-    //       </Link>
-    //     </Space>
-    //   ),
-    // },
   ];
   const originData: DataType[] = [];
-  for (let i = 0; i < category.length; i++) {
+  for (let i = 0; i < category?.data?.length; i++) {
     originData.push({
       key: i.toString(),
-      name: category[i].name,
+      name: category?.data[i].name,
     });
   }
+
   useEffect(() => {
-    dispatch(getCategorys(""));
-  }, []);
-  console.log(category);
+    dispatch(getCategorys({ pageNumber: currentPage }));
+  }, [currentPage]);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page - 1);
+  };
   return (
     <div className="mx-6">
       <div className="w-full text-[24px] text-gray-500 mb-[10px] flex items-center justify-between">
@@ -81,7 +58,15 @@ const TableProduct: React.FC = () => {
         </Link>
       </div>
 
-      <Table columns={columns} dataSource={originData} />
+      <Table columns={columns} dataSource={originData} pagination={false} />
+      <div className="bottom-14 fixed">
+        <Pagination
+          current={currentPage + 1}
+          pageSize={pageSize}
+          total={category?.data?.totalElements}
+          onChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 };

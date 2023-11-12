@@ -2,20 +2,26 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { SelectChangeEvent } from "@mui/material/Select";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import path from "src/constants/path";
 import { getRams } from "src/store/ram/ramSlice";
 import ProductRam from "./Table/Product/ProductPhone";
 import { getCardGraphic } from "src/store/cardGrap/cardGraphicSlice";
+import { Pagination } from "antd";
 
 const TableRam: React.FC = () => {
   const dispatch = useAppDispatch();
   const { cardGraphic } = useAppSelector((state) => state.cardGraphic);
   const navigate = useNavigate();
-  useEffect(() => {
-    dispatch(getCardGraphic(""));
-  }, []);
+  const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
+  const pageSize = 10; // Số phần tử trên mỗi trang
 
+  useEffect(() => {
+    dispatch(getCardGraphic({ pageNumber: currentPage }));
+  }, [currentPage]);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page - 1);
+  };
   const [product, setProduct] = React.useState("");
 
   const handleChangeProduct = (event: SelectChangeEvent) => {
@@ -89,7 +95,7 @@ const TableRam: React.FC = () => {
           </div>
         </div>
         <Link
-          to={path.smartPhoneNew}
+          to={path.cardGrapNew}
           className="no-underline text-green-500 text-lg font-medium border-[1px] border-solid border-[green] p-3 rounded cursor-pointer"
         >
           Thêm mới
@@ -97,11 +103,19 @@ const TableRam: React.FC = () => {
       </div>
 
       <div className="mt-6 grid grid-cols-6 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {cardGraphic?.map((_smartPhone: any) => (
+        {cardGraphic?.data?.data?.map((_smartPhone: any) => (
           <div className="col-span-1" key={_smartPhone.id}>
             <ProductRam product={_smartPhone} />
           </div>
         ))}
+      </div>
+      <div className="fixed bottom-12 left-auto">
+        <Pagination
+          current={currentPage + 1}
+          pageSize={pageSize}
+          total={cardGraphic?.data?.totalElements}
+          onChange={handlePageChange}
+        />
       </div>
     </div>
   );

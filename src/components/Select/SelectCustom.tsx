@@ -19,6 +19,17 @@ export default function SelectCustom({
   disabled,
   ...props
 }: any) {
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 250,
+      },
+    },
+  };
+
   const renderSelectOption = () => {
     return options?.map((item: any, index: number) => {
       return (
@@ -59,11 +70,12 @@ export default function SelectCustom({
           disabled={disabled}
         >
           <Select
-            className="select-field"
+            className="select-field "
             displayEmpty
             inputProps={{ "aria-label": "Without label" }}
             defaultValue={defaultValue >= 0 ? defaultValue : ""}
             {...register(id)}
+            MenuProps={MenuProps}
           >
             <MenuItem value="">
               <p className="text-left text-[#777777]">{placeholder}</p>

@@ -71,10 +71,10 @@ const NewRam: React.FC = () => {
   const { depot } = useAppSelector((state) => state.depot);
   const { brand } = useAppSelector((state) => state.brand);
   useEffect(() => {
-    dispatch(getCategorys(""));
-    dispatch(getCharacters(""));
-    dispatch(getBrands(""));
-    dispatch(getdepots(""));
+    dispatch(getCategorys({ pageSize: 100 }));
+    dispatch(getCharacters({ pageSize: 100 }));
+    dispatch(getBrands({ pageSize: 100 }));
+    dispatch(getdepots({ pageSize: 100 }));
   }, []);
 
   const [file, setFile] = useState<File[]>();
@@ -226,7 +226,6 @@ const NewRam: React.FC = () => {
             className={"flex-1 text-black"}
             id="category"
             // label="Hãng xe"
-            placeholder="Vui lòng chọn"
             defaultValue={""}
             options={category}
             register={register}
@@ -243,62 +242,21 @@ const NewRam: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="brand"
-            // label="Hãng xe"
-            placeholder="Vui lòng chọn"
             defaultValue={""}
-            options={brand}
+            options={brand?.data?.data}
             register={register}
             isBrand={true}
           >
             {errors.brand?.message}
           </SelectCustom>
         </Form.Item>
-        <Form.Item
-          label="Hệ điều hành"
-          name="operatingSystem"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="operatingSystem"
-            // label="Hãng xe"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={[
-              { id: "iOS", name: "iOS" },
-              { id: "Android", name: "android" },
-            ]}
-            register={register}
-            isBrand={true}
-          >
-            {errors.operatingSystem?.message}
-          </SelectCustom>
-        </Form.Item>
-        <Form.Item
-          label="Đặc điểm sản phẩm"
-          name="characteristic"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="characteristic"
-            // label="Hãng xe"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={character}
-            register={register}
-            isBrand={true}
-          >
-            {errors.characteristic?.message}
-          </SelectCustom>
-        </Form.Item>
+
         <Form.Item
           label="Tên sản phẩm"
           name="name"
           rules={[{ required: true }]}
         >
           <Input
-            placeholder="Điện thoại iPhone 15 Pro Max 1TB"
             name="name"
             register={register}
             type="text"
@@ -307,40 +265,6 @@ const NewRam: React.FC = () => {
           />
         </Form.Item>
 
-        <Form.Item label="Thiết kế" name="design" rules={[{ required: true }]}>
-          <Input
-            name="design"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.design?.message}
-            placeholder="Nguyên khối"
-          />
-        </Form.Item>
-        <Form.Item
-          label="Kích thước"
-          name="dimension"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="dimension"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.dimension?.message}
-            placeholder="Dài 159.9 mm - Ngang 76.7 mm - Dày 8.25 mm "
-          />
-        </Form.Item>
-        <Form.Item label="Khối lượng" name="mass" rules={[{ required: true }]}>
-          <Input
-            name="mass"
-            register={register}
-            type="number"
-            className=""
-            errorMessage={errors.mass?.message}
-            placeholder=" 221 "
-          />
-        </Form.Item>
         <Form.Item
           label="Năm ra mắt"
           name="launchTime"
@@ -352,21 +276,6 @@ const NewRam: React.FC = () => {
             type="number"
             className=""
             errorMessage={errors.launchTime?.message}
-            placeholder="2023"
-          />
-        </Form.Item>
-        <Form.Item
-          label="Phụ kiện"
-          name="accessories"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="accessories"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.accessories?.message}
-            placeholder="Tai nghe, sạc"
           />
         </Form.Item>
         <Form.Item
@@ -387,7 +296,6 @@ const NewRam: React.FC = () => {
                       name={`lstProductTypeAndPrice.${index}.ram`}
                       key={item.id} // important to include key with field's id
                       register={register}
-                      placeholder="8Gb"
                     />
                   </Form.Item>
                   <Form.Item
@@ -399,7 +307,6 @@ const NewRam: React.FC = () => {
                       name={`lstProductTypeAndPrice.${index}.storageCapacity`}
                       key={item.id} // important to include key with field's id
                       register={register}
-                      placeholder="1TB"
                     />
                   </Form.Item>
                 </div>
@@ -413,19 +320,16 @@ const NewRam: React.FC = () => {
                       name={`lstProductTypeAndPrice.${index}.price`}
                       key={item.id} // important to include key with field's id
                       register={register}
-                      placeholder="45000000"
                     />
                   </Form.Item>
                   <Form.Item
                     label="Giá khuyến mãi"
                     name={`lstProductTypeAndPrice.${index}.salePrice`}
-                    rules={[{ required: true }]}
                   >
                     <Input
                       name={`lstProductTypeAndPrice.${index}.salePrice`}
                       key={item.id} // important to include key with field's id
                       register={register}
-                      placeholder="44000000"
                     />
                   </Form.Item>
                 </div>
@@ -438,9 +342,8 @@ const NewRam: React.FC = () => {
                     className={"flex-1 text-black"}
                     id={`lstProductTypeAndPrice.${index}.depot`}
                     // label="Hãng xe"
-                    placeholder="Vui lòng chọn"
                     defaultValue={1}
-                    options={depot}
+                    options={depot?.data?.data}
                     register={register}
                   >
                     {errors.depot?.message}
@@ -456,7 +359,6 @@ const NewRam: React.FC = () => {
                       name={`lstProductTypeAndPrice.${index}.quantity`}
                       key={item.id} // important to include key with field's id
                       register={register}
-                      placeholder="1000"
                     />
                   </Form.Item>
                   <Form.Item
@@ -468,7 +370,6 @@ const NewRam: React.FC = () => {
                       name={`lstProductTypeAndPrice.${index}.color`}
                       key={item.id} // important to include key with field's id
                       register={register}
-                      placeholder="Titan tự nhiên"
                     />
                   </Form.Item>
                 </div>
@@ -513,7 +414,6 @@ const NewRam: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.ramType?.message}
-            placeholder=""
           />
         </Form.Item>
         <Form.Item label="Kiểu" name="model" rules={[{ required: true }]}>
@@ -523,7 +423,6 @@ const NewRam: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.model?.message}
-            placeholder=""
           />
         </Form.Item>
         <Form.Item
@@ -537,7 +436,6 @@ const NewRam: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.capacity?.message}
-            placeholder=""
           />
         </Form.Item>
         <Form.Item label="Bus" name="bus" rules={[{ required: true }]}>
@@ -547,7 +445,6 @@ const NewRam: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.bus?.message}
-            placeholder=""
           />
         </Form.Item>
         <Form.Item label="Độ trễ" name="latency" rules={[{ required: true }]}>
@@ -557,7 +454,6 @@ const NewRam: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.latency?.message}
-            placeholder=""
           />
         </Form.Item>
         <Form.Item label="Vol" name="voltage" rules={[{ required: true }]}>
@@ -567,7 +463,6 @@ const NewRam: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.voltage?.message}
-            placeholder=""
           />
         </Form.Item>
         <Form.Item label="Led" name="led" rules={[{ required: true }]}>
@@ -577,7 +472,6 @@ const NewRam: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.led?.message}
-            placeholder=""
           />
         </Form.Item>
 
@@ -592,7 +486,6 @@ const NewRam: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.ramTechnology?.message}
-            placeholder=""
           />
         </Form.Item>
 

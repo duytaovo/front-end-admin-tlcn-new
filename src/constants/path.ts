@@ -31,9 +31,9 @@ const path = {
   processor: "/processor",
   processorDetail: "/processor/detail/:id",
   processorNew: "/processor/new",
-  cardGrap: "/cardGrap",
-  cardGrapDetail: "/cardGrap/detail/:id",
-  cardGrapNew: "/cardGrap/new",
+  cardGrap: "/cardGraphic",
+  cardGrapDetail: "/cardGraphic/detail/:id",
+  cardGrapNew: "/cardGraphic/new",
 } as const;
 
 export default path;
