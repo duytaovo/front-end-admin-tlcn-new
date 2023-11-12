@@ -1,7 +1,7 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Form, Space, Upload } from "antd";
+import { Button, Form } from "antd";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +13,6 @@ import { ErrorResponse } from "src/types/utils.type";
 import { schemaProductSmartPhone } from "src/utils/rules";
 import {
   generateRandomString,
-  getAvatarUrl,
   isAxiosUnprocessableEntityError,
 } from "src/utils/utils";
 import SelectCustom from "src/components/Select";
@@ -25,6 +24,8 @@ import {
 } from "src/store/product/smartPhoneSlice";
 import InputFile from "src/components/InputFile";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
+import { getBrands } from "src/store/brand/brandSlice";
+import { getdepots } from "src/store/depot/depotSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -53,33 +54,6 @@ interface FormData {
   monitor: string;
 }
 
-type brand = {
-  id: number;
-  name: string;
-};
-
-const brandSmartPhone: brand[] = [
-  {
-    id: 1,
-    name: "Apple",
-  },
-  {
-    id: 2,
-    name: "Samsung",
-  },
-  {
-    id: 3,
-    name: "Realmi",
-  },
-  {
-    id: 4,
-    name: "Vivo",
-  },
-  {
-    id: 5,
-    name: "Nokia",
-  },
-];
 const NewPhone: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
@@ -97,10 +71,13 @@ const NewPhone: React.FC = () => {
   const navigate = useNavigate();
   const { category } = useAppSelector((state) => state.category);
   const { character } = useAppSelector((state) => state.character);
+  const { depot } = useAppSelector((state) => state.depot);
+  const { brand } = useAppSelector((state) => state.brand);
   useEffect(() => {
     dispatch(getCategorys(""));
     dispatch(getCharacters(""));
-    // dispatch(getBrands(""));
+    dispatch(getBrands(""));
+    dispatch(getdepots(""));
   }, []);
 
   const [file, setFile] = useState<File[]>();
@@ -130,6 +107,7 @@ const NewPhone: React.FC = () => {
     setValue("frontCamera", "");
     setValue("design", "");
     setValue("dimension", "");
+    setValue("quantity", "");
     setValue("imageUrl", []);
   }, []);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
@@ -141,10 +119,10 @@ const NewPhone: React.FC = () => {
   const onSubmit = handleSubmit(async (data) => {
     const body = JSON.stringify({
       productInfo: {
-        brandId: Number(data.brand),
-        categoryId: Number(data.category),
+        brandId: Number(data.brand) || 1,
+        categoryId: Number(data.category) || 1,
         productId: null,
-        characteristicId: Number(data.characteristic),
+        characteristicId: Number(data.characteristic) || 1,
         productCode: generateRandomString(10),
         name: data.name,
         description: data?.description,
@@ -161,6 +139,8 @@ const NewPhone: React.FC = () => {
           color: item?.color,
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
+          quantity: Number(item?.quantity),
+          depotId: Number(item?.depot) || 1,
         })),
 
         lstProductImageUrl: [],
@@ -180,8 +160,8 @@ const NewPhone: React.FC = () => {
       setIsSubmitting(true);
       const res = await dispatch(addSmartPhone(body));
       unwrapResult(res);
-      // const d = res?.payload?.data;
-      // if (d?.code !== 201) return toast.error(d?.message);
+      const d = res?.payload?.data;
+      if (d?.code !== 201) return toast.error(d?.message);
       await toast.success("Thêm sản phẩm điện thoại thành công ");
       await dispatch(getSmartPhones(""));
       await navigate(path.smartPhone);
@@ -266,7 +246,7 @@ const NewPhone: React.FC = () => {
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
-            options={brandSmartPhone}
+            options={brand}
             register={register}
             isBrand={true}
           >
@@ -449,7 +429,36 @@ const NewPhone: React.FC = () => {
                     />
                   </Form.Item>
                 </div>
-                <div>
+                <Form.Item
+                  label="Kho hàng"
+                  name={`lstProductTypeAndPrice.${index}.depot`}
+                  rules={[{ required: true }]}
+                >
+                  <SelectCustom
+                    className={"flex-1 text-black"}
+                    id={`lstProductTypeAndPrice.${index}.depot`}
+                    // label="Hãng xe"
+                    placeholder="Vui lòng chọn"
+                    defaultValue={1}
+                    options={depot}
+                    register={register}
+                  >
+                    {errors.depot?.message}
+                  </SelectCustom>
+                </Form.Item>
+                <div className="flex justify-between space-x-1">
+                  <Form.Item
+                    label="Số lượng sản phẩm"
+                    name={`lstProductTypeAndPrice.${index}.quantity`}
+                    rules={[{ required: true }]}
+                  >
+                    <Input
+                      name={`lstProductTypeAndPrice.${index}.quantity`}
+                      key={item.id} // important to include key with field's id
+                      register={register}
+                      placeholder="1000"
+                    />
+                  </Form.Item>
                   <Form.Item
                     label="Màu"
                     name={`lstProductTypeAndPrice.${index}.color`}

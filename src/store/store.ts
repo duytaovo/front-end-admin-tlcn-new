@@ -16,6 +16,7 @@ import ramReducer from "./ram/ramSlice";
 import romReducer from "./rom/romSlice";
 import cardGraphicReducer from "./cardGrap/cardGraphicSlice";
 import characterReducer from "./characteristic/characteristicSlice";
+import depotReducer from "./depot/depotSlice";
 
 export const store = configureStore({
   reducer: {
@@ -31,6 +32,7 @@ export const store = configureStore({
     rom: romReducer,
     cardGraphic: cardGraphicReducer,
     character: characterReducer,
+    depot: depotReducer,
   },
   devTools: process.env.NODE_ENV === "development",
   middleware: (getDefaultMiddleware) => [

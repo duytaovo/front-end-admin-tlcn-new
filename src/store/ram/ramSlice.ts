@@ -45,8 +45,7 @@ const ramSlice = createSlice({
     //   state.ram = payload.data;
     // });
     builder.addCase(getRams.fulfilled, (state, { payload }) => {
-      console.log(payload.data.data.data);
-      state.ram = payload.data.data.data;
+      state.ram = payload.data;
     });
     // builder.addCase(getDetailram.fulfilled, (state, { payload }) => {
     //   state.ramDetail = payload.data;

@@ -45,7 +45,7 @@ const romSlice = createSlice({
     //   state.rom = payload.data;
     // });
     builder.addCase(getRoms.fulfilled, (state, { payload }) => {
-      state.rom = payload.data.data.data;
+      state.rom = payload.data;
     });
     // builder.addCase(getDetailrom.fulfilled, (state, { payload }) => {
     //   state.romDetail = payload.data;

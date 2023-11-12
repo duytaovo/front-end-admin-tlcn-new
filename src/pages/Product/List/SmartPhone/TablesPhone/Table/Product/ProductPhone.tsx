@@ -74,8 +74,8 @@ export default function ProductPhone({ product }: Props) {
         const handleDelete = async () => {
           const res = await dispatch(deleteSmartPhone(product.id.toString()));
           unwrapResult(res);
-          const d = res?.payload;
-          if (d?.code !== 200) return toast.error(d?.message);
+          // const d = res?.payload;
+          // if (d?.code !== 200) return toast.error(d?.message);
           await toast.success("Xóa sản phẩm thành công ");
           await dispatch(getSmartPhones(""));
         };
@@ -116,13 +116,13 @@ export default function ProductPhone({ product }: Props) {
               <div className="max-w-[50%] truncate text-gray-500 line-through">
                 <span className="text-xs">₫</span>
                 <span className="text-sm">
-                  {formatCurrency(product.lstProductTypeAndPrice[0].price)}
+                  {formatCurrency(product.lstProductTypeAndPrice[0]?.price)}
                 </span>
               </div>
               <div className="ml-1 truncate text-orange">
                 <span className="text-lg">₫</span>
                 <span className="text-xl">
-                  {formatCurrency(product.lstProductTypeAndPrice[0].salePrice)}
+                  {formatCurrency(product.lstProductTypeAndPrice[0]?.salePrice)}
                 </span>
               </div>
             </div>

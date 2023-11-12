@@ -5,9 +5,10 @@ const brandApi = {
   addBrand(data: any) {
     return http.post("/brand/create", data);
   },
-  getBrands() {
-    return http.get<SuccessResponse<any>>("/brand");
+  getBrands(params: any) {
+    return http.get<SuccessResponse<any>>("/brand", { params });
   },
+
   getDetailBrand(params: any) {
     return http.get<SuccessResponse<any[]>>(`/brand/${params}`);
   },

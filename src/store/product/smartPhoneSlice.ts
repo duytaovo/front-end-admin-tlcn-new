@@ -48,60 +48,64 @@ export const deleteSmartPhone = createAsyncThunk(
 );
 
 interface IProudct {
-  smartPhone: ListSmartPhone[];
+  smartPhone: any;
   smartPhoneDetail: SmartPhoneDetail;
 }
-const data = {
-  id: 8,
-  monitor: "6.7 - Tần số quét 60 Hz",
-  operatingSystem: "iOS",
-  rearCamera: "Chính 48 MP & Phụ 12 MP",
-  frontCamera: "12 MP",
-  chip: "Apple A16 Bionic 6 nhân",
-  sim: "1 Nano SIM & 1 eSIM",
-  battery: "4383 mAh",
-  charging: " 20 W",
-  networkSupport: "5G",
+const dataDetail: SmartPhoneDetail = {
+  id: 3,
+  monitor: "",
+  operatingSystem: "",
+  rearCamera: "",
+  frontCamera: "",
+  chip: "",
+  sim: " ",
+  battery: "",
+  charging: "",
+  networkSupport: "",
   productInfo: {
     brandId: 1,
     categoryId: 1,
-    productId: 8,
-    characteristicId: 1,
-    totalReview: 0,
-    star: 0,
-    productCode: "xQzA1slnwb",
+    productId: 10,
+    characteristicId: 7,
+    productCode: "",
     name: "",
     description: "",
-    design: "",
+    design: " ",
     dimension: "",
-    mass: 201.0,
+    mass: 221.0,
     launchTime: 2023,
-    accessories: "",
+    accessories: "Tai nghe, sạc",
     productStatus: 100,
     lstProductTypeAndPrice: [
       {
-        typeId: 7,
-        ram: "6 GB",
-        storageCapacity: "128 GB",
-        color: "Hồng nhạt",
-        price: 25600000.0,
-        salePrice: 253000000.0,
+        typeId: 5,
+        ram: " 8 GB",
+        storageCapacity: "256 GB",
+        color: "Titan tự nhiên",
+        price: 0,
+        salePrice: 0,
+        quantity: 1000,
+        depotId: 1,
       },
       {
-        typeId: 8,
-        ram: "6GB",
-        storageCapacity: "256GB",
-        color: "Đen ",
-        price: 28500000.0,
-        salePrice: 28000000.0,
+        typeId: 6,
+        ram: " 8 GB",
+        storageCapacity: "512 GB",
+        color: "1000",
+        price: 0,
+        salePrice: 0,
+        quantity: 1000,
+        depotId: 1,
       },
     ],
     lstProductImageUrl: [],
   },
+  star: 4.9,
+  totalReview: 100,
 };
 const initialState: IProudct = {
   smartPhone: [],
-  smartPhoneDetail: data,
+  smartPhoneDetail: dataDetail,
 };
 const smartPhoneSlice = createSlice({
   name: "smartPhone",
@@ -112,9 +116,10 @@ const smartPhoneSlice = createSlice({
     //   state.smartPhone = payload.data;
     // });
     builder.addCase(getSmartPhones.fulfilled, (state, { payload }) => {
-      state.smartPhone = payload.data.data.data;
+      state.smartPhone = payload.data;
     });
     builder.addCase(getDetailPhone.fulfilled, (state, { payload }) => {
+      console.log(payload.data.data);
       state.smartPhoneDetail = payload.data.data;
     });
     // builder.addCase(updatesmartPhone.fulfilled, (state, { payload }) => {

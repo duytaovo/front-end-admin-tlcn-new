@@ -116,19 +116,21 @@ export default function ProductLaptop({ product }: Props) {
           </div>
           <div className="overflow-hidden p-2">
             <div className="min-h-[2rem] text-lg line-clamp-2">
-              {product.name}
+              {product?.name}
             </div>
             <div className="mt-3 flex items-center">
               <div className="max-w-[50%] truncate text-gray-500 line-through">
                 <span className="text-xs">₫</span>
                 <span className="text-sm">
-                  {formatCurrency(product.lstProductTypeAndPrice[0].price)}
+                  {formatCurrency(product?.lstProductTypeAndPrice[0]?.price)}
                 </span>
               </div>
               <div className="ml-1 truncate text-orange">
                 <span className="text-lg">₫</span>
                 <span className="text-xl">
-                  {formatCurrency(product.lstProductTypeAndPrice[0].salePrice)}
+                  {formatCurrency(
+                    product?.lstProductTypeAndPrice[0]?.salePrice
+                  )}
                 </span>
               </div>
             </div>

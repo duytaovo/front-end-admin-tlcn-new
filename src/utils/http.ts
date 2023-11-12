@@ -10,7 +10,7 @@ import {
   setRefreshTokenToLS,
 } from "./auth";
 
-import { isAxiosExpiredTokenError, isAxiosUnauthorizedError } from "./utils";
+import { isAxiosUnauthorizedError } from "./utils";
 import { ErrorResponse } from "src/types/utils.type";
 import config from "src/constants/configApi";
 
@@ -18,6 +18,7 @@ export const URL_LOGIN = "/authenticate";
 export const URL_REGISTER = "register";
 export const URL_LOGOUT = "logout";
 export const URL_REFRESH_TOKEN = "/refreshToken";
+
 export class Http {
   instance: AxiosInstance;
   private accessToken: string;
@@ -29,7 +30,7 @@ export class Http {
     this.refreshTokenRequest = null;
     this.instance = axios.create({
       baseURL: url,
-      timeout: 10000,
+      // timeout: 10000,
       headers: {
         "Content-Type": "application/json",
         // "expire-access-token": 60 * 60 * 24, // 1 ngày
@@ -38,7 +39,6 @@ export class Http {
     });
     this.instance.interceptors.request.use(
       (config) => {
-        config.headers.authorization = `Bearer ${this.accessToken}`;
         if (this.accessToken && config.headers) {
           config.headers.authorization = `Bearer ${this.accessToken}`;
           return config;
@@ -53,7 +53,7 @@ export class Http {
     this.instance.interceptors.response.use(
       (response) => {
         const { url } = response.config;
-        if (url === URL_LOGIN || url === URL_REGISTER) {
+        if (url === URL_LOGIN) {
           const data = response.data as AuthResponse;
           this.accessToken = data.data.accessToken;
           this.refreshToken = data.data.token;
@@ -77,7 +77,7 @@ export class Http {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const data: any | undefined = error.response?.data;
           const message = data?.message || error.message;
-          toast.error(message + "🥹");
+          toast.error(message);
         }
 
         if (
@@ -86,10 +86,12 @@ export class Http {
           >(error)
         ) {
           const config: any = error.response?.config || {};
+          console.log(error.response);
           const { url } = config;
           // Trường hợp Token hết hạn và request đó không phải là của request refresh token
           // thì chúng ta mới tiến hành gọi refresh token
-          if (isAxiosExpiredTokenError(error) && url !== URL_REFRESH_TOKEN) {
+          if (url !== URL_REFRESH_TOKEN && error.response?.status == 500) {
+            console.log("aaaa");
             // Hạn chế gọi 2 lần handleRefreshToken
             this.refreshTokenRequest = this.refreshTokenRequest
               ? this.refreshTokenRequest
@@ -108,9 +110,9 @@ export class Http {
             });
           }
 
-          clearLS();
-          this.accessToken = "";
-          this.refreshToken = "";
+          // clearLS();
+          // this.accessToken = "";
+          // this.refreshToken = "";
           toast.error(
             error.response?.data.data?.message || error.response?.data.message
           );
@@ -121,9 +123,10 @@ export class Http {
     );
   }
   private handleRefreshToken() {
+    console.log("first refresh token");
     return this.instance
       .post<RefreshTokenReponse>(URL_REFRESH_TOKEN, {
-        refresh_token: this.refreshToken,
+        token: this.refreshToken,
       })
       .then((res) => {
         const { accessToken } = res.data.data;
@@ -132,9 +135,9 @@ export class Http {
         return accessToken;
       })
       .catch((error) => {
-        clearLS();
-        this.accessToken = "";
-        this.refreshToken = "";
+        // clearLS();
+        // this.accessToken = "";
+        // this.refreshToken = "";
         throw error;
       });
   }

@@ -5,8 +5,8 @@ const romApi = {
   addRom(data: any) {
     return http.post("/product/rom/create", data);
   },
-  getRoms() {
-    return http.get<SuccessResponse<any>>("/product/rom");
+  getRoms(params: any) {
+    return http.get<SuccessResponse<any>>("/product/rom", { params });
   },
   getDetailRom(params: any) {
     return http.get<SuccessResponse<any[]>>(`/product/rom/${params}`);

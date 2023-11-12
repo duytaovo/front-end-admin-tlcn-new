@@ -14,8 +14,8 @@ const authApi = {
   addUser(data: any) {
     return http.post("/user/create", data);
   },
-  getUsers() {
-    return http.get<SuccessResponse<any>>("/user");
+  getUsers(params: any) {
+    return http.get<SuccessResponse<any>>("/user", { params });
   },
   getDetailUser(params: any) {
     return http.get<SuccessResponse<any[]>>(`/user/${params}`);

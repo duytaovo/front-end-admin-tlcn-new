@@ -216,6 +216,24 @@ const TableProduct: React.FC = () => {
                 >
                   Đồng hồ thông minh
                 </MenuItem>
+                <MenuItem value={"Ram"} onClick={() => onClick("/ram")}>
+                  Ram
+                </MenuItem>
+                <MenuItem value={"Rom"} onClick={() => onClick("/rom")}>
+                  Rom
+                </MenuItem>
+                <MenuItem
+                  value={"processor"}
+                  onClick={() => onClick("/processor")}
+                >
+                  Processor
+                </MenuItem>
+                <MenuItem
+                  value={"cardGraphic"}
+                  onClick={() => onClick("/cardGraphic")}
+                >
+                  Card đồ họa
+                </MenuItem>
                 {/* <MenuItem value={30}></MenuItem> */}
               </Select>
             </FormControl>

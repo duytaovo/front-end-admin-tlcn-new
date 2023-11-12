@@ -13,7 +13,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { SelectChangeEvent } from "@mui/material/Select";
 import path from "src/constants/path";
 import React, { useEffect, useState } from "react";
-import { Button, Space, Table, Typography } from "antd";
+import { Button, Pagination, Space, Table, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { deleteBrand, getBrands } from "src/store/brand/brandSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
@@ -27,19 +27,11 @@ interface DataType {
   category?: string;
 }
 
-// const originData: DataType[] = [];
-// for (let i = 0; i < 100; i++) {
-//   originData.push({
-//     key: i.toString(),
-//     name: `Edward ${i}`,
-//     age: 32,
-//     address: `London Park no. ${i}`,
-//   });
-// }
-
 const TableBrand: React.FC = () => {
   const dispatch = useAppDispatch();
   const { brand } = useAppSelector((state) => state.brand);
+  const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
+  const pageSize = 10; // Số phần tử trên mỗi trang
   const columns: ColumnsType<DataType> = [
     // { title: "Loại sản phẩm", dataIndex: "category", key: "category" },
     { title: "Tên thương hiệu", dataIndex: "name", key: "name" },
@@ -84,17 +76,20 @@ const TableBrand: React.FC = () => {
     },
   ];
   useEffect(() => {
-    dispatch(getBrands(""));
-  }, []);
+    dispatch(getBrands({ pageNumber: currentPage }));
+  }, [currentPage]);
   const originData: DataType[] = [];
-  for (let i = 0; i < brand?.length; i++) {
+
+  for (let i = 0; i < brand?.data?.data?.length; i++) {
     originData.push({
       key: i.toString(),
-      name: brand[i].name,
-      address: brand[i].address,
+      name: brand?.data?.data[i]?.name,
+      address: brand?.data?.data[i]?.address,
     });
   }
-
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page - 1);
+  };
   return (
     <div className="mx-6">
       <div className="w-full text-[24px] text-gray-500 mb-[10px] flex items-center justify-between">
@@ -107,7 +102,13 @@ const TableBrand: React.FC = () => {
         </Link>
       </div>
 
-      <Table columns={columns} dataSource={originData} />
+      <Table columns={columns} dataSource={originData} pagination={false} />
+      <Pagination
+        current={currentPage + 1}
+        pageSize={pageSize}
+        total={brand?.data?.totalElements}
+        onChange={handlePageChange}
+      />
     </div>
   );
 };

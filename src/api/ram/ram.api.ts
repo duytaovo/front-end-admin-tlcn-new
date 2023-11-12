@@ -5,8 +5,8 @@ const ramApi = {
   addRam(data: any) {
     return http.post("/product/ram/create", data);
   },
-  getRams() {
-    return http.get<SuccessResponse<any>>("/product/ram");
+  getRams(params: any) {
+    return http.get<SuccessResponse<any>>("/product/ram", { params });
   },
   getDetailRam(params: any) {
     return http.get<SuccessResponse<any[]>>(`/product/ram/${params}`);

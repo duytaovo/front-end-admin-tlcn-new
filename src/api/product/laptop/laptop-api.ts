@@ -5,8 +5,8 @@ const laptopApi = {
   addLaptop(data: any) {
     return http.post("/product/laptop/create", data);
   },
-  getLaptops() {
-    return http.get<SuccessResponse<any>>("/product/laptop");
+  getLaptops(params: any) {
+    return http.get<SuccessResponse<any>>("/product/laptop", { params });
   },
   getLaptopsWithPageNumber(pageNumber: number) {
     return http.get<SuccessResponse<any>>(`/product/laptop/${pageNumber}`);

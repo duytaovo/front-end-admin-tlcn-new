@@ -28,6 +28,8 @@ import {
 import InputFile from "src/components/InputFile";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
+import { getBrands } from "src/store/brand/brandSlice";
+import { getdepots } from "src/store/depot/depotSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -69,28 +71,7 @@ type brand = {
   id: number;
   name: string;
 };
-const brandSmartPhone: brand[] = [
-  {
-    id: 1,
-    name: "Apple",
-  },
-  {
-    id: 2,
-    name: "Samsung",
-  },
-  {
-    id: 3,
-    name: "Realmi",
-  },
-  {
-    id: 4,
-    name: "Vivo",
-  },
-  {
-    id: 5,
-    name: "Nokia",
-  },
-];
+
 const UpdatePhone: React.FC = () => {
   const [componentDisabled, setComponentDisabled] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -114,6 +95,8 @@ const UpdatePhone: React.FC = () => {
   // const { brand } = useAppSelector((state) => state.brand);
   const { smartPhoneDetail } = useAppSelector((state) => state.smartPhone);
   const { character } = useAppSelector((state) => state.character);
+  const { depot } = useAppSelector((state) => state.depot);
+  const { brand } = useAppSelector((state) => state.brand);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
       control, // control props comes from useForm (optional: if you are using FormContext)
@@ -124,6 +107,8 @@ const UpdatePhone: React.FC = () => {
     dispatch(getCategorys(""));
     dispatch(getCharacters(""));
     dispatch(getDetailPhone(id));
+    dispatch(getBrands(""));
+    dispatch(getdepots(""));
   }, []);
 
   useEffect(() => {
@@ -214,6 +199,8 @@ const UpdatePhone: React.FC = () => {
           color: item?.color,
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
+          quantity: Number(item?.quantity),
+          depotId: Number(item?.depot) || 1,
         })),
       },
       monitor: data.monitor,
@@ -346,7 +333,7 @@ const UpdatePhone: React.FC = () => {
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={smartPhoneDetail?.productInfo?.brandId}
-            options={brandSmartPhone}
+            options={brand}
             register={register}
             isBrand={true}
           >
@@ -529,7 +516,36 @@ const UpdatePhone: React.FC = () => {
                     />
                   </Form.Item>
                 </div>
+                <Form.Item
+                  label="Kho hàng"
+                  name={`lstProductTypeAndPrice.${index}.depot`}
+                  rules={[{ required: true }]}
+                >
+                  <SelectCustom
+                    className={"flex-1 text-black"}
+                    id={`lstProductTypeAndPrice.${index}.depot`}
+                    // label="Hãng xe"
+                    placeholder="Vui lòng chọn"
+                    defaultValue={1}
+                    options={depot}
+                    register={register}
+                  >
+                    {errors.depot?.message}
+                  </SelectCustom>
+                </Form.Item>
                 <div>
+                  <Form.Item
+                    label="Số lượng sản phẩm"
+                    name={`lstProductTypeAndPrice.${index}.quantity`}
+                    rules={[{ required: true }]}
+                  >
+                    <Input
+                      name={`lstProductTypeAndPrice.${index}.quantity`}
+                      key={item.id} // important to include key with field's id
+                      register={register}
+                      placeholder="1000"
+                    />
+                  </Form.Item>
                   <Form.Item
                     label="Màu"
                     name={`lstProductTypeAndPrice.${index}.color`}

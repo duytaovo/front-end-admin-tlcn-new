@@ -5,8 +5,8 @@ const smartPhoneApi = {
   addSmartPhone(data: any) {
     return http.post("/product/smartphone/create", data);
   },
-  getSmartPhones() {
-    return http.get<SuccessResponse<any>>("/product/smartphone");
+  getSmartPhones(params: any) {
+    return http.get<SuccessResponse<any>>("/product/smartphone", { params });
   },
   getSmartPhonesWithPageNumber(pageNumber: number) {
     return http.get<SuccessResponse<any>>(`/product/smartphone/${pageNumber}`);
@@ -20,13 +20,13 @@ const smartPhoneApi = {
     return http.get<SuccessResponse<any[]>>(`/product/smartphone/${params}`);
   },
   updateSmartPhone({ _id, body }: any) {
-    return http.post<SuccessResponse<any>>(
+    return http.put<SuccessResponse<any>>(
       `/product/smartphone/update/${_id}`,
       body
     );
   },
   deleteSmartPhone(idSmartPhone: string[]) {
-    return http.post<SuccessResponse<any>>(
+    return http.put<SuccessResponse<any>>(
       `/product/smartphone/delete/${idSmartPhone}`
     );
   },

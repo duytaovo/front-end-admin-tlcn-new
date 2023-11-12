@@ -22,6 +22,18 @@ const path = {
   brand: "/brand",
   brandDetail: "/brand/detail/:id",
   brandNew: "/brand/new",
+  ram: "/ram",
+  ramDetail: "/ram/detail/:id",
+  ramNew: "/ram/new",
+  rom: "/rom",
+  romDetail: "/rom/detail/:id",
+  romNew: "/rom/new",
+  processor: "/processor",
+  processorDetail: "/processor/detail/:id",
+  processorNew: "/processor/new",
+  cardGrap: "/cardGrap",
+  cardGrapDetail: "/cardGrap/detail/:id",
+  cardGrapNew: "/cardGrap/new",
 } as const;
 
 export default path;

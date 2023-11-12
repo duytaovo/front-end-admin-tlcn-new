@@ -48,7 +48,7 @@ export const deleteLaptop = createAsyncThunk(
 );
 
 interface IProudct {
-  laptop: ListSmartPhone[];
+  laptop: any;
   laptopDetail: LaptopDetail;
 }
 const data = {
@@ -108,7 +108,7 @@ const Laptoplice = createSlice({
     //   state.laptop = payload.data;
     // });
     builder.addCase(getLaptop.fulfilled, (state, { payload }) => {
-      state.laptop = payload.data.data.data;
+      state.laptop = payload.data;
     });
     builder.addCase(getDetailLaptop.fulfilled, (state, { payload }) => {
       state.laptopDetail = payload.data.data;

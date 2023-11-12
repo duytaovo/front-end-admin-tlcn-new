@@ -18,7 +18,7 @@ import {
   getSmartPhones,
 } from "src/store/product/smartPhoneSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Rate } from "antd";
+import { Button, Modal, Rate } from "antd";
 import DOMPurify from "dompurify";
 
 export default function SmartPhoneDetail() {
@@ -27,16 +27,16 @@ export default function SmartPhoneDetail() {
   const { nameId } = useParams();
   const dispatch = useAppDispatch();
   const { smartPhoneDetail } = useAppSelector((state) => state.smartPhone);
-
+  console.log(smartPhoneDetail);
   const id = getIdFromNameId(nameId as string);
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5]);
   const [activeImage, setActiveImage] = useState("");
   const imageRef = useRef<HTMLImageElement>(null);
   const [price, setPrice] = useState(
-    smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice
+    smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.price
   );
   const [salePrice, setSalePrice] = useState(
-    smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].price
+    smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
   );
   const currentImages = useMemo(
     () =>
@@ -49,7 +49,6 @@ export default function SmartPhoneDetail() {
   );
 
   const navigate = useNavigate();
-  console.log(smartPhoneDetail);
   useEffect(() => {
     if (
       smartPhoneDetail &&
@@ -62,6 +61,12 @@ export default function SmartPhoneDetail() {
   useEffect(() => {
     dispatch(getDetailPhone(id));
   }, []);
+  useEffect(() => {
+    setPrice(smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.price);
+    setSalePrice(
+      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
+    );
+  }, [smartPhoneDetail]);
   const next = () => {
     if (
       currentIndexImages[1] <
@@ -121,7 +126,19 @@ export default function SmartPhoneDetail() {
   const handleRemoveZoom = () => {
     imageRef.current?.removeAttribute("style");
   };
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   if (!smartPhoneDetail) return null;
   return (
     <div className="bg-gray-200 py-6">
@@ -136,7 +153,7 @@ export default function SmartPhoneDetail() {
           })}
         />
       </Helmet>
-      <div className="container">
+      <div className="px-20 py-5 rounded-md">
         <div className="bg-white p-4 shadow">
           <div className="grid grid-cols-12 gap-9">
             <div className="col-span-5">
@@ -219,13 +236,11 @@ export default function SmartPhoneDetail() {
               <div className="mt-8 flex items-center">
                 <div className="flex items-center">
                   <span className="mr-1 border-b border-b-orange text-orange">
-                    {smartPhoneDetail?.productInfo?.star}
+                    {smartPhoneDetail?.star}
                   </span>
                   <Rate
                     allowHalf
-                    defaultValue={
-                      Number(smartPhoneDetail?.productInfo?.star) || 4.5
-                    }
+                    defaultValue={Number(smartPhoneDetail?.totalReview) || 4.5}
                     disabled
                   />
                   ;
@@ -234,7 +249,7 @@ export default function SmartPhoneDetail() {
                 <div>
                   <span>
                     {formatNumberToSocialStyle(
-                      Number(smartPhoneDetail?.productInfo.totalReview) || 1520
+                      Number(smartPhoneDetail?.totalReview) || 1520
                     )}
                   </span>
                   <span className="ml-1 text-gray-500">Đã xem</span>
@@ -242,20 +257,19 @@ export default function SmartPhoneDetail() {
               </div>
               <div className="mt-8 flex items-center bg-gray-50 px-5 py-4">
                 <div className="text-gray-500 line-through">
-                  ₫{formatCurrency(salePrice)}
+                  ₫{formatCurrency(price)}
                 </div>
                 <div className="ml-3 text-3xl font-medium text-orange">
                   ₫{}
-                  {formatCurrency(price)}
+                  {formatCurrency(salePrice)}
                 </div>
                 <div className="ml-4 rounded-sm bg-orange px-1 py-[2px] text-xs font-semibold uppercase text-white">
-                  {rateSale(Number(smartPhoneDetail?.productInfo?.star), price)}{" "}
-                  giảm
+                  {rateSale(Number(smartPhoneDetail?.star), price)} giảm
                 </div>
               </div>
               <div className="space-x-3">
                 <Button
-                  className="w-[100px] bg-pink-300"
+                  className="w-[100px] "
                   onClick={() =>
                     onClickChangeColor(
                       smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]
@@ -269,7 +283,10 @@ export default function SmartPhoneDetail() {
                   type="dashed"
                   color="red"
                 >
-                  Hồng nhạt
+                  {
+                    smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]
+                      ?.color
+                  }
                 </Button>
                 <Button
                   className="w-[100px] bg-black/30"
@@ -286,20 +303,103 @@ export default function SmartPhoneDetail() {
                   type="dashed"
                   color="red"
                 >
-                  Đen
+                  {
+                    smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[1]
+                      ?.color
+                  }
                 </Button>
               </div>
             </div>
           </div>
         </div>
+        <Button type="link" onClick={showModal} className="bg-gray-300 mt-5">
+          Xem thông số kỹ thuật
+        </Button>
+        <Modal
+          title="Thông số kỹ thuật"
+          open={isModalOpen}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          centered
+        >
+          <div className="block space-y-2">
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Màn hình :</h4>
+              <h5>{smartPhoneDetail.monitor}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Hệ điều hành :</h4>
+              <h5>{smartPhoneDetail.operatingSystem}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Camera chính :</h4>
+              <h5>{smartPhoneDetail.rearCamera}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Camera trước :</h4>
+              <h5>{smartPhoneDetail.frontCamera}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Chip :</h4>
+              <h5>{smartPhoneDetail.chip}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Sim :</h4>
+              <h5>{smartPhoneDetail.sim}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Pin :</h4>
+              <h5>{smartPhoneDetail.monitor}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Sạc nhanh:</h4>
+              <h5>{smartPhoneDetail.charging}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Hỗ trợ mạng:</h4>
+              <h5>{smartPhoneDetail.networkSupport}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Phụ kiện:</h4>
+              <h5>{smartPhoneDetail.productInfo.accessories}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Năm ra mắt:</h4>
+              <h5>{smartPhoneDetail.productInfo.launchTime}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Thiết kế:</h4>
+              <h5>{smartPhoneDetail.productInfo.design}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Khối lượng:</h4>
+              <h5>{smartPhoneDetail.productInfo.mass}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Ram:</h4>
+              <h5>
+                {smartPhoneDetail.productInfo.lstProductTypeAndPrice[0].ram}
+              </h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Bộ nhớ trong:</h4>
+              <h5>
+                {
+                  smartPhoneDetail.productInfo.lstProductTypeAndPrice[0]
+                    .storageCapacity
+                }
+              </h5>
+            </div>
+          </div>
+        </Modal>
       </div>
       <div className="mt-8">
-        <div className="container">
+        <div className="px-20 py-5 rounded-md">
           <div className=" bg-white p-4 shadow">
             <div className="rounded bg-gray-50 p-4 text-lg capitalize text-slate-700">
               Mô tả sản phẩm
             </div>
-            <div className="mx-4 mb-4 mt-12 text-sm leading-loose">
+            <div className="mx-4 mb-4 mt-12 text-lg leading-loose">
               <div
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(

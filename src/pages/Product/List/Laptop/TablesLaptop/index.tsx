@@ -6,15 +6,21 @@ import path from "src/constants/path";
 import React, { useEffect, useState } from "react";
 import { getLaptop } from "src/store/product/laptopSlice ";
 import ProductLaptop from "./Table/Product/ProductLaptop";
+import { Pagination } from "antd";
 
 const TableLaptop: React.FC = () => {
   const dispatch = useAppDispatch();
   const { laptop } = useAppSelector((state) => state.laptop);
   const navigate = useNavigate();
-  useEffect(() => {
-    dispatch(getLaptop(""));
-  }, []);
+  const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
+  const pageSize = 10; // Số phần tử trên mỗi trang
 
+  useEffect(() => {
+    dispatch(getLaptop({ pageNumber: currentPage }));
+  }, [currentPage]);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page - 1);
+  };
   const [product, setProduct] = React.useState("");
 
   const handleChangeProduct = (event: SelectChangeEvent) => {
@@ -64,6 +70,24 @@ const TableLaptop: React.FC = () => {
                 >
                   Đồng hồ thông minh
                 </MenuItem>
+                <MenuItem value={"Ram"} onClick={() => onClick("/ram")}>
+                  Ram
+                </MenuItem>
+                <MenuItem value={"Rom"} onClick={() => onClick("/rom")}>
+                  Rom
+                </MenuItem>
+                <MenuItem
+                  value={"processor"}
+                  onClick={() => onClick("/processor")}
+                >
+                  Processor
+                </MenuItem>
+                <MenuItem
+                  value={"cardGraphic"}
+                  onClick={() => onClick("/cardGraphic")}
+                >
+                  Card đồ họa
+                </MenuItem>
                 {/* <MenuItem value={30}></MenuItem> */}
               </Select>
             </FormControl>
@@ -78,12 +102,18 @@ const TableLaptop: React.FC = () => {
       </div>
 
       <div className="mt-6 grid grid-cols-6 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {laptop?.map((_laptop: any) => (
+        {laptop?.data?.data?.map((_laptop: any) => (
           <div className="col-span-1" key={_laptop.id}>
             <ProductLaptop product={_laptop} />
           </div>
         ))}
       </div>
+      <Pagination
+        current={currentPage + 1}
+        pageSize={pageSize}
+        total={laptop?.data?.totalElements}
+        onChange={handlePageChange}
+      />
     </div>
   );
 };

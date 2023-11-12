@@ -1,5 +1,13 @@
 import { lazy } from "react";
 import path from "src/constants/path";
+import NewCardGraphic from "src/pages/Product/Create/NewCardGraphic";
+import NewProcessor from "src/pages/Product/Create/NewProcessor";
+import NewRam from "src/pages/Product/Create/NewRam";
+import NewRom from "src/pages/Product/Create/NewRom";
+import CardGraphic from "src/pages/Product/List/CardGraphic/CardGraphic";
+import Processor from "src/pages/Product/List/Processor/Processor";
+import Ram from "src/pages/Product/List/Ram/Ram";
+import Rom from "src/pages/Product/List/Rom/Rom";
 
 const Home = lazy(() => import("src/pages/Home/Home"));
 const TableProduct = lazy(() => import("src/pages/Product/Tables"));
@@ -117,6 +125,54 @@ export const routeMain = [
   {
     path: path.brandNew,
     Component: NewBrand,
+  },
+  {
+    path: path.ram,
+    Component: Ram,
+  },
+  {
+    path: path.ramDetail,
+    Component: Ram,
+  },
+  {
+    path: path.ramNew,
+    Component: NewRam,
+  },
+  {
+    path: path.rom,
+    Component: Rom,
+  },
+  {
+    path: path.romDetail,
+    Component: Ram,
+  },
+  {
+    path: path.romNew,
+    Component: NewRom,
+  },
+  {
+    path: path.processor,
+    Component: Processor,
+  },
+  {
+    path: path.processorDetail,
+    Component: Processor,
+  },
+  {
+    path: path.processorNew,
+    Component: NewProcessor,
+  },
+  {
+    path: path.cardGrap,
+    Component: CardGraphic,
+  },
+  {
+    path: path.processorDetail,
+    Component: CardGraphic,
+  },
+  {
+    path: path.cardGrapNew,
+    Component: NewCardGraphic,
   },
   {
     path: "*",

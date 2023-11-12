@@ -2,19 +2,25 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { SelectChangeEvent } from "@mui/material/Select";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { getSmartPhones } from "src/store/product/smartPhoneSlice";
 import ProductPhone from "./Table/Product/ProductPhone";
 import path from "src/constants/path";
+import { Pagination } from "antd";
 
 const TablePhone: React.FC = () => {
   const dispatch = useAppDispatch();
   const { smartPhone } = useAppSelector((state) => state.smartPhone);
   const navigate = useNavigate();
-  useEffect(() => {
-    dispatch(getSmartPhones(""));
-  }, []);
+  const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
+  const pageSize = 10; // Số phần tử trên mỗi trang
 
+  useEffect(() => {
+    dispatch(getSmartPhones({ pageNumber: currentPage }));
+  }, [currentPage]);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page - 1);
+  };
   const [product, setProduct] = React.useState("");
 
   const handleChangeProduct = (event: SelectChangeEvent) => {
@@ -64,6 +70,24 @@ const TablePhone: React.FC = () => {
                 >
                   Đồng hồ thông minh
                 </MenuItem>
+                <MenuItem value={"Ram"} onClick={() => onClick("/ram")}>
+                  Ram
+                </MenuItem>
+                <MenuItem value={"Rom"} onClick={() => onClick("/rom")}>
+                  Rom
+                </MenuItem>
+                <MenuItem
+                  value={"processor"}
+                  onClick={() => onClick("/processor")}
+                >
+                  Processor
+                </MenuItem>
+                <MenuItem
+                  value={"cardGraphic"}
+                  onClick={() => onClick("/cardGraphic")}
+                >
+                  Card đồ họa
+                </MenuItem>
                 {/* <MenuItem value={30}></MenuItem> */}
               </Select>
             </FormControl>
@@ -78,12 +102,18 @@ const TablePhone: React.FC = () => {
       </div>
 
       <div className="mt-6 grid grid-cols-6 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {smartPhone?.map((_smartPhone: any) => (
+        {smartPhone?.data?.data?.map((_smartPhone: any) => (
           <div className="col-span-1" key={_smartPhone.id}>
             <ProductPhone product={_smartPhone} />
           </div>
         ))}
       </div>
+      <Pagination
+        current={currentPage + 1}
+        pageSize={pageSize}
+        total={smartPhone?.data?.totalElements}
+        onChange={handlePageChange}
+      />
     </div>
   );
 };

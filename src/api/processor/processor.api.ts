@@ -5,8 +5,8 @@ const processorApi = {
   addProcessor(data: any) {
     return http.post("/product/processor/create", data);
   },
-  getProcessors() {
-    return http.get<SuccessResponse<any>>("/product/processor");
+  getProcessors(params: any) {
+    return http.get<SuccessResponse<any>>("/product/processor", { params });
   },
   getDetailProcessor(params: any) {
     return http.get<SuccessResponse<any[]>>(`/product/processor/${params}`);
