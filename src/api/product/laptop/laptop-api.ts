@@ -19,9 +19,9 @@ const laptopApi = {
   getDetailLaptop(params: any) {
     return http.get<SuccessResponse<any[]>>(`/product/laptop/${params}`);
   },
-  updateLaptop({ _id, body }: any) {
+  updateLaptop({ id, body }: any) {
     return http.post<SuccessResponse<any>>(
-      `/product/laptop/update/${_id}`,
+      `/product/laptop/update/${id}`,
       body
     );
   },

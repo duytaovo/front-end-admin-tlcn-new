@@ -35,8 +35,13 @@ export type LaptopDetail = {
       color: string;
       price: number;
       salePrice: number;
+      depotId: number;
+      quantity: number;
     }[];
     lstProductImageUrl: string[];
+    totalReview: number;
+    star: number;
+    slug: string;
   };
 };
 
@@ -77,9 +82,9 @@ export type SmartPhoneDetail = {
       depotId: number;
     }[];
     lstProductImageUrl: string[];
+    star: number;
+    totalReview: number;
   };
-  star: number;
-  totalReview: number;
 };
 
 export type ListSmartPhone = {

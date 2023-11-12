@@ -90,9 +90,14 @@ const data = {
         color: "",
         price: 0.0,
         salePrice: 0.0,
+        depotId: 0,
+        quantity: 0,
       },
     ],
     lstProductImageUrl: [],
+    totalReview: 0,
+    star: 0,
+    slug: "",
   },
 };
 const initialState: IProudct = {

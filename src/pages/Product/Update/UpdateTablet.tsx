@@ -1,10 +1,9 @@
-import { PlusOutlined } from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Form } from "antd";
+import { Button, Form, Space, Upload } from "antd";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Input from "src/components/Input";
 import path from "src/constants/path";
@@ -13,19 +12,25 @@ import { ErrorResponse } from "src/types/utils.type";
 import { schemaProductSmartPhone } from "src/utils/rules";
 import {
   generateRandomString,
+  getAvatarUrl,
+  getIdFromNameId,
   isAxiosUnprocessableEntityError,
 } from "src/utils/utils";
 import SelectCustom from "src/components/Select";
+
 import Textarea from "src/components/Textarea";
 import { getCategorys } from "src/store/category/categorySlice";
 import {
-  addSmartPhone,
+  getDetailPhone,
   getSmartPhones,
+  updateSmartPhone,
 } from "src/store/product/smartPhoneSlice";
 import InputFile from "src/components/InputFile";
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
+import { getDetailTablet } from "src/store/product/tabletSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -45,7 +50,7 @@ interface FormData {
   mass: string | undefined;
   launchTime: string | undefined;
   accessories: string | undefined;
-  productStatus: string | undefined;
+  productStatus: number | undefined;
   ram: string;
   storageCapacity: string;
   color: string;
@@ -53,8 +58,23 @@ interface FormData {
   salePrice: string | undefined;
   monitor: string;
 }
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+type brand = {
+  id: number;
+  name: string;
+};
 
-const NewSmartWatch: React.FC = () => {
+const UpdatePhone: React.FC = () => {
+  const [componentDisabled, setComponentDisabled] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     handleSubmit,
@@ -62,23 +82,38 @@ const NewSmartWatch: React.FC = () => {
     setError,
     register,
     setValue,
-    control,
     watch,
+    control,
   } = useForm({
     resolver: yupResolver(schemaProductSmartPhone),
   });
+  const [data, setData] = useState<any>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { category } = useAppSelector((state) => state.category);
+  const { nameId } = useParams();
+  const id = getIdFromNameId(nameId as string);
+  // const { brand } = useAppSelector((state) => state.brand);
+  const { tabletDetail } = useAppSelector((state) => state.tablet);
   const { character } = useAppSelector((state) => state.character);
   const { depot } = useAppSelector((state) => state.depot);
   const { brand } = useAppSelector((state) => state.brand);
+  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
+    {
+      control, // control props comes from useForm (optional: if you are using FormContext)
+      name: "lstProductTypeAndPrice", // unique name for your Field Array
+    }
+  );
   useEffect(() => {
     dispatch(getCategorys({ pageSize: 100 }));
     dispatch(getCharacters({ pageSize: 100 }));
     dispatch(getBrands({ pageSize: 100 }));
     dispatch(getdepots({ pageSize: 100 }));
   }, []);
+
+  useEffect(() => {
+    dispatch(getDetailTablet(id));
+  }, [id]);
 
   const [file, setFile] = useState<File[]>();
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
@@ -91,39 +126,52 @@ const NewSmartWatch: React.FC = () => {
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("battery", "");
-    setValue("charging", "");
-    setValue("chip", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("sim", "");
-    setValue("salePrice", "");
-    setValue("rearCamera", "");
-    setValue("price", "");
-    setValue("frontCamera", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("quantity", "");
-    setValue("imageUrl", []);
-  }, []);
-  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
-    {
-      control, // control props comes from useForm (optional: if you are using FormContext)
-      name: "lstProductTypeAndPrice", // unique name for your Field Array
-    }
-  );
+    setValue("ram", tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram);
+    setValue("accessories", tabletDetail?.productInfo?.accessories);
+    setValue("battery", tabletDetail?.battery);
+    setValue("charging", tabletDetail?.charging);
+    setValue("chip", tabletDetail?.chip);
+    setValue("mass", tabletDetail?.productInfo?.mass.toString());
+    setValue(
+      "color",
+      tabletDetail?.productInfo.lstProductTypeAndPrice[0].color.toString()
+    );
+    setValue("monitor", tabletDetail?.monitor);
+    setValue("networkSupport", tabletDetail?.networkSupport);
+    setValue("description", tabletDetail?.productInfo?.description);
+    setValue("brand", tabletDetail?.productInfo?.brandId.toString());
+    setValue(
+      "characteristic",
+      tabletDetail?.productInfo?.characteristicId.toString()
+    );
+    setValue("name", tabletDetail?.productInfo?.name);
+    setValue("sim", tabletDetail?.sim);
+    setValue(
+      "salePrice",
+      tabletDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+    );
+    setValue("rearCamera", tabletDetail?.rearCamera);
+    setValue(
+      "price",
+      tabletDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+    );
+    setValue("frontCamera", tabletDetail?.frontCamera);
+    setValue("operatingSystem", tabletDetail?.operatingSystem);
+    setValue("design", tabletDetail?.productInfo?.design);
+    setValue("dimension", tabletDetail?.productInfo?.dimension);
+    setValue("category", tabletDetail?.productInfo?.categoryId.toString());
+    setValue("launchTime", "2023");
+    setValue("imageUrl", tabletDetail?.productInfo.lstProductImageUrl);
+  }, [tabletDetail]);
+
   const onSubmit = handleSubmit(async (data) => {
     const body = JSON.stringify({
       productInfo: {
         brandId: Number(data.brand) || 1,
         categoryId: Number(data.category) || 1,
-        productId: null,
+        productId: Number(tabletDetail.productInfo.productId),
         characteristicId: Number(data.characteristic) || 1,
-        productCode: generateRandomString(10),
+        productCode: tabletDetail.productInfo.productCode,
         name: data.name,
         description: data?.description,
         design: data?.design,
@@ -132,16 +180,20 @@ const NewSmartWatch: React.FC = () => {
         launchTime: 2023,
         accessories: data?.accessories,
         productStatus: 100,
-        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
-          typeId: null,
-          ram: item?.ram,
-          storageCapacity: item?.storageCapacity,
-          color: item?.color,
-          price: Number(item?.price),
-          salePrice: Number(item?.salePrice),
-          quantity: Number(item?.quantity),
-          depotId: Number(item?.depot) || 1,
-        })),
+        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map(
+          (item, index) => ({
+            typeId: Number(
+              tabletDetail?.productInfo?.lstProductTypeAndPrice[index].typeId
+            ),
+            ram: item?.ram,
+            storageCapacity: item?.storageCapacity,
+            color: item?.color,
+            price: Number(item?.price),
+            salePrice: Number(item?.salePrice),
+            quantity: Number(item?.quantity),
+            depotId: Number(item?.depot) || 1,
+          })
+        ),
 
         lstProductImageUrl: [],
       },
@@ -155,14 +207,21 @@ const NewSmartWatch: React.FC = () => {
       charging: data.charging,
       networkSupport: data.networkSupport,
     });
+    // if (file) {
+    //   const form = new FormData();
+    //   form.append("file", file[0]);
+    //   form.append("image", file[0]);
+    // } else {
+    //   toast.warning("Cần chọn ảnh");
+    // }
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(addSmartPhone(body));
+      const res = await dispatch(updateSmartPhone({ id, body }));
       unwrapResult(res);
       const d = res?.payload?.data;
-      if (d?.code !== 201) return toast.error(d?.message);
-      await toast.success("Thêm sản phẩm điện thoại thành công ");
+      if (d?.code !== 200) return toast.error(d?.message);
+      await toast.success("Chỉnh sửa thành công ");
       await dispatch(getSmartPhones(""));
       await navigate(path.smartPhone);
     } catch (error: any) {
@@ -171,7 +230,7 @@ const NewSmartWatch: React.FC = () => {
         if (formError) {
           Object.keys(formError).forEach((key) => {
             setError(key as keyof FormData, {
-              message: formError[key as keyof FormData],
+              // message: formError[key as keyof FormData],
               type: "Server",
             });
           });
@@ -182,23 +241,42 @@ const NewSmartWatch: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("battery", "");
-    setValue("charging", "");
-    setValue("chip", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("sim", "");
-    setValue("salePrice", "");
-    setValue("rearCamera", "");
-    setValue("price", "");
-    setValue("frontCamera", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("imageUrl", []);
+    setValue("ram", tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram);
+    setValue("accessories", tabletDetail?.productInfo?.accessories);
+    setValue("battery", tabletDetail?.battery);
+    setValue("charging", tabletDetail?.charging);
+    setValue("chip", tabletDetail?.chip);
+    setValue("mass", tabletDetail?.productInfo?.mass.toString());
+    setValue(
+      "color",
+      tabletDetail?.productInfo.lstProductTypeAndPrice[0].color.toString()
+    );
+    setValue("monitor", tabletDetail?.monitor);
+    setValue("networkSupport", tabletDetail?.networkSupport);
+    setValue("description", tabletDetail?.productInfo?.description);
+    setValue("brand", tabletDetail?.productInfo?.brandId.toString());
+    setValue(
+      "characteristic",
+      tabletDetail?.productInfo?.characteristicId.toString()
+    );
+    setValue("name", tabletDetail?.productInfo?.name);
+    setValue("sim", tabletDetail?.sim);
+    setValue(
+      "salePrice",
+      tabletDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+    );
+    setValue("rearCamera", tabletDetail?.rearCamera);
+    setValue(
+      "price",
+      tabletDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+    );
+    setValue("frontCamera", tabletDetail?.frontCamera);
+    setValue("operatingSystem", tabletDetail?.operatingSystem);
+    setValue("design", tabletDetail?.productInfo?.design);
+    setValue("dimension", tabletDetail?.productInfo?.dimension);
+    setValue("category", tabletDetail?.productInfo?.categoryId.toString());
+    setValue("launchTime", "2023");
+    setValue("imageUrl", tabletDetail?.productInfo.lstProductImageUrl);
   };
   const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File[]) => {
@@ -207,7 +285,7 @@ const NewSmartWatch: React.FC = () => {
 
   return (
     <div className="bg-white shadow ">
-      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm điện thoại</h2>
+      <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm điện thoại</h2>
       <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
@@ -223,11 +301,11 @@ const NewSmartWatch: React.FC = () => {
           rules={[{ required: true }]}
         >
           <SelectCustom
-            className={"flex-1 text-black "}
+            className={"flex-1 text-black"}
             id="category"
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
-            defaultValue={""}
+            defaultValue={tabletDetail?.productInfo?.categoryId}
             options={category?.data}
             register={register}
             isBrand={true}
@@ -241,11 +319,11 @@ const NewSmartWatch: React.FC = () => {
           rules={[{ required: true }]}
         >
           <SelectCustom
-            className={"flex-1 text-black  "}
+            className={"flex-1 text-black"}
             id="brand"
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
-            defaultValue={""}
+            defaultValue={tabletDetail?.productInfo?.brandId}
             options={brand?.data?.data}
             register={register}
             isBrand={true}
@@ -263,7 +341,7 @@ const NewSmartWatch: React.FC = () => {
             id="operatingSystem"
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
-            defaultValue={""}
+            defaultValue={tabletDetail?.operatingSystem}
             options={[
               { id: "iOS", name: "iOS" },
               { id: "Android", name: "android" },
@@ -284,7 +362,7 @@ const NewSmartWatch: React.FC = () => {
             id="characteristic"
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
-            defaultValue={""}
+            defaultValue={tabletDetail?.productInfo?.characteristicId}
             options={character?.data}
             register={register}
             isBrand={true}
@@ -375,116 +453,124 @@ const NewSmartWatch: React.FC = () => {
           rules={[{ required: true }]}
         >
           <ul>
-            {fields.map((item, index) => (
-              <li key={item.id}>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Ram"
-                    name={`lstProductTypeAndPrice.${index}.ram`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
+            {tabletDetail?.productInfo?.lstProductTypeAndPrice?.map(
+              (item: any, index: number) => (
+                <li key={index}>
+                  <div className="flex justify-between space-x-1">
+                    <Form.Item
+                      label="Ram"
                       name={`lstProductTypeAndPrice.${index}.ram`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="8Gb"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
+                      rules={[{ required: true }]}
+                    >
+                      <Input
+                        name={`lstProductTypeAndPrice.${index}.ram`}
+                        key={index} // important to include key with field's id
+                        register={register}
+                        placeholder="8Gb"
+                        defaultValue={item.ram}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Bộ nhớ trong"
                       name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1TB"
-                    />
-                  </Form.Item>
-                </div>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Giá"
-                    name={`lstProductTypeAndPrice.${index}.price`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
+                      rules={[{ required: true }]}
+                    >
+                      <Input
+                        name={`lstProductTypeAndPrice.${index}.storageCapacity`}
+                        key={index} // important to include key with field's id
+                        register={register}
+                        placeholder="1TB"
+                        defaultValue={item.storageCapacity}
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className="flex justify-between space-x-1">
+                    <Form.Item
+                      label="Giá"
                       name={`lstProductTypeAndPrice.${index}.price`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="45000000"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Giá khuyến mãi"
-                    name={`lstProductTypeAndPrice.${index}.salePrice`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
+                      rules={[{ required: true }]}
+                    >
+                      <Input
+                        name={`lstProductTypeAndPrice.${index}.price`}
+                        key={index} // important to include key with field's id
+                        register={register}
+                        placeholder="45000000"
+                        defaultValue={item.price}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Giá khuyến mãi"
                       name={`lstProductTypeAndPrice.${index}.salePrice`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="44000000"
-                    />
-                  </Form.Item>
-                </div>
-                <Form.Item
-                  label="Kho hàng"
-                  name={`lstProductTypeAndPrice.${index}.depot`}
-                  rules={[{ required: true }]}
-                >
-                  <SelectCustom
-                    className={"flex-1 text-black"}
-                    id={`lstProductTypeAndPrice.${index}.depot`}
-                    // label="Hãng xe"
-                    placeholder="Vui lòng chọn"
-                    defaultValue={1}
-                    options={depot?.data?.data}
-                    register={register}
-                  >
-                    {errors.depot?.message}
-                  </SelectCustom>
-                </Form.Item>
-                <div className="flex justify-between space-x-1">
+                      rules={[{ required: true }]}
+                    >
+                      <Input
+                        name={`lstProductTypeAndPrice.${index}.salePrice`}
+                        key={index} // important to include key with field's id
+                        register={register}
+                        placeholder="44000000"
+                        defaultValue={item.salePrice}
+                      />
+                    </Form.Item>
+                  </div>
                   <Form.Item
-                    label="Số lượng sản phẩm"
-                    name={`lstProductTypeAndPrice.${index}.quantity`}
+                    label="Kho hàng"
+                    name={`lstProductTypeAndPrice.${index}.depot`}
                     rules={[{ required: true }]}
                   >
-                    <Input
+                    <SelectCustom
+                      className={"flex-1 text-black"}
+                      id={`lstProductTypeAndPrice.${index}.depot`}
+                      // label="Hãng xe"
+                      placeholder="Vui lòng chọn"
+                      defaultValue={item.depotId}
+                      options={depot?.data?.data}
+                      register={register}
+                    >
+                      {errors.depot?.message}
+                    </SelectCustom>
+                  </Form.Item>
+                  <div>
+                    <Form.Item
+                      label="Số lượng sản phẩm"
                       name={`lstProductTypeAndPrice.${index}.quantity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1000"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Màu"
-                    name={`lstProductTypeAndPrice.${index}.color`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
+                      rules={[{ required: true }]}
+                    >
+                      <Input
+                        name={`lstProductTypeAndPrice.${index}.quantity`}
+                        key={index} // important to include key with field's id
+                        register={register}
+                        defaultValue={item.quantity}
+                        placeholder="1000"
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Màu"
                       name={`lstProductTypeAndPrice.${index}.color`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="Titan tự nhiên"
-                    />
+                      rules={[{ required: true }]}
+                    >
+                      <Input
+                        name={`lstProductTypeAndPrice.${index}.color`}
+                        key={index} // important to include key with field's id
+                        register={register}
+                        defaultValue={item.color}
+                        placeholder="Titan tự nhiên"
+                      />
+                    </Form.Item>
+                  </div>
+                  <Form.Item>
+                    <Button
+                      type="default"
+                      onClick={() => remove(index)}
+                      block
+                      icon={<PlusOutlined />}
+                    >
+                      Xóa trường này
+                    </Button>
                   </Form.Item>
-                </div>
-                <Form.Item>
-                  <Button
-                    type="default"
-                    onClick={() => remove(index)}
-                    block
-                    icon={<PlusOutlined />}
-                  >
-                    Xóa trường này
-                  </Button>
-                </Form.Item>
-                {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
-              </li>
-            ))}
+                  {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
+                </li>
+              )
+            )}
             <Form.Item>
               <Button
                 type="dashed"
@@ -642,7 +728,7 @@ const NewSmartWatch: React.FC = () => {
           rules={[{ required: true }]}
         >
           <Textarea
-            defaultValue="Mô tả sản phẩm"
+            defaultValue={tabletDetail?.productInfo?.description}
             id="description"
             isUpdate={false}
             register={register}
@@ -682,4 +768,4 @@ const NewSmartWatch: React.FC = () => {
   );
 };
 
-export default () => <NewSmartWatch />;
+export default () => <UpdatePhone />;

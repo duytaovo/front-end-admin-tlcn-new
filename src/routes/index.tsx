@@ -1,14 +1,22 @@
 import { lazy } from "react";
 import path from "src/constants/path";
-import NewCardGraphic from "src/pages/Product/Create/NewCardGraphic";
-import NewProcessor from "src/pages/Product/Create/NewProcessor";
-import NewRam from "src/pages/Product/Create/NewRam";
-import NewRom from "src/pages/Product/Create/NewRom";
-import CardGraphic from "src/pages/Product/List/CardGraphic/CardGraphic";
-import Processor from "src/pages/Product/List/Processor/Processor";
-import Ram from "src/pages/Product/List/Ram/Ram";
-import Rom from "src/pages/Product/List/Rom/Rom";
 
+const NewCardGraphic = lazy(
+  () => import("src/pages/Product/Create/NewCardGraphic")
+);
+const NewProcessor = lazy(
+  () => import("src/pages/Product/Create/NewProcessor")
+);
+const CardGraphic = lazy(
+  () => import("src/pages/Product/List/CardGraphic/CardGraphic")
+);
+const Processor = lazy(
+  () => import("src/pages/Product/List/Processor/Processor")
+);
+const Rom = lazy(() => import("src/pages/Product/List/Rom/Rom"));
+const Ram = lazy(() => import("src/pages/Product/List/Ram/Ram"));
+const NewRom = lazy(() => import("src/pages/Product/Create/NewRom"));
+const NewRam = lazy(() => import("src/pages/Product/Create/NewRam"));
 const Home = lazy(() => import("src/pages/Home/Home"));
 const TableProduct = lazy(() => import("src/pages/Product/Tables"));
 
@@ -20,10 +28,16 @@ const UpdateUser = lazy(() => import("src/pages/ListUser/UpdateUser"));
 const Categorys = lazy(() => import("src/pages/Category"));
 const Brands = lazy(() => import("src/pages/Brand"));
 
-const UpdateBrand = lazy(() => import("src/pages/Brand/UpdateBrand"));
-const UpdateCategory = lazy(() => import("src/pages/Category/UpdateCategory"));
-const NewCategory = lazy(() => import("src/pages/Category/NewCategory"));
-const NewBrand = lazy(() => import("src/pages/Brand/NewBrand"));
+const ListTablet = lazy(
+  () => import("src/pages/Product/List/Tablet/ListTablet")
+);
+const UpdateTablet = lazy(
+  () => import("src/pages/Product/Update/UpdateTablet")
+);
+const NewTablet = lazy(() => import("src/pages/Product/Create/NewTablet"));
+const TabletDetail = lazy(
+  () => import("src/pages/Product/Detail/Tablet/Tablet_Detail")
+);
 
 //Product
 const ListPhone = lazy(
@@ -44,6 +58,11 @@ const ListLaptop = lazy(
 const UpdateLaptop = lazy(
   () => import("src/pages/Product/Update/UpdateLaptop")
 );
+
+const UpdateBrand = lazy(() => import("src/pages/Brand/UpdateBrand"));
+const UpdateCategory = lazy(() => import("src/pages/Category/UpdateCategory"));
+const NewCategory = lazy(() => import("src/pages/Category/NewCategory"));
+const NewBrand = lazy(() => import("src/pages/Brand/NewBrand"));
 export const routeMain = [
   {
     path: path.home,
@@ -173,6 +192,38 @@ export const routeMain = [
   {
     path: path.cardGrapNew,
     Component: NewCardGraphic,
+  },
+  {
+    path: path.tablet,
+    Component: ListTablet,
+  },
+  {
+    path: path.tabletNew,
+    Component: NewTablet,
+  },
+  {
+    path: path.tabletDetail,
+    Component: TabletDetail,
+  },
+  {
+    path: path.tabletUpdate,
+    Component: UpdateTablet,
+  },
+  {
+    path: path.tablet,
+    Component: ListTablet,
+  },
+  {
+    path: path.tabletNew,
+    Component: NewTablet,
+  },
+  {
+    path: path.tabletDetail,
+    Component: TabletDetail,
+  },
+  {
+    path: path.tabletUpdate,
+    Component: UpdateTablet,
   },
   {
     path: "*",

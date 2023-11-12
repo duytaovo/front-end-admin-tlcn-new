@@ -99,9 +99,9 @@ const dataDetail: SmartPhoneDetail = {
       },
     ],
     lstProductImageUrl: [],
+    star: 4.9,
+    totalReview: 100,
   },
-  star: 4.9,
-  totalReview: 100,
 };
 const initialState: IProudct = {
   smartPhone: [],

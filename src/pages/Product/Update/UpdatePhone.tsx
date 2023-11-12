@@ -104,11 +104,10 @@ const UpdatePhone: React.FC = () => {
     }
   );
   useEffect(() => {
-    dispatch(getCategorys(""));
-    dispatch(getCharacters(""));
-    dispatch(getDetailPhone(id));
-    dispatch(getBrands(""));
-    dispatch(getdepots(""));
+    dispatch(getCategorys({ pageSize: 100 }));
+    dispatch(getCharacters({ pageSize: 100 }));
+    dispatch(getBrands({ pageSize: 100 }));
+    dispatch(getdepots({ pageSize: 100 }));
   }, []);
 
   useEffect(() => {
@@ -170,11 +169,11 @@ const UpdatePhone: React.FC = () => {
   const onSubmit = handleSubmit(async (data) => {
     const body = JSON.stringify({
       productInfo: {
-        brandId: 1,
-        categoryId: Number(data.category),
-        productId: null,
-        characteristicId: 1,
-        productCode: generateRandomString(10),
+        brandId: Number(data.brand) || 1,
+        categoryId: Number(data.category) || 1,
+        productId: Number(smartPhoneDetail.productInfo.productId),
+        characteristicId: Number(data.characteristic) || 1,
+        productCode: smartPhoneDetail.productInfo.productCode,
         name: data.name,
         description: data?.description,
         design: data?.design,
@@ -183,25 +182,23 @@ const UpdatePhone: React.FC = () => {
         launchTime: 2023,
         accessories: data?.accessories,
         productStatus: 100,
-        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
-          typeId: null,
-          ram: item?.ram,
-          storageCapacity: item?.storageCapacity,
-          color: item?.color,
-          price: Number(item?.price),
-          salePrice: Number(item?.salePrice),
-        })),
+        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map(
+          (item, index) => ({
+            typeId: Number(
+              smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[index]
+                .typeId
+            ),
+            ram: item?.ram,
+            storageCapacity: item?.storageCapacity,
+            color: item?.color,
+            price: Number(item?.price),
+            salePrice: Number(item?.salePrice),
+            quantity: Number(item?.quantity),
+            depotId: Number(item?.depot) || 1,
+          })
+        ),
 
-        lstProductImageUrl: data?.imageUrl?.map((item) => ({
-          typeId: null,
-          ram: item?.ram,
-          storageCapacity: item?.storageCapacity,
-          color: item?.color,
-          price: Number(item?.price),
-          salePrice: Number(item?.salePrice),
-          quantity: Number(item?.quantity),
-          depotId: Number(item?.depot) || 1,
-        })),
+        lstProductImageUrl: [],
       },
       monitor: data.monitor,
       operatingSystem: data.operatingSystem,
@@ -223,7 +220,7 @@ const UpdatePhone: React.FC = () => {
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(updateSmartPhone(body));
+      const res = await dispatch(updateSmartPhone({ id, body }));
       unwrapResult(res);
       const d = res?.payload?.data;
       if (d?.code !== 200) return toast.error(d?.message);
@@ -315,7 +312,7 @@ const UpdatePhone: React.FC = () => {
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={smartPhoneDetail?.productInfo?.categoryId}
-            options={category}
+            options={category?.data}
             register={register}
             isBrand={true}
           >
@@ -333,7 +330,7 @@ const UpdatePhone: React.FC = () => {
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={smartPhoneDetail?.productInfo?.brandId}
-            options={brand}
+            options={brand?.data?.data}
             register={register}
             isBrand={true}
           >
@@ -350,7 +347,7 @@ const UpdatePhone: React.FC = () => {
             id="operatingSystem"
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
-            defaultValue={""}
+            defaultValue={smartPhoneDetail?.operatingSystem}
             options={[
               { id: "iOS", name: "iOS" },
               { id: "Android", name: "android" },
@@ -371,8 +368,8 @@ const UpdatePhone: React.FC = () => {
             id="characteristic"
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={character}
+            defaultValue={smartPhoneDetail?.productInfo?.characteristicId}
+            options={character?.data}
             register={register}
             isBrand={true}
           >
@@ -462,116 +459,124 @@ const UpdatePhone: React.FC = () => {
           rules={[{ required: true }]}
         >
           <ul>
-            {fields.map((item, index) => (
-              <li key={item.id}>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Ram"
-                    name={`lstProductTypeAndPrice.${index}.ram`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
+            {smartPhoneDetail?.productInfo?.lstProductTypeAndPrice?.map(
+              (item, index) => (
+                <li key={index}>
+                  <div className="flex justify-between space-x-1">
+                    <Form.Item
+                      label="Ram"
                       name={`lstProductTypeAndPrice.${index}.ram`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="8Gb"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
+                      rules={[{ required: true }]}
+                    >
+                      <Input
+                        name={`lstProductTypeAndPrice.${index}.ram`}
+                        key={index} // important to include key with field's id
+                        register={register}
+                        placeholder="8Gb"
+                        defaultValue={item.ram}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Bộ nhớ trong"
                       name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1TB"
-                    />
-                  </Form.Item>
-                </div>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Giá"
-                    name={`lstProductTypeAndPrice.${index}.price`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
+                      rules={[{ required: true }]}
+                    >
+                      <Input
+                        name={`lstProductTypeAndPrice.${index}.storageCapacity`}
+                        key={index} // important to include key with field's id
+                        register={register}
+                        placeholder="1TB"
+                        defaultValue={item.storageCapacity}
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className="flex justify-between space-x-1">
+                    <Form.Item
+                      label="Giá"
                       name={`lstProductTypeAndPrice.${index}.price`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="45000000"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Giá khuyến mãi"
-                    name={`lstProductTypeAndPrice.${index}.salePrice`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
+                      rules={[{ required: true }]}
+                    >
+                      <Input
+                        name={`lstProductTypeAndPrice.${index}.price`}
+                        key={index} // important to include key with field's id
+                        register={register}
+                        placeholder="45000000"
+                        defaultValue={item.price}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Giá khuyến mãi"
                       name={`lstProductTypeAndPrice.${index}.salePrice`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="44000000"
-                    />
-                  </Form.Item>
-                </div>
-                <Form.Item
-                  label="Kho hàng"
-                  name={`lstProductTypeAndPrice.${index}.depot`}
-                  rules={[{ required: true }]}
-                >
-                  <SelectCustom
-                    className={"flex-1 text-black"}
-                    id={`lstProductTypeAndPrice.${index}.depot`}
-                    // label="Hãng xe"
-                    placeholder="Vui lòng chọn"
-                    defaultValue={1}
-                    options={depot}
-                    register={register}
-                  >
-                    {errors.depot?.message}
-                  </SelectCustom>
-                </Form.Item>
-                <div>
+                      rules={[{ required: true }]}
+                    >
+                      <Input
+                        name={`lstProductTypeAndPrice.${index}.salePrice`}
+                        key={index} // important to include key with field's id
+                        register={register}
+                        placeholder="44000000"
+                        defaultValue={item.salePrice}
+                      />
+                    </Form.Item>
+                  </div>
                   <Form.Item
-                    label="Số lượng sản phẩm"
-                    name={`lstProductTypeAndPrice.${index}.quantity`}
+                    label="Kho hàng"
+                    name={`lstProductTypeAndPrice.${index}.depot`}
                     rules={[{ required: true }]}
                   >
-                    <Input
+                    <SelectCustom
+                      className={"flex-1 text-black"}
+                      id={`lstProductTypeAndPrice.${index}.depot`}
+                      // label="Hãng xe"
+                      placeholder="Vui lòng chọn"
+                      defaultValue={item.depotId}
+                      options={depot?.data?.data}
+                      register={register}
+                    >
+                      {errors.depot?.message}
+                    </SelectCustom>
+                  </Form.Item>
+                  <div>
+                    <Form.Item
+                      label="Số lượng sản phẩm"
                       name={`lstProductTypeAndPrice.${index}.quantity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1000"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Màu"
-                    name={`lstProductTypeAndPrice.${index}.color`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
+                      rules={[{ required: true }]}
+                    >
+                      <Input
+                        name={`lstProductTypeAndPrice.${index}.quantity`}
+                        key={index} // important to include key with field's id
+                        register={register}
+                        defaultValue={item.quantity}
+                        placeholder="1000"
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Màu"
                       name={`lstProductTypeAndPrice.${index}.color`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="Titan tự nhiên"
-                    />
+                      rules={[{ required: true }]}
+                    >
+                      <Input
+                        name={`lstProductTypeAndPrice.${index}.color`}
+                        key={index} // important to include key with field's id
+                        register={register}
+                        defaultValue={item.color}
+                        placeholder="Titan tự nhiên"
+                      />
+                    </Form.Item>
+                  </div>
+                  <Form.Item>
+                    <Button
+                      type="default"
+                      onClick={() => remove(index)}
+                      block
+                      icon={<PlusOutlined />}
+                    >
+                      Xóa trường này
+                    </Button>
                   </Form.Item>
-                </div>
-                <Form.Item>
-                  <Button
-                    type="default"
-                    onClick={() => remove(index)}
-                    block
-                    icon={<PlusOutlined />}
-                  >
-                    Xóa trường này
-                  </Button>
-                </Form.Item>
-                {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
-              </li>
-            ))}
+                  {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
+                </li>
+              )
+            )}
             <Form.Item>
               <Button
                 type="dashed"

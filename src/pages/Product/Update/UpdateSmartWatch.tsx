@@ -1,7 +1,6 @@
-import { PlusOutlined } from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Form } from "antd";
+import { Button, Form, Space, Upload } from "antd";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,26 +9,26 @@ import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
-import { schemaProductRam } from "src/utils/rules";
+import { schemaProductSmartPhone } from "src/utils/rules";
 import {
   generateRandomString,
   getIdFromNameId,
   isAxiosUnprocessableEntityError,
 } from "src/utils/utils";
 import SelectCustom from "src/components/Select";
+
 import Textarea from "src/components/Textarea";
 import { getCategorys } from "src/store/category/categorySlice";
+import {
+  getDetailPhone,
+  getSmartPhones,
+  updateSmartPhone,
+} from "src/store/product/smartPhoneSlice";
 import InputFile from "src/components/InputFile";
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
-
-import { getDetailRom, getRoms, updateRom } from "src/store/rom/romSlice";
-import {
-  getCardGraphic,
-  getDetailCardGraphic,
-  updateCardGraphic,
-} from "src/store/cardGrap/cardGraphicSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -49,7 +48,7 @@ interface FormData {
   mass: string | undefined;
   launchTime: string | undefined;
   accessories: string | undefined;
-  productStatus: string | undefined;
+  productStatus: number | undefined;
   ram: string;
   storageCapacity: string;
   color: string;
@@ -57,8 +56,23 @@ interface FormData {
   salePrice: string | undefined;
   monitor: string;
 }
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+type brand = {
+  id: number;
+  name: string;
+};
 
-const NewRam: React.FC = () => {
+const UpdatePhone: React.FC = () => {
+  const [componentDisabled, setComponentDisabled] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     handleSubmit,
@@ -66,30 +80,40 @@ const NewRam: React.FC = () => {
     setError,
     register,
     setValue,
-    control,
     watch,
+    control,
   } = useForm({
-    resolver: yupResolver(schemaProductRam),
+    resolver: yupResolver(schemaProductSmartPhone),
   });
+  const [data, setData] = useState<any>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { nameId } = useParams();
-  const { cardGraphic } = useAppSelector((state) => state.cardGraphic);
-  const id = getIdFromNameId(nameId as string);
   const { category } = useAppSelector((state) => state.category);
+  const { nameId } = useParams();
+  const id = getIdFromNameId(nameId as string);
+  // const { brand } = useAppSelector((state) => state.brand);
+  const { smartPhoneDetail } = useAppSelector((state) => state.smartPhone);
   const { character } = useAppSelector((state) => state.character);
   const { depot } = useAppSelector((state) => state.depot);
   const { brand } = useAppSelector((state) => state.brand);
+  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
+    {
+      control, // control props comes from useForm (optional: if you are using FormContext)
+      name: "lstProductTypeAndPrice", // unique name for your Field Array
+    }
+  );
   useEffect(() => {
-    dispatch(getCategorys({ pageSize: 100 }));
-    dispatch(getCharacters({ pageSize: 100 }));
-    dispatch(getBrands({ pageSize: 100 }));
-    dispatch(getdepots({ pageSize: 100 }));
+    dispatch(getCategorys(""));
+    dispatch(getCharacters(""));
+    dispatch(getDetailPhone(id));
+    dispatch(getBrands(""));
+    dispatch(getdepots(""));
   }, []);
 
   useEffect(() => {
-    dispatch(getDetailCardGraphic(id));
+    dispatch(getDetailPhone(id));
   }, [id]);
+
   const [file, setFile] = useState<File[]>();
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
 
@@ -103,58 +127,52 @@ const NewRam: React.FC = () => {
   useEffect(() => {
     setValue(
       "ram",
-      cardGraphic?.productInfo?.lstProductTypeAndPrice[0]?.cardGraphic
+      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram
     );
-    setValue("accessories", cardGraphic?.productInfo?.accessories);
-    setValue("mass", cardGraphic?.productInfo?.mass.toString());
+    setValue("accessories", smartPhoneDetail?.productInfo?.accessories);
+    setValue("battery", smartPhoneDetail?.battery);
+    setValue("charging", smartPhoneDetail?.charging);
+    setValue("chip", smartPhoneDetail?.chip);
+    setValue("mass", smartPhoneDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      cardGraphic?.productInfo.lstProductTypeAndPrice[0].color.toString()
+      smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0].color.toString()
     );
-    setValue("monitor", cardGraphic?.monitor);
-    setValue("description", cardGraphic?.productInfo?.description);
-    setValue("brand", cardGraphic?.productInfo?.brandId.toString());
+    setValue("monitor", smartPhoneDetail?.monitor);
+    setValue("networkSupport", smartPhoneDetail?.networkSupport);
+    setValue("description", smartPhoneDetail?.productInfo?.description);
+    setValue("brand", smartPhoneDetail?.productInfo?.brandId.toString());
     setValue(
       "characteristic",
-      cardGraphic?.productInfo?.characteristicId.toString()
+      smartPhoneDetail?.productInfo?.characteristicId.toString()
     );
-    setValue("name", cardGraphic?.productInfo?.name);
+    setValue("name", smartPhoneDetail?.productInfo?.name);
+    setValue("sim", smartPhoneDetail?.sim);
     setValue(
       "salePrice",
-      cardGraphic?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
     );
+    setValue("rearCamera", smartPhoneDetail?.rearCamera);
     setValue(
       "price",
-      cardGraphic?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString()
     );
-    setValue("operatingSystem", cardGraphic?.operatingSystem);
-    setValue("design", cardGraphic?.productInfo?.design);
-    setValue("dimension", cardGraphic?.productInfo?.dimension);
-    setValue("category", cardGraphic?.productInfo?.categoryId.toString());
+    setValue("frontCamera", smartPhoneDetail?.frontCamera);
+    setValue("operatingSystem", smartPhoneDetail?.operatingSystem);
+    setValue("design", smartPhoneDetail?.productInfo?.design);
+    setValue("dimension", smartPhoneDetail?.productInfo?.dimension);
+    setValue("category", smartPhoneDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("imageUrl", cardGraphic?.productInfo.lstProductImageUrl);
-    setValue("graphicsEngine", cardGraphic?.graphicsEngine);
-    setValue("standardBus", cardGraphic?.standardBus);
-    setValue("memory", cardGraphic?.memory);
-    setValue("memorySpeed", cardGraphic?.memorySpeed);
-    setValue("engineClock", cardGraphic?.engineClock);
-    setValue("maxSpeed", cardGraphic?.maxSpeed);
-    setValue("caching", cardGraphic?.caching);
-    setValue("maximumResolution", cardGraphic?.maximumResolution);
-  }, [cardGraphic]);
-  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
-    {
-      control, // control props comes fprocessor useForm (optional: if you are using FormContext)
-      name: "lstProductTypeAndPrice", // unique name for your Field Array
-    }
-  );
+    setValue("imageUrl", smartPhoneDetail?.productInfo.lstProductImageUrl);
+  }, [smartPhoneDetail]);
+
   const onSubmit = handleSubmit(async (data) => {
     const body = JSON.stringify({
       productInfo: {
-        brandId: Number(data.brand) || 1,
-        categoryId: Number(data.category) || 1,
+        brandId: 1,
+        categoryId: Number(data.category),
         productId: null,
-        characteristicId: Number(data.characteristic) || 1,
+        characteristicId: 1,
         productCode: generateRandomString(10),
         name: data.name,
         description: data?.description,
@@ -171,39 +189,53 @@ const NewRam: React.FC = () => {
           color: item?.color,
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
+        })),
+
+        lstProductImageUrl: data?.imageUrl?.map((item) => ({
+          typeId: null,
+          ram: item?.ram,
+          storageCapacity: item?.storageCapacity,
+          color: item?.color,
+          price: Number(item?.price),
+          salePrice: Number(item?.salePrice),
           quantity: Number(item?.quantity),
           depotId: Number(item?.depot) || 1,
         })),
-
-        lstProductImageUrl: [],
       },
-      ramFor: true,
-      model: data.model,
-      ramType: data.ramType,
-      capacity: data.capacity,
-      bus: Number(data.bus),
-      latency: data.latency,
-      voltage: data.voltage,
-      led: data.led,
-      ramTechnology: data.ramTechnology,
+      monitor: data.monitor,
+      operatingSystem: data.operatingSystem,
+      rearCamera: data.rearCamera,
+      frontCamera: data.frontCamera,
+      chip: data.chip,
+      sim: data.sim,
+      battery: data.battery,
+      charging: data.charging,
+      networkSupport: data.networkSupport,
     });
+    // if (file) {
+    //   const form = new FormData();
+    //   form.append("file", file[0]);
+    //   form.append("image", file[0]);
+    // } else {
+    //   toast.warning("Cần chọn ảnh");
+    // }
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(updateCardGraphic(body));
+      const res = await dispatch(updateSmartPhone(body));
       unwrapResult(res);
       const d = res?.payload?.data;
-      if (d?.code !== 201) return toast.error(d?.message);
-      await toast.success("Cập nhật sản phẩm thành công ");
-      await dispatch(getCardGraphic(""));
-      await navigate(path.rom);
+      if (d?.code !== 200) return toast.error(d?.message);
+      await toast.success("Chỉnh sửa thành công ");
+      await dispatch(getSmartPhones(""));
+      await navigate(path.smartPhone);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
         if (formError) {
           Object.keys(formError).forEach((key) => {
             setError(key as keyof FormData, {
-              message: formError[key as keyof FormData],
+              // message: formError[key as keyof FormData],
               type: "Server",
             });
           });
@@ -216,44 +248,43 @@ const NewRam: React.FC = () => {
   const onClickHuy = () => {
     setValue(
       "ram",
-      cardGraphic?.productInfo?.lstProductTypeAndPrice[0]?.cardGraphic
+      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram
     );
-    setValue("accessories", cardGraphic?.productInfo?.accessories);
-    setValue("mass", cardGraphic?.productInfo?.mass.toString());
+    setValue("accessories", smartPhoneDetail?.productInfo?.accessories);
+    setValue("battery", smartPhoneDetail?.battery);
+    setValue("charging", smartPhoneDetail?.charging);
+    setValue("chip", smartPhoneDetail?.chip);
+    setValue("mass", smartPhoneDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      cardGraphic?.productInfo.lstProductTypeAndPrice[0].color.toString()
+      smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0].color.toString()
     );
-    setValue("monitor", cardGraphic?.monitor);
-    setValue("description", cardGraphic?.productInfo?.description);
-    setValue("brand", cardGraphic?.productInfo?.brandId.toString());
+    setValue("monitor", smartPhoneDetail?.monitor);
+    setValue("networkSupport", smartPhoneDetail?.networkSupport);
+    setValue("description", smartPhoneDetail?.productInfo?.description);
+    setValue("brand", smartPhoneDetail?.productInfo?.brandId.toString());
     setValue(
       "characteristic",
-      cardGraphic?.productInfo?.characteristicId.toString()
+      smartPhoneDetail?.productInfo?.characteristicId.toString()
     );
-    setValue("name", cardGraphic?.productInfo?.name);
+    setValue("name", smartPhoneDetail?.productInfo?.name);
+    setValue("sim", smartPhoneDetail?.sim);
     setValue(
       "salePrice",
-      cardGraphic?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
     );
+    setValue("rearCamera", smartPhoneDetail?.rearCamera);
     setValue(
       "price",
-      cardGraphic?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString()
     );
-    setValue("operatingSystem", cardGraphic?.operatingSystem);
-    setValue("design", cardGraphic?.productInfo?.design);
-    setValue("dimension", cardGraphic?.productInfo?.dimension);
-    setValue("category", cardGraphic?.productInfo?.categoryId.toString());
+    setValue("frontCamera", smartPhoneDetail?.frontCamera);
+    setValue("operatingSystem", smartPhoneDetail?.operatingSystem);
+    setValue("design", smartPhoneDetail?.productInfo?.design);
+    setValue("dimension", smartPhoneDetail?.productInfo?.dimension);
+    setValue("category", smartPhoneDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("imageUrl", cardGraphic?.productInfo.lstProductImageUrl);
-    setValue("graphicsEngine", cardGraphic?.graphicsEngine);
-    setValue("standardBus", cardGraphic?.standardBus);
-    setValue("memory", cardGraphic?.memory);
-    setValue("memorySpeed", cardGraphic?.memorySpeed);
-    setValue("engineClock", cardGraphic?.engineClock);
-    setValue("maxSpeed", cardGraphic?.maxSpeed);
-    setValue("caching", cardGraphic?.caching);
-    setValue("maximumResolution", cardGraphic?.maximumResolution);
+    setValue("imageUrl", smartPhoneDetail?.productInfo.lstProductImageUrl);
   };
   const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File[]) => {
@@ -262,7 +293,7 @@ const NewRam: React.FC = () => {
 
   return (
     <div className="bg-white shadow ">
-      <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm thành công</h2>
+      <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm điện thoại</h2>
       <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
@@ -272,7 +303,7 @@ const NewRam: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
-        {/* <Form.Item
+        <Form.Item
           label="Danh mục sản phẩm"
           name=""
           rules={[{ required: true }]}
@@ -282,14 +313,14 @@ const NewRam: React.FC = () => {
             id="category"
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={category?.data}
+            defaultValue={smartPhoneDetail?.productInfo?.categoryId}
+            options={category}
             register={register}
             isBrand={true}
           >
             {errors.category?.message}
           </SelectCustom>
-        </Form.Item> */}
+        </Form.Item>
         <Form.Item
           label="Hãng sản xuất"
           name="brand"
@@ -300,15 +331,35 @@ const NewRam: React.FC = () => {
             id="brand"
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={brand?.data?.data}
+            defaultValue={smartPhoneDetail?.productInfo?.brandId}
+            options={brand}
             register={register}
             isBrand={true}
           >
             {errors.brand?.message}
           </SelectCustom>
         </Form.Item>
-
+        <Form.Item
+          label="Hệ điều hành"
+          name="operatingSystem"
+          rules={[{ required: true }]}
+        >
+          <SelectCustom
+            className={"flex-1 text-black"}
+            id="operatingSystem"
+            // label="Hãng xe"
+            placeholder="Vui lòng chọn"
+            defaultValue={""}
+            options={[
+              { id: "iOS", name: "iOS" },
+              { id: "Android", name: "android" },
+            ]}
+            register={register}
+            isBrand={true}
+          >
+            {errors.operatingSystem?.message}
+          </SelectCustom>
+        </Form.Item>
         <Form.Item
           label="Đặc điểm sản phẩm"
           name="characteristic"
@@ -320,7 +371,7 @@ const NewRam: React.FC = () => {
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
-            options={character?.data}
+            options={character}
             register={register}
             isBrand={true}
           >
@@ -475,13 +526,13 @@ const NewRam: React.FC = () => {
                     // label="Hãng xe"
                     placeholder="Vui lòng chọn"
                     defaultValue={1}
-                    options={depot?.data?.data}
+                    options={depot}
                     register={register}
                   >
                     {errors.depot?.message}
                   </SelectCustom>
                 </Form.Item>
-                <div className="flex justify-between space-x-1">
+                <div>
                   <Form.Item
                     label="Số lượng sản phẩm"
                     name={`lstProductTypeAndPrice.${index}.quantity`}
@@ -541,93 +592,101 @@ const NewRam: React.FC = () => {
           </ul>
         </Form.Item>
 
-        <Form.Item label="Loại ram" name="ramType" rules={[{ required: true }]}>
+        <Form.Item label="Màn hình" name="monitor" rules={[{ required: true }]}>
           <Input
-            name="ramType"
+            name="monitor"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.ramType?.message}
-            placeholder=""
-          />
-        </Form.Item>
-        <Form.Item label="Kiểu" name="model" rules={[{ required: true }]}>
-          <Input
-            name="model"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.model?.message}
-            placeholder=""
-          />
-        </Form.Item>
-        <Form.Item
-          label="Dung tích"
-          name="capacity"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="capacity"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.capacity?.message}
-            placeholder=""
-          />
-        </Form.Item>
-        <Form.Item label="Bus" name="bus" rules={[{ required: true }]}>
-          <Input
-            name="bus"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.bus?.message}
-            placeholder=""
-          />
-        </Form.Item>
-        <Form.Item label="Độ trễ" name="latency" rules={[{ required: true }]}>
-          <Input
-            name="latency"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.latency?.message}
-            placeholder=""
-          />
-        </Form.Item>
-        <Form.Item label="Vol" name="voltage" rules={[{ required: true }]}>
-          <Input
-            name="voltage"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.voltage?.message}
-            placeholder=""
-          />
-        </Form.Item>
-        <Form.Item label="Led" name="led" rules={[{ required: true }]}>
-          <Input
-            name="led"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.led?.message}
-            placeholder=""
+            errorMessage={errors.monitor?.message}
+            placeholder="6.7 - Tần số quét 120 Hz"
           />
         </Form.Item>
 
         <Form.Item
-          label="Công nghệ"
-          name="ramTechnology"
+          label="Camera trước"
+          name="frontCamera"
           rules={[{ required: true }]}
         >
           <Input
-            name="ramTechnology"
+            name="frontCamera"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.ramTechnology?.message}
-            placeholder=""
+            errorMessage={errors.frontCamera?.message}
+            placeholder="12 MP"
+          />
+        </Form.Item>
+        <Form.Item
+          label="Camera sau"
+          name="rearCamera"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="rearCamera"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.rearCamera?.message}
+            placeholder="Chính 48 MP & Phụ 12 MP, 12 MP"
+          />
+        </Form.Item>
+        <Form.Item label="Chip" name="chip" rules={[{ required: true }]}>
+          <Input
+            name="chip"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.chip?.message}
+            placeholder="Apple A17 Pro 6 nhân"
+          />
+        </Form.Item>
+        <Form.Item label="Sim" name="sim" rules={[{ required: true }]}>
+          <Input
+            name="sim"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.sim?.message}
+            placeholder="1 Nano SIM & 1 eSIM"
+          />
+        </Form.Item>
+        <Form.Item label="Pin" name="battery" rules={[{ required: true }]}>
+          <Input
+            name="battery"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.battery?.message}
+            placeholder="4422 mAh"
+          />
+        </Form.Item>
+        <Form.Item
+          label="Sạc nhanh"
+          name="charging"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="charging"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.charging?.message}
+            placeholder="20 W"
+          />
+        </Form.Item>
+        <Form.Item
+          label="Hỗ trợ mạng"
+          name="networkSupport"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="networkSupport"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.networkSupport?.message}
+            placeholder="5G"
           />
         </Form.Item>
 
@@ -669,7 +728,7 @@ const NewRam: React.FC = () => {
           rules={[{ required: true }]}
         >
           <Textarea
-            defaultValue="Mô tả sản phẩm"
+            defaultValue={smartPhoneDetail?.productInfo?.description}
             id="description"
             isUpdate={false}
             register={register}
@@ -709,4 +768,4 @@ const NewRam: React.FC = () => {
   );
 };
 
-export default () => <NewRam />;
+export default () => <UpdatePhone />;

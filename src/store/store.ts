@@ -17,6 +17,7 @@ import romReducer from "./rom/romSlice";
 import cardGraphicReducer from "./cardGrap/cardGraphicSlice";
 import characterReducer from "./characteristic/characteristicSlice";
 import depotReducer from "./depot/depotSlice";
+import tabletReducer from "./product/tabletSlice";
 
 export const store = configureStore({
   reducer: {
@@ -25,6 +26,7 @@ export const store = configureStore({
     orders: orderReducer,
     smartPhone: smartPhoneReducer,
     laptop: laptopReducer,
+    tablet: tabletReducer,
     category: categoryReducer,
     brand: brandReducer,
     processor: processorReducer,

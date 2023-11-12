@@ -34,6 +34,14 @@ const path = {
   cardGrap: "/cardGraphic",
   cardGrapDetail: "/cardGraphic/detail/:id",
   cardGrapNew: "/cardGraphic/new",
+  tablet: "/tablet",
+  tabletDetail: "/tablet/detail/:nameId",
+  tabletUpdate: "/tablet/detail/update/:nameId",
+  tabletNew: "/tabletNew",
+  smartWatch: "/smartWatch",
+  smartWatchDetail: "/smartWatch/detail/:nameId",
+  smartWatchUpdate: "/smartWatch/detail/update/:nameId",
+  smartWatchNew: "/smartWatchNew",
 } as const;
 
 export default path;

@@ -119,7 +119,7 @@ const NewProcessor: React.FC = () => {
     const body = JSON.stringify({
       productInfo: {
         brandId: Number(data.brand) || 1,
-        categoryId: Number(data.category) || 1,
+        categoryId: 14,
         productId: null,
         characteristicId: Number(data.characteristic) || 1,
         productCode: generateRandomString(10),
@@ -160,10 +160,10 @@ const NewProcessor: React.FC = () => {
       const res = await dispatch(addProcessor(body));
       unwrapResult(res);
       const d = res?.payload?.data;
-      if (d?.code !== 201) return toast.error(d?.message);
+      if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Thêm sản phẩm thành công ");
       await dispatch(getProcessor(""));
-      await navigate(path.ram);
+      await navigate(path.processor);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
@@ -267,7 +267,6 @@ const NewProcessor: React.FC = () => {
                   <Form.Item
                     label="Ram"
                     name={`lstProductTypeAndPrice.${index}.ram`}
-                    rules={[{ required: true }]}
                   >
                     <Input
                       name={`lstProductTypeAndPrice.${index}.ram`}
@@ -278,7 +277,6 @@ const NewProcessor: React.FC = () => {
                   <Form.Item
                     label="Bộ nhớ trong"
                     name={`lstProductTypeAndPrice.${index}.storagesocket`}
-                    rules={[{ required: true }]}
                   >
                     <Input
                       name={`lstProductTypeAndPrice.${index}.storagesocket`}
@@ -341,7 +339,6 @@ const NewProcessor: React.FC = () => {
                   <Form.Item
                     label="Màu"
                     name={`lstProductTypeAndPrice.${index}.color`}
-                    rules={[{ required: true }]}
                   >
                     <Input
                       name={`lstProductTypeAndPrice.${index}.color`}

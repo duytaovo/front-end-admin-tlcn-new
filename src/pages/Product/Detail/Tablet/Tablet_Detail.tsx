@@ -1,27 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
-import { toast } from "react-toastify";
-
 import {
   formatCurrency,
   formatNumberToSocialStyle,
   getIdFromNameId,
   rateSale,
 } from "src/utils/utils";
-import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import { convert } from "html-to-text";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
-import {
-  getDetailPhone,
-  getSmartPhones,
-} from "src/store/product/smartPhoneSlice";
-import { unwrapResult } from "@reduxjs/toolkit";
+import { getDetailPhone } from "src/store/product/smartPhoneSlice";
 import { Button, Modal, Rate } from "antd";
 import DOMPurify from "dompurify";
 
-export default function SmartPhoneDetail() {
+export default function TabletDetail() {
   // const { t } = useTranslation(["product"]);
   const [buyCount, setBuyCount] = useState(1);
   const { nameId } = useParams();
@@ -47,7 +39,6 @@ export default function SmartPhoneDetail() {
     [smartPhoneDetail, currentIndexImages]
   );
 
-  const navigate = useNavigate();
   useEffect(() => {
     if (
       smartPhoneDetail &&

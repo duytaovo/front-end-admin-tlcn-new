@@ -10,7 +10,7 @@ import { Helmet } from "react-helmet-async";
 import { convert } from "html-to-text";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { getDetailPhone } from "src/store/product/smartPhoneSlice";
-import { Button, Rate } from "antd";
+import { Button, Modal, Rate } from "antd";
 import DOMPurify from "dompurify";
 import { getDetailLaptop } from "src/store/product/laptopSlice ";
 
@@ -24,11 +24,12 @@ export default function SmartPhoneDetail() {
   const [activeImage, setActiveImage] = useState("");
   const imageRef = useRef<HTMLImageElement>(null);
   const [price, setPrice] = useState(
-    laptopDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice
-  );
-  const [salePrice, setSalePrice] = useState(
     laptopDetail?.productInfo?.lstProductTypeAndPrice[0].price
   );
+  const [salePrice, setSalePrice] = useState(
+    laptopDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice
+  );
+  console.log(price);
   const currentImages = useMemo(
     () =>
       laptopDetail?.productInfo?.lstProductImageUrl
@@ -48,7 +49,12 @@ export default function SmartPhoneDetail() {
       setActiveImage(laptopDetail?.productInfo?.lstProductImageUrl[0]);
     }
   }, [laptopDetail]);
-
+  useEffect(() => {
+    setPrice(laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.price);
+    setSalePrice(
+      laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
+    );
+  }, [laptopDetail]);
   useEffect(() => {
     dispatch(getDetailLaptop(id));
   }, [id, dispatch]);
@@ -106,7 +112,19 @@ export default function SmartPhoneDetail() {
     image.style.top = top + "px";
     image.style.left = left + "px";
   };
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const handleRemoveZoom = () => {
     imageRef.current?.removeAttribute("style");
   };
@@ -125,7 +143,7 @@ export default function SmartPhoneDetail() {
           })}
         />
       </Helmet>
-      <div className="container">
+      <div className="px-20 py-5 rounded-md">
         <div className="bg-white p-4 shadow">
           <div className="grid grid-cols-12 gap-9">
             <div className="col-span-5">
@@ -214,24 +232,30 @@ export default function SmartPhoneDetail() {
                 </div>
                 <div className="mx-4 h-4 w-[1px] bg-gray-300"></div>
                 <div>
-                  <span>{formatNumberToSocialStyle(1520)}</span>
+                  <span>
+                    {" "}
+                    {formatNumberToSocialStyle(
+                      Number(laptopDetail?.productInfo?.totalReview) || 1520
+                    )}
+                  </span>
                   <span className="ml-1 text-gray-500">Đã xem</span>
                 </div>
               </div>
               <div className="mt-8 flex items-center bg-gray-50 px-5 py-4">
                 <div className="text-gray-500 line-through">
-                  ₫{formatCurrency(salePrice || 15000000)}
+                  ₫{formatCurrency(price)}
                 </div>
                 <div className="ml-3 text-3xl font-medium text-orange">
-                  ₫{formatCurrency(price || 14000000)}
+                  {formatCurrency(salePrice)}
                 </div>
                 <div className="ml-4 rounded-sm bg-orange px-1 py-[2px] text-xs font-semibold uppercase text-white">
-                  {rateSale(Number(5), price)} giảm
+                  {rateSale(Number(laptopDetail?.productInfo?.star), price)}{" "}
+                  giảm
                 </div>
               </div>
               <div className="space-x-3">
                 <Button
-                  className="w-[100px] bg-pink-300"
+                  className="w-[100px] "
                   onClick={() =>
                     onClickChangeColor(
                       laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram,
@@ -266,9 +290,73 @@ export default function SmartPhoneDetail() {
             </div>
           </div>
         </div>
+        <Button type="link" onClick={showModal} className="bg-gray-300 mt-5">
+          Xem thông số kỹ thuật
+        </Button>
+        <Modal
+          title="Thông số kỹ thuật"
+          open={isModalOpen}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          centered
+        >
+          <div className="block space-y-2">
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Màn hình :</h4>
+              <h5>{laptopDetail.monitor}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Hệ điều hành :</h4>
+              <h5>{laptopDetail.operatingSystem}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Cổng :</h4>
+              <h5>{laptopDetail.gateway}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Kích thước :</h4>
+              <h5>{laptopDetail?.productInfo?.dimension}</h5>
+            </div>
+
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Pin :</h4>
+              <h5>{laptopDetail.monitor}</h5>
+            </div>
+
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Phụ kiện:</h4>
+              <h5>{laptopDetail.productInfo.accessories}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Năm ra mắt:</h4>
+              <h5>{laptopDetail.productInfo.launchTime}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Thiết kế:</h4>
+              <h5>{laptopDetail.productInfo.design}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Khối lượng:</h4>
+              <h5>{laptopDetail.productInfo.mass}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Ram:</h4>
+              <h5>{laptopDetail.productInfo.lstProductTypeAndPrice[0].ram}</h5>
+            </div>
+            <div className="flex justify-start align-baseline space-x-4">
+              <h4 className="font-bold">Bộ nhớ trong:</h4>
+              <h5>
+                {
+                  laptopDetail.productInfo.lstProductTypeAndPrice[0]
+                    .storageCapacity
+                }
+              </h5>
+            </div>
+          </div>
+        </Modal>
       </div>
       <div className="mt-8">
-        <div className="container">
+        <div className="px-20 py-5 rounded-md">
           <div className=" bg-white p-4 shadow">
             <div className="rounded bg-gray-50 p-4 text-lg capitalize text-slate-700">
               Mô tả sản phẩm

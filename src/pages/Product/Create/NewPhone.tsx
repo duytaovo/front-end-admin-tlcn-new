@@ -161,7 +161,7 @@ const NewPhone: React.FC = () => {
       const res = await dispatch(addSmartPhone(body));
       unwrapResult(res);
       const d = res?.payload?.data;
-      if (d?.code !== 201) return toast.error(d?.message);
+      // if (d?.code !== 201) return toast.error(d?.message);
       await toast.success("Thêm sản phẩm điện thoại thành công ");
       await dispatch(getSmartPhones(""));
       await navigate(path.smartPhone);

@@ -19,9 +19,9 @@ const smartPhoneApi = {
   getDetailSmartPhone(params: any) {
     return http.get<SuccessResponse<any[]>>(`/product/smartphone/${params}`);
   },
-  updateSmartPhone({ _id, body }: any) {
+  updateSmartPhone({ id, body }: any) {
     return http.put<SuccessResponse<any>>(
-      `/product/smartphone/update/${_id}`,
+      `/product/smartphone/update/${id}`,
       body
     );
   },

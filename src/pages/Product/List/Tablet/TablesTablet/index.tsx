@@ -3,21 +3,20 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { SelectChangeEvent } from "@mui/material/Select";
 import React, { useEffect, useState } from "react";
+import { getSmartPhones } from "src/store/product/smartPhoneSlice";
+import ProductPhone from "./Table/Product/ProductTablet";
 import path from "src/constants/path";
-import { getRams } from "src/store/ram/ramSlice";
-import ProductRam from "./Table/Product/ProductPhone";
-import { getCardGraphic } from "src/store/cardGrap/cardGraphicSlice";
 import { Pagination } from "antd";
 
-const TableRam: React.FC = () => {
+const TableTablet: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { cardGraphic } = useAppSelector((state) => state.cardGraphic);
+  const { smartPhone } = useAppSelector((state) => state.smartPhone);
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
   const pageSize = 10; // Số phần tử trên mỗi trang
 
   useEffect(() => {
-    dispatch(getCardGraphic({ pageNumber: currentPage }));
+    dispatch(getSmartPhones({ pageNumber: currentPage }));
   }, [currentPage]);
   const handlePageChange = (page: number) => {
     setCurrentPage(page - 1);
@@ -31,7 +30,7 @@ const TableRam: React.FC = () => {
   const onClick = (value: string) => {
     navigate(value);
   };
-  console.log(cardGraphic);
+
   return (
     <div className="mx-6">
       <div className="w-full text-[24px] text-gray-500 mb-[10px] flex items-center justify-between">
@@ -95,7 +94,7 @@ const TableRam: React.FC = () => {
           </div>
         </div>
         <Link
-          to={path.cardGrapNew}
+          to={path.tabletNew}
           className="no-underline text-green-500 text-lg font-medium border-[1px] border-solid border-[green] p-3 rounded cursor-pointer"
         >
           Thêm mới
@@ -103,9 +102,9 @@ const TableRam: React.FC = () => {
       </div>
 
       <div className="mt-6 grid grid-cols-6 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {cardGraphic?.data?.data?.map((_smartPhone: any) => (
+        {smartPhone?.data?.data?.map((_smartPhone: any) => (
           <div className="col-span-1" key={_smartPhone.id}>
-            <ProductRam product={_smartPhone} />
+            <ProductPhone product={_smartPhone} />
           </div>
         ))}
       </div>
@@ -113,7 +112,7 @@ const TableRam: React.FC = () => {
         <Pagination
           current={currentPage + 1}
           pageSize={pageSize}
-          total={cardGraphic?.data?.totalElements}
+          total={smartPhone?.data?.totalElements}
           onChange={handlePageChange}
         />
       </div>
@@ -121,4 +120,4 @@ const TableRam: React.FC = () => {
   );
 };
 
-export default TableRam;
+export default TableTablet;

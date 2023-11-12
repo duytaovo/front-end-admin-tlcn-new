@@ -23,6 +23,10 @@ import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
 import { addRam, getRams } from "src/store/ram/ramSlice";
+import {
+  addCardGraphic,
+  getCardGraphic,
+} from "src/store/cardGrap/cardGraphicSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -118,7 +122,7 @@ const NewCardGraphic: React.FC = () => {
     const body = JSON.stringify({
       productInfo: {
         brandId: Number(data.brand) || 1,
-        categoryId: Number(data.category) || 1,
+        categoryId: 15,
         productId: null,
         characteristicId: Number(data.characteristic) || 1,
         productCode: generateRandomString(10),
@@ -156,13 +160,13 @@ const NewCardGraphic: React.FC = () => {
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(addRam(body));
+      const res = await dispatch(addCardGraphic(body));
       unwrapResult(res);
       const d = res?.payload?.data;
-      if (d?.code !== 201) return toast.error(d?.message);
+      if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Thêm sản phẩm thành công ");
-      await dispatch(getRams(""));
-      await navigate(path.ram);
+      await dispatch(getCardGraphic(""));
+      await navigate(path.cardGrap);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
@@ -260,7 +264,7 @@ const NewCardGraphic: React.FC = () => {
             type="number"
             className=""
             errorMessage={errors.launchTime?.message}
-            placeholder="2023"
+            placeholder=""
           />
         </Form.Item>
 
@@ -328,7 +332,7 @@ const NewCardGraphic: React.FC = () => {
                     // label="Hãng xe"
                     placeholder="Vui lòng chọn"
                     defaultValue={1}
-                    options={depot}
+                    options={depot?.data?.data}
                     register={register}
                   >
                     {errors.depot?.message}
@@ -485,7 +489,7 @@ const NewCardGraphic: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.powerCapacity?.message}
-            placeholder="5G"
+            placeholder=""
           />
         </Form.Item>
 
@@ -500,7 +504,7 @@ const NewCardGraphic: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.maximumResolution?.message}
-            placeholder="5G"
+            placeholder=""
           />
         </Form.Item>
 

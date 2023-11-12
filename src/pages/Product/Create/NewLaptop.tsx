@@ -165,6 +165,8 @@ const NewLaptop: React.FC = () => {
           color: item?.color,
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
+          quantity: Number(item?.quantity),
+          depotId: Number(item?.depot) || 1,
         })),
         lstProductImageUrl: data.imageUrl,
       },
@@ -191,7 +193,7 @@ const NewLaptop: React.FC = () => {
       const res = await dispatch(addLaptop(body));
       unwrapResult(res);
       const d = res?.payload?.data;
-      if (d?.code !== 201) return toast.error(d?.message);
+      if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Thêm sp laptop thành công ");
       await dispatch(getLaptop(""));
       await navigate(path.laptop);

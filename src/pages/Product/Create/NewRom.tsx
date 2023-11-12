@@ -23,7 +23,7 @@ import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
 import { addRam, getRams } from "src/store/ram/ramSlice";
-import { addRom } from "src/store/rom/romSlice";
+import { addRom, getRoms } from "src/store/rom/romSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -118,7 +118,7 @@ const NewRom: React.FC = () => {
     const body = JSON.stringify({
       productInfo: {
         brandId: Number(data.brand) || 1,
-        categoryId: Number(data.category) || 1,
+        categoryId: 13,
         productId: null,
         characteristicId: Number(data.characteristic) || 1,
         productCode: generateRandomString(10),
@@ -157,10 +157,10 @@ const NewRom: React.FC = () => {
       const res = await dispatch(addRom(body));
       unwrapResult(res);
       const d = res?.payload?.data;
-      if (d?.code !== 201) return toast.error(d?.message);
+      if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Thêm sản phẩm thành công ");
-      await dispatch(getRams(""));
-      await navigate(path.ram);
+      await dispatch(getRoms(""));
+      await navigate(path.rom);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
@@ -272,7 +272,6 @@ const NewRom: React.FC = () => {
                   <Form.Item
                     label="Ram"
                     name={`lstProductTypeAndPrice.${index}.ram`}
-                    rules={[{ required: true }]}
                   >
                     <Input
                       name={`lstProductTypeAndPrice.${index}.ram`}
@@ -283,7 +282,6 @@ const NewRom: React.FC = () => {
                   <Form.Item
                     label="Bộ nhớ trong"
                     name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                    rules={[{ required: true }]}
                   >
                     <Input
                       name={`lstProductTypeAndPrice.${index}.storageCapacity`}
@@ -345,7 +343,6 @@ const NewRom: React.FC = () => {
                   <Form.Item
                     label="Màu"
                     name={`lstProductTypeAndPrice.${index}.color`}
-                    rules={[{ required: true }]}
                   >
                     <Input
                       name={`lstProductTypeAndPrice.${index}.color`}
