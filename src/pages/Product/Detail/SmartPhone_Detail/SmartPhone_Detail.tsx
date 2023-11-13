@@ -13,17 +13,12 @@ import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import { convert } from "html-to-text";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
-import {
-  getDetailPhone,
-  getSmartPhones,
-} from "src/store/product/smartPhoneSlice";
-import { unwrapResult } from "@reduxjs/toolkit";
+import { getDetailPhone } from "src/store/product/smartPhoneSlice";
 import { Button, Modal, Rate } from "antd";
 import DOMPurify from "dompurify";
 
 export default function SmartPhoneDetail() {
   // const { t } = useTranslation(["product"]);
-  const [buyCount, setBuyCount] = useState(1);
   const { nameId } = useParams();
   const dispatch = useAppDispatch();
   const { smartPhoneDetail } = useAppSelector((state) => state.smartPhone);
@@ -47,7 +42,6 @@ export default function SmartPhoneDetail() {
     [smartPhoneDetail, currentIndexImages]
   );
 
-  const navigate = useNavigate();
   useEffect(() => {
     if (
       smartPhoneDetail &&
@@ -59,7 +53,7 @@ export default function SmartPhoneDetail() {
 
   useEffect(() => {
     dispatch(getDetailPhone(id));
-  }, []);
+  }, [id]);
   useEffect(() => {
     setPrice(smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.price);
     setSalePrice(
@@ -327,68 +321,68 @@ export default function SmartPhoneDetail() {
           <div className="block space-y-2">
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Màn hình :</h4>
-              <h5>{smartPhoneDetail.monitor}</h5>
+              <h5>{smartPhoneDetail?.monitor}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Hệ điều hành :</h4>
-              <h5>{smartPhoneDetail.operatingSystem}</h5>
+              <h5>{smartPhoneDetail?.operatingSystem}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Camera chính :</h4>
-              <h5>{smartPhoneDetail.rearCamera}</h5>
+              <h5>{smartPhoneDetail?.rearCamera}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Camera trước :</h4>
-              <h5>{smartPhoneDetail.frontCamera}</h5>
+              <h5>{smartPhoneDetail?.frontCamera}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Chip :</h4>
-              <h5>{smartPhoneDetail.chip}</h5>
+              <h5>{smartPhoneDetail?.chip}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Sim :</h4>
-              <h5>{smartPhoneDetail.sim}</h5>
+              <h5>{smartPhoneDetail?.sim}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Pin :</h4>
-              <h5>{smartPhoneDetail.monitor}</h5>
+              <h5>{smartPhoneDetail?.monitor}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Sạc nhanh:</h4>
-              <h5>{smartPhoneDetail.charging}</h5>
+              <h5>{smartPhoneDetail?.charging}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Hỗ trợ mạng:</h4>
-              <h5>{smartPhoneDetail.networkSupport}</h5>
+              <h5>{smartPhoneDetail?.networkSupport}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Phụ kiện:</h4>
-              <h5>{smartPhoneDetail.productInfo.accessories}</h5>
+              <h5>{smartPhoneDetail?.productInfo.accessories}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Năm ra mắt:</h4>
-              <h5>{smartPhoneDetail.productInfo.launchTime}</h5>
+              <h5>{smartPhoneDetail?.productInfo.launchTime}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Thiết kế:</h4>
-              <h5>{smartPhoneDetail.productInfo.design}</h5>
+              <h5>{smartPhoneDetail?.productInfo.design}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Khối lượng:</h4>
-              <h5>{smartPhoneDetail.productInfo.mass}</h5>
+              <h5>{smartPhoneDetail?.productInfo.mass}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Ram:</h4>
               <h5>
-                {smartPhoneDetail.productInfo.lstProductTypeAndPrice[0].ram}
+                {smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0]?.ram}
               </h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Bộ nhớ trong:</h4>
               <h5>
                 {
-                  smartPhoneDetail.productInfo.lstProductTypeAndPrice[0]
-                    .storageCapacity
+                  smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0]
+                    ?.storageCapacity
                 }
               </h5>
             </div>

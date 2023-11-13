@@ -1,3 +1,3 @@
-import ProductPhone from "./ProductSmartWatch";
+import ProductSmartWatch from "./ProductSmartWatch";
 
-export default ProductPhone;
+export default ProductSmartWatch;

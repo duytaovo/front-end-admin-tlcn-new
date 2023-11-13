@@ -3,36 +3,29 @@ import http from "src/utils/http";
 
 const laptopApi = {
   addLaptop(data: any) {
-    return http.post("/product/laptop/create", data);
+    return http.post("/manage/product/laptop/create", data);
   },
   getLaptops(params: any) {
-    return http.get<SuccessResponse<any>>("/product/laptop", { params });
+    return http.get<SuccessResponse<any>>("/manage/product/laptop", { params });
   },
-  getLaptopsWithPageNumber(pageNumber: number) {
-    return http.get<SuccessResponse<any>>(`/product/laptop/${pageNumber}`);
-  },
-  getLaptopsWithPageNumberSize(pageNumber: number, pageSize: number) {
-    return http.get<SuccessResponse<any>>(
-      `/product/laptop/${pageNumber}/${pageSize}`
-    );
-  },
+
   getDetailLaptop(params: any) {
-    return http.get<SuccessResponse<any[]>>(`/product/laptop/${params}`);
+    return http.get<SuccessResponse<any[]>>(`/manage/product/laptop/${params}`);
   },
   updateLaptop({ id, body }: any) {
-    return http.post<SuccessResponse<any>>(
-      `/product/laptop/update/${id}`,
+    return http.put<SuccessResponse<any>>(
+      `/manage/product/laptop/update/${id}`,
       body
     );
   },
   deleteLaptop(idlaptop: string[]) {
-    return http.post<SuccessResponse<any>>(
-      `/product/laptop/delete/${idlaptop}`
+    return http.put<SuccessResponse<any>>(
+      `/manage/product/laptop/delete/${idlaptop}`
     );
   },
   uploadImageLaptop(body: FormData) {
     return http.post<SuccessResponse<string>>(
-      "/product/laptop/upload-image",
+      "/manage/product/laptop/upload-image",
       body,
       {
         headers: {
@@ -43,7 +36,7 @@ const laptopApi = {
   },
   uploadImagesLaptop(body: FormData) {
     return http.post<SuccessResponse<string>>(
-      "/product/laptop/upload-images",
+      "/manage/product/laptop/upload-images",
       body,
       {
         headers: {

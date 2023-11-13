@@ -7,16 +7,17 @@ import { getSmartPhones } from "src/store/product/smartPhoneSlice";
 import ProductPhone from "./Table/Product/ProductTablet";
 import path from "src/constants/path";
 import { Pagination } from "antd";
+import { getTablet } from "src/store/product/tabletSlice";
 
 const TableTablet: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { smartPhone } = useAppSelector((state) => state.smartPhone);
+  const { tablet } = useAppSelector((state) => state.tablet);
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
   const pageSize = 10; // Số phần tử trên mỗi trang
 
   useEffect(() => {
-    dispatch(getSmartPhones({ pageNumber: currentPage }));
+    dispatch(getTablet({ pageNumber: currentPage }));
   }, [currentPage]);
   const handlePageChange = (page: number) => {
     setCurrentPage(page - 1);
@@ -102,7 +103,7 @@ const TableTablet: React.FC = () => {
       </div>
 
       <div className="mt-6 grid grid-cols-6 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {smartPhone?.data?.data?.map((_smartPhone: any) => (
+        {tablet?.data?.data?.map((_smartPhone: any) => (
           <div className="col-span-1" key={_smartPhone.id}>
             <ProductPhone product={_smartPhone} />
           </div>
@@ -112,7 +113,7 @@ const TableTablet: React.FC = () => {
         <Pagination
           current={currentPage + 1}
           pageSize={pageSize}
-          total={smartPhone?.data?.totalElements}
+          total={tablet?.data?.totalElements}
           onChange={handlePageChange}
         />
       </div>

@@ -226,6 +226,22 @@ export const routeMain = [
     Component: UpdateTablet,
   },
   {
+    path: path.smartWatch,
+    Component: ListTablet,
+  },
+  {
+    path: path.smartWatchNew,
+    Component: NewTablet,
+  },
+  {
+    path: path.smartWatchDetail,
+    Component: TabletDetail,
+  },
+  {
+    path: path.smartWatchUpdate,
+    Component: UpdateTablet,
+  },
+  {
     path: "*",
     Component: NotFound,
   },

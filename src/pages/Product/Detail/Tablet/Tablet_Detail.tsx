@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   formatCurrency,
   formatNumberToSocialStyle,
@@ -12,55 +12,56 @@ import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { getDetailPhone } from "src/store/product/smartPhoneSlice";
 import { Button, Modal, Rate } from "antd";
 import DOMPurify from "dompurify";
+import { getDetailTablet } from "src/store/product/tabletSlice";
 
 export default function TabletDetail() {
-  // const { t } = useTranslation(["product"]);
-  const [buyCount, setBuyCount] = useState(1);
   const { nameId } = useParams();
   const dispatch = useAppDispatch();
-  const { smartPhoneDetail } = useAppSelector((state) => state.smartPhone);
+  const { tabletDetail } = useAppSelector((state) => state.tablet);
+  console.log(tabletDetail);
   const id = getIdFromNameId(nameId as string);
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5]);
   const [activeImage, setActiveImage] = useState("");
   const imageRef = useRef<HTMLImageElement>(null);
   const [price, setPrice] = useState(
-    smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.price
+    tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.price
   );
   const [salePrice, setSalePrice] = useState(
-    smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
+    tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
   );
   const currentImages = useMemo(
     () =>
-      smartPhoneDetail?.productInfo?.lstProductImageUrl
-        ? smartPhoneDetail?.productInfo?.lstProductImageUrl.slice(
+      tabletDetail?.productInfo?.lstProductImageUrl
+        ? tabletDetail?.productInfo?.lstProductImageUrl.slice(
             ...currentIndexImages
           )
         : [],
-    [smartPhoneDetail, currentIndexImages]
+    [tabletDetail, currentIndexImages]
   );
 
   useEffect(() => {
     if (
-      smartPhoneDetail &&
-      smartPhoneDetail?.productInfo?.lstProductImageUrl?.length > 0
+      tabletDetail &&
+      tabletDetail?.productInfo?.lstProductImageUrl?.length > 0
     ) {
-      setActiveImage(smartPhoneDetail?.productInfo?.lstProductImageUrl[0]);
+      setActiveImage(tabletDetail?.productInfo?.lstProductImageUrl[0]);
     }
-  }, [smartPhoneDetail]);
+  }, [tabletDetail]);
 
   useEffect(() => {
-    dispatch(getDetailPhone(id));
-  }, []);
+    dispatch(getDetailTablet(id));
+  }, [id]);
+
   useEffect(() => {
-    setPrice(smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.price);
+    setPrice(tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.price);
     setSalePrice(
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
+      tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
     );
-  }, [smartPhoneDetail]);
+  }, [tabletDetail]);
   const next = () => {
     if (
       currentIndexImages[1] <
-      smartPhoneDetail?.productInfo.lstProductImageUrl.length
+      tabletDetail?.productInfo.lstProductImageUrl.length
     ) {
       setCurrentIndexImages((prev) => [prev[0] + 1, prev[1] + 1]);
     }
@@ -78,20 +79,19 @@ export default function TabletDetail() {
 
   const onClickChangeColor = (ram: string, rom: string, color: string) => {
     if (
-      ram === smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram &&
+      ram === tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram &&
       rom ===
-        smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]
-          ?.storageCapacity &&
-      color === smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.color
+        tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.storageCapacity &&
+      color === tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.color
     ) {
-      setPrice(smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.price);
+      setPrice(tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.price);
       setSalePrice(
-        smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
+        tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
       );
     } else {
-      setPrice(smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[1]?.price);
+      setPrice(tabletDetail?.productInfo?.lstProductTypeAndPrice[1]?.price);
       setSalePrice(
-        smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[1]?.salePrice
+        tabletDetail?.productInfo?.lstProductTypeAndPrice[1]?.salePrice
       );
     }
   };
@@ -129,14 +129,14 @@ export default function TabletDetail() {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  if (!smartPhoneDetail) return null;
+  if (!tabletDetail) return null;
   return (
     <div className="bg-gray-200 py-6">
       <Helmet>
-        <title>{smartPhoneDetail?.productInfo?.name}</title>
+        <title>{tabletDetail?.productInfo?.name}</title>
         <meta
           name="description"
-          content={convert(smartPhoneDetail?.productInfo?.description, {
+          content={convert(tabletDetail?.productInfo?.description, {
             limits: {
               maxInputLength: 50000,
             },
@@ -154,7 +154,7 @@ export default function TabletDetail() {
               >
                 <img
                   src={activeImage}
-                  alt={smartPhoneDetail?.productInfo?.name}
+                  alt={tabletDetail?.productInfo?.name}
                   className="absolute left-0 top-0 h-full w-full bg-white object-cover"
                   ref={imageRef}
                 />
@@ -189,7 +189,7 @@ export default function TabletDetail() {
                     >
                       <img
                         src={img}
-                        alt={smartPhoneDetail?.productInfo?.name}
+                        alt={tabletDetail?.productInfo?.name}
                         className="absolute left-0 top-0 h-full w-full cursor-pointer bg-white object-cover"
                       />
                       {isActive && (
@@ -221,17 +221,17 @@ export default function TabletDetail() {
             </div>
             <div className="col-span-7">
               <h1 className="text-xl font-medium uppercase">
-                {smartPhoneDetail?.productInfo?.name}
+                {tabletDetail?.productInfo?.name}
               </h1>
               <div className="mt-8 flex items-center">
                 <div className="flex items-center">
                   <span className="mr-1 border-b border-b-orange text-orange">
-                    {smartPhoneDetail?.productInfo?.star}
+                    {tabletDetail?.productInfo?.star}
                   </span>
                   <Rate
                     allowHalf
                     defaultValue={
-                      Number(smartPhoneDetail?.productInfo?.totalReview) || 4.5
+                      Number(tabletDetail?.productInfo?.totalReview) || 4.5
                     }
                     disabled
                   />
@@ -241,7 +241,7 @@ export default function TabletDetail() {
                 <div>
                   <span>
                     {formatNumberToSocialStyle(
-                      Number(smartPhoneDetail?.productInfo?.totalReview) || 1520
+                      Number(tabletDetail?.productInfo?.totalReview) || 1520
                     )}
                   </span>
                   <span className="ml-1 text-gray-500">Đã xem</span>
@@ -256,7 +256,7 @@ export default function TabletDetail() {
                   {formatCurrency(salePrice)}
                 </div>
                 <div className="ml-4 rounded-sm bg-orange px-1 py-[2px] text-xs font-semibold uppercase text-white">
-                  {rateSale(Number(smartPhoneDetail?.productInfo?.star), price)}{" "}
+                  {rateSale(Number(tabletDetail?.productInfo?.star), price)}{" "}
                   giảm
                 </div>
               </div>
@@ -265,41 +265,33 @@ export default function TabletDetail() {
                   className="w-[100px] "
                   onClick={() =>
                     onClickChangeColor(
-                      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]
-                        ?.ram,
-                      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]
+                      tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram,
+                      tabletDetail?.productInfo?.lstProductTypeAndPrice[0]
                         ?.storageCapacity,
-                      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]
+                      tabletDetail?.productInfo?.lstProductTypeAndPrice[0]
                         ?.color
                     )
                   }
                   type="dashed"
                   color="red"
                 >
-                  {
-                    smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]
-                      ?.color
-                  }
+                  {tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.color}
                 </Button>
                 <Button
                   className="w-[100px] bg-black/30"
                   onClick={() =>
                     onClickChangeColor(
-                      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[1]
-                        ?.ram,
-                      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[1]
+                      tabletDetail?.productInfo?.lstProductTypeAndPrice[1]?.ram,
+                      tabletDetail?.productInfo?.lstProductTypeAndPrice[1]
                         ?.storageCapacity,
-                      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[1]
+                      tabletDetail?.productInfo?.lstProductTypeAndPrice[1]
                         ?.color
                     )
                   }
                   type="dashed"
                   color="red"
                 >
-                  {
-                    smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[1]
-                      ?.color
-                  }
+                  {tabletDetail?.productInfo?.lstProductTypeAndPrice[1]?.color}
                 </Button>
               </div>
             </div>
@@ -318,67 +310,65 @@ export default function TabletDetail() {
           <div className="block space-y-2">
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Màn hình :</h4>
-              <h5>{smartPhoneDetail.monitor}</h5>
+              <h5>{tabletDetail.monitor}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Hệ điều hành :</h4>
-              <h5>{smartPhoneDetail.operatingSystem}</h5>
+              <h5>{tabletDetail.operatingSystem}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Camera chính :</h4>
-              <h5>{smartPhoneDetail.rearCamera}</h5>
+              <h5>{tabletDetail.rearCamera}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Camera trước :</h4>
-              <h5>{smartPhoneDetail.frontCamera}</h5>
+              <h5>{tabletDetail.frontCamera}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Chip :</h4>
-              <h5>{smartPhoneDetail.chip}</h5>
+              <h5>{tabletDetail.chip}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Sim :</h4>
-              <h5>{smartPhoneDetail.sim}</h5>
+              <h5>{tabletDetail.sim}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Pin :</h4>
-              <h5>{smartPhoneDetail.monitor}</h5>
+              <h5>{tabletDetail.monitor}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Sạc nhanh:</h4>
-              <h5>{smartPhoneDetail.charging}</h5>
+              <h5>{tabletDetail.charging}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Hỗ trợ mạng:</h4>
-              <h5>{smartPhoneDetail.networkSupport}</h5>
+              <h5>{tabletDetail.networkSupport}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Phụ kiện:</h4>
-              <h5>{smartPhoneDetail.productInfo.accessories}</h5>
+              <h5>{tabletDetail.productInfo.accessories}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Năm ra mắt:</h4>
-              <h5>{smartPhoneDetail.productInfo.launchTime}</h5>
+              <h5>{tabletDetail.productInfo.launchTime}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Thiết kế:</h4>
-              <h5>{smartPhoneDetail.productInfo.design}</h5>
+              <h5>{tabletDetail.productInfo.design}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Khối lượng:</h4>
-              <h5>{smartPhoneDetail.productInfo.mass}</h5>
+              <h5>{tabletDetail.productInfo.mass}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Ram:</h4>
-              <h5>
-                {smartPhoneDetail.productInfo.lstProductTypeAndPrice[0].ram}
-              </h5>
+              <h5>{tabletDetail.productInfo.lstProductTypeAndPrice[0].ram}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Bộ nhớ trong:</h4>
               <h5>
                 {
-                  smartPhoneDetail.productInfo.lstProductTypeAndPrice[0]
+                  tabletDetail.productInfo.lstProductTypeAndPrice[0]
                     .storageCapacity
                 }
               </h5>
@@ -396,7 +386,7 @@ export default function TabletDetail() {
               <div
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(
-                    smartPhoneDetail?.productInfo?.description
+                    tabletDetail?.productInfo?.description
                   ),
                 }}
               />

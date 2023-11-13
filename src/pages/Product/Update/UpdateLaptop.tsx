@@ -9,10 +9,8 @@ import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
-import { schemaLaptop, schemaProductSmartPhone } from "src/utils/rules";
+import { schemaLaptop } from "src/utils/rules";
 import {
-  generateRandomString,
-  getAvatarUrl,
   getIdFromNameId,
   isAxiosUnprocessableEntityError,
 } from "src/utils/utils";
@@ -28,7 +26,6 @@ import { getRoms } from "src/store/rom/romSlice";
 import { getProcessor } from "src/store/processor/processorSlice";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import {
-  addLaptop,
   getDetailLaptop,
   getLaptop,
   updateLaptop,
@@ -185,7 +182,7 @@ const NewLaptop: React.FC = () => {
             color: item?.color,
             price: Number(item?.price),
             salePrice: Number(item?.salePrice),
-            depotId: Number(item?.depotId),
+            depotId: Number(item?.depotId) || 1,
             quantity: Number(item?.quantity),
           })
         ),
@@ -215,7 +212,7 @@ const NewLaptop: React.FC = () => {
       unwrapResult(res);
       const d = res?.payload?.data;
       // if (d?.code !== 201) return toast.error(d?.message);
-      await toast.success("Thêm sp laptop thành công ");
+      await toast.success("Cập nhật sp laptop thành công ");
       await dispatch(getLaptop(""));
       await navigate(path.laptop);
     } catch (error: any) {
@@ -266,7 +263,6 @@ const NewLaptop: React.FC = () => {
     setValue("launchTime", "2023");
     setValue("imageUrl", laptopDetail?.productInfo?.lstProductImageUrl);
   };
-  const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
@@ -368,17 +364,6 @@ const NewLaptop: React.FC = () => {
             errorMessage={errors.name?.message}
           />
         </Form.Item>
-        {/* 
-        <Form.Item label="Thiết kế" name="design" rules={[{ required: true }]}>
-          <Input
-            name="design"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.design?.message}
-            placeholder="Nguyên khối"
-          />
-        </Form.Item> */}
         <Form.Item
           label="Kích thước"
           name="dimension"
@@ -588,6 +573,7 @@ const NewLaptop: React.FC = () => {
             className=""
             errorMessage={errors.monitor?.message}
             placeholder="15.3 inch"
+            defaultValue={laptopDetail?.monitor}
           />
         </Form.Item>
 
@@ -599,6 +585,7 @@ const NewLaptop: React.FC = () => {
             className=""
             errorMessage={errors.gateway?.message}
             placeholder="MagSafe 3"
+            defaultValue={laptopDetail?.gateway}
           />
         </Form.Item>
         <Form.Item label="Tính năng đặc biệt" name="special">
@@ -607,6 +594,7 @@ const NewLaptop: React.FC = () => {
             register={register}
             type="text"
             className=""
+            defaultValue={laptopDetail?.special}
             errorMessage={errors.special?.message}
             placeholder="Bảo mật vân tay"
           />
@@ -617,6 +605,7 @@ const NewLaptop: React.FC = () => {
             register={register}
             type="text"
             className=""
+            defaultValue={laptopDetail?.maximumRam}
             errorMessage={errors.maximumRam?.message}
             placeholder="16GB"
           />
@@ -626,7 +615,7 @@ const NewLaptop: React.FC = () => {
             name="maximumRom"
             register={register}
             type="text"
-            className=""
+            defaultValue={laptopDetail?.maximumRom}
             errorMessage={errors.maximumRom?.message}
             placeholder="512GB"
           />
@@ -676,7 +665,7 @@ const NewLaptop: React.FC = () => {
             id="graphicsCard"
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
-            defaultValue={""}
+            defaultValue={laptopDetail?.graphicsCardId}
             options={cardGraphic?.data?.data}
             register={register}
           >

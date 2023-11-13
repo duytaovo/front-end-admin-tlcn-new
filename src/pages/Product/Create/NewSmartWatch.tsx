@@ -10,7 +10,10 @@ import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
-import { schemaProductSmartPhone } from "src/utils/rules";
+import {
+  schemaProductSmartPhone,
+  schemaProductSmartWatch,
+} from "src/utils/rules";
 import {
   generateRandomString,
   isAxiosUnprocessableEntityError,
@@ -26,6 +29,10 @@ import InputFile from "src/components/InputFile";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
+import {
+  addSmartWatch,
+  getSmartWatch,
+} from "src/store/product/smartwatchSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -65,7 +72,7 @@ const NewSmartWatch: React.FC = () => {
     control,
     watch,
   } = useForm({
-    resolver: yupResolver(schemaProductSmartPhone),
+    resolver: yupResolver(schemaProductSmartWatch),
   });
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -94,17 +101,17 @@ const NewSmartWatch: React.FC = () => {
     setValue("ram", "");
     setValue("accessories", "");
     setValue("battery", "");
-    setValue("charging", "");
-    setValue("chip", "");
+    setValue("connectToOs", "");
+    setValue("cpu", "");
     setValue("color", "");
     setValue("description", "");
     setValue("brand", "");
     setValue("name", "");
-    setValue("sim", "");
+    setValue("internalMemory", "");
     setValue("salePrice", "");
-    setValue("rearCamera", "");
+    setValue("connector", "");
     setValue("price", "");
-    setValue("frontCamera", "");
+    setValue("health", "");
     setValue("design", "");
     setValue("dimension", "");
     setValue("quantity", "");
@@ -147,24 +154,23 @@ const NewSmartWatch: React.FC = () => {
       },
       monitor: data.monitor,
       operatingSystem: data.operatingSystem,
-      rearCamera: data.rearCamera,
-      frontCamera: data.frontCamera,
-      chip: data.chip,
-      sim: data.sim,
+      connector: data.connector,
+      health: data.health,
+      cpu: data.cpu,
+      internalMemory: data.internalMemory,
       battery: data.battery,
-      charging: data.charging,
-      networkSupport: data.networkSupport,
+      connectToOs: data.connectToOs,
     });
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(addSmartPhone(body));
+      const res = await dispatch(addSmartWatch(body));
       unwrapResult(res);
       const d = res?.payload?.data;
       if (d?.code !== 201) return toast.error(d?.message);
       await toast.success("Thêm sản phẩm điện thoại thành công ");
-      await dispatch(getSmartPhones(""));
-      await navigate(path.smartPhone);
+      await dispatch(getSmartWatch(""));
+      await navigate(path.smartWatch);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
@@ -185,17 +191,17 @@ const NewSmartWatch: React.FC = () => {
     setValue("ram", "");
     setValue("accessories", "");
     setValue("battery", "");
-    setValue("charging", "");
-    setValue("chip", "");
+    setValue("connectToOs", "");
+    setValue("cpu", "");
     setValue("color", "");
     setValue("description", "");
     setValue("brand", "");
     setValue("name", "");
-    setValue("sim", "");
+    setValue("internalMemory", "");
     setValue("salePrice", "");
-    setValue("rearCamera", "");
+    setValue("connector", "");
     setValue("price", "");
-    setValue("frontCamera", "");
+    setValue("health", "");
     setValue("design", "");
     setValue("dimension", "");
     setValue("imageUrl", []);
@@ -519,50 +525,54 @@ const NewSmartWatch: React.FC = () => {
 
         <Form.Item
           label="Camera trước"
-          name="frontCamera"
+          name="health"
           rules={[{ required: true }]}
         >
           <Input
-            name="frontCamera"
+            name="health"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.frontCamera?.message}
+            errorMessage={errors.health?.message}
             placeholder="12 MP"
           />
         </Form.Item>
         <Form.Item
-          label="Camera sau"
-          name="rearCamera"
+          label="Cổng kết nối"
+          name="connector"
           rules={[{ required: true }]}
         >
           <Input
-            name="rearCamera"
+            name="connector"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.rearCamera?.message}
+            errorMessage={errors.connector?.message}
             placeholder="Chính 48 MP & Phụ 12 MP, 12 MP"
           />
         </Form.Item>
-        <Form.Item label="Chip" name="chip" rules={[{ required: true }]}>
+        <Form.Item label="Cpu" name="cpu" rules={[{ required: true }]}>
           <Input
-            name="chip"
+            name="cpu"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.chip?.message}
+            errorMessage={errors.cpu?.message}
             placeholder="Apple A17 Pro 6 nhân"
           />
         </Form.Item>
-        <Form.Item label="Sim" name="sim" rules={[{ required: true }]}>
+        <Form.Item
+          label="Bộ nhớ trong"
+          name="internalMemory"
+          rules={[{ required: true }]}
+        >
           <Input
-            name="sim"
+            name="internalMemory"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.sim?.message}
-            placeholder="1 Nano SIM & 1 eSIM"
+            errorMessage={errors.internalMemory?.message}
+            placeholder="1 Nano internalMemory & 1 einternalMemory"
           />
         </Form.Item>
         <Form.Item label="Pin" name="battery" rules={[{ required: true }]}>
@@ -576,31 +586,17 @@ const NewSmartWatch: React.FC = () => {
           />
         </Form.Item>
         <Form.Item
-          label="Sạc nhanh"
-          name="charging"
+          label="Kết nối hệ điều hành"
+          name="connectToOs"
           rules={[{ required: true }]}
         >
           <Input
-            name="charging"
+            name="connectToOs"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.charging?.message}
+            errorMessage={errors.connectToOs?.message}
             placeholder="20 W"
-          />
-        </Form.Item>
-        <Form.Item
-          label="Hỗ trợ mạng"
-          name="networkSupport"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="networkSupport"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.networkSupport?.message}
-            placeholder="5G"
           />
         </Form.Item>
 

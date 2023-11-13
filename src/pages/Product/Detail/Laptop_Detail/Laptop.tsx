@@ -9,12 +9,11 @@ import {
 import { Helmet } from "react-helmet-async";
 import { convert } from "html-to-text";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
-import { getDetailPhone } from "src/store/product/smartPhoneSlice";
 import { Button, Modal, Rate } from "antd";
 import DOMPurify from "dompurify";
 import { getDetailLaptop } from "src/store/product/laptopSlice ";
 
-export default function SmartPhoneDetail() {
+export default function LaptopDetail() {
   // const { t } = useTranslation(["product"]);
   const { nameId } = useParams();
   const dispatch = useAppDispatch();
@@ -24,12 +23,11 @@ export default function SmartPhoneDetail() {
   const [activeImage, setActiveImage] = useState("");
   const imageRef = useRef<HTMLImageElement>(null);
   const [price, setPrice] = useState(
-    laptopDetail?.productInfo?.lstProductTypeAndPrice[0].price
+    laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.price
   );
   const [salePrice, setSalePrice] = useState(
-    laptopDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice
+    laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
   );
-  console.log(price);
   const currentImages = useMemo(
     () =>
       laptopDetail?.productInfo?.lstProductImageUrl
@@ -40,7 +38,6 @@ export default function SmartPhoneDetail() {
     [laptopDetail, currentIndexImages]
   );
 
-  const navigate = useNavigate();
   useEffect(() => {
     if (
       laptopDetail &&
@@ -58,6 +55,7 @@ export default function SmartPhoneDetail() {
   useEffect(() => {
     dispatch(getDetailLaptop(id));
   }, [id, dispatch]);
+
   const next = () => {
     if (
       currentIndexImages[1] <
@@ -303,15 +301,15 @@ export default function SmartPhoneDetail() {
           <div className="block space-y-2">
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Màn hình :</h4>
-              <h5>{laptopDetail.monitor}</h5>
+              <h5>{laptopDetail?.monitor}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Hệ điều hành :</h4>
-              <h5>{laptopDetail.operatingSystem}</h5>
+              <h5>{laptopDetail?.operatingSystem}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Cổng :</h4>
-              <h5>{laptopDetail.gateway}</h5>
+              <h5>{laptopDetail?.gateway}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Kích thước :</h4>
@@ -320,35 +318,37 @@ export default function SmartPhoneDetail() {
 
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Pin :</h4>
-              <h5>{laptopDetail.monitor}</h5>
+              <h5>{laptopDetail?.monitor}</h5>
             </div>
 
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Phụ kiện:</h4>
-              <h5>{laptopDetail.productInfo.accessories}</h5>
+              <h5>{laptopDetail?.productInfo?.accessories}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Năm ra mắt:</h4>
-              <h5>{laptopDetail.productInfo.launchTime}</h5>
+              <h5>{laptopDetail?.productInfo?.launchTime}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Thiết kế:</h4>
-              <h5>{laptopDetail.productInfo.design}</h5>
+              <h5>{laptopDetail?.productInfo?.design}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Khối lượng:</h4>
-              <h5>{laptopDetail.productInfo.mass}</h5>
+              <h5>{laptopDetail?.productInfo?.mass}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Ram:</h4>
-              <h5>{laptopDetail.productInfo.lstProductTypeAndPrice[0].ram}</h5>
+              <h5>
+                {laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram}
+              </h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Bộ nhớ trong:</h4>
               <h5>
                 {
-                  laptopDetail.productInfo.lstProductTypeAndPrice[0]
-                    .storageCapacity
+                  laptopDetail?.productInfo?.lstProductTypeAndPrice[0]
+                    ?.storageCapacity
                 }
               </h5>
             </div>

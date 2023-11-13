@@ -18,6 +18,7 @@ import cardGraphicReducer from "./cardGrap/cardGraphicSlice";
 import characterReducer from "./characteristic/characteristicSlice";
 import depotReducer from "./depot/depotSlice";
 import tabletReducer from "./product/tabletSlice";
+import smartWatchReducer from "./product/smartwatchSlice";
 
 export const store = configureStore({
   reducer: {
@@ -25,6 +26,7 @@ export const store = configureStore({
     user: userReducer,
     orders: orderReducer,
     smartPhone: smartPhoneReducer,
+    smartWatch: smartWatchReducer,
     laptop: laptopReducer,
     tablet: tabletReducer,
     category: categoryReducer,

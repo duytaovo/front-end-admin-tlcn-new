@@ -84,6 +84,7 @@ export type SmartPhoneDetail = {
     lstProductImageUrl: string[];
     star: number;
     totalReview: number;
+    slug: string;
   };
 };
 

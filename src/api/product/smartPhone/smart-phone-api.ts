@@ -3,36 +3,33 @@ import http from "src/utils/http";
 
 const smartPhoneApi = {
   addSmartPhone(data: any) {
-    return http.post("/product/smartphone/create", data);
+    return http.post("/manage/product/smartphone/create", data);
   },
   getSmartPhones(params: any) {
-    return http.get<SuccessResponse<any>>("/product/smartphone", { params });
+    return http.get<SuccessResponse<any>>("/manage/product/smartphone", {
+      params,
+    });
   },
-  getSmartPhonesWithPageNumber(pageNumber: number) {
-    return http.get<SuccessResponse<any>>(`/product/smartphone/${pageNumber}`);
-  },
-  getSmartPhonesWithPageNumberSize(pageNumber: number, pageSize: number) {
-    return http.get<SuccessResponse<any>>(
-      `/product/smartphone/${pageNumber}/${pageSize}`
-    );
-  },
+
   getDetailSmartPhone(params: any) {
-    return http.get<SuccessResponse<any[]>>(`/product/smartphone/${params}`);
+    return http.get<SuccessResponse<any[]>>(
+      `/manage/product/smartphone/${params}`
+    );
   },
   updateSmartPhone({ id, body }: any) {
     return http.put<SuccessResponse<any>>(
-      `/product/smartphone/update/${id}`,
+      `/manage/product/smartphone/update/${id}`,
       body
     );
   },
   deleteSmartPhone(idSmartPhone: string[]) {
     return http.put<SuccessResponse<any>>(
-      `/product/smartphone/delete/${idSmartPhone}`
+      `/manage/product/smartphone/delete/${idSmartPhone}`
     );
   },
   uploadImageSmartPhone(body: FormData) {
     return http.post<SuccessResponse<string>>(
-      "/product/smartphone/upload-image",
+      "/manage/product/smartphone/upload-image",
       body,
       {
         headers: {
@@ -43,7 +40,7 @@ const smartPhoneApi = {
   },
   uploadImagesSmartPhone(body: FormData) {
     return http.post<SuccessResponse<string>>(
-      "/product/smartphone/upload-images",
+      "/manage/product/smartphone/upload-images",
       body,
       {
         headers: {

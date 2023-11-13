@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Form, Space, Upload } from "antd";
+import { Button, Form } from "antd";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -11,8 +11,6 @@ import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
 import { schemaProductSmartPhone } from "src/utils/rules";
 import {
-  generateRandomString,
-  getAvatarUrl,
   getIdFromNameId,
   isAxiosUnprocessableEntityError,
 } from "src/utils/utils";
@@ -26,7 +24,7 @@ import {
   updateSmartPhone,
 } from "src/store/product/smartPhoneSlice";
 import InputFile from "src/components/InputFile";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
@@ -59,18 +57,6 @@ interface FormData {
 }
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-type brand = {
-  id: number;
-  name: string;
-};
 
 const UpdatePhone: React.FC = () => {
   const [componentDisabled, setComponentDisabled] = useState<boolean>(false);
@@ -198,7 +184,7 @@ const UpdatePhone: React.FC = () => {
           })
         ),
 
-        lstProductImageUrl: [],
+        lstProductImageUrl: data.imageUrl,
       },
       monitor: data.monitor,
       operatingSystem: data.operatingSystem,

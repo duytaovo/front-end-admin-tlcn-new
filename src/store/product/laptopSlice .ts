@@ -1,24 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import laptopApi from "src/api/product/laptop/laptop-api";
-import {
-  LaptopDetail,
-  ListSmartPhone,
-} from "src/types/allProductsType.interface";
+import { LaptopDetail } from "src/types/allProductsType.interface";
 import { payloadCreator } from "src/utils/utils";
 
 export const getLaptop = createAsyncThunk(
   "laptop/getLaptop",
   payloadCreator(laptopApi.getLaptops)
-);
-
-export const getLaptopWithPageNumber = createAsyncThunk(
-  "laptop/getLaptopWithPageNumber",
-  payloadCreator(laptopApi.getLaptopsWithPageNumber)
-);
-
-export const getLaptopWithPageNumberSize = createAsyncThunk(
-  "laptop/getLaptopWithPageNumberSize",
-  payloadCreator(laptopApi.getLaptopsWithPageNumberSize)
 );
 
 export const getDetailLaptop = createAsyncThunk(
@@ -109,21 +96,12 @@ const Laptoplice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // builder.addCase(addlaptop.fulfilled, (state, { payload }) => {
-    //   state.laptop = payload.data;
-    // });
     builder.addCase(getLaptop.fulfilled, (state, { payload }) => {
       state.laptop = payload.data;
     });
     builder.addCase(getDetailLaptop.fulfilled, (state, { payload }) => {
       state.laptopDetail = payload.data.data;
     });
-    // builder.addCase(updatelaptop.fulfilled, (state, { payload }) => {
-    //   [state.laptopDetail, ...payload.data];
-    // });
-    // builder.addCase(deletelaptop.fulfilled, (state, { payload }) => {
-    //   state.laptop = payload.data;
-    // });
   },
 });
 

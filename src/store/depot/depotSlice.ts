@@ -27,6 +27,7 @@ const depotSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(getdepots.fulfilled, (state, { payload }) => {
+      console.log(payload);
       state.depot = payload.data;
     });
     builder.addCase(getDetailDepot.fulfilled, (state, { payload }) => {

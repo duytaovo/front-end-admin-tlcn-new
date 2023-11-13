@@ -3,31 +3,37 @@ import http from "src/utils/http";
 
 const processorApi = {
   addProcessor(data: any) {
-    return http.post("/product/processor/create", data);
+    return http.post("/manage/product/processor/create", data);
   },
   getProcessors(params: any) {
-    return http.get<SuccessResponse<any>>("/product/processor", { params });
+    return http.get<SuccessResponse<any>>("/manage/product/processor", {
+      params,
+    });
   },
   getDetailProcessor(params: any) {
-    return http.get<SuccessResponse<any[]>>(`/product/processor/${params}`);
+    return http.get<SuccessResponse<any[]>>(
+      `/manage/product/processor/${params}`
+    );
   },
   updateProcessor({ _id, body }: any) {
     return http.post<SuccessResponse<any>>(
-      `/product/processor/update/${_id}`,
+      `/manage/product/processor/update/${_id}`,
       body
     );
   },
   deleteProcessor(idProcessor: string[]) {
     return http.post<SuccessResponse<any>>(
-      `/product/processor/delete/${idProcessor}`
+      `/manage/product/processor/delete/${idProcessor}`
     );
   },
   getProcessorWithPageNumber(pageNumber: number) {
-    return http.get<SuccessResponse<any>>(`/product/processor/${pageNumber}`);
+    return http.get<SuccessResponse<any>>(
+      `/manage/product/processor/${pageNumber}`
+    );
   },
   getProcessorWithPageNumberSize(pageNumber: number, pageSize: number) {
     return http.get<SuccessResponse<any>>(
-      `/product/processor/${pageNumber}/${pageSize}`
+      `/manage/product/processor/${pageNumber}/${pageSize}`
     );
   },
 };

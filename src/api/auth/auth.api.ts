@@ -6,26 +6,26 @@ const authApi = {
     return http_auth.post("/authenticate", data);
   },
   register(data: any) {
-    return http.post("/register", data);
+    return http.post("/manage/register", data);
   },
   logout() {
-    return http.post("/logout-user", {});
+    return http.post("/manage/logout-user", {});
   },
   addUser(data: any) {
-    return http.post("/user/create", data);
+    return http.post("/manage/user/create", data);
   },
   getUsers(params: any) {
-    return http.get<SuccessResponse<any>>("/user", { params });
+    return http.get<SuccessResponse<any>>("/manage/user", { params });
   },
   getDetailUser(params: any) {
-    return http.get<SuccessResponse<any[]>>(`/user/${params}`);
+    return http.get<SuccessResponse<any[]>>(`/manage/user/${params}`);
   },
   updateUser({ id, body }: any) {
     console.log(id);
-    return http.put<SuccessResponse<any>>(`/user/update/${id}`, body);
+    return http.put<SuccessResponse<any>>(`/manage/user/update/${id}`, body);
   },
   deleteUser(idUser: string) {
-    return http.put<SuccessResponse<any>>(`/user/delete/${idUser}`);
+    return http.put<SuccessResponse<any>>(`/manage/user/delete/${idUser}`);
   },
 };
 

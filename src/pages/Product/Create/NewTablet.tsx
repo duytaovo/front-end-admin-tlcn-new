@@ -18,10 +18,7 @@ import {
 import SelectCustom from "src/components/Select";
 import Textarea from "src/components/Textarea";
 import { getCategorys } from "src/store/category/categorySlice";
-import {
-  addSmartPhone,
-  getSmartPhones,
-} from "src/store/product/smartPhoneSlice";
+
 import InputFile from "src/components/InputFile";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
@@ -144,7 +141,7 @@ const NewTablet: React.FC = () => {
           depotId: Number(item?.depot) || 1,
         })),
 
-        lstProductImageUrl: [],
+        lstProductImageUrl: data.imageUrl,
       },
       monitor: data.monitor,
       operatingSystem: data.operatingSystem,
@@ -207,7 +204,7 @@ const NewTablet: React.FC = () => {
 
   return (
     <div className="bg-white shadow ">
-      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm điện thoại</h2>
+      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm tablet</h2>
       <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
@@ -263,8 +260,8 @@ const NewTablet: React.FC = () => {
             placeholder="Vui lòng chọn"
             defaultValue={""}
             options={[
-              { id: "iOS", name: "iOS" },
-              { id: "Android", name: "android" },
+              { id: "iPadOS", name: "iPadOS" },
+              { id: "Android", name: "Android" },
             ]}
             register={register}
             isBrand={true}
@@ -280,7 +277,6 @@ const NewTablet: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="characteristic"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
             options={character?.data}
@@ -296,7 +292,7 @@ const NewTablet: React.FC = () => {
           rules={[{ required: true }]}
         >
           <Input
-            placeholder="Điện thoại iPhone 15 Pro Max 1TB"
+            placeholder="Máy tính bảng iPad Pro M2 11 inch WiFi 128GB"
             name="name"
             register={register}
             type="text"

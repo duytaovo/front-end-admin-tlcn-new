@@ -11,16 +11,6 @@ export const getSmartPhones = createAsyncThunk(
   payloadCreator(smartPhoneApi.getSmartPhones)
 );
 
-export const getSmartPhonesWithPageNumber = createAsyncThunk(
-  "smartPhone/getSmartPhonesWithPageNumber",
-  payloadCreator(smartPhoneApi.getSmartPhonesWithPageNumber)
-);
-
-export const getSmartPhonesWithPageNumberSize = createAsyncThunk(
-  "smartPhone/getSmartPhonesWithPageNumberSize",
-  payloadCreator(smartPhoneApi.getSmartPhonesWithPageNumberSize)
-);
-
 export const getDetailPhone = createAsyncThunk(
   "smartPhone/getDetailPhone",
   payloadCreator(smartPhoneApi.getDetailSmartPhone)
@@ -101,6 +91,7 @@ const dataDetail: SmartPhoneDetail = {
     lstProductImageUrl: [],
     star: 4.9,
     totalReview: 100,
+    slug: "",
   },
 };
 const initialState: IProudct = {
@@ -112,22 +103,12 @@ const smartPhoneSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // builder.addCase(addSmartPhone.fulfilled, (state, { payload }) => {
-    //   state.smartPhone = payload.data;
-    // });
     builder.addCase(getSmartPhones.fulfilled, (state, { payload }) => {
       state.smartPhone = payload.data;
     });
     builder.addCase(getDetailPhone.fulfilled, (state, { payload }) => {
-      console.log(payload.data.data);
       state.smartPhoneDetail = payload.data.data;
     });
-    // builder.addCase(updatesmartPhone.fulfilled, (state, { payload }) => {
-    //   [state.smartPhoneDetail, ...payload.data];
-    // });
-    // builder.addCase(deletesmartPhone.fulfilled, (state, { payload }) => {
-    //   state.smartPhone = payload.data;
-    // });
   },
 });
 

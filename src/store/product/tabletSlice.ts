@@ -81,12 +81,14 @@ const dataDetail: any = {
     lstProductImageUrl: [],
     star: 4.9,
     totalReview: 100,
+    slug: "",
   },
 };
 const initialState: IProduct = {
   tablet: [],
   tabletDetail: dataDetail,
 };
+
 const TabletSlice = createSlice({
   name: "tablet",
   initialState,
@@ -96,7 +98,7 @@ const TabletSlice = createSlice({
       state.tablet = payload.data;
     });
     builder.addCase(getDetailTablet.fulfilled, (state, { payload }) => {
-      state.tablet = payload.data.data;
+      state.tabletDetail = payload.data.data;
     });
   },
 });

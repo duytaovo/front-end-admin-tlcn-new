@@ -1,5 +1,4 @@
 import { Link, useNavigate } from "react-router-dom";
-import path from "src/constants/path";
 import {
   formatCurrency,
   formatNumberToSocialStyle,
@@ -16,6 +15,10 @@ import {
 import { unwrapResult } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import { ListSmartPhone } from "src/types/allProductsType.interface";
+import {
+  deleteSmartWatch,
+  getSmartWatch,
+} from "src/store/product/smartwatchSlice";
 
 interface Props {
   product: ListSmartPhone;
@@ -36,7 +39,7 @@ interface IProps {
 const OptionWrapper: React.FC<IProps> = ({ children }) => {
   return <div className="flex h-17 items-end py-1">{children}</div>;
 };
-export default function ProductPhone({ product }: Props) {
+export default function ProductSmartWatch({ product }: Props) {
   const cRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const [iOffset, setIOffset] = useState<IiOffset>({
@@ -57,7 +60,7 @@ export default function ProductPhone({ product }: Props) {
       title: "Sửa",
       callback: () => {
         navigate(
-          `${"/smartPhone/detail/update"}/${generateNameId({
+          `${"/smartWatch/detail/update"}/${generateNameId({
             name: product.name,
             id: product.id.toString(),
           })}`
@@ -72,12 +75,12 @@ export default function ProductPhone({ product }: Props) {
       title: "Xóa",
       callback: () => {
         const handleDelete = async () => {
-          const res = await dispatch(deleteSmartPhone(product.id.toString()));
+          const res = await dispatch(deleteSmartWatch(product.id.toString()));
           unwrapResult(res);
           // const d = res?.payload;
           // if (d?.code !== 200) return toast.error(d?.message);
           await toast.success("Xóa sản phẩm thành công ");
-          await dispatch(getSmartPhones(""));
+          await dispatch(getSmartWatch(""));
         };
         handleDelete();
         hidden();
@@ -95,7 +98,7 @@ export default function ProductPhone({ product }: Props) {
   return (
     <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <Link
-        to={`${"/smartPhone/detail"}/${generateNameId({
+        to={`${"/smartWatch/detail"}/${generateNameId({
           name: product.name,
           id: product.id.toString(),
         })}`}

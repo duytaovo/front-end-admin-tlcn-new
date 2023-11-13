@@ -3,21 +3,26 @@ import http from "src/utils/http";
 
 const categoryApi = {
   addCategory(data: any) {
-    return http.post("/category/create", data);
+    return http.post("/manage/category/create", data);
   },
   getCategorys(params: any) {
-    return http.get<SuccessResponse<any>>("/category", { params });
+    return http.get<SuccessResponse<any>>("/manage/category", { params });
   },
   getDetailCategory(params: any) {
-    return http.get<SuccessResponse<any[]>>(`/category/${params}`, {
+    return http.get<SuccessResponse<any[]>>(`/manage/category/${params}`, {
       params,
     });
   },
   updateCategory({ _id, body }: any) {
-    return http.post<SuccessResponse<any>>(`/category/update/${_id}`, body);
+    return http.post<SuccessResponse<any>>(
+      `/manage/category/update/${_id}`,
+      body
+    );
   },
   deleteCategory(idcategory: string[]) {
-    return http.post<SuccessResponse<any>>(`/category/delete/${idcategory}`);
+    return http.post<SuccessResponse<any>>(
+      `/manage/category/delete/${idcategory}`
+    );
   },
 };
 

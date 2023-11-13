@@ -11,8 +11,6 @@ import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
 import { schemaProductSmartPhone } from "src/utils/rules";
 import {
-  generateRandomString,
-  getAvatarUrl,
   getIdFromNameId,
   isAxiosUnprocessableEntityError,
 } from "src/utils/utils";
@@ -20,17 +18,16 @@ import SelectCustom from "src/components/Select";
 
 import Textarea from "src/components/Textarea";
 import { getCategorys } from "src/store/category/categorySlice";
-import {
-  getDetailPhone,
-  getSmartPhones,
-  updateSmartPhone,
-} from "src/store/product/smartPhoneSlice";
 import InputFile from "src/components/InputFile";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
-import { getDetailTablet } from "src/store/product/tabletSlice";
+import {
+  getDetailTablet,
+  getTablet,
+  updateTablet,
+} from "src/store/product/tabletSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -50,7 +47,7 @@ interface FormData {
   mass: string | undefined;
   launchTime: string | undefined;
   accessories: string | undefined;
-  productStatus: number | undefined;
+  productStatus: string | undefined;
   ram: string;
   storageCapacity: string;
   color: string;
@@ -60,21 +57,8 @@ interface FormData {
 }
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-type brand = {
-  id: number;
-  name: string;
-};
 
 const UpdatePhone: React.FC = () => {
-  const [componentDisabled, setComponentDisabled] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     handleSubmit,
@@ -87,13 +71,11 @@ const UpdatePhone: React.FC = () => {
   } = useForm({
     resolver: yupResolver(schemaProductSmartPhone),
   });
-  const [data, setData] = useState<any>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { category } = useAppSelector((state) => state.category);
   const { nameId } = useParams();
   const id = getIdFromNameId(nameId as string);
-  // const { brand } = useAppSelector((state) => state.brand);
   const { tabletDetail } = useAppSelector((state) => state.tablet);
   const { character } = useAppSelector((state) => state.character);
   const { depot } = useAppSelector((state) => state.depot);
@@ -182,9 +164,10 @@ const UpdatePhone: React.FC = () => {
         productStatus: 100,
         lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map(
           (item, index) => ({
-            typeId: Number(
-              tabletDetail?.productInfo?.lstProductTypeAndPrice[index].typeId
-            ),
+            typeId:
+              Number(
+                tabletDetail?.productInfo?.lstProductTypeAndPrice[index].typeId
+              ) || null,
             ram: item?.ram,
             storageCapacity: item?.storageCapacity,
             color: item?.color,
@@ -217,20 +200,20 @@ const UpdatePhone: React.FC = () => {
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(updateSmartPhone({ id, body }));
+      const res = await dispatch(updateTablet({ id, body }));
       unwrapResult(res);
       const d = res?.payload?.data;
       if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Chỉnh sửa thành công ");
-      await dispatch(getSmartPhones(""));
-      await navigate(path.smartPhone);
+      await dispatch(getTablet(""));
+      await navigate(path.tablet);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
         if (formError) {
           Object.keys(formError).forEach((key) => {
             setError(key as keyof FormData, {
-              // message: formError[key as keyof FormData],
+              message: formError[key as keyof FormData],
               type: "Server",
             });
           });
@@ -278,14 +261,13 @@ const UpdatePhone: React.FC = () => {
     setValue("launchTime", "2023");
     setValue("imageUrl", tabletDetail?.productInfo.lstProductImageUrl);
   };
-  const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
 
   return (
     <div className="bg-white shadow ">
-      <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm điện thoại</h2>
+      <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm tablet</h2>
       <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
@@ -343,8 +325,8 @@ const UpdatePhone: React.FC = () => {
             placeholder="Vui lòng chọn"
             defaultValue={tabletDetail?.operatingSystem}
             options={[
-              { id: "iOS", name: "iOS" },
-              { id: "Android", name: "android" },
+              { id: "iPadOS", name: "iPadOS" },
+              { id: "Android", name: "Android" },
             ]}
             register={register}
             isBrand={true}
@@ -522,7 +504,7 @@ const UpdatePhone: React.FC = () => {
                       id={`lstProductTypeAndPrice.${index}.depot`}
                       // label="Hãng xe"
                       placeholder="Vui lòng chọn"
-                      defaultValue={item.depotId}
+                      defaultValue={1}
                       options={depot?.data?.data}
                       register={register}
                     >
