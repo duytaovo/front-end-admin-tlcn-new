@@ -1,25 +1,17 @@
-import { PlusOutlined } from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Form, Upload } from "antd";
+import { Button, Form } from "antd";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Input from "src/components/Input";
 import path from "src/constants/path";
-import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
+import { useAppDispatch } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
-import { schemaBrand, schemaProductSmartPhone } from "src/utils/rules";
+import { schemaBrand } from "src/utils/rules";
 import { isAxiosUnprocessableEntityError } from "src/utils/utils";
-
-import Textarea from "src/components/Textarea";
-import { getCategorys } from "src/store/category/categorySlice";
 import { addBrand, getBrands } from "src/store/brand/brandSlice";
-import {
-  addSmartPhone,
-  getSmartPhones,
-} from "src/store/product/smartPhoneSlice";
 import InputFile from "src/components/InputFile";
 
 const normFile = (e: any) => {

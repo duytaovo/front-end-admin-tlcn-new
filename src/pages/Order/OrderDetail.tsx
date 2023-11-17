@@ -2,13 +2,14 @@ import { CheckCircleFill } from "react-bootstrap-icons";
 
 import "./table.scss";
 import numberWithCommas from "src/utils/numberWithCommas";
-
-function OrderDetail(props: any) {
-  const { customer } = props;
-  const orderItems = props.order_items.data;
-
-  const deliveryTime = "3/8/2023";
-  const amountPaid = props.totalPrice;
+import { Button } from "antd";
+interface Props {
+  order: any;
+  displayDetail: any;
+  setOrderDetail: any;
+  index: number;
+}
+const OrderDetail = ({ order, index, setOrderDetail }: Props) => {
   const surcharge = 20000;
   const style = (text: string) => {
     switch (text) {
@@ -26,97 +27,106 @@ function OrderDetail(props: any) {
 
   return (
     <div>
-      <div className="p-8 border-b">
+      <div className="py-8 border-b">
         <div className="flex justify-between">
-          <h2 className="font-bold text-xl">Chi tiết đơn hàng: #{props.id}</h2>
-          <p className="text-xl">
+          <h2 className="font-bold text-3xl">Chi tiết đơn hàng: #{order.id}</h2>
+          <p className="text-2xl">
             Trạng thái:{" "}
-            <span className={style(props.status)}>{props.status}</span>{" "}
+            <span className={style(order.orderStatusString)}>{"Đã đặt"}</span>
           </p>
         </div>
-        <p className="text-xl">Mua tại thegioicongnghe.com</p>
+        <p className="text-2xl">Mua tại docongnghe.com</p>
       </div>
-      {orderItems.map((item: any) => {
+      {order?.orderDetails?.map((item: any, index: number) => {
         return (
-          <div className="flex justify-between py-4 border-b">
-            <div className="flex">
-              <div className="w-40 h-56">
-                <img className="object-cover" src={item.img} alt={item.title} />
+          <div className="flex justify-between py-4 border-b" key={index}>
+            <div className="flex space-x-5">
+              <div className="w-28 h-20">
+                <img
+                  className="object-contain"
+                  src={item.image}
+                  alt={item.name}
+                />
               </div>
               <div>
-                <p className="font-semibold text-xl">{item.title}</p>
-                <p className="text-left">Màu: {item.color}</p>
-                <p className="text-left">Số lượng: {item.quantity}</p>
+                <p className="font-medium text-3xl">{item.name}</p>
+                <p className="font-medium text-xl">Màu: {item.color}</p>
+                <p className="font-medium text-xl">Ram: {item.ram}</p>
+                <p className="font-medium text-xl">
+                  Bộ nhớ trong: {item.storageCapacity}
+                </p>
+                <p className="font-medium text-xl">Số lượng: {item.quantity}</p>
               </div>
             </div>
 
-            <div>
+            <div className="font-medium text-3xl">
               <p className="text-red-400">
-                {numberWithCommas(item.price * (1 - item.discount))}
+                {numberWithCommas(item.salePrice)}đ
               </p>
               <p className="line-through">{numberWithCommas(item.price)}₫</p>
             </div>
           </div>
         );
       })}
-      <div className="text-left border-b p-4 text-2xl leading-[40px]">
-        <p>Giá tạm tính: {numberWithCommas(props.totalPrice)}₫</p>
+      <div className="border-b p-4 text-2xl leading-[40px]">
+        <p>Giá tạm tính: {numberWithCommas(order?.orderPrice)}₫</p>
         <p>
-          <span className="">Phụ phí: </span>{" "}
-          <span>+{numberWithCommas(surcharge)}₫</span>
+          <span className="">Phí giao hàng: </span>{" "}
+          <span>{numberWithCommas(order?.deliveryPrice)}₫</span>
+        </p>
+        <p>
+          <span className="">Giảm giá: </span>{" "}
+          <span>{numberWithCommas(order?.discount)}₫</span>
         </p>
         <p>
           <span className="font-bold">Tổng tiền: </span>
           <span className="text-red-500">
-            {numberWithCommas(amountPaid + surcharge)}₫
+            {numberWithCommas(order?.finalPrice)}₫
           </span>
         </p>
         <p>
+          <CheckCircleFill className="text-blue-500" />
           <span className="font-bold"> Số tiền đã thanh toán: </span>
 
           <span className="text-red-400">
-            <CheckCircleFill className="text-blue-500 text-xl" />{" "}
-            {numberWithCommas(amountPaid + surcharge)}₫
+            {numberWithCommas(order?.finalPrice)}₫
           </span>
         </p>
       </div>
-      <div className=" text-left border-b p-4 text-2xl leading-[40px]">
+      <div className="border-b p-4 text-2xl leading-[40px]">
         <p className="font-bold text-2xl">
           Địa chỉ và thông tin người nhận hàng
         </p>
         <ul>
           <li>
-            {customer.sex} {customer.username} - {customer.phone}
+            {order?.nameReceiver} - {order?.phoneReceiver}
           </li>
-          <li>
-            Địa chỉ nhận hàng {customer.address.ward}{" "}
-            {customer.address.district} {customer.address.city}
-          </li>
-          <li>Thời gian nhận hàng: {deliveryTime}</li>
+          <li>Địa chỉ nhận hàng {order.addressReceiver}</li>
         </ul>
       </div>
+
       <div className="flex justify-center py-4">
-        <button
-          className="bg-blue-400 rounded-xl p-4"
+        <Button
+          type="link"
           onClick={() =>
-            props.setOrderDetail((current: any) => {
-              return current.index === props.index
+            setOrderDetail((current: any) => {
+              return current.index === index
                 ? {
                     index: -1,
-                    id: props.id,
+                    id: order.id,
                   }
                 : {
-                    index: props.index,
-                    id: props.id,
+                    index: index,
+                    id: order.id,
                   };
             })
           }
         >
           Ẩn xem chi tiết
-        </button>
+        </Button>
       </div>
     </div>
   );
-}
+};
 
 export default OrderDetail;

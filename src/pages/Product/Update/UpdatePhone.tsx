@@ -22,6 +22,7 @@ import {
   getDetailPhone,
   getSmartPhones,
   updateSmartPhone,
+  uploadManyImagesProductSmartPhone,
 } from "src/store/product/smartPhoneSlice";
 import InputFile from "src/components/InputFile";
 import { PlusOutlined } from "@ant-design/icons";
@@ -64,11 +65,13 @@ const UpdatePhone: React.FC = () => {
     setError,
     register,
     setValue,
+    getValues,
     watch,
     control,
   } = useForm({
     resolver: yupResolver(schemaProductSmartPhone),
   });
+  const [imageUrls, setImages] = useState<string[]>([]);
   const [data, setData] = useState<any>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -101,13 +104,15 @@ const UpdatePhone: React.FC = () => {
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
 
   // Tạo một mảng chứa các URL tạm thời cho ảnh
-  const imageUrls: string[] = [];
 
   for (const image of imageArray) {
     const imageUrl = URL.createObjectURL(image);
     imageUrls.push(imageUrl);
   }
+
   useEffect(() => {
+    setImages(smartPhoneDetail.productInfo.lstProductImageUrl);
+
     setValue(
       "ram",
       smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram
@@ -146,10 +151,24 @@ const UpdatePhone: React.FC = () => {
     setValue("dimension", smartPhoneDetail?.productInfo?.dimension);
     setValue("category", smartPhoneDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("imageUrl", smartPhoneDetail?.productInfo.lstProductImageUrl);
+    setValue("files", smartPhoneDetail?.productInfo.lstProductImageUrl);
   }, [smartPhoneDetail]);
-
+  console.log(file);
   const onSubmit = handleSubmit(async (data) => {
+    let images = [];
+
+    if (file) {
+      const form = new FormData();
+      for (let i = 0; i < file.length; i++) {
+        form.append("files", file[i]);
+      }
+      const res = await dispatch(uploadManyImagesProductSmartPhone(form));
+      unwrapResult(res);
+      const d = res?.payload?.data?.data;
+      for (let i = 0; i < d.length; i++) {
+        images.push(d[i]?.fileUrl);
+      }
+    }
     const body = JSON.stringify({
       productInfo: {
         brandId: Number(data.brand) || 1,
@@ -181,7 +200,7 @@ const UpdatePhone: React.FC = () => {
           })
         ),
 
-        lstProductImageUrl: data.imageUrl,
+        lstProductImageUrl: images || [],
       },
       monitor: data.monitor,
       operatingSystem: data.operatingSystem,
@@ -193,13 +212,6 @@ const UpdatePhone: React.FC = () => {
       charging: data.charging,
       networkSupport: data.networkSupport,
     });
-    // if (file) {
-    //   const form = new FormData();
-    //   form.append("file", file[0]);
-    //   form.append("image", file[0]);
-    // } else {
-    //   toast.warning("Cần chọn ảnh");
-    // }
 
     try {
       setIsSubmitting(true);
@@ -265,11 +277,36 @@ const UpdatePhone: React.FC = () => {
     setValue("dimension", smartPhoneDetail?.productInfo?.dimension);
     setValue("category", smartPhoneDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("imageUrl", smartPhoneDetail?.productInfo.lstProductImageUrl);
+    setValue("files", smartPhoneDetail?.productInfo.lstProductImageUrl);
   };
-  const avatar = watch("imageUrl");
+
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
+  };
+
+  const handleEditImage = (index: number) => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+
+    fileInput.addEventListener("change", (event) => {
+      const selectedFile = (event.target as HTMLInputElement).files?.[0];
+
+      if (selectedFile) {
+        const currentImages = getValues("files") || [];
+        currentImages[index] = selectedFile;
+        setValue("files", currentImages);
+
+        // Update the image preview immediately
+        setImages((prevImages) => {
+          const updatedImages = [...prevImages];
+          updatedImages[index] = URL.createObjectURL(selectedFile);
+          return updatedImages;
+        });
+      }
+    });
+
+    fileInput.click();
   };
 
   return (
@@ -681,7 +718,6 @@ const UpdatePhone: React.FC = () => {
 
         <Form.Item
           name="file"
-          // rules={[{ required: true }]}
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
@@ -690,12 +726,22 @@ const UpdatePhone: React.FC = () => {
             <div className="my-5 w-24 space-y-5 justify-between items-center">
               {imageUrls.map((imageUrl, index) => {
                 return (
-                  <img
-                    key={index}
-                    src={imageUrl}
-                    className="h-full rounded-md w-full  object-cover"
-                    alt="avatar"
-                  />
+                  <div key={index}>
+                    <img
+                      src={imageUrl}
+                      alt={`Image ${index + 1}`}
+                      width="100"
+                      height="100"
+                      className="h-full rounded-md w-full  object-cover"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => handleEditImage(index)}
+                    >
+                      Edit
+                    </button>
+                  </div>
                 );
               })}
             </div>

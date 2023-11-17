@@ -6,7 +6,6 @@ import {
 } from "@reduxjs/toolkit";
 import appReducer from "src/app.slice";
 import userReducer from "./user/userSlice";
-import orderReducer from "./order/ordersSlice";
 import smartPhoneReducer from "./product/smartPhoneSlice";
 import categoryReducer from "./category/categorySlice";
 import brandReducer from "./brand/brandSlice";
@@ -19,12 +18,15 @@ import characterReducer from "./characteristic/characteristicSlice";
 import depotReducer from "./depot/depotSlice";
 import tabletReducer from "./product/tabletSlice";
 import smartWatchReducer from "./product/smartwatchSlice";
+import orderReducer from "./order/orderSlice";
+import commentsReducer from "./comment/commentsSlice";
 
 export const store = configureStore({
   reducer: {
     loading: appReducer,
     user: userReducer,
     orders: orderReducer,
+    comment: commentsReducer,
     smartPhone: smartPhoneReducer,
     smartWatch: smartWatchReducer,
     laptop: laptopReducer,

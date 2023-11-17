@@ -139,7 +139,7 @@ export const schemaProductSmartPhone = yup.object({
   charging: yup.string(),
   networkSupport: yup.string(),
   lstProductTypeAndPrice: yup.array(),
-  imageUrl: yup.array(),
+  files: yup.array(),
 });
 
 export const schemaProductSmartWatch = yup.object({

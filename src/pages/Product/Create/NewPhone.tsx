@@ -109,7 +109,7 @@ const NewPhone: React.FC = () => {
     setValue("design", "");
     setValue("dimension", "");
     setValue("quantity", "");
-    setValue("imageUrl", []);
+    setValue("files", []);
   }, []);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
@@ -215,9 +215,9 @@ const NewPhone: React.FC = () => {
     setValue("frontCamera", "");
     setValue("design", "");
     setValue("dimension", "");
-    setValue("imageUrl", []);
+    setValue("files", []);
   };
-  const avatar = watch("imageUrl");
+  const avatar = watch("files");
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };

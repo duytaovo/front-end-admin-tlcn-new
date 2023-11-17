@@ -6,43 +6,79 @@ import clsx from "clsx";
 import { useState } from "react";
 import numberWithCommas from "src/utils/numberWithCommas";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
-import { orderService } from "src/services/order.service";
-import { getAllOrders } from "src/store/order/ordersApi";
+import {
+  getPurchases,
+  updatePurchasesCancel,
+  updatePurchasesSuccess,
+} from "src/store/order/orderSlice";
+import { Button } from "antd";
 
 const Order = ({ title }: { title?: string }) => {
   const style = (text: string) => {
     switch (text) {
-      case "Đã đặt hàng":
-      case "Đặt hàng":
-        return "text-blue-400 uppercase font-bold";
-      case "Đang giao hàng":
+      case "Ordered":
+        return "text-blue-400 uppercase text-xl font-bold";
+      case "Delivering":
         return "text-blue-400";
-      case "Đã hủy":
-        return "text-red-400 uppercase font-bold";
-      case "Đã xác nhận":
-        return "text-green-400 font-bold uppercase";
+      case "Cancelled":
+        return "text-red-400 uppercase text-xl font-bold";
+      case "Confirmed":
+        return "text-green-400 font-bold uppercase text-xl";
+      case "Delivered":
+        return "text-yellow-400 font-bold uppercase text-xl";
+    }
+  };
+
+  const stringStatus = (text: string) => {
+    switch (text) {
+      case "Ordered":
+        return "Đã đặt hàng";
+      case "Delivering":
+        return "Đang giao hàng";
+      case "Cancelled":
+        return "Đã hủy";
+      case "Confirmed":
+        return "Đã xác nhận";
+      case "Delivered":
+        return "Đã giao hàng";
     }
   };
   const [orderDetail, setOrderDetail] = useState({ index: -1, id: null });
+  const dispatch = useAppDispatch();
 
-  const handleCancel = async (e: any) => {
+  const { order } = useAppSelector((state) => state.orders);
+
+  const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
+  const pageSize = 10; // Số phần tử trên mỗi trang
+
+  const handleAccept = async (id: number) => {
     if (confirm("Bạn có muốn Xác nhận đơn hàng không?")) {
-      const id = e.target.id;
-      const data = JSON.stringify({ status: "Đã xác nhận" });
-      const res = await orderService.updateHistoryOrder(id, data);
+      const res = await dispatch(updatePurchasesSuccess(id));
+
       if (res) {
         alert("Xác nhận thành công");
       }
+      dispatch(getPurchases(""));
     }
   };
 
-  const dispatch = useAppDispatch();
-
-  const orders = useAppSelector((state) => state.orders.order.data);
+  const handleCancel = async (id: number) => {
+    if (confirm("Bạn có muốn Hủy đơn hàng không?")) {
+      const res = await dispatch(updatePurchasesCancel(id));
+      if (res) {
+        alert("Hủy thành công");
+      }
+      dispatch(getPurchases(""));
+    }
+  };
 
   useEffect(() => {
-    getAllOrders(dispatch);
-  }, []);
+    dispatch(getPurchases({ pageNumber: currentPage }));
+  }, [currentPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page - 1);
+  };
 
   useEffect(() => {
     document.title = title || "";
@@ -59,69 +95,86 @@ const Order = ({ title }: { title?: string }) => {
           <Table.HeadCell> Ngày đặt mua</Table.HeadCell>
           <Table.HeadCell>Trạng thái</Table.HeadCell>
           <Table.HeadCell>
-            <span className="sr-only">Chỉnh sửa</span>
+            <span className="">Chỉnh sửa</span>
           </Table.HeadCell>
         </Table.Head>
         <Table.Body className=" ">
-          {orders.map((order: any, index) => {
-            const styleStatus = style(order.status);
+          {order?.data?.data.map((_order: any, index) => {
+            const styleStatus = style(_order.orderStatusString);
             const displayDetail = index === orderDetail.index;
-            const displayCancelBtn = order.status != "Đặt hàng";
-            const styleDisable = "bg-gray-100";
+            const displayCancelBtn = _order.orderStatusString != "Ordered";
             return (
               <>
                 <Table.Row className=" dark:border-gray-700 dark:bg-gray-800 overflow-hidden">
-                  <Table.Cell className="text-blue-400">#{order.id}</Table.Cell>
-                  <Table.Cell className="text-blue-400 hover:text-blue-700 select-none">
-                    <button
+                  <Table.Cell className="text-blue-400 text-2xl">
+                    #{_order.id}
+                  </Table.Cell>
+                  <Table.Cell className="text-blue-400 hover:text-blue-700 select-none text-2xl">
+                    <Button
+                      type="link"
                       onClick={() =>
                         setOrderDetail((current) => {
                           return current.index === index
                             ? {
                                 index: -1,
-                                id: order.id,
+                                id: _order.id,
                               }
                             : {
                                 index,
-                                id: order.id,
+                                id: _order.id,
                               };
                         })
                       }
                     >
                       Xem chi tiết
-                    </button>
+                    </Button>
                   </Table.Cell>
-                  <Table.Cell>{order.totalQuantity}</Table.Cell>
-                  <Table.Cell className="text-red-400">
-                    {numberWithCommas(order.totalPrice)}₫
+                  <Table.Cell className="text-2xl">
+                    {_order?.orderDetails?.length}
                   </Table.Cell>
-                  <Table.Cell>
+                  <Table.Cell className="text-red-400 text-2xl">
+                    {numberWithCommas(_order?.finalPrice)}₫
+                  </Table.Cell>
+                  <Table.Cell className="text-2xl">
                     {" "}
-                    <p className="">{order.createdAt}</p>{" "}
+                    <p className="">{_order?.buyDate.substring(0, 10)}</p>
                   </Table.Cell>
 
                   <Table.Cell className={styleStatus}>
-                    {order.status}
+                    {stringStatus(_order.orderStatusString)}
                   </Table.Cell>
-                  <Table.Cell>
-                    <button
+                  <Table.Cell className="space-x-3">
+                    <Button
+                      type="link"
                       disabled={displayCancelBtn}
-                      id={order.id}
-                      onClick={handleCancel}
+                      id={_order.id}
+                      onClick={() => handleAccept(_order.id)}
+                      className={clsx(
+                        "bg-green-500 text-xl font-medium p-4 rounded-lg  text-white",
+                        displayCancelBtn && "!bg-gray-100 !text-gray-700"
+                      )}
+                    >
+                      Xác nhận
+                    </Button>
+                    <Button
+                      type="link"
+                      disabled={displayCancelBtn}
+                      id={_order.id}
+                      onClick={() => handleCancel(_order.id)}
                       className={clsx(
                         "bg-red-500 text-xl font-medium p-4 rounded-lg  text-white",
                         displayCancelBtn && "!bg-gray-100 !text-gray-700"
                       )}
                     >
-                      Xác nhận
-                    </button>
+                      Hủy đơn
+                    </Button>
                   </Table.Cell>
                 </Table.Row>
                 {displayDetail && (
                   <Table.Row>
                     <Table.Cell className="" colSpan={7}>
                       <OrderDetail
-                        {...order}
+                        order={_order}
                         displayDetail={displayDetail}
                         setOrderDetail={setOrderDetail}
                         index={index}
