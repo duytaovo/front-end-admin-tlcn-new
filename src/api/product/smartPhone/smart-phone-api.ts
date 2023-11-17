@@ -28,26 +28,18 @@ const smartPhoneApi = {
     );
   },
   uploadImageSmartPhone(body: FormData) {
-    return http.post<SuccessResponse<string>>(
-      "/manage/product/smartphone/upload-image",
-      body,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    return http.post<SuccessResponse<string>>("/file/system/upload", body, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   },
-  uploadImagesSmartPhone(body: FormData) {
-    return http.post<SuccessResponse<string>>(
-      "/manage/product/smartphone/upload-images",
-      body,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+  uploadManyImagesSmartPhone(body: any) {
+    return http.post<SuccessResponse<string>>("/file/s3/upload", body, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   },
 };
 

@@ -9,9 +9,8 @@ import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
-import { schemaProductSmartPhone } from "src/utils/rules";
+import { schemaProductSmartWatch } from "src/utils/rules";
 import {
-  generateRandomString,
   getIdFromNameId,
   isAxiosUnprocessableEntityError,
 } from "src/utils/utils";
@@ -19,16 +18,16 @@ import SelectCustom from "src/components/Select";
 
 import Textarea from "src/components/Textarea";
 import { getCategorys } from "src/store/category/categorySlice";
-import {
-  getDetailPhone,
-  getSmartPhones,
-  updateSmartPhone,
-} from "src/store/product/smartPhoneSlice";
+import { getDetailPhone } from "src/store/product/smartPhoneSlice";
 import InputFile from "src/components/InputFile";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
+import {
+  getSmartWatch,
+  updateSmartWatch,
+} from "src/store/product/smartwatchSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -72,7 +71,6 @@ type brand = {
 };
 
 const UpdatePhone: React.FC = () => {
-  const [componentDisabled, setComponentDisabled] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     handleSubmit,
@@ -83,16 +81,14 @@ const UpdatePhone: React.FC = () => {
     watch,
     control,
   } = useForm({
-    resolver: yupResolver(schemaProductSmartPhone),
+    resolver: yupResolver(schemaProductSmartWatch),
   });
-  const [data, setData] = useState<any>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { category } = useAppSelector((state) => state.category);
   const { nameId } = useParams();
   const id = getIdFromNameId(nameId as string);
-  // const { brand } = useAppSelector((state) => state.brand);
-  const { smartPhoneDetail } = useAppSelector((state) => state.smartPhone);
+  const { smartWatchDetail } = useAppSelector((state) => state.smartWatch);
   const { character } = useAppSelector((state) => state.character);
   const { depot } = useAppSelector((state) => state.depot);
   const { brand } = useAppSelector((state) => state.brand);
@@ -103,11 +99,10 @@ const UpdatePhone: React.FC = () => {
     }
   );
   useEffect(() => {
-    dispatch(getCategorys(""));
-    dispatch(getCharacters(""));
-    dispatch(getDetailPhone(id));
-    dispatch(getBrands(""));
-    dispatch(getdepots(""));
+    dispatch(getCategorys({ pageSize: 100 }));
+    dispatch(getCharacters({ pageSize: 100 }));
+    dispatch(getBrands({ pageSize: 100 }));
+    dispatch(getdepots({ pageSize: 100 }));
   }, []);
 
   useEffect(() => {
@@ -127,53 +122,53 @@ const UpdatePhone: React.FC = () => {
   useEffect(() => {
     setValue(
       "ram",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram
+      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram
     );
-    setValue("accessories", smartPhoneDetail?.productInfo?.accessories);
-    setValue("battery", smartPhoneDetail?.battery);
-    setValue("charging", smartPhoneDetail?.charging);
-    setValue("chip", smartPhoneDetail?.chip);
-    setValue("mass", smartPhoneDetail?.productInfo?.mass.toString());
+    setValue("accessories", smartWatchDetail?.productInfo?.accessories);
+    setValue("battery", smartWatchDetail?.battery);
+    setValue("charging", smartWatchDetail?.charging);
+    setValue("chip", smartWatchDetail?.chip);
+    setValue("mass", smartWatchDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0].color.toString()
+      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.color.toString()
     );
-    setValue("monitor", smartPhoneDetail?.monitor);
-    setValue("networkSupport", smartPhoneDetail?.networkSupport);
-    setValue("description", smartPhoneDetail?.productInfo?.description);
-    setValue("brand", smartPhoneDetail?.productInfo?.brandId.toString());
+    setValue("monitor", smartWatchDetail?.monitor);
+    setValue("networkSupport", smartWatchDetail?.networkSupport);
+    setValue("description", smartWatchDetail?.productInfo?.description);
+    setValue("brand", smartWatchDetail?.productInfo?.brandId.toString());
     setValue(
       "characteristic",
-      smartPhoneDetail?.productInfo?.characteristicId.toString()
+      smartWatchDetail?.productInfo?.characteristicId.toString()
     );
-    setValue("name", smartPhoneDetail?.productInfo?.name);
-    setValue("sim", smartPhoneDetail?.sim);
+    setValue("name", smartWatchDetail?.productInfo?.name);
+    setValue("sim", smartWatchDetail?.sim);
     setValue(
       "salePrice",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
     );
-    setValue("rearCamera", smartPhoneDetail?.rearCamera);
+    setValue("rearCamera", smartWatchDetail?.rearCamera);
     setValue(
       "price",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString()
     );
-    setValue("frontCamera", smartPhoneDetail?.frontCamera);
-    setValue("operatingSystem", smartPhoneDetail?.operatingSystem);
-    setValue("design", smartPhoneDetail?.productInfo?.design);
-    setValue("dimension", smartPhoneDetail?.productInfo?.dimension);
-    setValue("category", smartPhoneDetail?.productInfo?.categoryId.toString());
+    setValue("frontCamera", smartWatchDetail?.frontCamera);
+    setValue("operatingSystem", smartWatchDetail?.operatingSystem);
+    setValue("design", smartWatchDetail?.productInfo?.design);
+    setValue("dimension", smartWatchDetail?.productInfo?.dimension);
+    setValue("category", smartWatchDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("imageUrl", smartPhoneDetail?.productInfo.lstProductImageUrl);
-  }, [smartPhoneDetail]);
+    setValue("imageUrl", smartWatchDetail?.productInfo.lstProductImageUrl);
+  }, [smartWatchDetail]);
 
   const onSubmit = handleSubmit(async (data) => {
     const body = JSON.stringify({
       productInfo: {
-        brandId: 1,
+        brandId: Number(data.brand) || 1,
         categoryId: Number(data.category),
-        productId: null,
-        characteristicId: 1,
-        productCode: generateRandomString(10),
+        productId: smartWatchDetail.productInfo.productId,
+        characteristicId: Number(data.characteristic) || 1,
+        productCode: smartWatchDetail.productInfo.productCode,
         name: data.name,
         description: data?.description,
         design: data?.design,
@@ -182,35 +177,31 @@ const UpdatePhone: React.FC = () => {
         launchTime: 2023,
         accessories: data?.accessories,
         productStatus: 100,
-        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
-          typeId: null,
-          ram: item?.ram,
-          storageCapacity: item?.storageCapacity,
-          color: item?.color,
-          price: Number(item?.price),
-          salePrice: Number(item?.salePrice),
-        })),
-
-        lstProductImageUrl: data?.imageUrl?.map((item) => ({
-          typeId: null,
-          ram: item?.ram,
-          storageCapacity: item?.storageCapacity,
-          color: item?.color,
-          price: Number(item?.price),
-          salePrice: Number(item?.salePrice),
-          quantity: Number(item?.quantity),
-          depotId: Number(item?.depot) || 1,
-        })),
+        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map(
+          (item, index) => ({
+            typeId: Number(
+              smartWatchDetail?.productInfo?.lstProductTypeAndPrice[index]
+                .typeId
+            ),
+            ram: item?.ram,
+            storageCapacity: item?.storageCapacity,
+            color: item?.color,
+            price: Number(item?.price),
+            salePrice: Number(item?.salePrice),
+            quantity: Number(item?.quantity),
+            depotId: Number(item?.depot) || 1,
+          })
+        ),
+        lstProductImageUrl: data.imageUrl,
       },
       monitor: data.monitor,
       operatingSystem: data.operatingSystem,
-      rearCamera: data.rearCamera,
-      frontCamera: data.frontCamera,
-      chip: data.chip,
-      sim: data.sim,
+      connector: data.connector,
+      health: data.health,
+      cpu: data.cpu,
+      internalMemory: data.internalMemory,
       battery: data.battery,
-      charging: data.charging,
-      networkSupport: data.networkSupport,
+      connectToOs: data.connectToOs,
     });
     // if (file) {
     //   const form = new FormData();
@@ -222,13 +213,13 @@ const UpdatePhone: React.FC = () => {
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(updateSmartPhone(body));
+      const res = await dispatch(updateSmartWatch({ id, body }));
       unwrapResult(res);
       const d = res?.payload?.data;
       if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Chỉnh sửa thành công ");
-      await dispatch(getSmartPhones(""));
-      await navigate(path.smartPhone);
+      await dispatch(getSmartWatch(""));
+      await navigate(path.smartWatch);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
@@ -248,43 +239,43 @@ const UpdatePhone: React.FC = () => {
   const onClickHuy = () => {
     setValue(
       "ram",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram
+      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram
     );
-    setValue("accessories", smartPhoneDetail?.productInfo?.accessories);
-    setValue("battery", smartPhoneDetail?.battery);
-    setValue("charging", smartPhoneDetail?.charging);
-    setValue("chip", smartPhoneDetail?.chip);
-    setValue("mass", smartPhoneDetail?.productInfo?.mass.toString());
+    setValue("accessories", smartWatchDetail?.productInfo?.accessories);
+    setValue("battery", smartWatchDetail?.battery);
+    setValue("charging", smartWatchDetail?.charging);
+    setValue("chip", smartWatchDetail?.chip);
+    setValue("mass", smartWatchDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0].color.toString()
+      smartWatchDetail?.productInfo.lstProductTypeAndPrice[0].color.toString()
     );
-    setValue("monitor", smartPhoneDetail?.monitor);
-    setValue("networkSupport", smartPhoneDetail?.networkSupport);
-    setValue("description", smartPhoneDetail?.productInfo?.description);
-    setValue("brand", smartPhoneDetail?.productInfo?.brandId.toString());
+    setValue("monitor", smartWatchDetail?.monitor);
+    setValue("networkSupport", smartWatchDetail?.networkSupport);
+    setValue("description", smartWatchDetail?.productInfo?.description);
+    setValue("brand", smartWatchDetail?.productInfo?.brandId.toString());
     setValue(
       "characteristic",
-      smartPhoneDetail?.productInfo?.characteristicId.toString()
+      smartWatchDetail?.productInfo?.characteristicId.toString()
     );
-    setValue("name", smartPhoneDetail?.productInfo?.name);
-    setValue("sim", smartPhoneDetail?.sim);
+    setValue("name", smartWatchDetail?.productInfo?.name);
+    setValue("sim", smartWatchDetail?.sim);
     setValue(
       "salePrice",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
     );
-    setValue("rearCamera", smartPhoneDetail?.rearCamera);
+    setValue("rearCamera", smartWatchDetail?.rearCamera);
     setValue(
       "price",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString()
     );
-    setValue("frontCamera", smartPhoneDetail?.frontCamera);
-    setValue("operatingSystem", smartPhoneDetail?.operatingSystem);
-    setValue("design", smartPhoneDetail?.productInfo?.design);
-    setValue("dimension", smartPhoneDetail?.productInfo?.dimension);
-    setValue("category", smartPhoneDetail?.productInfo?.categoryId.toString());
+    setValue("frontCamera", smartWatchDetail?.frontCamera);
+    setValue("operatingSystem", smartWatchDetail?.operatingSystem);
+    setValue("design", smartWatchDetail?.productInfo?.design);
+    setValue("dimension", smartWatchDetail?.productInfo?.dimension);
+    setValue("category", smartWatchDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("imageUrl", smartPhoneDetail?.productInfo.lstProductImageUrl);
+    setValue("imageUrl", smartWatchDetail?.productInfo.lstProductImageUrl);
   };
   const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File[]) => {
@@ -293,7 +284,7 @@ const UpdatePhone: React.FC = () => {
 
   return (
     <div className="bg-white shadow ">
-      <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm điện thoại</h2>
+      <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm smartwatch</h2>
       <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
@@ -309,12 +300,11 @@ const UpdatePhone: React.FC = () => {
           rules={[{ required: true }]}
         >
           <SelectCustom
-            className={"flex-1 text-black"}
+            className={"flex-1 text-black "}
             id="category"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
-            defaultValue={smartPhoneDetail?.productInfo?.categoryId}
-            options={category}
+            defaultValue={""}
+            options={category?.data}
             register={register}
             isBrand={true}
           >
@@ -327,12 +317,11 @@ const UpdatePhone: React.FC = () => {
           rules={[{ required: true }]}
         >
           <SelectCustom
-            className={"flex-1 text-black"}
+            className={"flex-1 text-black  "}
             id="brand"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
-            defaultValue={smartPhoneDetail?.productInfo?.brandId}
-            options={brand}
+            defaultValue={""}
+            options={brand?.data?.data}
             register={register}
             isBrand={true}
           >
@@ -347,7 +336,6 @@ const UpdatePhone: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="operatingSystem"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
             options={[
@@ -368,10 +356,9 @@ const UpdatePhone: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="characteristic"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
-            options={character}
+            options={character?.data}
             register={register}
             isBrand={true}
           >
@@ -384,7 +371,7 @@ const UpdatePhone: React.FC = () => {
           rules={[{ required: true }]}
         >
           <Input
-            placeholder="Điện thoại iPhone 15 Pro Max 1TB"
+            placeholder=""
             name="name"
             register={register}
             type="text"
@@ -523,16 +510,15 @@ const UpdatePhone: React.FC = () => {
                   <SelectCustom
                     className={"flex-1 text-black"}
                     id={`lstProductTypeAndPrice.${index}.depot`}
-                    // label="Hãng xe"
                     placeholder="Vui lòng chọn"
                     defaultValue={1}
-                    options={depot}
+                    options={depot?.data?.data}
                     register={register}
                   >
                     {errors.depot?.message}
                   </SelectCustom>
                 </Form.Item>
-                <div>
+                <div className="flex justify-between space-x-1">
                   <Form.Item
                     label="Số lượng sản phẩm"
                     name={`lstProductTypeAndPrice.${index}.quantity`}
@@ -605,50 +591,54 @@ const UpdatePhone: React.FC = () => {
 
         <Form.Item
           label="Camera trước"
-          name="frontCamera"
+          name="health"
           rules={[{ required: true }]}
         >
           <Input
-            name="frontCamera"
+            name="health"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.frontCamera?.message}
+            errorMessage={errors.health?.message}
             placeholder="12 MP"
           />
         </Form.Item>
         <Form.Item
-          label="Camera sau"
-          name="rearCamera"
+          label="Cổng kết nối"
+          name="connector"
           rules={[{ required: true }]}
         >
           <Input
-            name="rearCamera"
+            name="connector"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.rearCamera?.message}
+            errorMessage={errors.connector?.message}
             placeholder="Chính 48 MP & Phụ 12 MP, 12 MP"
           />
         </Form.Item>
-        <Form.Item label="Chip" name="chip" rules={[{ required: true }]}>
+        <Form.Item label="Cpu" name="cpu" rules={[{ required: true }]}>
           <Input
-            name="chip"
+            name="cpu"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.chip?.message}
-            placeholder="Apple A17 Pro 6 nhân"
+            errorMessage={errors.cpu?.message}
+            placeholder=""
           />
         </Form.Item>
-        <Form.Item label="Sim" name="sim" rules={[{ required: true }]}>
+        <Form.Item
+          label="Bộ nhớ trong"
+          name="internalMemory"
+          rules={[{ required: true }]}
+        >
           <Input
-            name="sim"
+            name="internalMemory"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.sim?.message}
-            placeholder="1 Nano SIM & 1 eSIM"
+            errorMessage={errors.internalMemory?.message}
+            placeholder="1 Nano internalMemory & 1 einternalMemory"
           />
         </Form.Item>
         <Form.Item label="Pin" name="battery" rules={[{ required: true }]}>
@@ -662,31 +652,17 @@ const UpdatePhone: React.FC = () => {
           />
         </Form.Item>
         <Form.Item
-          label="Sạc nhanh"
-          name="charging"
+          label="Kết nối hệ điều hành"
+          name="connectToOs"
           rules={[{ required: true }]}
         >
           <Input
-            name="charging"
+            name="connectToOs"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.charging?.message}
-            placeholder="20 W"
-          />
-        </Form.Item>
-        <Form.Item
-          label="Hỗ trợ mạng"
-          name="networkSupport"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="networkSupport"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.networkSupport?.message}
-            placeholder="5G"
+            errorMessage={errors.connectToOs?.message}
+            placeholder=""
           />
         </Form.Item>
 
@@ -728,7 +704,7 @@ const UpdatePhone: React.FC = () => {
           rules={[{ required: true }]}
         >
           <Textarea
-            defaultValue={smartPhoneDetail?.productInfo?.description}
+            defaultValue="Mô tả sản phẩm"
             id="description"
             isUpdate={false}
             register={register}

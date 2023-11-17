@@ -22,8 +22,8 @@ import InputFile from "src/components/InputFile";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
-import { addRam, getRams } from "src/store/ram/ramSlice";
 import { addRom, getRoms } from "src/store/rom/romSlice";
+import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -115,6 +115,23 @@ const NewRom: React.FC = () => {
     }
   );
   const onSubmit = handleSubmit(async (data) => {
+    let images = [];
+
+    if (file) {
+      const form = new FormData();
+      for (let i = 0; i < file.length; i++) {
+        form.append("files", file[i]);
+      }
+      const res = await dispatch(uploadManyImagesProductSmartPhone(form));
+      unwrapResult(res);
+      const d = res?.payload?.data?.data;
+      for (let i = 0; i < d.length; i++) {
+        images.push(d[i]?.fileUrl);
+      }
+    } else {
+      toast.warning("Cần chọn ảnh");
+      return;
+    }
     const body = JSON.stringify({
       productInfo: {
         brandId: Number(data.brand) || 1,
@@ -141,7 +158,7 @@ const NewRom: React.FC = () => {
           depotId: Number(item?.depot) || 1,
         })),
 
-        lstProductImageUrl: [],
+        lstProductImageUrl: images || [],
       },
       romFor: true,
       model: data.model,
@@ -441,8 +458,7 @@ const NewRom: React.FC = () => {
         </Form.Item>
 
         <Form.Item
-          name="file"
-          //
+          name="files"
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
@@ -463,7 +479,7 @@ const NewRom: React.FC = () => {
             <InputFile
               label="Upload ảnh"
               onChange={handleChangeFile}
-              id="images"
+              id="files"
             />
             <div className="mt-3  flex flex-col items-center text-red-500">
               <div>Dụng lượng file tối đa 2 MB</div>

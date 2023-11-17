@@ -21,6 +21,7 @@ import { getCategorys } from "src/store/category/categorySlice";
 import {
   addSmartPhone,
   getSmartPhones,
+  uploadManyImagesProductSmartPhone,
 } from "src/store/product/smartPhoneSlice";
 import InputFile from "src/components/InputFile";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
@@ -117,51 +118,67 @@ const NewPhone: React.FC = () => {
     }
   );
   const onSubmit = handleSubmit(async (data) => {
-    const body = JSON.stringify({
-      productInfo: {
-        brandId: Number(data.brand) || 1,
-        categoryId: Number(data.category) || 1,
-        productId: null,
-        characteristicId: Number(data.characteristic) || 1,
-        productCode: generateRandomString(10),
-        name: data.name,
-        description: data?.description,
-        design: data?.design,
-        dimension: data?.dimension,
-        mass: Number(data?.mass),
-        launchTime: 2023,
-        accessories: data?.accessories,
-        productStatus: 100,
-        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
-          typeId: null,
-          ram: item?.ram,
-          storageCapacity: item?.storageCapacity,
-          color: item?.color,
-          price: Number(item?.price),
-          salePrice: Number(item?.salePrice),
-          quantity: Number(item?.quantity),
-          depotId: Number(item?.depot) || 1,
-        })),
+    let images = [];
 
-        lstProductImageUrl: [],
-      },
-      monitor: data.monitor,
-      operatingSystem: data.operatingSystem,
-      rearCamera: data.rearCamera,
-      frontCamera: data.frontCamera,
-      chip: data.chip,
-      sim: data.sim,
-      battery: data.battery,
-      charging: data.charging,
-      networkSupport: data.networkSupport,
-    });
-
+    if (file) {
+      const form = new FormData();
+      for (let i = 0; i < file.length; i++) {
+        form.append("files", file[i]);
+      }
+      const res = await dispatch(uploadManyImagesProductSmartPhone(form));
+      unwrapResult(res);
+      const d = res?.payload?.data?.data;
+      for (let i = 0; i < d.length; i++) {
+        images.push(d[i]?.fileUrl);
+      }
+    } else {
+      toast.warning("Cần chọn ảnh");
+      return;
+    }
     try {
+      const body = JSON.stringify({
+        productInfo: {
+          brandId: Number(data.brand) || 1,
+          categoryId: Number(data.category) || 1,
+          productId: null,
+          characteristicId: Number(data.characteristic) || 1,
+          productCode: generateRandomString(10),
+          name: data.name,
+          description: data?.description,
+          design: data?.design,
+          dimension: data?.dimension,
+          mass: Number(data?.mass),
+          launchTime: 2023,
+          accessories: data?.accessories,
+          productStatus: 100,
+          lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
+            typeId: null,
+            ram: item?.ram,
+            storageCapacity: item?.storageCapacity,
+            color: item?.color,
+            price: Number(item?.price),
+            salePrice: Number(item?.salePrice),
+            quantity: Number(item?.quantity),
+            depotId: Number(item?.depot) || 1,
+          })),
+
+          lstProductImageUrl: images || [],
+        },
+        monitor: data.monitor,
+        operatingSystem: data.operatingSystem,
+        rearCamera: data.rearCamera,
+        frontCamera: data.frontCamera,
+        chip: data.chip,
+        sim: data.sim,
+        battery: data.battery,
+        charging: data.charging,
+        networkSupport: data.networkSupport,
+      });
       setIsSubmitting(true);
       const res = await dispatch(addSmartPhone(body));
       unwrapResult(res);
       const d = res?.payload?.data;
-      // if (d?.code !== 201) return toast.error(d?.message);
+      if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Thêm sản phẩm điện thoại thành công ");
       await dispatch(getSmartPhones(""));
       await navigate(path.smartPhone);
@@ -605,7 +622,7 @@ const NewPhone: React.FC = () => {
         </Form.Item>
 
         <Form.Item
-          name="file"
+          name="files"
           // rules={[{ required: true }]}
           label="Hình ảnh"
           valuePropName="fileList"
@@ -627,7 +644,7 @@ const NewPhone: React.FC = () => {
             <InputFile
               label="Upload ảnh"
               onChange={handleChangeFile}
-              id="images"
+              id="files"
             />
             <div className="mt-3  flex flex-col items-center text-red-500">
               <div>Dụng lượng file tối đa 2 MB</div>

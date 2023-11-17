@@ -12,7 +12,6 @@ import { ErrorResponse } from "src/types/utils.type";
 import { schemaLaptop } from "src/utils/rules";
 import {
   generateRandomString,
-  getAvatarUrl,
   isAxiosUnprocessableEntityError,
 } from "src/utils/utils";
 import SelectCustom from "src/components/Select";
@@ -29,6 +28,7 @@ import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { addLaptop, getLaptop } from "src/store/product/laptopSlice ";
 import { PlusOutlined } from "@ant-design/icons";
 import { getdepots } from "src/store/depot/depotSlice";
+import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -135,6 +135,23 @@ const NewLaptop: React.FC = () => {
   }, []);
 
   const onSubmit = handleSubmit(async (data) => {
+    let images = [];
+
+    if (file) {
+      const form = new FormData();
+      for (let i = 0; i < file.length; i++) {
+        form.append("files", file[i]);
+      }
+      const res = await dispatch(uploadManyImagesProductSmartPhone(form));
+      unwrapResult(res);
+      const d = res?.payload?.data?.data;
+      for (let i = 0; i < d.length; i++) {
+        images.push(d[i]?.fileUrl);
+      }
+    } else {
+      toast.warning("Cần chọn ảnh");
+      return;
+    }
     const body = JSON.stringify({
       gateway: data.gateway,
       special: data.special,
@@ -168,7 +185,7 @@ const NewLaptop: React.FC = () => {
           quantity: Number(item?.quantity),
           depotId: Number(item?.depot) || 1,
         })),
-        lstProductImageUrl: data.imageUrl,
+        lstProductImageUrl: images || [],
       },
       monitor: data.monitor,
       operatingSystem: data.operatingSystem,
@@ -180,13 +197,6 @@ const NewLaptop: React.FC = () => {
       charging: data.charging,
       networkSupport: data.networkSupport,
     });
-    // if (file) {
-    //   const form = new FormData();
-    //   form.append("file", file[0]);
-    //   form.append("image", file[0]);
-    // } else {
-    //   toast.warning("Cần chọn ảnh");
-    // }
 
     try {
       setIsSubmitting(true);
@@ -702,7 +712,8 @@ const NewLaptop: React.FC = () => {
           </SelectCustom>
         </Form.Item>
         <Form.Item
-          name="file"
+          name="files"
+          // rules={[{ required: true }]}
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
@@ -723,7 +734,7 @@ const NewLaptop: React.FC = () => {
             <InputFile
               label="Upload ảnh"
               onChange={handleChangeFile}
-              id="images"
+              id="files"
             />
             <div className="mt-3  flex flex-col items-center text-red-500">
               <div>Dụng lượng file tối đa 2 MB</div>

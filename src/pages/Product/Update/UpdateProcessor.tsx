@@ -190,7 +190,7 @@ const NewRam: React.FC = () => {
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(updateProcessor(body));
+      const res = await dispatch(updateProcessor({ id, body }));
       unwrapResult(res);
       const d = res?.payload?.data;
       if (d?.code !== 201) return toast.error(d?.message);

@@ -190,10 +190,10 @@ const NewRam: React.FC = () => {
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(updateCardGraphic(body));
+      const res = await dispatch(updateCardGraphic({ id, body }));
       unwrapResult(res);
       const d = res?.payload?.data;
-      if (d?.code !== 201) return toast.error(d?.message);
+      if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Cập nhật sản phẩm thành công ");
       await dispatch(getCardGraphic(""));
       await navigate(path.rom);
@@ -255,7 +255,6 @@ const NewRam: React.FC = () => {
     setValue("caching", cardGraphic?.caching);
     setValue("maximumResolution", cardGraphic?.maximumResolution);
   };
-  const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };

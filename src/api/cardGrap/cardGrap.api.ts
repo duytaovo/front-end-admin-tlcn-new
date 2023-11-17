@@ -15,9 +15,9 @@ const cardGraphicApi = {
       `/manage/product/graphics-card/${params}`
     );
   },
-  updateCardGraphic({ _id, body }: any) {
+  updateCardGraphic({ id, body }: any) {
     return http.post<SuccessResponse<any>>(
-      `/manage/product/graphics-card/update/${_id}`,
+      `/manage/product/graphics-card/update/${id}`,
       body
     );
   },

@@ -119,13 +119,14 @@ export class Http {
           toast.error(
             error.response?.data.data?.message || error.response?.data.message
           );
-          // window.location.reload()
+          window.location.reload();
         }
         return Promise.reject(error);
       }
     );
   }
   private handleRefreshToken() {
+    console.log("first refresh token");
     return this.instance
       .post<RefreshTokenReponse>(URL_REFRESH_TOKEN, {
         token: this.refreshToken,

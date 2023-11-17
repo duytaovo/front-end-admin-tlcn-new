@@ -150,7 +150,7 @@ const NewLaptop: React.FC = () => {
   }, [laptopDetail]);
 
   const onSubmit = handleSubmit(async (data) => {
-    const body = JSON.stringify({
+    const body: any = JSON.stringify({
       gateway: data.gateway,
       special: data.special,
       maximumRam: Number(data.maximumRam),
@@ -211,7 +211,7 @@ const NewLaptop: React.FC = () => {
       const res = await dispatch(updateLaptop({ id, body }));
       unwrapResult(res);
       const d = res?.payload?.data;
-      // if (d?.code !== 201) return toast.error(d?.message);
+      if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Cập nhật sp laptop thành công ");
       await dispatch(getLaptop(""));
       await navigate(path.laptop);

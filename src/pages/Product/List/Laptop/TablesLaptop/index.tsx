@@ -18,6 +18,9 @@ const TableLaptop: React.FC = () => {
   useEffect(() => {
     dispatch(getLaptop({ pageNumber: currentPage }));
   }, [currentPage]);
+  useEffect(() => {
+    dispatch(getLaptop({ pageNumber: currentPage }));
+  }, [currentPage]);
   const handlePageChange = (page: number) => {
     setCurrentPage(page - 1);
   };

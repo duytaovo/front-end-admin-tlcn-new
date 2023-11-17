@@ -63,6 +63,19 @@ const UpdateBrand = lazy(() => import("src/pages/Brand/UpdateBrand"));
 const UpdateCategory = lazy(() => import("src/pages/Category/UpdateCategory"));
 const NewCategory = lazy(() => import("src/pages/Category/NewCategory"));
 const NewBrand = lazy(() => import("src/pages/Brand/NewBrand"));
+
+const NewSmartWatch = lazy(
+  () => import("src/pages/Product/Create/NewSmartWatch")
+);
+const SmartWatchDetail = lazy(
+  () => import("src/pages/Product/Detail/SmartWatch/SmartWatch_Detail")
+);
+const ListSmartWatch = lazy(
+  () => import("src/pages/Product/List/SmartWatch/ListSmartWatch")
+);
+const UpdateSmartWatch = lazy(
+  () => import("src/pages/Product/Update/UpdateSmartWatch")
+);
 export const routeMain = [
   {
     path: path.home,
@@ -227,19 +240,19 @@ export const routeMain = [
   },
   {
     path: path.smartWatch,
-    Component: ListTablet,
+    Component: ListSmartWatch,
   },
   {
     path: path.smartWatchNew,
-    Component: NewTablet,
+    Component: NewSmartWatch,
   },
   {
     path: path.smartWatchDetail,
-    Component: TabletDetail,
+    Component: SmartWatchDetail,
   },
   {
     path: path.smartWatchUpdate,
-    Component: UpdateTablet,
+    Component: UpdateSmartWatch,
   },
   {
     path: "*",

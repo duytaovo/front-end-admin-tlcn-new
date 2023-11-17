@@ -55,11 +55,8 @@ interface FormData {
   salePrice: string | undefined;
   monitor: string;
 }
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
 
 const UpdatePhone: React.FC = () => {
-  const [componentDisabled, setComponentDisabled] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     handleSubmit,

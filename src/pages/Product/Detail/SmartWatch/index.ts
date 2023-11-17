@@ -1,3 +1,3 @@
-import SmartPhoneDetail from "./SmartPhone_Detail";
+import SmartWatchDetail from "./SmartWatch_Detail";
 
-export default SmartPhoneDetail;
+export default SmartWatchDetail;

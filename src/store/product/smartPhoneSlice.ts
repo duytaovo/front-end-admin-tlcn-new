@@ -19,14 +19,16 @@ export const addSmartPhone = createAsyncThunk(
   "smartPhone/addSmartPhone",
   payloadCreator(smartPhoneApi.addSmartPhone)
 );
-// export const uploadImageProduct = createAsyncThunk(
-//   "smartPhone/uploadImageProduct",
-//   payloadCreator(smartPhoneApi.)
-// );
-// export const uploadImagesProduct = createAsyncThunk(
-//   "smartPhone/uploadImagesProduct",
-//   payloadCreator(smartPhoneApi.uploadImagesProduct)
-// );
+
+export const uploadImagesProductSmartPhone = createAsyncThunk(
+  "smartPhone/uploadImagesProduct",
+  payloadCreator(smartPhoneApi.uploadImageSmartPhone)
+);
+
+export const uploadManyImagesProductSmartPhone = createAsyncThunk(
+  "smartPhone/uploadManyImagesProductSmartPhone",
+  payloadCreator(smartPhoneApi.uploadManyImagesSmartPhone)
+);
 export const updateSmartPhone = createAsyncThunk(
   "smartPhone/updateSmartPhone",
   payloadCreator(smartPhoneApi.updateSmartPhone)

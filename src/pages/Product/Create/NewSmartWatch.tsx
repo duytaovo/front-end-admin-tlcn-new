@@ -10,10 +10,7 @@ import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
-import {
-  schemaProductSmartPhone,
-  schemaProductSmartWatch,
-} from "src/utils/rules";
+import { schemaProductSmartWatch } from "src/utils/rules";
 import {
   generateRandomString,
   isAxiosUnprocessableEntityError,
@@ -21,10 +18,7 @@ import {
 import SelectCustom from "src/components/Select";
 import Textarea from "src/components/Textarea";
 import { getCategorys } from "src/store/category/categorySlice";
-import {
-  addSmartPhone,
-  getSmartPhones,
-} from "src/store/product/smartPhoneSlice";
+
 import InputFile from "src/components/InputFile";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
@@ -33,6 +27,7 @@ import {
   addSmartWatch,
   getSmartWatch,
 } from "src/store/product/smartwatchSlice";
+import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -124,6 +119,23 @@ const NewSmartWatch: React.FC = () => {
     }
   );
   const onSubmit = handleSubmit(async (data) => {
+    let images = [];
+
+    if (file) {
+      const form = new FormData();
+      for (let i = 0; i < file.length; i++) {
+        form.append("files", file[i]);
+      }
+      const res = await dispatch(uploadManyImagesProductSmartPhone(form));
+      unwrapResult(res);
+      const d = res?.payload?.data?.data;
+      for (let i = 0; i < d.length; i++) {
+        images.push(d[i]?.fileUrl);
+      }
+    } else {
+      toast.warning("Cần chọn ảnh");
+      return;
+    }
     const body = JSON.stringify({
       productInfo: {
         brandId: Number(data.brand) || 1,
@@ -150,7 +162,7 @@ const NewSmartWatch: React.FC = () => {
           depotId: Number(item?.depot) || 1,
         })),
 
-        lstProductImageUrl: [],
+        lstProductImageUrl: images || [],
       },
       monitor: data.monitor,
       operatingSystem: data.operatingSystem,
@@ -167,8 +179,8 @@ const NewSmartWatch: React.FC = () => {
       const res = await dispatch(addSmartWatch(body));
       unwrapResult(res);
       const d = res?.payload?.data;
-      if (d?.code !== 201) return toast.error(d?.message);
-      await toast.success("Thêm sản phẩm điện thoại thành công ");
+      if (d?.code !== 200) return toast.error(d?.message);
+      await toast.success("Thêm sản phẩm thành công ");
       await dispatch(getSmartWatch(""));
       await navigate(path.smartWatch);
     } catch (error: any) {
@@ -206,14 +218,13 @@ const NewSmartWatch: React.FC = () => {
     setValue("dimension", "");
     setValue("imageUrl", []);
   };
-  const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
 
   return (
     <div className="bg-white shadow ">
-      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm điện thoại</h2>
+      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm smartwatch</h2>
       <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
@@ -304,7 +315,7 @@ const NewSmartWatch: React.FC = () => {
           rules={[{ required: true }]}
         >
           <Input
-            placeholder="Điện thoại iPhone 15 Pro Max 1TB"
+            placeholder=""
             name="name"
             register={register}
             type="text"
@@ -524,20 +535,6 @@ const NewSmartWatch: React.FC = () => {
         </Form.Item>
 
         <Form.Item
-          label="Camera trước"
-          name="health"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="health"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.health?.message}
-            placeholder="12 MP"
-          />
-        </Form.Item>
-        <Form.Item
           label="Cổng kết nối"
           name="connector"
           rules={[{ required: true }]}
@@ -599,10 +596,8 @@ const NewSmartWatch: React.FC = () => {
             placeholder="20 W"
           />
         </Form.Item>
-
         <Form.Item
-          name="file"
-          // rules={[{ required: true }]}
+          name="files"
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
@@ -623,7 +618,7 @@ const NewSmartWatch: React.FC = () => {
             <InputFile
               label="Upload ảnh"
               onChange={handleChangeFile}
-              id="images"
+              id="files"
             />
             <div className="mt-3  flex flex-col items-center text-red-500">
               <div>Dụng lượng file tối đa 2 MB</div>

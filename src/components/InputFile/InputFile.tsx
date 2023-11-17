@@ -25,11 +25,11 @@ export default function InputFile({ onChange, id, label }: Props) {
     ) {
       toast.error(`Dụng lượng file tối đa 2 MB. Định dạng:.JPEG, .PNG`, {});
     } else {
-      if (fileUpload && fileUpload?.length > 3) {
+      if (fileUpload && fileUpload?.length > 6) {
         toast.error(`Chỉ được upload tối đa 3 ảnh`, {});
       } else {
         const files = Array.from(fileUpload);
-        files.length > 3 ? files.slice(0, 3) : files;
+        files.length > 6 ? files.slice(0, 6) : files;
         onChange && onChange(files);
       }
     }

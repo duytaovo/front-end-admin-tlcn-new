@@ -158,8 +158,8 @@ const NewTablet: React.FC = () => {
       setIsSubmitting(true);
       const res = await dispatch(addTablet(body));
       unwrapResult(res);
-      // const d = res?.payload?.data;
-      // if (d?.code !== 200) return toast.error(d?.message);
+      const d = res?.payload?.data;
+      if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Thêm sản phẩm thành công ");
       await dispatch(getTablet(""));
       await navigate(path.tablet);
