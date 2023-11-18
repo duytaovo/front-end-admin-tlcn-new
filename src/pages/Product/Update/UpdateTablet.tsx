@@ -143,7 +143,6 @@ const UpdatePhone: React.FC = () => {
     setValue("dimension", tabletDetail?.productInfo?.dimension);
     setValue("category", tabletDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("imageUrl", tabletDetail?.productInfo.lstProductImageUrl);
   }, [tabletDetail]);
 
   const onSubmit = handleSubmit(async (data) => {
@@ -259,7 +258,6 @@ const UpdatePhone: React.FC = () => {
     setValue("dimension", tabletDetail?.productInfo?.dimension);
     setValue("category", tabletDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("imageUrl", tabletDetail?.productInfo.lstProductImageUrl);
   };
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
