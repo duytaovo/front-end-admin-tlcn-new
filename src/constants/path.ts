@@ -42,6 +42,8 @@ const path = {
   smartWatchDetail: "/smartWatch/detail/:nameId",
   smartWatchUpdate: "/smartWatch/detail/update/:nameId",
   smartWatchNew: "/smartWatchNew",
+  feedback: "/feedback",
+  feedbackDetail: "/feedback/:id",
 } as const;
 
 export default path;

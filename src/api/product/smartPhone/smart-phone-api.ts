@@ -41,6 +41,9 @@ const smartPhoneApi = {
       },
     });
   },
+  getProductByProductSlugId({ slug, id }: { slug: string; id: string }) {
+    return http.get(`/product/${slug}/${id}`);
+  },
 };
 
 export default smartPhoneApi;

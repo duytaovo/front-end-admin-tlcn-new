@@ -2,16 +2,19 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { commentService } from "src/api/comment/commentApi.api";
 import { payloadCreator } from "src/utils/utils";
 
-export const getCommentByProductId = createAsyncThunk(
-  "comments/getCommentByProductId",
-  payloadCreator(commentService.getCommentById)
+export const getComments = createAsyncThunk(
+  "comments/getComments",
+  payloadCreator(commentService.getComment)
 );
 
 export const getCommentById = createAsyncThunk(
   "comments/getCommentById",
   payloadCreator(commentService.getCommentById)
 );
-
+export const getCommentByProductId = createAsyncThunk(
+  "comments/getCommentByProductId",
+  payloadCreator(commentService.getCommentByProductId)
+);
 export const putComments = createAsyncThunk(
   "comments/putComments",
   payloadCreator(commentService.putComment)
@@ -19,31 +22,50 @@ export const putComments = createAsyncThunk(
 
 const CommentDetail = {
   code: 200,
-  message: "Requested completed!",
+  message: "",
   data: {
     id: 12,
     userId: 2,
-    username: "ADMIN",
-    userAvatar: "test",
+    username: "",
+    userAvatar: "",
     star: 3,
-    comment: "abc",
-    feedbackFilesUrl: [
-      "https://techstore2023.s3.ap-southeast-1.amazonaws.com/1700214917749e6e163c1-5037-4cbb-a30d-2156e2a0df46-aaa.jpeg",
-    ],
+    comment: "",
+    feedbackFilesUrl: [],
   },
 };
 
 const initialState = {
+  comment: {
+    code: 200,
+    message: "",
+    data: {
+      pageNumber: 0,
+      pageSize: 10,
+      totalPages: 1,
+      totalElements: 1,
+      data: [
+        {
+          id: 12,
+          userId: 2,
+          username: "",
+          userAvatar: "",
+          star: 3,
+          comment: "",
+          feedbackFilesUrl: [],
+        },
+      ],
+    },
+  },
   commentByProduct: {
     code: 200,
     data: [
       {
         id: 12,
         userId: 2,
-        username: "ADMIN",
-        userAvatar: "test",
+        username: "",
+        userAvatar: "",
         star: 3,
-        comment: "abc",
+        comment: "",
         feedbackFilesUrl: [],
       },
     ],
@@ -56,8 +78,8 @@ export const comments = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getCommentByProductId.fulfilled, (state, { payload }) => {
-      state.commentByProduct = payload.data;
+    builder.addCase(getComments.fulfilled, (state, { payload }) => {
+      state.comment = payload.data;
     });
     builder.addCase(getCommentById.fulfilled, (state, { payload }) => {
       state.commentById = payload.data;

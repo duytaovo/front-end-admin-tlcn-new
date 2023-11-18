@@ -18,7 +18,6 @@ export default function TabletDetail() {
   const { nameId } = useParams();
   const dispatch = useAppDispatch();
   const { tabletDetail } = useAppSelector((state) => state.tablet);
-  console.log(tabletDetail);
   const id = getIdFromNameId(nameId as string);
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5]);
   const [activeImage, setActiveImage] = useState("");

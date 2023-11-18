@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   formatCurrency,
   formatNumberToSocialStyle,
@@ -218,7 +218,7 @@ export default function LaptopDetail() {
               </div>
             </div>
             <div className="col-span-7">
-              <h1 className="text-xl font-medium uppercase">
+              <h1 className="text-3xl  uppercase">
                 {laptopDetail?.productInfo?.name}
               </h1>
               <div className="mt-8 flex items-center">

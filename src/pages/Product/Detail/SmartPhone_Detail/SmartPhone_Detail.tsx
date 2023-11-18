@@ -1,8 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-
-import { toast } from "react-toastify";
-
+import { useParams } from "react-router-dom";
 import {
   formatCurrency,
   formatNumberToSocialStyle,
@@ -16,6 +13,7 @@ import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { getDetailPhone } from "src/store/product/smartPhoneSlice";
 import { Button, Modal, Rate } from "antd";
 import DOMPurify from "dompurify";
+import RatingFeedback from "../../../../components/Rating";
 
 export default function SmartPhoneDetail() {
   // const { t } = useTranslation(["product"]);
@@ -223,7 +221,7 @@ export default function SmartPhoneDetail() {
               </div>
             </div>
             <div className="col-span-7">
-              <h1 className="text-xl font-medium uppercase">
+              <h1 className="text-4xl font-medium uppercase">
                 {smartPhoneDetail?.productInfo?.name}
               </h1>
               <div className="mt-8 flex items-center">
@@ -407,7 +405,12 @@ export default function SmartPhoneDetail() {
           </div>
         </div>
       </div>
-
+      <div className="px-20 py-10">
+        <div className="">
+          <div className="uppercase text-gray-400">Đánh giá sản phẩm</div>
+          <RatingFeedback />
+        </div>
+      </div>
       {/* <div className="mt-8">
         <div className="container">
           <div className="uppercase text-gray-400">CÓ THỂ BẠN CŨNG THÍCH</div>

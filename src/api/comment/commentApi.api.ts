@@ -7,7 +7,9 @@ export const commentService = {
   getComment(id: string) {
     return http.get(`/manage/feedback`);
   },
-
+  getCommentByProductId(id: string) {
+    return http.get(`/feedback/product/${id}`);
+  },
   putComment(id: any) {
     return http.put(`/manage/feedback/delete/${id}`);
   },

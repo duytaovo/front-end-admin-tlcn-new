@@ -12,6 +12,7 @@ import {
   updatePurchasesSuccess,
 } from "src/store/order/orderSlice";
 import { Button } from "antd";
+import { toast } from "react-toastify";
 
 const Order = ({ title }: { title?: string }) => {
   const style = (text: string) => {
@@ -56,7 +57,7 @@ const Order = ({ title }: { title?: string }) => {
       const res = await dispatch(updatePurchasesSuccess(id));
 
       if (res) {
-        alert("Xác nhận thành công");
+        toast.success("Xác nhận thành công");
       }
       dispatch(getPurchases(""));
     }
@@ -66,7 +67,7 @@ const Order = ({ title }: { title?: string }) => {
     if (confirm("Bạn có muốn Hủy đơn hàng không?")) {
       const res = await dispatch(updatePurchasesCancel(id));
       if (res) {
-        alert("Hủy thành công");
+        toast.success("Hủy đơn thành công");
       }
       dispatch(getPurchases(""));
     }
@@ -105,13 +106,17 @@ const Order = ({ title }: { title?: string }) => {
             const displayCancelBtn = _order.orderStatusString != "Ordered";
             return (
               <>
-                <Table.Row className=" dark:border-gray-700 dark:bg-gray-800 overflow-hidden">
+                <Table.Row
+                  key={_order.id}
+                  className=" dark:border-gray-700 dark:bg-gray-800 overflow-hidden"
+                >
                   <Table.Cell className="text-blue-400 text-2xl">
                     #{_order.id}
                   </Table.Cell>
                   <Table.Cell className="text-blue-400 hover:text-blue-700 select-none text-2xl">
                     <Button
                       type="link"
+                      className="p-0"
                       onClick={() =>
                         setOrderDetail((current) => {
                           return current.index === index
@@ -150,7 +155,7 @@ const Order = ({ title }: { title?: string }) => {
                       id={_order.id}
                       onClick={() => handleAccept(_order.id)}
                       className={clsx(
-                        "bg-green-500 text-xl font-medium p-4 rounded-lg  text-white",
+                        "bg-green-500 text-xl font-medium rounded-lg  text-white",
                         displayCancelBtn && "!bg-gray-100 !text-gray-700"
                       )}
                     >
@@ -162,7 +167,7 @@ const Order = ({ title }: { title?: string }) => {
                       id={_order.id}
                       onClick={() => handleCancel(_order.id)}
                       className={clsx(
-                        "bg-red-500 text-xl font-medium p-4 rounded-lg  text-white",
+                        "bg-red-500 text-xl font-medium rounded-lg  text-white",
                         displayCancelBtn && "!bg-gray-100 !text-gray-700"
                       )}
                     >

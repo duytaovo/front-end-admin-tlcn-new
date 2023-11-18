@@ -15,6 +15,11 @@ export const getDetailPhone = createAsyncThunk(
   "smartPhone/getDetailPhone",
   payloadCreator(smartPhoneApi.getDetailSmartPhone)
 );
+
+export const getProductWithSlug = createAsyncThunk(
+  "smartPhone/getProductWithSlug",
+  payloadCreator(smartPhoneApi.getProductByProductSlugId)
+);
 export const addSmartPhone = createAsyncThunk(
   "smartPhone/addSmartPhone",
   payloadCreator(smartPhoneApi.addSmartPhone)
@@ -109,6 +114,9 @@ const smartPhoneSlice = createSlice({
       state.smartPhone = payload.data;
     });
     builder.addCase(getDetailPhone.fulfilled, (state, { payload }) => {
+      state.smartPhoneDetail = payload.data.data;
+    });
+    builder.addCase(getProductWithSlug.fulfilled, (state, { payload }) => {
       state.smartPhoneDetail = payload.data.data;
     });
   },

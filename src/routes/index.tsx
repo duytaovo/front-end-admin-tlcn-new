@@ -1,6 +1,8 @@
 import { lazy } from "react";
 import path from "src/constants/path";
 
+const TableFeedback = lazy(() => import("src/pages/Feedback"));
+
 const NewCardGraphic = lazy(
   () => import("src/pages/Product/Create/NewCardGraphic")
 );
@@ -253,6 +255,10 @@ export const routeMain = [
   {
     path: path.smartWatchUpdate,
     Component: UpdateSmartWatch,
+  },
+  {
+    path: path.feedback,
+    Component: TableFeedback,
   },
   {
     path: "*",
