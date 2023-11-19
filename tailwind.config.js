@@ -30,7 +30,7 @@ module.exports = {
         mainColor: "linear-gradient(70deg,#44c5e5,#276dc1)",
       },
       colors: {
-        mainColor: "#3699d3",
+        mainColor: "#00DFA2",
         textMainColor: "#ffffff",
         textCustom: "#ffffff99",
         textCustomBgWhite: "#727171",

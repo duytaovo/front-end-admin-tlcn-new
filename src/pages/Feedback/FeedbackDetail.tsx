@@ -80,7 +80,7 @@ const FeedbackDetail = ({ order, index, setOrderDetail }: Props) => {
           </p>
           <p>
             <span className="">Bình luận: </span>{" "}
-            <span>{numberWithCommas(order?.comment)}₫</span>
+            <span>{numberWithCommas(order?.comment)}</span>
           </p>
         </div>
         <div className="my-0 w-24 space-y-5 justify-between items-center">

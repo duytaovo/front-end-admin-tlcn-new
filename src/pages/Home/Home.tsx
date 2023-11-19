@@ -19,8 +19,8 @@ const Home = () => {
         <div className="">
           <Featured />
         </div>
-        {/* <ChartComponent title="Last 6 Months (Revenue)" /> */}
-        <Chart title="Last 6 Months (Revenue)" aspect={2 / 1} />
+        <ChartComponent title="Last 6 Months (Revenue)" />
+        {/* <Chart title="Last 6 Months (Revenue)" aspect={2 / 1} /> */}
       </div>
       <div className="shadow-[2px_4px_10px_1px_rgba(201,201,201,0.47)]">
         <div className="font-medium text-gray-500 mb-[15px]">

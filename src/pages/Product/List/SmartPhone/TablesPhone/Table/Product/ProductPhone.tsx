@@ -109,19 +109,18 @@ export default function ProductPhone({ product }: Props) {
             />
           </div>
           <div className="overflow-hidden p-2">
-            <div className="min-h-[2rem] text-lg line-clamp-2">
+            <div className="min-h-[2rem] text-2xl line-clamp-2">
               {product.name}
             </div>
             <div className="mt-3 flex items-center">
-              <div className="max-w-[50%] truncate text-gray-500 line-through">
-                <span className="text-xs">₫</span>
-                <span className="text-sm">
-                  {formatCurrency(product.lstProductTypeAndPrice[0]?.price)}
+              <div className="max-w-[50%] truncate text-blue-500 line-through">
+                <span className="text-xl">
+                  đ{formatCurrency(product.lstProductTypeAndPrice[0]?.price)}
                 </span>
               </div>
-              <div className="ml-1 truncate text-orange">
-                <span className="text-lg">₫</span>
-                <span className="text-xl">
+              <div className="ml-1 truncate text-orange-500">
+                <span className="text-2xl">
+                  đ
                   {formatCurrency(product.lstProductTypeAndPrice[0]?.salePrice)}
                 </span>
               </div>
@@ -135,9 +134,10 @@ export default function ProductPhone({ product }: Props) {
                 }}
               />
 
-              <div className="ml-2 text-sm">
-                <span>{formatNumberToSocialStyle(product.totalReview)}</span>
-                <span className="ml-1">Review</span>
+              <div className="ml-2 text-lg">
+                <span>
+                  {formatNumberToSocialStyle(product.totalReview)} Review
+                </span>
               </div>
             </div>
           </div>
