@@ -291,7 +291,7 @@ export const schemaSmartWatch = yup.object({
   price: yup.string().required("Giá sản phẩm là bắt buộc"),
   sale: yup.string(),
   mota: yup.string().required("Mô tả là bắt buộc"),
-  upload: yup.string().required("Upload ảnh là bắt buộc"),
+  upload: yup.string().required(" là bắt buộc"),
 });
 export type UserSchema = yup.InferType<typeof userSchema>;
 

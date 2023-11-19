@@ -634,11 +634,7 @@ const NewTablet: React.FC = () => {
                 );
               })}
             </div>
-            <InputFile
-              label="Upload ảnh"
-              onChange={handleChangeFile}
-              id="files"
-            />
+            <InputFile label="" onChange={handleChangeFile} id="files" />
             <div className="mt-3  flex flex-col items-center text-red-500">
               <div>Dụng lượng file tối đa 2 MB</div>
               <div>Định dạng:.JPEG, .PNG</div>

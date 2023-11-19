@@ -113,9 +113,9 @@ export class Http {
             });
           }
 
-          clearLS();
-          this.accessToken = "";
-          this.refreshToken = "";
+          // clearLS();
+          // this.accessToken = "";
+          // this.refreshToken = "";
           toast.error(
             error.response?.data.data?.message || error.response?.data.message
           );
@@ -138,9 +138,9 @@ export class Http {
         return accessToken;
       })
       .catch((error) => {
-        // clearLS();
-        // this.accessToken = "";
-        // this.refreshToken = "";
+        clearLS();
+        this.accessToken = "";
+        this.refreshToken = "";
         throw error;
       });
   }
