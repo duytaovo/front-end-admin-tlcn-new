@@ -9,10 +9,10 @@ import {
 import { Helmet } from "react-helmet-async";
 import { convert } from "html-to-text";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
-import { getDetailPhone } from "src/store/product/smartPhoneSlice";
 import { Button, Modal, Rate } from "antd";
 import DOMPurify from "dompurify";
 import { getDetailTablet } from "src/store/product/tabletSlice";
+import Tag from "src/components/Tag/Tag";
 
 export default function TabletDetail() {
   const { nameId } = useParams();
@@ -246,52 +246,8 @@ export default function TabletDetail() {
                   <span className="ml-1 text-gray-500">Đã xem</span>
                 </div>
               </div>
-              <div className="mt-8 flex items-center bg-gray-50 px-5 py-4">
-                <div className="text-gray-500 line-through">
-                  ₫{formatCurrency(price)}
-                </div>
-                <div className="ml-3 text-3xl font-medium text-orange">
-                  ₫{}
-                  {formatCurrency(salePrice)}
-                </div>
-                <div className="ml-4 rounded-sm bg-orange px-1 py-[2px] text-xs font-semibold uppercase text-white">
-                  {rateSale(Number(tabletDetail?.productInfo?.star), price)}{" "}
-                  giảm
-                </div>
-              </div>
-              <div className="space-x-3">
-                <Button
-                  className="w-[100px] "
-                  onClick={() =>
-                    onClickChangeColor(
-                      tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram,
-                      tabletDetail?.productInfo?.lstProductTypeAndPrice[0]
-                        ?.storageCapacity,
-                      tabletDetail?.productInfo?.lstProductTypeAndPrice[0]
-                        ?.color
-                    )
-                  }
-                  type="dashed"
-                  color="red"
-                >
-                  {tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.color}
-                </Button>
-                <Button
-                  className="w-[100px] bg-black/30"
-                  onClick={() =>
-                    onClickChangeColor(
-                      tabletDetail?.productInfo?.lstProductTypeAndPrice[1]?.ram,
-                      tabletDetail?.productInfo?.lstProductTypeAndPrice[1]
-                        ?.storageCapacity,
-                      tabletDetail?.productInfo?.lstProductTypeAndPrice[1]
-                        ?.color
-                    )
-                  }
-                  type="dashed"
-                  color="red"
-                >
-                  {tabletDetail?.productInfo?.lstProductTypeAndPrice[1]?.color}
-                </Button>
+              <div className="space-x-3 mt-4 flex justify-start align-baseline">
+                <Tag productData={tabletDetail} />
               </div>
             </div>
           </div>

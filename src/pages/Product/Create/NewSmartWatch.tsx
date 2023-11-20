@@ -242,7 +242,6 @@ const NewSmartWatch: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black "}
             id="category"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
             options={category?.data}
@@ -260,12 +259,10 @@ const NewSmartWatch: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black  "}
             id="brand"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
             options={brand?.data?.data}
             register={register}
-            isBrand={true}
           >
             {errors.brand?.message}
           </SelectCustom>
@@ -278,15 +275,13 @@ const NewSmartWatch: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="operatingSystem"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
             options={[
-              { id: "iOS", name: "iOS" },
-              { id: "Android", name: "android" },
+              { id: "Apple", name: "Apple" },
+              { id: "Android", name: "Android" },
             ]}
             register={register}
-            isBrand={true}
           >
             {errors.operatingSystem?.message}
           </SelectCustom>
@@ -299,12 +294,10 @@ const NewSmartWatch: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="characteristic"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={""}
             options={character?.data}
             register={register}
-            isBrand={true}
           >
             {errors.characteristic?.message}
           </SelectCustom>
@@ -454,7 +447,6 @@ const NewSmartWatch: React.FC = () => {
                   <SelectCustom
                     className={"flex-1 text-black"}
                     id={`lstProductTypeAndPrice.${index}.depot`}
-                    // label="Hãng xe"
                     placeholder="Vui lòng chọn"
                     defaultValue={1}
                     options={depot?.data?.data}
@@ -530,7 +522,7 @@ const NewSmartWatch: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.monitor?.message}
-            placeholder="6.7 - Tần số quét 120 Hz"
+            placeholder="6.7"
           />
         </Form.Item>
 
@@ -545,7 +537,7 @@ const NewSmartWatch: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.connector?.message}
-            placeholder="Chính 48 MP & Phụ 12 MP, 12 MP"
+            placeholder=""
           />
         </Form.Item>
         <Form.Item label="Cpu" name="cpu" rules={[{ required: true }]}>
@@ -555,7 +547,7 @@ const NewSmartWatch: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.cpu?.message}
-            placeholder="Apple A17 Pro 6 nhân"
+            placeholder=""
           />
         </Form.Item>
         <Form.Item
@@ -569,7 +561,7 @@ const NewSmartWatch: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.internalMemory?.message}
-            placeholder="1 Nano internalMemory & 1 einternalMemory"
+            placeholder=""
           />
         </Form.Item>
         <Form.Item label="Pin" name="battery" rules={[{ required: true }]}>
@@ -579,7 +571,7 @@ const NewSmartWatch: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.battery?.message}
-            placeholder="4422 mAh"
+            placeholder=""
           />
         </Form.Item>
         <Form.Item
@@ -593,7 +585,7 @@ const NewSmartWatch: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.connectToOs?.message}
-            placeholder="20 W"
+            placeholder=""
           />
         </Form.Item>
         <Form.Item

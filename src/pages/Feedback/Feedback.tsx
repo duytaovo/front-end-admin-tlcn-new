@@ -19,7 +19,7 @@ const Feedback = ({ title }: { title?: string }) => {
   const dispatch = useAppDispatch();
 
   const { comment } = useAppSelector((state) => state.comment);
-
+  console.log(comment);
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
   const pageSize = 10; // Số phần tử trên mỗi trang
 

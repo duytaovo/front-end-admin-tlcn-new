@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { Button, Modal, Rate } from "antd";
 import DOMPurify from "dompurify";
 import { getDetailSmartWatch } from "src/store/product/smartwatchSlice";
+import Tag from "src/components/Tag/Tag";
 
 export default function SmartWatchDetail() {
   // const { t } = useTranslation(["product"]);
@@ -246,60 +247,8 @@ export default function SmartWatchDetail() {
                   <span className="ml-1 text-gray-500">Đã xem</span>
                 </div>
               </div>
-              <div className="mt-8 flex items-center bg-gray-50 px-5 py-4">
-                <div className="text-gray-500 line-through">
-                  ₫{formatCurrency(price)}
-                </div>
-                <div className="ml-3 text-3xl font-medium text-orange">
-                  ₫{}
-                  {formatCurrency(salePrice)}
-                </div>
-                <div className="ml-4 rounded-sm bg-orange px-1 py-[2px] text-xs font-semibold uppercase text-white">
-                  {rateSale(Number(smartWatchDetail?.productInfo?.star), price)}{" "}
-                  giảm
-                </div>
-              </div>
-              <div className="space-x-3">
-                <Button
-                  className="w-[100px] "
-                  onClick={() =>
-                    onClickChangeColor(
-                      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]
-                        ?.ram,
-                      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]
-                        ?.storageCapacity,
-                      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]
-                        ?.color
-                    )
-                  }
-                  type="dashed"
-                  color="red"
-                >
-                  {
-                    smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]
-                      ?.color
-                  }
-                </Button>
-                <Button
-                  className="w-[100px] bg-black/30"
-                  onClick={() =>
-                    onClickChangeColor(
-                      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[1]
-                        ?.ram,
-                      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[1]
-                        ?.storageCapacity,
-                      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[1]
-                        ?.color
-                    )
-                  }
-                  type="dashed"
-                  color="red"
-                >
-                  {
-                    smartWatchDetail?.productInfo?.lstProductTypeAndPrice[1]
-                      ?.color
-                  }
-                </Button>
+              <div className="space-x-3 mt-4 flex justify-start align-baseline">
+                <Tag productData={smartWatchDetail} />
               </div>
             </div>
           </div>

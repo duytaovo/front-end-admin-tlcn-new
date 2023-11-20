@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { Button, Modal, Rate } from "antd";
 import DOMPurify from "dompurify";
 import { getDetailLaptop } from "src/store/product/laptopSlice ";
+import Tag from "src/components/Tag/Tag";
 
 export default function LaptopDetail() {
   // const { t } = useTranslation(["product"]);
@@ -22,12 +23,7 @@ export default function LaptopDetail() {
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5]);
   const [activeImage, setActiveImage] = useState("");
   const imageRef = useRef<HTMLImageElement>(null);
-  const [price, setPrice] = useState(
-    laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.price
-  );
-  const [salePrice, setSalePrice] = useState(
-    laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
-  );
+
   const currentImages = useMemo(
     () =>
       laptopDetail?.productInfo?.lstProductImageUrl
@@ -46,12 +42,7 @@ export default function LaptopDetail() {
       setActiveImage(laptopDetail?.productInfo?.lstProductImageUrl[0]);
     }
   }, [laptopDetail]);
-  useEffect(() => {
-    setPrice(laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.price);
-    setSalePrice(
-      laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
-    );
-  }, [laptopDetail]);
+
   useEffect(() => {
     dispatch(getDetailLaptop(id));
   }, [id, dispatch]);
@@ -73,25 +64,6 @@ export default function LaptopDetail() {
 
   const chooseActive = (img: string) => {
     setActiveImage(img);
-  };
-
-  const onClickChangeColor = (ram: string, rom: string, color: string) => {
-    if (
-      ram === laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram &&
-      rom ===
-        laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.storageCapacity &&
-      color === laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.color
-    ) {
-      setPrice(laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.price);
-      setSalePrice(
-        laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
-      );
-    } else {
-      setPrice(laptopDetail?.productInfo?.lstProductTypeAndPrice[1]?.price);
-      setSalePrice(
-        laptopDetail?.productInfo?.lstProductTypeAndPrice[1]?.salePrice
-      );
-    }
   };
 
   const handleZoom = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -239,51 +211,8 @@ export default function LaptopDetail() {
                   <span className="ml-1 text-gray-500">Đã xem</span>
                 </div>
               </div>
-              <div className="mt-8 flex items-center bg-gray-50 px-5 py-4">
-                <div className="text-gray-500 line-through">
-                  ₫{formatCurrency(price)}
-                </div>
-                <div className="ml-3 text-3xl font-medium text-orange">
-                  {formatCurrency(salePrice)}
-                </div>
-                <div className="ml-4 rounded-sm bg-orange px-1 py-[2px] text-xs font-semibold uppercase text-white">
-                  {rateSale(Number(laptopDetail?.productInfo?.star), price)}{" "}
-                  giảm
-                </div>
-              </div>
-              <div className="space-x-3">
-                <Button
-                  className="w-[100px] "
-                  onClick={() =>
-                    onClickChangeColor(
-                      laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram,
-                      laptopDetail?.productInfo?.lstProductTypeAndPrice[0]
-                        ?.storageCapacity,
-                      laptopDetail?.productInfo?.lstProductTypeAndPrice[0]
-                        ?.color
-                    )
-                  }
-                  type="dashed"
-                  color="red"
-                >
-                  {laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.color}
-                </Button>
-                <Button
-                  className="w-[100px] bg-black/30"
-                  onClick={() =>
-                    onClickChangeColor(
-                      laptopDetail?.productInfo?.lstProductTypeAndPrice[1]?.ram,
-                      laptopDetail?.productInfo?.lstProductTypeAndPrice[1]
-                        ?.storageCapacity,
-                      laptopDetail?.productInfo?.lstProductTypeAndPrice[1]
-                        ?.color
-                    )
-                  }
-                  type="dashed"
-                  color="red"
-                >
-                  {laptopDetail?.productInfo?.lstProductTypeAndPrice[1]?.color}
-                </Button>
+              <div className="space-x-3 mt-4 flex justify-start align-baseline">
+                <Tag productData={laptopDetail} />
               </div>
             </div>
           </div>

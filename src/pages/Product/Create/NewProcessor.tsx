@@ -222,7 +222,7 @@ const NewProcessor: React.FC = () => {
 
   return (
     <div className="bg-white shadow ">
-      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm điện thoại</h2>
+      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm processor</h2>
       <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}

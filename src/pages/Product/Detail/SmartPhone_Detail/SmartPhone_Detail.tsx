@@ -1,11 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  formatCurrency,
-  formatNumberToSocialStyle,
-  getIdFromNameId,
-  rateSale,
-} from "src/utils/utils";
+import { formatNumberToSocialStyle, getIdFromNameId } from "src/utils/utils";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import { convert } from "html-to-text";
@@ -14,7 +9,7 @@ import { getDetailPhone } from "src/store/product/smartPhoneSlice";
 import { Button, Modal, Rate } from "antd";
 import DOMPurify from "dompurify";
 import RatingFeedback from "../../../../components/Rating";
-import Tag from "./Tag";
+import Tag from "../../../../components/Tag/Tag";
 
 export default function SmartPhoneDetail() {
   // const { t } = useTranslation(["product"]);
