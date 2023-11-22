@@ -24,7 +24,7 @@ const OrderDetail = ({ order, index, setOrderDetail }: Props) => {
         return "text-gray-400";
     }
   };
-
+  const checkPayment = order?.paymentStatusString === "Unpaid" ? false : true;
   return (
     <div>
       <div className="py-8 border-b">
@@ -87,10 +87,16 @@ const OrderDetail = ({ order, index, setOrderDetail }: Props) => {
         <p>
           <CheckCircleFill className="text-blue-500" />
           <span className="font-bold"> Số tiền đã thanh toán: </span>
-
-          <span className="text-red-400">
-            {numberWithCommas(order?.finalPrice)}₫
-          </span>
+          {checkPayment && (
+            <span className="text-red-400">
+              {numberWithCommas(order?.finalPrice)}₫
+            </span>
+          )}
+          {checkPayment === false && (
+            <>
+              <span className="text-red-400">Chưa thanh toán</span>{" "}
+            </>
+          )}
         </p>
       </div>
       <div className="border-b p-4 text-2xl leading-[40px]">

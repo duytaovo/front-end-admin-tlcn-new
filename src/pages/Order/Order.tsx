@@ -11,7 +11,7 @@ import {
   updatePurchasesCancel,
   updatePurchasesSuccess,
 } from "src/store/order/orderSlice";
-import { Button } from "antd";
+import { Button, Pagination } from "antd";
 import { toast } from "react-toastify";
 
 const Order = ({ title }: { title?: string }) => {
@@ -146,7 +146,18 @@ const Order = ({ title }: { title?: string }) => {
                   </Table.Cell>
 
                   <Table.Cell className={styleStatus}>
-                    {stringStatus(_order.orderStatusString)}
+                    <div className="flex flex-grow justify-between">
+                      {stringStatus(_order.orderStatusString)}
+                      {_order.paymentStatusString === "Payment success" ? (
+                        <span className="text-white text-xl bg-green-500 p-2 rounded-lg">
+                          Đã thanh toán
+                        </span>
+                      ) : (
+                        <span className="text-white text-xl bg-gray-500 p-2 rounded-lg">
+                          Chưa thanh toán
+                        </span>
+                      )}
+                    </div>
                   </Table.Cell>
                   <Table.Cell className="space-x-3">
                     <Button
@@ -192,6 +203,12 @@ const Order = ({ title }: { title?: string }) => {
           })}
         </Table.Body>
       </Table>
+      <Pagination
+        current={currentPage + 1}
+        pageSize={pageSize}
+        total={order?.data?.totalElements}
+        onChange={handlePageChange}
+      />
     </div>
   );
 };

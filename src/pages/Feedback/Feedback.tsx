@@ -9,7 +9,7 @@ import {
   updatePurchasesCancel,
   updatePurchasesSuccess,
 } from "src/store/order/orderSlice";
-import { Avatar, Button } from "antd";
+import { Avatar, Button, Pagination } from "antd";
 import { getComments, putComments } from "src/store/comment/commentsSlice";
 import { toast } from "react-toastify";
 import FeedbackDetail from "./FeedbackDetail";
@@ -19,7 +19,7 @@ const Feedback = ({ title }: { title?: string }) => {
   const dispatch = useAppDispatch();
 
   const { comment } = useAppSelector((state) => state.comment);
-  console.log(comment);
+
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
   const pageSize = 10; // Số phần tử trên mỗi trang
 
@@ -129,6 +129,12 @@ const Feedback = ({ title }: { title?: string }) => {
           })}
         </Table.Body>
       </Table>
+      <Pagination
+        current={currentPage + 1}
+        pageSize={pageSize}
+        total={comment?.data?.totalElements}
+        onChange={handlePageChange}
+      />
     </div>
   );
 };
