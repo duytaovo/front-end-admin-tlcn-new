@@ -103,6 +103,7 @@ const TableBrand: React.FC = () => {
       </div>
 
       <Table columns={columns} dataSource={originData} pagination={false} />
+
       <Pagination
         current={currentPage + 1}
         pageSize={pageSize}

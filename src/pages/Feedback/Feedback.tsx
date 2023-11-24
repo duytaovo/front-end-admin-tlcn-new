@@ -129,12 +129,14 @@ const Feedback = ({ title }: { title?: string }) => {
           })}
         </Table.Body>
       </Table>
-      <Pagination
-        current={currentPage + 1}
-        pageSize={pageSize}
-        total={comment?.data?.totalElements}
-        onChange={handlePageChange}
-      />
+      <div className="fixed bottom-12 left-auto">
+        <Pagination
+          current={currentPage + 1}
+          pageSize={pageSize}
+          total={comment?.data?.totalElements}
+          onChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 };

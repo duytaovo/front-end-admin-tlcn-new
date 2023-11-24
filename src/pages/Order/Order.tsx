@@ -3,12 +3,14 @@ import { Table } from "flowbite-react";
 import OrderDetail from "./OrderDetail";
 import "./table.scss";
 import clsx from "clsx";
+
 import { useState } from "react";
 import numberWithCommas from "src/utils/numberWithCommas";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import {
   getPurchases,
   updatePurchasesCancel,
+  updatePurchasesConfirm,
   updatePurchasesSuccess,
 } from "src/store/order/orderSlice";
 import { Button, Pagination } from "antd";
@@ -54,7 +56,7 @@ const Order = ({ title }: { title?: string }) => {
 
   const handleAccept = async (id: number) => {
     if (confirm("Bạn có muốn Xác nhận đơn hàng không?")) {
-      const res = await dispatch(updatePurchasesSuccess(id));
+      const res = await dispatch(updatePurchasesConfirm(id));
 
       if (res) {
         toast.success("Xác nhận thành công");
@@ -203,12 +205,14 @@ const Order = ({ title }: { title?: string }) => {
           })}
         </Table.Body>
       </Table>
-      <Pagination
-        current={currentPage + 1}
-        pageSize={pageSize}
-        total={order?.data?.totalElements}
-        onChange={handlePageChange}
-      />
+      <div className="fixed bottom-12 left-auto">
+        <Pagination
+          current={currentPage + 1}
+          pageSize={pageSize}
+          total={order?.data?.totalElements}
+          onChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 };

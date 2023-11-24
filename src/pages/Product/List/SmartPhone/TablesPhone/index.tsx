@@ -16,7 +16,7 @@ const TablePhone: React.FC = () => {
   const pageSize = 10; // Số phần tử trên mỗi trang
 
   useEffect(() => {
-    dispatch(getSmartPhones({ pageNumber: currentPage }));
+    dispatch(getSmartPhones({ pageNumber: currentPage, pageSize: 12 }));
   }, [currentPage]);
   const handlePageChange = (page: number) => {
     setCurrentPage(page - 1);
