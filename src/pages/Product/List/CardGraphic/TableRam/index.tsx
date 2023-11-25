@@ -8,7 +8,16 @@ import { getRams } from "src/store/ram/ramSlice";
 import ProductRam from "./Table/Product/ProductPhone";
 import { getCardGraphic } from "src/store/cardGrap/cardGraphicSlice";
 import { Pagination } from "antd";
-
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 150,
+    },
+  },
+};
 const TableRam: React.FC = () => {
   const dispatch = useAppDispatch();
   const { cardGraphic } = useAppSelector((state) => state.cardGraphic);
@@ -44,8 +53,9 @@ const TableRam: React.FC = () => {
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 value={product}
-                label="Product"
+                label="Age"
                 onChange={handleChangeProduct}
+                MenuProps={MenuProps}
               >
                 <MenuItem
                   value={"Điện thoại"}
@@ -82,6 +92,21 @@ const TableRam: React.FC = () => {
                   onClick={() => onClick("/processor")}
                 >
                   Processor
+                </MenuItem>
+                <MenuItem value={"mouse"} onClick={() => onClick("/mouse")}>
+                  Chuột máy tính
+                </MenuItem>
+                <MenuItem
+                  value={"loudSpeaker"}
+                  onClick={() => onClick("/loudSpeaker")}
+                >
+                  Loa nghe nhạc
+                </MenuItem>
+                <MenuItem
+                  value={"keyboard"}
+                  onClick={() => onClick("/keyboard")}
+                >
+                  Bàn phím
                 </MenuItem>
                 <MenuItem
                   value={"cardGraphic"}

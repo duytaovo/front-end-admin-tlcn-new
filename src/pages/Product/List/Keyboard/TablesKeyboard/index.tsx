@@ -4,11 +4,9 @@ import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { SelectChangeEvent } from "@mui/material/Select";
 import React, { useEffect, useState } from "react";
 import { getSmartPhones } from "src/store/product/smartPhoneSlice";
-import ProductPhone from "./Table/Product/ProductSmartWatch";
+import ProductPhone from "./Table/Product/Keyboard";
 import path from "src/constants/path";
 import { Pagination } from "antd";
-import { getSmartWatch } from "src/store/product/smartwatchSlice";
-
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -19,15 +17,15 @@ const MenuProps = {
     },
   },
 };
-const TableSmartWatch: React.FC = () => {
+const TableKeyboard: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { smartWatch } = useAppSelector((state) => state.smartWatch);
+  const { smartPhone } = useAppSelector((state) => state.smartPhone);
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
   const pageSize = 10; // Số phần tử trên mỗi trang
 
   useEffect(() => {
-    dispatch(getSmartWatch({ pageNumber: currentPage }));
+    dispatch(getSmartPhones({ pageNumber: currentPage, pageSize: 12 }));
   }, [currentPage]);
   const handlePageChange = (page: number) => {
     setCurrentPage(page - 1);
@@ -121,7 +119,7 @@ const TableSmartWatch: React.FC = () => {
           </div>
         </div>
         <Link
-          to={path.smartWatchNew}
+          to={path.smartPhoneNew}
           className="no-underline text-green-500 text-lg font-medium border-[1px] border-solid border-[green] p-3 rounded cursor-pointer"
         >
           Thêm mới
@@ -129,7 +127,7 @@ const TableSmartWatch: React.FC = () => {
       </div>
 
       <div className="mt-6 grid grid-cols-6 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {smartWatch?.data?.data?.map((_smartPhone: any) => (
+        {smartPhone?.data?.data?.map((_smartPhone: any) => (
           <div className="col-span-1" key={_smartPhone.id}>
             <ProductPhone product={_smartPhone} />
           </div>
@@ -139,7 +137,7 @@ const TableSmartWatch: React.FC = () => {
         <Pagination
           current={currentPage + 1}
           pageSize={pageSize}
-          total={smartWatch?.data?.totalElements}
+          total={smartPhone?.data?.totalElements}
           onChange={handlePageChange}
         />
       </div>
@@ -147,4 +145,4 @@ const TableSmartWatch: React.FC = () => {
   );
 };
 
-export default TableSmartWatch;
+export default TableKeyboard;

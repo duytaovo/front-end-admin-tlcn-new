@@ -8,6 +8,16 @@ import { getLaptop } from "src/store/product/laptopSlice ";
 import ProductLaptop from "./Table/Product/ProductLaptop";
 import { Pagination } from "antd";
 
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 150,
+    },
+  },
+};
 const TableLaptop: React.FC = () => {
   const dispatch = useAppDispatch();
   const { laptop } = useAppSelector((state) => state.laptop);
@@ -48,6 +58,7 @@ const TableLaptop: React.FC = () => {
                 value={product}
                 label="Age"
                 onChange={handleChangeProduct}
+                MenuProps={MenuProps}
               >
                 <MenuItem
                   value={"Điện thoại"}
@@ -90,6 +101,21 @@ const TableLaptop: React.FC = () => {
                   onClick={() => onClick("/cardGraphic")}
                 >
                   Card đồ họa
+                </MenuItem>
+                <MenuItem value={"mouse"} onClick={() => onClick("/mouse")}>
+                  Chuột máy tính
+                </MenuItem>
+                <MenuItem
+                  value={"loudSpeaker"}
+                  onClick={() => onClick("/loudSpeaker")}
+                >
+                  Loa nghe nhạc
+                </MenuItem>
+                <MenuItem
+                  value={"keyboard"}
+                  onClick={() => onClick("/keyboard")}
+                >
+                  Bàn phím
                 </MenuItem>
                 {/* <MenuItem value={30}></MenuItem> */}
               </Select>

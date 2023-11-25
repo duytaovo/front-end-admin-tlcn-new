@@ -88,6 +88,21 @@ const TableRom: React.FC = () => {
                 >
                   Card đồ họa
                 </MenuItem>
+                <MenuItem value={"mouse"} onClick={() => onClick("/mouse")}>
+                  Chuột máy tính
+                </MenuItem>
+                <MenuItem
+                  value={"loudSpeaker"}
+                  onClick={() => onClick("/loudSpeaker")}
+                >
+                  Loa nghe nhạc
+                </MenuItem>
+                <MenuItem
+                  value={"keyboard"}
+                  onClick={() => onClick("/keyboard")}
+                >
+                  Bàn phím
+                </MenuItem>
                 {/* <MenuItem value={30}></MenuItem> */}
               </Select>
             </FormControl>

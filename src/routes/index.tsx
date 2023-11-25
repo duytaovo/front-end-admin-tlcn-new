@@ -1,7 +1,25 @@
 import { lazy } from "react";
 import path from "src/constants/path";
 
+const UpdateKeyboard = lazy(
+  () => import("src/pages/Product/Update/UpdateKeyboard")
+);
+const KeyboardDetail = lazy(
+  () => import("src/pages/Product/Detail/Keyboard_Detail ")
+);
+const ListKeyboard = lazy(() => import("src/pages/Product/Create/NewKeyboard"));
+const NewKeyboard = lazy(
+  () => import("src/pages/Product/List/Keyboard/ListKeyboard")
+);
+
+const NewLoudSpeaker = lazy(
+  () => import("src/pages/Product/Create/NewLoudSpeaker")
+);
+const MouseDetail = lazy(
+  () => import("src/pages/Product/Detail/Mouse_Detail ")
+);
 const TableFeedback = lazy(() => import("src/pages/Feedback"));
+const NewMouse = lazy(() => import("src/pages/Product/Create/NewMouse"));
 
 const NewCardGraphic = lazy(
   () => import("src/pages/Product/Create/NewCardGraphic")
@@ -15,7 +33,19 @@ const CardGraphic = lazy(
 const Processor = lazy(
   () => import("src/pages/Product/List/Processor/Processor")
 );
+const UpdateLoudSpeaker = lazy(
+  () => import("src/pages/Product/Update/UpdateLoudSpeaker")
+);
+const LoudSpeakerDetail = lazy(
+  () => import("src/pages/Product/Detail/LoudSpeaker_Detail")
+);
+const UpdateMouse = lazy(() => import("src/pages/Product/Update/UpdateMouse"));
+const ListLoudSpeaker = lazy(
+  () => import("src/pages/Product/List/LoudSpeaker/ListLoudSpeaker")
+);
+const ListMouse = lazy(() => import("src/pages/Product/List/Mouse/ListMouse"));
 const Rom = lazy(() => import("src/pages/Product/List/Rom/Rom"));
+
 const Ram = lazy(() => import("src/pages/Product/List/Ram/Ram"));
 const NewRom = lazy(() => import("src/pages/Product/Create/NewRom"));
 const NewRam = lazy(() => import("src/pages/Product/Create/NewRam"));
@@ -255,6 +285,54 @@ export const routeMain = [
   {
     path: path.smartWatchUpdate,
     Component: UpdateSmartWatch,
+  },
+  {
+    path: path.mouse,
+    Component: ListMouse,
+  },
+  {
+    path: path.mouseNew,
+    Component: NewMouse,
+  },
+  {
+    path: path.mouseDetail,
+    Component: MouseDetail,
+  },
+  {
+    path: path.mouseUpdate,
+    Component: UpdateMouse,
+  },
+  {
+    path: path.loudSpeaker,
+    Component: ListLoudSpeaker,
+  },
+  {
+    path: path.loudSpeakerNew,
+    Component: NewLoudSpeaker,
+  },
+  {
+    path: path.loudSpeakerDetail,
+    Component: LoudSpeakerDetail,
+  },
+  {
+    path: path.loudSpeakerUpdate,
+    Component: UpdateLoudSpeaker,
+  },
+  {
+    path: path.keyboard,
+    Component: ListKeyboard,
+  },
+  {
+    path: path.keyboardNew,
+    Component: NewKeyboard,
+  },
+  {
+    path: path.keyboardDetail,
+    Component: KeyboardDetail,
+  },
+  {
+    path: path.keyboardUpdate,
+    Component: UpdateKeyboard,
   },
   {
     path: path.feedback,

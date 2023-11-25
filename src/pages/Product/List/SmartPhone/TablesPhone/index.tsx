@@ -8,6 +8,16 @@ import ProductPhone from "./Table/Product/ProductPhone";
 import path from "src/constants/path";
 import { Pagination } from "antd";
 
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 150,
+    },
+  },
+};
 const TablePhone: React.FC = () => {
   const dispatch = useAppDispatch();
   const { smartPhone } = useAppSelector((state) => state.smartPhone);
@@ -43,8 +53,9 @@ const TablePhone: React.FC = () => {
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 value={product}
-                label="Product"
+                label="Age"
                 onChange={handleChangeProduct}
+                MenuProps={MenuProps}
               >
                 <MenuItem
                   value={"Điện thoại"}
@@ -88,7 +99,21 @@ const TablePhone: React.FC = () => {
                 >
                   Card đồ họa
                 </MenuItem>
-                {/* <MenuItem value={30}></MenuItem> */}
+                <MenuItem value={"mouse"} onClick={() => onClick("/mouse")}>
+                  Chuột máy tính
+                </MenuItem>
+                <MenuItem
+                  value={"loudSpeaker"}
+                  onClick={() => onClick("/loudSpeaker")}
+                >
+                  Loa nghe nhạc
+                </MenuItem>
+                <MenuItem
+                  value={"keyboard"}
+                  onClick={() => onClick("/keyboard")}
+                >
+                  Bàn phím
+                </MenuItem>
               </Select>
             </FormControl>
           </div>

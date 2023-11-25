@@ -9,6 +9,16 @@ import path from "src/constants/path";
 import { Pagination } from "antd";
 import { getTablet } from "src/store/product/tabletSlice";
 
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 150,
+    },
+  },
+};
 const TableTablet: React.FC = () => {
   const dispatch = useAppDispatch();
   const { tablet } = useAppSelector((state) => state.tablet);
@@ -44,8 +54,9 @@ const TableTablet: React.FC = () => {
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 value={product}
-                label="Product"
+                label="Age"
                 onChange={handleChangeProduct}
+                MenuProps={MenuProps}
               >
                 <MenuItem
                   value={"Điện thoại"}
@@ -88,6 +99,21 @@ const TableTablet: React.FC = () => {
                   onClick={() => onClick("/cardGraphic")}
                 >
                   Card đồ họa
+                </MenuItem>
+                <MenuItem value={"mouse"} onClick={() => onClick("/mouse")}>
+                  Chuột máy tính
+                </MenuItem>
+                <MenuItem
+                  value={"loudSpeaker"}
+                  onClick={() => onClick("/loudSpeaker")}
+                >
+                  Loa nghe nhạc
+                </MenuItem>
+                <MenuItem
+                  value={"keyboard"}
+                  onClick={() => onClick("/keyboard")}
+                >
+                  Bàn phím
                 </MenuItem>
                 {/* <MenuItem value={30}></MenuItem> */}
               </Select>

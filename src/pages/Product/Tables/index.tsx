@@ -36,7 +36,7 @@ const TableProduct: React.FC = () => {
   const pageSize = 10; // Số phần tử trên mỗi trang
 
   useEffect(() => {
-    dispatch(getSmartPhones({ pageNumber: currentPage }));
+    dispatch(getSmartPhones({ pageNumber: currentPage, pageSize: 12 }));
   }, [currentPage]);
   const handlePageChange = (page: number) => {
     setCurrentPage(page - 1);
@@ -101,6 +101,21 @@ const TableProduct: React.FC = () => {
                   onClick={() => onClick("/cardGraphic")}
                 >
                   Card đồ họa
+                </MenuItem>
+                <MenuItem value={"mouse"} onClick={() => onClick("/mouse")}>
+                  Chuột máy tính
+                </MenuItem>
+                <MenuItem
+                  value={"loudSpeaker"}
+                  onClick={() => onClick("/loudSpeaker")}
+                >
+                  Loa nghe nhạc
+                </MenuItem>
+                <MenuItem
+                  value={"keyboard"}
+                  onClick={() => onClick("/keyboard")}
+                >
+                  Bàn phím
                 </MenuItem>
               </Select>
             </FormControl>
