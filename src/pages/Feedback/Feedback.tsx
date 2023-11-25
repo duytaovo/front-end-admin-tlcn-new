@@ -4,15 +4,12 @@ import "./table.scss";
 import clsx from "clsx";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
-import {
-  getPurchases,
-  updatePurchasesCancel,
-  updatePurchasesSuccess,
-} from "src/store/order/orderSlice";
+
 import { Avatar, Button, Pagination } from "antd";
 import { getComments, putComments } from "src/store/comment/commentsSlice";
 import { toast } from "react-toastify";
 import FeedbackDetail from "./FeedbackDetail";
+import { Helmet } from "react-helmet-async";
 
 const Feedback = ({ title }: { title?: string }) => {
   const [orderDetail, setOrderDetail] = useState({ index: -1, id: null });

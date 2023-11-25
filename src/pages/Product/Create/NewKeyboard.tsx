@@ -10,7 +10,7 @@ import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
-import { schemaProductRam } from "src/utils/rules";
+import { schemaProductKeyboard, schemaProductRam } from "src/utils/rules";
 import {
   generateRandomString,
   isAxiosUnprocessableEntityError,
@@ -24,6 +24,7 @@ import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
 import { addRam, getRams } from "src/store/ram/ramSlice";
 import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
+import { addKeyboard, getKeyboard } from "src/store/accessory/keyboard";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -49,7 +50,6 @@ interface FormData {
   color: string;
   price: string;
   salePrice: string | undefined;
-  monitor: string;
 }
 
 const NewKeyboard: React.FC = () => {
@@ -63,7 +63,7 @@ const NewKeyboard: React.FC = () => {
     control,
     watch,
   } = useForm({
-    resolver: yupResolver(schemaProductRam),
+    resolver: yupResolver(schemaProductKeyboard),
   });
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -89,23 +89,15 @@ const NewKeyboard: React.FC = () => {
   useEffect(() => {
     setValue("ram", "");
     setValue("accessories", "");
-    setValue("model", "");
-    setValue("ramType", "");
-    setValue("capacity", "");
     setValue("color", "");
     setValue("description", "");
     setValue("brand", "");
     setValue("name", "");
-    setValue("capacity", "");
     setValue("salePrice", "");
-    setValue("latency", "");
     setValue("price", "");
-    setValue("voltage", "");
     setValue("design", "");
     setValue("dimension", "");
-    setValue("quantity", "");
     setValue("led", "");
-    setValue("ramTechnology", "");
   }, []);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
@@ -159,26 +151,25 @@ const NewKeyboard: React.FC = () => {
 
         lstProductImageUrl: images || [],
       },
-      ramFor: true,
-      model: data.model,
-      ramType: data.ramType,
-      capacity: data.capacity,
-      bus: Number(data.bus),
-      latency: data.latency,
-      voltage: data.voltage,
+      keyboardType: true,
+      compatible: data.compatible,
+      connector: data.connector,
       led: data.led,
-      ramTechnology: data.ramTechnology,
+      numberOfKeys: data.numberOfKeys,
+      keycapsMaterial: data.keycapsMaterial,
+      specialKeys: data.specialKeys,
+      softwareSupport: data.softwareSupport,
     });
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(addRam(body));
+      const res = await dispatch(addKeyboard(body));
       unwrapResult(res);
       const d = res?.payload?.data;
       if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Thêm sản phẩm thành công ");
-      await dispatch(getRams(""));
-      await navigate(path.ram);
+      await dispatch(getKeyboard(""));
+      await navigate(path.keyboard);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
@@ -198,25 +189,19 @@ const NewKeyboard: React.FC = () => {
   const onClickHuy = () => {
     setValue("ram", "");
     setValue("accessories", "");
-    setValue("model", "");
-    setValue("ramType", "");
-    setValue("capacity", "");
+    setValue("compatible", "");
+    setValue("connector", "");
     setValue("color", "");
     setValue("description", "");
     setValue("brand", "");
     setValue("name", "");
-    setValue("capacity", "");
+    setValue("connector", "");
     setValue("salePrice", "");
-    setValue("latency", "");
     setValue("price", "");
-    setValue("voltage", "");
     setValue("design", "");
     setValue("dimension", "");
-    setValue("quantity", "");
     setValue("led", "");
-    setValue("ramTechnology", "");
   };
-  const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
@@ -316,11 +301,11 @@ const NewKeyboard: React.FC = () => {
                   </Form.Item>
                   <Form.Item
                     label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
+                    name={`lstProductTypeAndPrice.${index}.storageconnector`}
                     rules={[{ required: true }]}
                   >
                     <Input
-                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
+                      name={`lstProductTypeAndPrice.${index}.storageconnector`}
                       key={item.id} // important to include key with field's id
                       register={register}
                     />
@@ -362,7 +347,7 @@ const NewKeyboard: React.FC = () => {
                     options={depot?.data?.data}
                     register={register}
                   >
-                    {errors.depot?.message}
+                    {/* {errors.depot?.message} */}
                   </SelectCustom>
                 </Form.Item>
                 <div className="flex justify-between space-x-1">
@@ -407,7 +392,7 @@ const NewKeyboard: React.FC = () => {
                 type="dashed"
                 onClick={() =>
                   append({
-                    storageCapacity: "",
+                    storageconnector: "",
                     ram: "",
                     color: "",
                     price: "",
@@ -423,62 +408,30 @@ const NewKeyboard: React.FC = () => {
           </ul>
         </Form.Item>
 
-        <Form.Item label="Loại ram" name="ramType" rules={[{ required: true }]}>
-          <Input
-            name="ramType"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.ramType?.message}
-          />
-        </Form.Item>
-        <Form.Item label="Kiểu" name="model" rules={[{ required: true }]}>
-          <Input
-            name="model"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.model?.message}
-          />
-        </Form.Item>
         <Form.Item
-          label="Dung tích"
-          name="capacity"
+          label="Tương thích"
+          name="compatible"
           rules={[{ required: true }]}
         >
           <Input
-            name="capacity"
+            name="compatible"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.capacity?.message}
+            errorMessage={errors.compatible?.message}
           />
         </Form.Item>
-        <Form.Item label="Bus" name="bus" rules={[{ required: true }]}>
+        <Form.Item
+          label="Kết nối"
+          name="connector"
+          rules={[{ required: true }]}
+        >
           <Input
-            name="bus"
+            name="connector"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.bus?.message}
-          />
-        </Form.Item>
-        <Form.Item label="Độ trễ" name="latency" rules={[{ required: true }]}>
-          <Input
-            name="latency"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.latency?.message}
-          />
-        </Form.Item>
-        <Form.Item label="Vol" name="voltage" rules={[{ required: true }]}>
-          <Input
-            name="voltage"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.voltage?.message}
+            errorMessage={errors.connector?.message}
           />
         </Form.Item>
         <Form.Item label="Led" name="led" rules={[{ required: true }]}>
@@ -490,18 +443,57 @@ const NewKeyboard: React.FC = () => {
             errorMessage={errors.led?.message}
           />
         </Form.Item>
-
         <Form.Item
-          label="Công nghệ"
-          name="ramTechnology"
+          label="Số khóa"
+          name="numberOfKeys"
           rules={[{ required: true }]}
         >
           <Input
-            name="ramTechnology"
+            name="numberOfKeys"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.ramTechnology?.message}
+            errorMessage={errors.numberOfKeys?.message}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Chất liệu khóa"
+          name="keycapsMaterial"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="keycapsMaterial"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.keycapsMaterial?.message}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Khóa đặc biệt"
+          name="specialKeys"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="specialKeys"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.specialKeys?.message}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Hỗ trợ phần mềm"
+          name="softwareSupport"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="softwareSupport"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.softwareSupport?.message}
           />
         </Form.Item>
 

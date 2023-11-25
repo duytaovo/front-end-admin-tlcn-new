@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import { getSmartPhones } from "src/store/product/smartPhoneSlice";
 import ProductPhone from "../List/SmartPhone/TablesPhone/Table/Product";
 import { Pagination } from "antd";
+import { Helmet } from "react-helmet-async";
 
 const TableProduct: React.FC = () => {
   const navigate = useNavigate();
@@ -44,6 +45,10 @@ const TableProduct: React.FC = () => {
 
   return (
     <div className="mx-6">
+      <Helmet>
+        <title>{"Trang quản lý sản phẩm"}</title>
+        <meta name="description" />
+      </Helmet>
       <div className="w-full text-[20px] text-gray-500 mb-[10px] flex items-center justify-between">
         <div>
           Quản lý sản phẩm

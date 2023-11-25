@@ -1,33 +1,30 @@
+import { PlusOutlined } from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Form, Space, Upload } from "antd";
+import { Button, Form } from "antd";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
-import { schemaProductSmartWatch } from "src/utils/rules";
+import { schemaProductMouse } from "src/utils/rules";
 import {
-  getIdFromNameId,
+  generateRandomString,
   isAxiosUnprocessableEntityError,
 } from "src/utils/utils";
 import SelectCustom from "src/components/Select";
-
 import Textarea from "src/components/Textarea";
 import { getCategorys } from "src/store/category/categorySlice";
-import { getDetailPhone } from "src/store/product/smartPhoneSlice";
 import InputFile from "src/components/InputFile";
-import { PlusOutlined } from "@ant-design/icons";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
-import {
-  getSmartWatch,
-  updateSmartWatch,
-} from "src/store/product/smartwatchSlice";
+import { addRam, getRams } from "src/store/ram/ramSlice";
+import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
+import { addMouse, getMouse } from "src/store/accessory/mouse";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -47,30 +44,15 @@ interface FormData {
   mass: string | undefined;
   launchTime: string | undefined;
   accessories: string | undefined;
-  productStatus: number | undefined;
+  productStatus: string | undefined;
   ram: string;
   storageCapacity: string;
   color: string;
   price: string;
   salePrice: string | undefined;
-  monitor: string;
 }
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-type brand = {
-  id: number;
-  name: string;
-};
 
-const UpdateMouse: React.FC = () => {
+const NewMouse: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     handleSubmit,
@@ -78,36 +60,21 @@ const UpdateMouse: React.FC = () => {
     setError,
     register,
     setValue,
-    watch,
     control,
+    watch,
   } = useForm({
-    resolver: yupResolver(schemaProductSmartWatch),
+    resolver: yupResolver(schemaProductMouse),
   });
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { category } = useAppSelector((state) => state.category);
-  const { nameId } = useParams();
-  const id = getIdFromNameId(nameId as string);
-  const { smartWatchDetail } = useAppSelector((state) => state.smartWatch);
-  const { character } = useAppSelector((state) => state.character);
   const { depot } = useAppSelector((state) => state.depot);
   const { brand } = useAppSelector((state) => state.brand);
-  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
-    {
-      control, // control props comes from useForm (optional: if you are using FormContext)
-      name: "lstProductTypeAndPrice", // unique name for your Field Array
-    }
-  );
   useEffect(() => {
     dispatch(getCategorys({ pageSize: 100 }));
     dispatch(getCharacters({ pageSize: 100 }));
     dispatch(getBrands({ pageSize: 100 }));
     dispatch(getdepots({ pageSize: 100 }));
   }, []);
-
-  useEffect(() => {
-    dispatch(getDetailPhone(id));
-  }, [id]);
 
   const [file, setFile] = useState<File[]>();
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
@@ -120,55 +87,49 @@ const UpdateMouse: React.FC = () => {
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue(
-      "ram",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram
-    );
-    setValue("accessories", smartWatchDetail?.productInfo?.accessories);
-    setValue("battery", smartWatchDetail?.battery);
-    setValue("charging", smartWatchDetail?.charging);
-    setValue("chip", smartWatchDetail?.chip);
-    setValue("mass", smartWatchDetail?.productInfo?.mass.toString());
-    setValue(
-      "color",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.color.toString()
-    );
-    setValue("monitor", smartWatchDetail?.monitor);
-    setValue("networkSupport", smartWatchDetail?.networkSupport);
-    setValue("description", smartWatchDetail?.productInfo?.description);
-    setValue("brand", smartWatchDetail?.productInfo?.brandId.toString());
-    setValue(
-      "characteristic",
-      smartWatchDetail?.productInfo?.characteristicId.toString()
-    );
-    setValue("name", smartWatchDetail?.productInfo?.name);
-    setValue("sim", smartWatchDetail?.sim);
-    setValue(
-      "salePrice",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
-    );
-    setValue("rearCamera", smartWatchDetail?.rearCamera);
-    setValue(
-      "price",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString()
-    );
-    setValue("frontCamera", smartWatchDetail?.frontCamera);
-    setValue("operatingSystem", smartWatchDetail?.operatingSystem);
-    setValue("design", smartWatchDetail?.productInfo?.design);
-    setValue("dimension", smartWatchDetail?.productInfo?.dimension);
-    setValue("category", smartWatchDetail?.productInfo?.categoryId.toString());
-    setValue("launchTime", "2023");
-    setValue("imageUrl", smartWatchDetail?.productInfo.lstProductImageUrl);
-  }, [smartWatchDetail]);
-
+    setValue("ram", "");
+    setValue("accessories", "");
+    setValue("color", "");
+    setValue("description", "");
+    setValue("brand", "");
+    setValue("name", "");
+    setValue("salePrice", "");
+    setValue("price", "");
+    setValue("design", "");
+    setValue("dimension", "");
+    setValue("led", "");
+  }, []);
+  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
+    {
+      control, // control props comes from useForm (optional: if you are using FormContext)
+      name: "lstProductTypeAndPrice", // unique name for your Field Array
+    }
+  );
   const onSubmit = handleSubmit(async (data) => {
+    let images = [];
+
+    if (file) {
+      const form = new FormData();
+      for (let i = 0; i < file.length; i++) {
+        form.append("files", file[i]);
+      }
+      const res = await dispatch(uploadManyImagesProductSmartPhone(form));
+      unwrapResult(res);
+      const d = res?.payload?.data?.data;
+      for (let i = 0; i < d.length; i++) {
+        images.push(d[i]?.fileUrl);
+      }
+    } else {
+      toast.warning("Cần chọn ảnh");
+      return;
+    }
     const body = JSON.stringify({
       productInfo: {
         brandId: Number(data.brand) || 1,
-        categoryId: Number(data.category),
-        productId: smartWatchDetail.productInfo.productId,
+        categoryId: 12,
+        productId: null,
         characteristicId: Number(data.characteristic) || 1,
-        productCode: smartWatchDetail.productInfo.productCode,
+        productCode: generateRandomString(10),
         name: data.name,
         description: data?.description,
         design: data?.design,
@@ -177,56 +138,46 @@ const UpdateMouse: React.FC = () => {
         launchTime: 2023,
         accessories: data?.accessories,
         productStatus: 100,
-        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map(
-          (item, index) => ({
-            typeId: Number(
-              smartWatchDetail?.productInfo?.lstProductTypeAndPrice[index]
-                .typeId
-            ),
-            ram: item?.ram,
-            storageCapacity: item?.storageCapacity,
-            color: item?.color,
-            price: Number(item?.price),
-            salePrice: Number(item?.salePrice),
-            quantity: Number(item?.quantity),
-            depotId: Number(item?.depot) || 1,
-          })
-        ),
-        lstProductImageUrl: data.imageUrl,
+        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
+          typeId: null,
+          ram: item?.ram,
+          storageCapacity: item?.storageCapacity,
+          color: item?.color,
+          price: Number(item?.price),
+          salePrice: Number(item?.salePrice),
+          quantity: Number(item?.quantity),
+          depotId: Number(item?.depot) || 1,
+        })),
+
+        lstProductImageUrl: images || [],
       },
-      monitor: data.monitor,
-      operatingSystem: data.operatingSystem,
+      mouseType: true,
+      compatible: data.compatible,
+      resolution: data.resolution,
       connector: data.connector,
-      health: data.health,
-      cpu: data.cpu,
-      internalMemory: data.internalMemory,
-      battery: data.battery,
-      connectToOs: data.connectToOs,
+      led: data.led,
+      softwareSupport: data.softwareSupport,
+      batteryType: data.batteryType,
+      time: data.time,
+      chargingPort: data.chargingPort,
     });
-    // if (file) {
-    //   const form = new FormData();
-    //   form.append("file", file[0]);
-    //   form.append("image", file[0]);
-    // } else {
-    //   toast.warning("Cần chọn ảnh");
-    // }
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(updateSmartWatch({ id, body }));
+      const res = await dispatch(addMouse(body));
       unwrapResult(res);
       const d = res?.payload?.data;
       if (d?.code !== 200) return toast.error(d?.message);
-      await toast.success("Chỉnh sửa thành công ");
-      await dispatch(getSmartWatch(""));
-      await navigate(path.smartWatch);
+      await toast.success("Thêm sản phẩm thành công ");
+      await dispatch(getMouse(""));
+      await navigate(path.mouse);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
         if (formError) {
           Object.keys(formError).forEach((key) => {
             setError(key as keyof FormData, {
-              // message: formError[key as keyof FormData],
+              message: formError[key as keyof FormData],
               type: "Server",
             });
           });
@@ -237,54 +188,25 @@ const UpdateMouse: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue(
-      "ram",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram
-    );
-    setValue("accessories", smartWatchDetail?.productInfo?.accessories);
-    setValue("battery", smartWatchDetail?.battery);
-    setValue("charging", smartWatchDetail?.charging);
-    setValue("chip", smartWatchDetail?.chip);
-    setValue("mass", smartWatchDetail?.productInfo?.mass.toString());
-    setValue(
-      "color",
-      smartWatchDetail?.productInfo.lstProductTypeAndPrice[0].color.toString()
-    );
-    setValue("monitor", smartWatchDetail?.monitor);
-    setValue("networkSupport", smartWatchDetail?.networkSupport);
-    setValue("description", smartWatchDetail?.productInfo?.description);
-    setValue("brand", smartWatchDetail?.productInfo?.brandId.toString());
-    setValue(
-      "characteristic",
-      smartWatchDetail?.productInfo?.characteristicId.toString()
-    );
-    setValue("name", smartWatchDetail?.productInfo?.name);
-    setValue("sim", smartWatchDetail?.sim);
-    setValue(
-      "salePrice",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
-    );
-    setValue("rearCamera", smartWatchDetail?.rearCamera);
-    setValue(
-      "price",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString()
-    );
-    setValue("frontCamera", smartWatchDetail?.frontCamera);
-    setValue("operatingSystem", smartWatchDetail?.operatingSystem);
-    setValue("design", smartWatchDetail?.productInfo?.design);
-    setValue("dimension", smartWatchDetail?.productInfo?.dimension);
-    setValue("category", smartWatchDetail?.productInfo?.categoryId.toString());
-    setValue("launchTime", "2023");
-    setValue("imageUrl", smartWatchDetail?.productInfo.lstProductImageUrl);
+    setValue("ram", "");
+    setValue("accessories", "");
+    setValue("color", "");
+    setValue("description", "");
+    setValue("brand", "");
+    setValue("name", "");
+    setValue("salePrice", "");
+    setValue("price", "");
+    setValue("design", "");
+    setValue("dimension", "");
+    setValue("led", "");
   };
-  const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
 
   return (
     <div className="bg-white shadow ">
-      <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm smartwatch</h2>
+      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm chuột máy tính</h2>
       <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
@@ -295,31 +217,13 @@ const UpdateMouse: React.FC = () => {
         onSubmitCapture={onSubmit}
       >
         <Form.Item
-          label="Danh mục sản phẩm"
-          name=""
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black "}
-            id="category"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={category?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.category?.message}
-          </SelectCustom>
-        </Form.Item>
-        <Form.Item
           label="Hãng sản xuất"
           name="brand"
           rules={[{ required: true }]}
         >
           <SelectCustom
-            className={"flex-1 text-black  "}
+            className={"flex-1 text-black"}
             id="brand"
-            placeholder="Vui lòng chọn"
             defaultValue={""}
             options={brand?.data?.data}
             register={register}
@@ -328,50 +232,13 @@ const UpdateMouse: React.FC = () => {
             {errors.brand?.message}
           </SelectCustom>
         </Form.Item>
-        <Form.Item
-          label="Hệ điều hành"
-          name="operatingSystem"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="operatingSystem"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={[
-              { id: "iOS", name: "iOS" },
-              { id: "Android", name: "android" },
-            ]}
-            register={register}
-            isBrand={true}
-          >
-            {errors.operatingSystem?.message}
-          </SelectCustom>
-        </Form.Item>
-        <Form.Item
-          label="Đặc điểm sản phẩm"
-          name="characteristic"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="characteristic"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={character?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.characteristic?.message}
-          </SelectCustom>
-        </Form.Item>
+
         <Form.Item
           label="Tên sản phẩm"
           name="name"
           rules={[{ required: true }]}
         >
           <Input
-            placeholder=""
             name="name"
             register={register}
             type="text"
@@ -380,40 +247,6 @@ const UpdateMouse: React.FC = () => {
           />
         </Form.Item>
 
-        <Form.Item label="Thiết kế" name="design" rules={[{ required: true }]}>
-          <Input
-            name="design"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.design?.message}
-            placeholder="Nguyên khối"
-          />
-        </Form.Item>
-        <Form.Item
-          label="Kích thước"
-          name="dimension"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="dimension"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.dimension?.message}
-            placeholder="Dài 159.9 mm - Ngang 76.7 mm - Dày 8.25 mm "
-          />
-        </Form.Item>
-        <Form.Item label="Khối lượng" name="mass" rules={[{ required: true }]}>
-          <Input
-            name="mass"
-            register={register}
-            type="number"
-            className=""
-            errorMessage={errors.mass?.message}
-            placeholder=" 221 "
-          />
-        </Form.Item>
         <Form.Item
           label="Năm ra mắt"
           name="launchTime"
@@ -425,21 +258,6 @@ const UpdateMouse: React.FC = () => {
             type="number"
             className=""
             errorMessage={errors.launchTime?.message}
-            placeholder="2023"
-          />
-        </Form.Item>
-        <Form.Item
-          label="Phụ kiện"
-          name="accessories"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="accessories"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.accessories?.message}
-            placeholder="Tai nghe, sạc"
           />
         </Form.Item>
         <Form.Item
@@ -460,7 +278,6 @@ const UpdateMouse: React.FC = () => {
                       name={`lstProductTypeAndPrice.${index}.ram`}
                       key={item.id} // important to include key with field's id
                       register={register}
-                      placeholder="8Gb"
                     />
                   </Form.Item>
                   <Form.Item
@@ -472,7 +289,6 @@ const UpdateMouse: React.FC = () => {
                       name={`lstProductTypeAndPrice.${index}.storageCapacity`}
                       key={item.id} // important to include key with field's id
                       register={register}
-                      placeholder="1TB"
                     />
                   </Form.Item>
                 </div>
@@ -486,19 +302,16 @@ const UpdateMouse: React.FC = () => {
                       name={`lstProductTypeAndPrice.${index}.price`}
                       key={item.id} // important to include key with field's id
                       register={register}
-                      placeholder="45000000"
                     />
                   </Form.Item>
                   <Form.Item
                     label="Giá khuyến mãi"
                     name={`lstProductTypeAndPrice.${index}.salePrice`}
-                    rules={[{ required: true }]}
                   >
                     <Input
                       name={`lstProductTypeAndPrice.${index}.salePrice`}
                       key={item.id} // important to include key with field's id
                       register={register}
-                      placeholder="44000000"
                     />
                   </Form.Item>
                 </div>
@@ -510,13 +323,11 @@ const UpdateMouse: React.FC = () => {
                   <SelectCustom
                     className={"flex-1 text-black"}
                     id={`lstProductTypeAndPrice.${index}.depot`}
-                    placeholder="Vui lòng chọn"
+                    // label="Hãng xe"
                     defaultValue={1}
                     options={depot?.data?.data}
                     register={register}
-                  >
-                    {errors.depot?.message}
-                  </SelectCustom>
+                  ></SelectCustom>
                 </Form.Item>
                 <div className="flex justify-between space-x-1">
                   <Form.Item
@@ -528,7 +339,6 @@ const UpdateMouse: React.FC = () => {
                       name={`lstProductTypeAndPrice.${index}.quantity`}
                       key={item.id} // important to include key with field's id
                       register={register}
-                      placeholder="1000"
                     />
                   </Form.Item>
                   <Form.Item
@@ -540,7 +350,6 @@ const UpdateMouse: React.FC = () => {
                       name={`lstProductTypeAndPrice.${index}.color`}
                       key={item.id} // important to include key with field's id
                       register={register}
-                      placeholder="Titan tự nhiên"
                     />
                   </Form.Item>
                 </div>
@@ -578,33 +387,34 @@ const UpdateMouse: React.FC = () => {
           </ul>
         </Form.Item>
 
-        <Form.Item label="Màn hình" name="monitor" rules={[{ required: true }]}>
-          <Input
-            name="monitor"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.monitor?.message}
-            placeholder="6.7 - Tần số quét 120 Hz"
-          />
-        </Form.Item>
-
         <Form.Item
-          label="Camera trước"
-          name="health"
+          label="Tương thích"
+          name="compatible"
           rules={[{ required: true }]}
         >
           <Input
-            name="health"
+            name="compatible"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.health?.message}
-            placeholder="12 MP"
+            errorMessage={errors.compatible?.message}
           />
         </Form.Item>
         <Form.Item
-          label="Cổng kết nối"
+          label="Phát minh"
+          name="resolution"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="resolution"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.resolution?.message}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Cổng kết nôi"
           name="connector"
           rules={[{ required: true }]}
         >
@@ -614,61 +424,69 @@ const UpdateMouse: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.connector?.message}
-            placeholder="Chính 48 MP & Phụ 12 MP, 12 MP"
           />
         </Form.Item>
-        <Form.Item label="Cpu" name="cpu" rules={[{ required: true }]}>
+        <Form.Item label="Led" name="led" rules={[{ required: true }]}>
           <Input
-            name="cpu"
+            name="led"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.cpu?.message}
-            placeholder=""
-          />
-        </Form.Item>
-        <Form.Item
-          label="Bộ nhớ trong"
-          name="internalMemory"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="internalMemory"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.internalMemory?.message}
-            placeholder="1 Nano internalMemory & 1 einternalMemory"
-          />
-        </Form.Item>
-        <Form.Item label="Pin" name="battery" rules={[{ required: true }]}>
-          <Input
-            name="battery"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.battery?.message}
-            placeholder="4422 mAh"
+            errorMessage={errors.led?.message}
           />
         </Form.Item>
         <Form.Item
-          label="Kết nối hệ điều hành"
-          name="connectToOs"
+          label="Hỗ trợ phần mềm"
+          name="softwareSupport"
           rules={[{ required: true }]}
         >
           <Input
-            name="connectToOs"
+            name="softwareSupport"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.connectToOs?.message}
-            placeholder=""
+            errorMessage={errors.softwareSupport?.message}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Loại pin"
+          name="batteryType"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="batteryType"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.batteryType?.message}
+          />
+        </Form.Item>
+
+        <Form.Item label="Thời gian" name="time" rules={[{ required: true }]}>
+          <Input
+            name="time"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.time?.message}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Cổng sạc"
+          name="chargingPort"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="chargingPort"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.chargingPort?.message}
           />
         </Form.Item>
 
         <Form.Item
-          name="file"
-          // rules={[{ required: true }]}
+          name="files"
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
@@ -686,7 +504,7 @@ const UpdateMouse: React.FC = () => {
                 );
               })}
             </div>
-            <InputFile label="" onChange={handleChangeFile} id="images" />
+            <InputFile label="" onChange={handleChangeFile} id="files" />
             <div className="mt-3  flex flex-col items-center text-red-500">
               <div>Dụng lượng file tối đa 2 MB</div>
               <div>Định dạng:.JPEG, .PNG</div>
@@ -740,4 +558,4 @@ const UpdateMouse: React.FC = () => {
   );
 };
 
-export default () => <UpdateMouse />;
+export default () => <NewMouse />;

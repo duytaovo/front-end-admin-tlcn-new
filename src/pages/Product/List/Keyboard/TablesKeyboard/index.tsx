@@ -7,6 +7,7 @@ import { getSmartPhones } from "src/store/product/smartPhoneSlice";
 import ProductPhone from "./Table/Product/Keyboard";
 import path from "src/constants/path";
 import { Pagination } from "antd";
+import { getKeyboard } from "src/store/accessory/keyboard";
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -19,13 +20,13 @@ const MenuProps = {
 };
 const TableKeyboard: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { smartPhone } = useAppSelector((state) => state.smartPhone);
+  const { keyboard } = useAppSelector((state) => state.keyboard);
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
-  const pageSize = 10; // Số phần tử trên mỗi trang
+  const pageSize = 12; // Số phần tử trên mỗi trang
 
   useEffect(() => {
-    dispatch(getSmartPhones({ pageNumber: currentPage, pageSize: 12 }));
+    dispatch(getKeyboard({ pageNumber: currentPage, pageSize: 12 }));
   }, [currentPage]);
   const handlePageChange = (page: number) => {
     setCurrentPage(page - 1);
@@ -119,7 +120,7 @@ const TableKeyboard: React.FC = () => {
           </div>
         </div>
         <Link
-          to={path.smartPhoneNew}
+          to={path.keyboardNew}
           className="no-underline text-green-500 text-lg font-medium border-[1px] border-solid border-[green] p-3 rounded cursor-pointer"
         >
           Thêm mới
@@ -127,7 +128,7 @@ const TableKeyboard: React.FC = () => {
       </div>
 
       <div className="mt-6 grid grid-cols-6 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {smartPhone?.data?.data?.map((_smartPhone: any) => (
+        {keyboard?.data?.data?.map((_smartPhone: any) => (
           <div className="col-span-1" key={_smartPhone.id}>
             <ProductPhone product={_smartPhone} />
           </div>
@@ -137,7 +138,7 @@ const TableKeyboard: React.FC = () => {
         <Pagination
           current={currentPage + 1}
           pageSize={pageSize}
-          total={smartPhone?.data?.totalElements}
+          total={keyboard?.data?.totalElements}
           onChange={handlePageChange}
         />
       </div>

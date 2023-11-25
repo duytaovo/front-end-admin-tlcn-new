@@ -20,6 +20,9 @@ import tabletReducer from "./product/tabletSlice";
 import smartWatchReducer from "./product/smartwatchSlice";
 import orderReducer from "./order/orderSlice";
 import commentsReducer from "./comment/commentsSlice";
+import mouseReducer from "./accessory/mouse";
+import keyboardReducer from "./accessory/keyboard";
+import loudSpeakerReducer from "./accessory/loudSpeaker";
 
 export const store = configureStore({
   reducer: {
@@ -32,6 +35,9 @@ export const store = configureStore({
     laptop: laptopReducer,
     tablet: tabletReducer,
     category: categoryReducer,
+    mouse: mouseReducer,
+    keyboard: keyboardReducer,
+    loudSpeaker: loudSpeakerReducer,
     brand: brandReducer,
     processor: processorReducer,
     ram: ramReducer,

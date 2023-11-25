@@ -16,6 +16,7 @@ import {
 } from "src/store/order/orderSlice";
 import { Button, Pagination } from "antd";
 import { toast } from "react-toastify";
+import { Helmet } from "react-helmet-async";
 
 const Order = ({ title }: { title?: string }) => {
   const style = (text: string) => {
@@ -112,6 +113,10 @@ const Order = ({ title }: { title?: string }) => {
 
   return (
     <div className="h-1/2">
+      <Helmet>
+        <title>{"Trang quản lý đơn hàng "}</title>
+        <meta name="description" />
+      </Helmet>
       <Table hoverable={true} className="bg-transparent">
         <Table.Head>
           <Table.HeadCell> Mã đơn hàng </Table.HeadCell>

@@ -15,6 +15,7 @@ import {
 import { unwrapResult } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import { ListSmartPhone } from "src/types/allProductsType.interface";
+import { deleteKeyboard, getKeyboard } from "src/store/accessory/keyboard";
 
 interface Props {
   product: ListSmartPhone;
@@ -56,7 +57,7 @@ export default function ProductLoudSpeaker({ product }: Props) {
       title: "Sửa",
       callback: () => {
         navigate(
-          `${"/smartPhone/detail/update"}/${generateNameId({
+          `${"/keyboard/detail/update"}/${generateNameId({
             name: product.name,
             id: product.id.toString(),
           })}`
@@ -71,12 +72,12 @@ export default function ProductLoudSpeaker({ product }: Props) {
       title: "Xóa",
       callback: () => {
         const handleDelete = async () => {
-          const res = await dispatch(deleteSmartPhone(product.id.toString()));
+          const res = await dispatch(deleteKeyboard(product.id.toString()));
           unwrapResult(res);
           // const d = res?.payload;
           // if (d?.code !== 200) return toast.error(d?.message);
           await toast.success("Xóa sản phẩm thành công ");
-          await dispatch(getSmartPhones(""));
+          await dispatch(getKeyboard(""));
         };
         handleDelete();
         hidden();
@@ -94,7 +95,7 @@ export default function ProductLoudSpeaker({ product }: Props) {
   return (
     <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <Link
-        to={`${"/smartPhone/detail"}/${generateNameId({
+        to={`${"/keyboard/detail"}/${generateNameId({
           name: product.name,
           id: product.id.toString(),
         })}`}

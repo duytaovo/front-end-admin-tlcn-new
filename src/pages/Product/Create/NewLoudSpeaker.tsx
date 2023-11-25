@@ -10,7 +10,7 @@ import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
-import { schemaProductRam } from "src/utils/rules";
+import { schemaProductLoudSpeaker, schemaProductRam } from "src/utils/rules";
 import {
   generateRandomString,
   isAxiosUnprocessableEntityError,
@@ -24,6 +24,10 @@ import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
 import { addRam, getRams } from "src/store/ram/ramSlice";
 import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
+import {
+  addloudSpeaker,
+  getloudSpeaker,
+} from "src/store/accessory/loudSpeaker";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -49,7 +53,6 @@ interface FormData {
   color: string;
   price: string;
   salePrice: string | undefined;
-  monitor: string;
 }
 
 const NewLoudSpeaker: React.FC = () => {
@@ -63,7 +66,7 @@ const NewLoudSpeaker: React.FC = () => {
     control,
     watch,
   } = useForm({
-    resolver: yupResolver(schemaProductRam),
+    resolver: yupResolver(schemaProductLoudSpeaker),
   });
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -89,23 +92,14 @@ const NewLoudSpeaker: React.FC = () => {
   useEffect(() => {
     setValue("ram", "");
     setValue("accessories", "");
-    setValue("model", "");
-    setValue("ramType", "");
-    setValue("capacity", "");
     setValue("color", "");
     setValue("description", "");
     setValue("brand", "");
     setValue("name", "");
-    setValue("capacity", "");
     setValue("salePrice", "");
-    setValue("latency", "");
     setValue("price", "");
-    setValue("voltage", "");
     setValue("design", "");
     setValue("dimension", "");
-    setValue("quantity", "");
-    setValue("led", "");
-    setValue("ramTechnology", "");
   }, []);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
@@ -159,26 +153,23 @@ const NewLoudSpeaker: React.FC = () => {
 
         lstProductImageUrl: images || [],
       },
-      ramFor: true,
-      model: data.model,
-      ramType: data.ramType,
-      capacity: data.capacity,
-      bus: Number(data.bus),
-      latency: data.latency,
-      voltage: data.voltage,
-      led: data.led,
-      ramTechnology: data.ramTechnology,
+      loudspeakerType: true,
+      totalCapacity: data.totalCapacity,
+      time: data.time,
+      connection: data.connection,
+      utilities: data.utilities,
+      control: data.control,
     });
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(addRam(body));
+      const res = await dispatch(addloudSpeaker(body));
       unwrapResult(res);
       const d = res?.payload?.data;
       if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Thêm sản phẩm thành công ");
-      await dispatch(getRams(""));
-      await navigate(path.ram);
+      await dispatch(getloudSpeaker(""));
+      await navigate(path.loudSpeaker);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
@@ -198,32 +189,22 @@ const NewLoudSpeaker: React.FC = () => {
   const onClickHuy = () => {
     setValue("ram", "");
     setValue("accessories", "");
-    setValue("model", "");
-    setValue("ramType", "");
-    setValue("capacity", "");
     setValue("color", "");
     setValue("description", "");
     setValue("brand", "");
     setValue("name", "");
-    setValue("capacity", "");
     setValue("salePrice", "");
-    setValue("latency", "");
     setValue("price", "");
-    setValue("voltage", "");
     setValue("design", "");
     setValue("dimension", "");
-    setValue("quantity", "");
-    setValue("led", "");
-    setValue("ramTechnology", "");
   };
-  const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
 
   return (
     <div className="bg-white shadow ">
-      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm Ram</h2>
+      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm loa nghe nhạc</h2>
       <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
@@ -362,7 +343,7 @@ const NewLoudSpeaker: React.FC = () => {
                     options={depot?.data?.data}
                     register={register}
                   >
-                    {errors.depot?.message}
+                    {/* {errors.depot?.message} */}
                   </SelectCustom>
                 </Form.Item>
                 <div className="flex justify-between space-x-1">
@@ -423,85 +404,65 @@ const NewLoudSpeaker: React.FC = () => {
           </ul>
         </Form.Item>
 
-        <Form.Item label="Loại ram" name="ramType" rules={[{ required: true }]}>
-          <Input
-            name="ramType"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.ramType?.message}
-          />
-        </Form.Item>
-        <Form.Item label="Kiểu" name="model" rules={[{ required: true }]}>
-          <Input
-            name="model"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.model?.message}
-          />
-        </Form.Item>
         <Form.Item
-          label="Dung tích"
-          name="capacity"
+          label="Tổng công suất"
+          name="totalCapacity"
           rules={[{ required: true }]}
         >
           <Input
-            name="capacity"
+            name="totalCapacity"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.capacity?.message}
+            errorMessage={errors.totalCapacity?.message}
           />
         </Form.Item>
-        <Form.Item label="Bus" name="bus" rules={[{ required: true }]}>
+        <Form.Item label="Thời gian" name="time" rules={[{ required: true }]}>
           <Input
-            name="bus"
+            name="time"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.bus?.message}
+            errorMessage={errors.time?.message}
           />
         </Form.Item>
-        <Form.Item label="Độ trễ" name="latency" rules={[{ required: true }]}>
-          <Input
-            name="latency"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.latency?.message}
-          />
-        </Form.Item>
-        <Form.Item label="Vol" name="voltage" rules={[{ required: true }]}>
-          <Input
-            name="voltage"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.voltage?.message}
-          />
-        </Form.Item>
-        <Form.Item label="Led" name="led" rules={[{ required: true }]}>
-          <Input
-            name="led"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.led?.message}
-          />
-        </Form.Item>
-
         <Form.Item
-          label="Công nghệ"
-          name="ramTechnology"
+          label="Kết nối"
+          name="connection"
           rules={[{ required: true }]}
         >
           <Input
-            name="ramTechnology"
+            name="connection"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.ramTechnology?.message}
+            errorMessage={errors.connection?.message}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Tiện ích"
+          name="utilities"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="utilities"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.utilities?.message}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Điều khiển"
+          name="control"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="control"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.control?.message}
           />
         </Form.Item>
 

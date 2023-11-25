@@ -7,10 +7,10 @@ const UpdateKeyboard = lazy(
 const KeyboardDetail = lazy(
   () => import("src/pages/Product/Detail/Keyboard_Detail ")
 );
-const ListKeyboard = lazy(() => import("src/pages/Product/Create/NewKeyboard"));
-const NewKeyboard = lazy(
+const ListKeyboard = lazy(
   () => import("src/pages/Product/List/Keyboard/ListKeyboard")
 );
+const NewKeyboard = lazy(() => import("src/pages/Product/Create/NewKeyboard"));
 
 const NewLoudSpeaker = lazy(
   () => import("src/pages/Product/Create/NewLoudSpeaker")

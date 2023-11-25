@@ -5,10 +5,15 @@ import CustomTable from "./components/Table";
 import Chart from "../chart/Chart";
 import { CircularProgressbar } from "react-circular-progressbar";
 import path from "src/constants/path";
+import { Helmet } from "react-helmet-async";
 
 const Home = () => {
   return (
     <div>
+      <Helmet>
+        <title>{"Trang chủ"}</title>
+        <meta name="description" />
+      </Helmet>
       <div className="flex p-5 gap-5">
         <Widget type="user" path={path.users} />
         <Widget type="order" path={path.orders} />

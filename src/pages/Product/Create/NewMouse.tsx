@@ -10,7 +10,7 @@ import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
-import { schemaProductRam } from "src/utils/rules";
+import { schemaProductMouse, schemaProductRam } from "src/utils/rules";
 import {
   generateRandomString,
   isAxiosUnprocessableEntityError,
@@ -24,6 +24,7 @@ import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
 import { addRam, getRams } from "src/store/ram/ramSlice";
 import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
+import { addMouse, getMouse } from "src/store/accessory/mouse";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -49,7 +50,6 @@ interface FormData {
   color: string;
   price: string;
   salePrice: string | undefined;
-  monitor: string;
 }
 
 const NewMouse: React.FC = () => {
@@ -63,7 +63,7 @@ const NewMouse: React.FC = () => {
     control,
     watch,
   } = useForm({
-    resolver: yupResolver(schemaProductRam),
+    resolver: yupResolver(schemaProductMouse),
   });
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -89,23 +89,15 @@ const NewMouse: React.FC = () => {
   useEffect(() => {
     setValue("ram", "");
     setValue("accessories", "");
-    setValue("model", "");
-    setValue("ramType", "");
-    setValue("capacity", "");
     setValue("color", "");
     setValue("description", "");
     setValue("brand", "");
     setValue("name", "");
-    setValue("capacity", "");
     setValue("salePrice", "");
-    setValue("latency", "");
     setValue("price", "");
-    setValue("voltage", "");
     setValue("design", "");
     setValue("dimension", "");
-    setValue("quantity", "");
     setValue("led", "");
-    setValue("ramTechnology", "");
   }, []);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
@@ -159,26 +151,26 @@ const NewMouse: React.FC = () => {
 
         lstProductImageUrl: images || [],
       },
-      ramFor: true,
-      model: data.model,
-      ramType: data.ramType,
-      capacity: data.capacity,
-      bus: Number(data.bus),
-      latency: data.latency,
-      voltage: data.voltage,
+      mouseType: true,
+      compatible: data.compatible,
+      resolution: data.resolution,
+      connector: data.connector,
       led: data.led,
-      ramTechnology: data.ramTechnology,
+      softwareSupport: data.softwareSupport,
+      batteryType: data.batteryType,
+      time: data.time,
+      chargingPort: data.chargingPort,
     });
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(addRam(body));
+      const res = await dispatch(addMouse(body));
       unwrapResult(res);
       const d = res?.payload?.data;
       if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Thêm sản phẩm thành công ");
-      await dispatch(getRams(""));
-      await navigate(path.ram);
+      await dispatch(getMouse(""));
+      await navigate(path.mouse);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
@@ -198,32 +190,23 @@ const NewMouse: React.FC = () => {
   const onClickHuy = () => {
     setValue("ram", "");
     setValue("accessories", "");
-    setValue("model", "");
-    setValue("ramType", "");
-    setValue("capacity", "");
     setValue("color", "");
     setValue("description", "");
     setValue("brand", "");
     setValue("name", "");
-    setValue("capacity", "");
     setValue("salePrice", "");
-    setValue("latency", "");
     setValue("price", "");
-    setValue("voltage", "");
     setValue("design", "");
     setValue("dimension", "");
-    setValue("quantity", "");
     setValue("led", "");
-    setValue("ramTechnology", "");
   };
-  const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
 
   return (
     <div className="bg-white shadow ">
-      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm Ram</h2>
+      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm chuột máy tính</h2>
       <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
@@ -233,23 +216,6 @@ const NewMouse: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
-        {/* <Form.Item
-          label="Danh mục sản phẩm"
-          name=""
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="category"
-            // label="Hãng xe"
-            defaultValue={""}
-            options={category}
-            register={register}
-            isBrand={true}
-          >
-            {errors.category?.message}
-          </SelectCustom>
-        </Form.Item> */}
         <Form.Item
           label="Hãng sản xuất"
           name="brand"
@@ -361,9 +327,7 @@ const NewMouse: React.FC = () => {
                     defaultValue={1}
                     options={depot?.data?.data}
                     register={register}
-                  >
-                    {errors.depot?.message}
-                  </SelectCustom>
+                  ></SelectCustom>
                 </Form.Item>
                 <div className="flex justify-between space-x-1">
                   <Form.Item
@@ -423,62 +387,43 @@ const NewMouse: React.FC = () => {
           </ul>
         </Form.Item>
 
-        <Form.Item label="Loại ram" name="ramType" rules={[{ required: true }]}>
-          <Input
-            name="ramType"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.ramType?.message}
-          />
-        </Form.Item>
-        <Form.Item label="Kiểu" name="model" rules={[{ required: true }]}>
-          <Input
-            name="model"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.model?.message}
-          />
-        </Form.Item>
         <Form.Item
-          label="Dung tích"
-          name="capacity"
+          label="Tương thích"
+          name="compatible"
           rules={[{ required: true }]}
         >
           <Input
-            name="capacity"
+            name="compatible"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.capacity?.message}
+            errorMessage={errors.compatible?.message}
           />
         </Form.Item>
-        <Form.Item label="Bus" name="bus" rules={[{ required: true }]}>
+        <Form.Item
+          label="Phát minh"
+          name="resolution"
+          rules={[{ required: true }]}
+        >
           <Input
-            name="bus"
+            name="resolution"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.bus?.message}
+            errorMessage={errors.resolution?.message}
           />
         </Form.Item>
-        <Form.Item label="Độ trễ" name="latency" rules={[{ required: true }]}>
+        <Form.Item
+          label="Cổng kết nôi"
+          name="connector"
+          rules={[{ required: true }]}
+        >
           <Input
-            name="latency"
+            name="connector"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.latency?.message}
-          />
-        </Form.Item>
-        <Form.Item label="Vol" name="voltage" rules={[{ required: true }]}>
-          <Input
-            name="voltage"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.voltage?.message}
+            errorMessage={errors.connector?.message}
           />
         </Form.Item>
         <Form.Item label="Led" name="led" rules={[{ required: true }]}>
@@ -490,18 +435,53 @@ const NewMouse: React.FC = () => {
             errorMessage={errors.led?.message}
           />
         </Form.Item>
-
         <Form.Item
-          label="Công nghệ"
-          name="ramTechnology"
+          label="Hỗ trợ phần mềm"
+          name="softwareSupport"
           rules={[{ required: true }]}
         >
           <Input
-            name="ramTechnology"
+            name="softwareSupport"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.ramTechnology?.message}
+            errorMessage={errors.softwareSupport?.message}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Loại pin"
+          name="batteryType"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="batteryType"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.batteryType?.message}
+          />
+        </Form.Item>
+
+        <Form.Item label="Thời gian" name="time" rules={[{ required: true }]}>
+          <Input
+            name="time"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.time?.message}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Cổng sạc"
+          name="chargingPort"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="chargingPort"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.chargingPort?.message}
           />
         </Form.Item>
 

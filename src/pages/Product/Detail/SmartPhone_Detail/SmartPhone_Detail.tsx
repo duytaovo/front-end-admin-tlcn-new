@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { formatNumberToSocialStyle, getIdFromNameId } from "src/utils/utils";
-import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import { convert } from "html-to-text";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";

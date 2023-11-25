@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import ListBrand from "./ListBrand";
 
 type Props = {};
@@ -5,6 +6,10 @@ type Props = {};
 const Brands = (props: Props) => {
   return (
     <div>
+      <Helmet>
+        <title>{"Trang thương hiệu"}</title>
+        <meta name="description" />
+      </Helmet>
       <ListBrand />
     </div>
   );

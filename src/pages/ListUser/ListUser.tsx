@@ -1,8 +1,13 @@
+import { Helmet } from "react-helmet-async";
 import TableUser from "./Tables";
 
 const ListUser = () => {
   return (
     <div className="">
+      <Helmet>
+        <title>{"Trang quản lý người dùng "}</title>
+        <meta name="description" />
+      </Helmet>
       <TableUser />
     </div>
   );
