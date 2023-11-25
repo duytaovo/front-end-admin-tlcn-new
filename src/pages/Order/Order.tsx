@@ -11,6 +11,7 @@ import {
   getPurchases,
   updatePurchasesCancel,
   updatePurchasesConfirm,
+  updatePurchasesDelivery,
   updatePurchasesSuccess,
 } from "src/store/order/orderSlice";
 import { Button, Pagination } from "antd";
@@ -37,7 +38,7 @@ const Order = ({ title }: { title?: string }) => {
       case "Ordered":
         return "Đã đặt hàng";
       case "Delivering":
-        return "Đang giao hàng";
+        return "ĐANG GIAO HÀNG";
       case "Cancelled":
         return "Đã hủy";
       case "Confirmed":
@@ -60,6 +61,28 @@ const Order = ({ title }: { title?: string }) => {
 
       if (res) {
         toast.success("Xác nhận thành công");
+      }
+      dispatch(getPurchases(""));
+    }
+  };
+
+  const handleAcceptSuccess = async (id: number) => {
+    if (confirm("Bạn có muốn Xác nhận đơn hàng thành công không?")) {
+      const res = await dispatch(updatePurchasesSuccess(id));
+
+      if (res) {
+        toast.success("Giao hàng thành công");
+      }
+      dispatch(getPurchases(""));
+    }
+  };
+
+  const handleAcceptDelivery = async (id: number) => {
+    if (confirm("Bạn có muốn giao cho đơn vị vận chuyển không?")) {
+      const res = await dispatch(updatePurchasesDelivery(id));
+
+      if (res) {
+        toast.success("Chuyển giao thành công");
       }
       dispatch(getPurchases(""));
     }
@@ -106,6 +129,8 @@ const Order = ({ title }: { title?: string }) => {
             const styleStatus = style(_order.orderStatusString);
             const displayDetail = index === orderDetail.index;
             const displayCancelBtn = _order.orderStatusString != "Ordered";
+            const displayButtonDelivered = _order.orderStatus === 4;
+
             return (
               <>
                 <Table.Row
@@ -148,7 +173,7 @@ const Order = ({ title }: { title?: string }) => {
                   </Table.Cell>
 
                   <Table.Cell className={styleStatus}>
-                    <div className="flex flex-grow justify-between">
+                    <div className="flex flex-grow justify-between text-xl font-bold">
                       {stringStatus(_order.orderStatusString)}
                       {_order.paymentStatusString === "Payment success" ? (
                         <span className="text-white text-xl bg-green-500 p-2 rounded-lg">
@@ -162,18 +187,59 @@ const Order = ({ title }: { title?: string }) => {
                     </div>
                   </Table.Cell>
                   <Table.Cell className="space-x-3">
-                    <Button
-                      type="link"
-                      disabled={displayCancelBtn}
-                      id={_order.id}
-                      onClick={() => handleAccept(_order.id)}
-                      className={clsx(
-                        "bg-green-500 text-xl font-medium rounded-lg  text-white",
-                        displayCancelBtn && "!bg-gray-100 !text-gray-700"
-                      )}
-                    >
-                      Xác nhận
-                    </Button>
+                    {_order.orderStatus === 2 ? (
+                      <Button
+                        type="link"
+                        // disabled={displayCancelBtn}
+                        id={_order.id}
+                        onClick={() => handleAcceptDelivery(_order.id)}
+                        className={clsx(
+                          "bg-yellow-500 text-xl font-medium rounded-lg  text-white"
+                        )}
+                      >
+                        Giao vận chuyển
+                      </Button>
+                    ) : _order.orderStatus === 3 ? (
+                      <Button
+                        type="link"
+                        // disabled={displayCancelBtn}
+                        id={_order.id}
+                        onClick={() => handleAcceptSuccess(_order.id)}
+                        className={clsx(
+                          "bg-blue-500 text-xl font-medium rounded-lg  text-white"
+                        )}
+                      >
+                        Giao thành công
+                      </Button>
+                    ) : _order.orderStatus === 4 ? (
+                      <Button
+                        type="link"
+                        disabled={displayButtonDelivered}
+                        id={_order.id}
+                        onClick={() => handleAcceptSuccess(_order.id)}
+                        className={clsx(
+                          "bg-blue-500 text-xl font-medium rounded-lg  text-white",
+                          displayButtonDelivered &&
+                            "!bg-gray-100 !text-gray-700"
+                        )}
+                      >
+                        Đã giao
+                      </Button>
+                    ) : (
+                      <Button
+                        type="link"
+                        disabled={displayCancelBtn}
+                        id={_order.id}
+                        onClick={() => handleAccept(_order.id)}
+                        className={clsx(
+                          "bg-green-500 text-xl font-medium rounded-lg  text-white",
+                          displayCancelBtn && "!bg-gray-100 !text-gray-700"
+                        )}
+                      >
+                        Xác nhận
+                      </Button>
+                    )}
+
                     <Button
                       type="link"
                       disabled={displayCancelBtn}
