@@ -53,7 +53,6 @@ const FormDisabledDemo: React.FC = () => {
   const [value, setValueSex] = useState(1);
 
   const onChange = (e: RadioChangeEvent) => {
-    console.log("radio checked", e.target.value);
     setValueSex(e.target.value);
   };
   const {

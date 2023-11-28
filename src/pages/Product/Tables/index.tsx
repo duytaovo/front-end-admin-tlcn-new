@@ -37,7 +37,25 @@ const TableProduct: React.FC = () => {
   const pageSize = 10; // Số phần tử trên mỗi trang
 
   useEffect(() => {
-    dispatch(getSmartPhones({ pageNumber: currentPage, pageSize: 12 }));
+    const body = {
+      slug: "smartphone",
+      // brandId: [0],
+      // characteristicId: [0],
+      // priceFrom: 0,
+      // priceTo: 0,
+      // specialFeatures: [""],
+      // smartphoneType: [""],
+      // ram: [""],
+      // storageCapacity: [""],
+      // charging: [""],
+      // screen: [""],
+    };
+    dispatch(
+      getSmartPhones({
+        body: body,
+        params: { pageNumber: currentPage, pageSize: 12 },
+      })
+    );
   }, [currentPage]);
   const handlePageChange = (page: number) => {
     setCurrentPage(page - 1);

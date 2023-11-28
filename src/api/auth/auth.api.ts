@@ -21,7 +21,6 @@ const authApi = {
     return http.get<SuccessResponse<any[]>>(`/manage/user/${params}`);
   },
   updateUser({ id, body }: any) {
-    console.log(id);
     return http.put<SuccessResponse<any>>(`/manage/user/update/${id}`, body);
   },
   deleteUser(idUser: string) {

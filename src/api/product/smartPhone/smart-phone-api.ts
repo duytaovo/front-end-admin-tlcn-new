@@ -5,8 +5,8 @@ const smartPhoneApi = {
   addSmartPhone(data: any) {
     return http.post("/manage/product/smartphone/create", data);
   },
-  getSmartPhones(params: any) {
-    return http.get<SuccessResponse<any>>("/manage/product/smartphone", {
+  getSmartPhones({ body, params }: any) {
+    return http.post<SuccessResponse<any>>("/manage/product/smartphone", body, {
       params,
     });
   },
