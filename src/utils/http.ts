@@ -145,6 +145,7 @@ export class Http {
       });
   }
 }
-const http = new Http("http://54.255.223.29/api").instance;
-export const http_auth = new Http("http://54.255.223.29/api").instance;
+const http = new Http("https://techstore-8ma0.onrender.com/api").instance;
+export const http_auth = new Http("https://techstore-8ma0.onrender.com/api")
+  .instance;
 export default http;
