@@ -3,6 +3,7 @@ const path = {
   login: "/login",
   logout: "/logout",
   register: "/register",
+  search: "/search",
   orders: "/orders",
   users: "/users",
   usersNew: "/users/new",
@@ -59,3 +60,4 @@ const path = {
 } as const;
 
 export default path;
+

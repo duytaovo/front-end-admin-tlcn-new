@@ -24,6 +24,7 @@ import mouseReducer from "./accessory/mouse";
 import keyboardReducer from "./accessory/keyboard";
 import loudSpeakerReducer from "./accessory/loudSpeaker";
 import filterReducer from "./product/filterSlice";
+import searchSlice from "./search/searchSlice";
 
 export const store = configureStore({
   reducer: {
@@ -47,6 +48,7 @@ export const store = configureStore({
     character: characterReducer,
     depot: depotReducer,
     filter: filterReducer,
+    search: searchSlice,
   },
   devTools: process.env.NODE_ENV === "development",
   middleware: (getDefaultMiddleware) => [
