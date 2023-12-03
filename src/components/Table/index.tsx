@@ -78,8 +78,11 @@ const DataTable = ({
         fontSize: "24px",
       }}
     >
-      <div className="data-table_container text-2xl">
+      <div className="data-table_container text-xl">
         <DataGrid
+          sx={{
+            fontSize: "14px",
+          }}
           className="text-xl"
           rows={rows}
           columns={columns}
