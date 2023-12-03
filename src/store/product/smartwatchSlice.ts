@@ -4,16 +4,16 @@ import { payloadCreator } from "src/utils/utils";
 
 export const getSmartWatch = createAsyncThunk(
   "smartWatch/getSmartWatch",
-  payloadCreator(smartWatchApi.getSmartWatchs)
+  payloadCreator(smartWatchApi.getSmartWatchs),
 );
 
 export const getDetailSmartWatch = createAsyncThunk(
   "smartWatch/getDetailSmartWatch",
-  payloadCreator(smartWatchApi.getDetailSmartWatch)
+  payloadCreator(smartWatchApi.getDetailSmartWatch),
 );
 export const addSmartWatch = createAsyncThunk(
   "smartWatch/addSmartWatch",
-  payloadCreator(smartWatchApi.addSmartWatch)
+  payloadCreator(smartWatchApi.addSmartWatch),
 );
 // export const uploadImageProduct = createAsyncThunk(
 //   "smartWatch/uploadImageProduct",
@@ -25,12 +25,12 @@ export const addSmartWatch = createAsyncThunk(
 // );
 export const updateSmartWatch = createAsyncThunk(
   "smartWatch/updateSmartWatch",
-  payloadCreator(smartWatchApi.updateSmartWatch)
+  payloadCreator(smartWatchApi.updateSmartWatch),
 );
 
 export const deleteSmartWatch = createAsyncThunk(
   "smartWatch/deleteSmartWatch",
-  payloadCreator(smartWatchApi.deleteSmartWatch)
+  payloadCreator(smartWatchApi.deleteSmartWatch),
 );
 
 interface IProudct {
@@ -60,24 +60,14 @@ const dataDetail: any = {
     dimension: "",
     mass: 221.0,
     launchTime: 2023,
-    accessories: "Tai nghe, sạc",
+    accessories: "",
     productStatus: 100,
     lstProductTypeAndPrice: [
       {
         typeId: 5,
-        ram: " 8 GB",
-        storageCapacity: "256 GB",
-        color: "Titan tự nhiên",
-        price: 0,
-        salePrice: 0,
-        quantity: 1000,
-        depotId: 1,
-      },
-      {
-        typeId: 6,
-        ram: " 8 GB",
-        storageCapacity: "512 GB",
-        color: "1000",
+        ram: "",
+        storageCapacity: "",
+        color: "",
         price: 0,
         salePrice: 0,
         quantity: 1000,
@@ -110,3 +100,4 @@ const smartWatchSlice = createSlice({
 
 const smartWatchReducer = smartWatchSlice.reducer;
 export default smartWatchReducer;
+
