@@ -86,7 +86,6 @@ export class Http {
           >(error)
         ) {
           const config: any = error.response?.config || {};
-          console.log(error.response);
           const { url } = config;
           // Trường hợp Token hết hạn và request đó không phải là của request refresh token
           // thì chúng ta mới tiến hành gọi refresh token
@@ -145,8 +144,8 @@ export class Http {
       });
   }
 }
-const http = new Http("http://localhost:8081/api").instance;
-// export const http_auth = new Http("http://54.255.223.29/api").instance;
-export const http_auth = new Http("http://localhost:8081/api").instance;
+const http = new Http("http://54.255.223.29/api").instance;
+export const http_auth = new Http("http://54.255.223.29/api").instance;
+// export const http_auth = new Http("http://localhost:8081/api").instance;
 export default http;
 
