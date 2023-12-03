@@ -23,6 +23,7 @@ import commentsReducer from "./comment/commentsSlice";
 import mouseReducer from "./accessory/mouse";
 import keyboardReducer from "./accessory/keyboard";
 import loudSpeakerReducer from "./accessory/loudSpeaker";
+import filterReducer from "./product/filterSlice";
 
 export const store = configureStore({
   reducer: {
@@ -45,6 +46,7 @@ export const store = configureStore({
     cardGraphic: cardGraphicReducer,
     character: characterReducer,
     depot: depotReducer,
+    filter: filterReducer,
   },
   devTools: process.env.NODE_ENV === "development",
   middleware: (getDefaultMiddleware) => [
@@ -67,3 +69,4 @@ export type AppStore = Omit<Store<RootState, AnyAction>, "dispatch"> & {
 };
 
 export default store;
+

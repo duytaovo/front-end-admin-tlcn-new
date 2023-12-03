@@ -39,22 +39,22 @@ const TableProduct: React.FC = () => {
   useEffect(() => {
     const body = {
       slug: "smartphone",
-      // brandId: [0],
-      // characteristicId: [0],
-      // priceFrom: 0,
-      // priceTo: 0,
-      // specialFeatures: [""],
-      // smartphoneType: [""],
-      // ram: [""],
-      // storageCapacity: [""],
-      // charging: [""],
-      // screen: [""],
+      brandId: null,
+      characteristicId: null,
+      priceFrom: null,
+      priceTo: null,
+      specialFeatures: [],
+      smartphoneType: [],
+      ram: [],
+      storageCapacity: [],
+      charging: [],
+      screen: [],
     };
     dispatch(
       getSmartPhones({
         body: body,
-        params: { pageNumber: currentPage, pageSize: 12 },
-      })
+        params: { pageNumber: currentPage, pageSize: 10 },
+      }),
     );
   }, [currentPage]);
   const handlePageChange = (page: number) => {
@@ -145,14 +145,14 @@ const TableProduct: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="mt-6 grid grid-cols-6 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="mt-6 grid grid-cols-5 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mb-12 h-[80%]">
         {smartPhone?.data?.data?.map((_smartPhone: any) => (
           <div className="col-span-1" key={_smartPhone.id}>
             <ProductPhone product={_smartPhone} />
           </div>
         ))}
       </div>
-      <div className="fixed bottom-12 left-auto">
+      <div className="fixed bottom-12 mt-12 right-4">
         <Pagination
           current={currentPage + 1}
           pageSize={pageSize}
@@ -165,3 +165,4 @@ const TableProduct: React.FC = () => {
 };
 
 export default TableProduct;
+

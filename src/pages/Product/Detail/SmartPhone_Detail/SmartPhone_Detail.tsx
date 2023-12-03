@@ -24,10 +24,10 @@ export default function SmartPhoneDetail() {
     () =>
       smartPhoneDetail?.productInfo?.lstProductImageUrl
         ? smartPhoneDetail?.productInfo?.lstProductImageUrl.slice(
-            ...currentIndexImages
+            ...currentIndexImages,
           )
         : [],
-    [smartPhoneDetail, currentIndexImages]
+    [smartPhoneDetail, currentIndexImages],
   );
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function SmartPhoneDetail() {
     ) {
       setActiveImage(smartPhoneDetail?.productInfo?.lstProductImageUrl[0]);
     }
-  }, [smartPhoneDetail]);
+  }, [smartPhoneDetail, activeImage]);
 
   useEffect(() => {
     dispatch(getDetailPhone(id));
@@ -199,7 +199,7 @@ export default function SmartPhoneDetail() {
                   <Rate
                     allowHalf
                     defaultValue={Number(
-                      smartPhoneDetail?.productInfo?.totalReview
+                      smartPhoneDetail?.productInfo?.totalReview,
                     )}
                     disabled
                   />
@@ -209,7 +209,7 @@ export default function SmartPhoneDetail() {
                 <div>
                   <span>
                     {formatNumberToSocialStyle(
-                      Number(smartPhoneDetail?.productInfo?.totalReview)
+                      Number(smartPhoneDetail?.productInfo?.totalReview),
                     )}
                   </span>
                   <span className="ml-1 text-gray-500">Đã xem</span>
@@ -312,7 +312,7 @@ export default function SmartPhoneDetail() {
               <div
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(
-                    smartPhoneDetail?.productInfo?.description
+                    smartPhoneDetail?.productInfo?.description,
                   ),
                 }}
               />
@@ -343,3 +343,4 @@ export default function SmartPhoneDetail() {
     </div>
   );
 }
+

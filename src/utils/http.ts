@@ -45,7 +45,7 @@ export class Http {
       },
       (error) => {
         return Promise.reject(error);
-      }
+      },
     );
     // Add a response interceptor
     this.instance.interceptors.response.use(
@@ -117,12 +117,12 @@ export class Http {
           // this.accessToken = "";
           // this.refreshToken = "";
           toast.error(
-            error.response?.data.data?.message || error.response?.data.message
+            error.response?.data.data?.message || error.response?.data.message,
           );
           window.location.reload();
         }
         return Promise.reject(error);
-      }
+      },
     );
   }
   private handleRefreshToken() {
@@ -145,6 +145,8 @@ export class Http {
       });
   }
 }
-const http = new Http("http://54.255.223.29/api").instance;
-export const http_auth = new Http("http://54.255.223.29/api").instance;
+const http = new Http("http://localhost:8081/api").instance;
+// export const http_auth = new Http("http://54.255.223.29/api").instance;
+export const http_auth = new Http("http://localhost:8081/api").instance;
 export default http;
+

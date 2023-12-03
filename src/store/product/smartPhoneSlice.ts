@@ -8,45 +8,52 @@ import { payloadCreator } from "src/utils/utils";
 
 export const getSmartPhones = createAsyncThunk(
   "smartPhone/getSmartPhones",
-  payloadCreator(smartPhoneApi.getSmartPhones)
+  payloadCreator(smartPhoneApi.getSmartPhones),
 );
 
 export const getDetailPhone = createAsyncThunk(
   "smartPhone/getDetailPhone",
-  payloadCreator(smartPhoneApi.getDetailSmartPhone)
+  payloadCreator(smartPhoneApi.getDetailSmartPhone),
 );
 
 export const getProductWithSlug = createAsyncThunk(
   "smartPhone/getProductWithSlug",
-  payloadCreator(smartPhoneApi.getProductByProductSlugId)
+  payloadCreator(smartPhoneApi.getProductByProductSlugId),
 );
 export const addSmartPhone = createAsyncThunk(
   "smartPhone/addSmartPhone",
-  payloadCreator(smartPhoneApi.addSmartPhone)
+  payloadCreator(smartPhoneApi.addSmartPhone),
 );
 
 export const uploadImagesProductSmartPhone = createAsyncThunk(
   "smartPhone/uploadImagesProduct",
-  payloadCreator(smartPhoneApi.uploadImageSmartPhone)
+  payloadCreator(smartPhoneApi.uploadImageSmartPhone),
 );
 
 export const uploadManyImagesProductSmartPhone = createAsyncThunk(
   "smartPhone/uploadManyImagesProductSmartPhone",
-  payloadCreator(smartPhoneApi.uploadManyImagesSmartPhone)
+  payloadCreator(smartPhoneApi.uploadManyImagesSmartPhone),
 );
 export const updateSmartPhone = createAsyncThunk(
   "smartPhone/updateSmartPhone",
-  payloadCreator(smartPhoneApi.updateSmartPhone)
+  payloadCreator(smartPhoneApi.updateSmartPhone),
 );
 
 export const deleteSmartPhone = createAsyncThunk(
   "smartPhone/deleteSmartPhone",
-  payloadCreator(smartPhoneApi.deleteSmartPhone)
+  payloadCreator(smartPhoneApi.deleteSmartPhone),
 );
-
+export type SmartPhone = {
+  data: ListSmartPhone[];
+  pageNumber: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+};
 interface IProudct {
   smartPhone: any;
   smartPhoneDetail: SmartPhoneDetail;
+  filter: SmartPhone;
 }
 const dataDetail: SmartPhoneDetail = {
   id: 3,
@@ -101,14 +108,26 @@ const dataDetail: SmartPhoneDetail = {
     slug: "",
   },
 };
+const data = {
+  data: [],
+  pageNumber: 0,
+  pageSize: 10,
+  totalElements: 1,
+  totalPages: 1,
+};
 const initialState: IProudct = {
   smartPhone: [],
   smartPhoneDetail: dataDetail,
+  filter: data,
 };
 const smartPhoneSlice = createSlice({
   name: "smartPhone",
   initialState,
-  reducers: {},
+  reducers: {
+    handleFilterStore: (state, action) => {
+      state.filter.data = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(getSmartPhones.fulfilled, (state, { payload }) => {
       state.smartPhone = payload.data;
@@ -121,6 +140,8 @@ const smartPhoneSlice = createSlice({
     });
   },
 });
+export const { handleFilterStore } = smartPhoneSlice.actions;
 
 const smartPhoneReducer = smartPhoneSlice.reducer;
 export default smartPhoneReducer;
+

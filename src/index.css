@@ -44,6 +44,9 @@ body {
   /* font-size: 1.6rem; */
   line-height: 1.5;
   text-rendering: optimizeSpeed;
+  padding: 1rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 a {
   text-decoration: none;
@@ -80,3 +83,11 @@ input[type="number"]::-webkit-outer-spin-button {
   width: 100%;
   background: linear-gradient(45deg, #0016ef, #006ec3, #00b0a8, #0ce88c);
 }
+
+.card {
+  background: var(--surface-card);
+  padding: 2rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+

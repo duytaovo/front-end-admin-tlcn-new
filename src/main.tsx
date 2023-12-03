@@ -2,7 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "src/App";
 import "src/i18n/i18n";
-
+import { PrimeReactProvider } from "primereact/api";
+import "primereact/resources/themes/lara-light-indigo/theme.css"; // theme
+import "primeflex/primeflex.css"; // css utility
+import "primeicons/primeicons.css";
+import "primereact/resources/primereact.css"; // core css
+import "./flags.css";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
@@ -18,15 +23,18 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <ConfigProvider theme={theme}>
       <Provider store={store}>
-        <GlobalStyles>
-          <AppProvider>
-            <DarkModeProvider>
-              <App />
-            </DarkModeProvider>
-          </AppProvider>
-        </GlobalStyles>
+        <PrimeReactProvider>
+          <GlobalStyles>
+            <AppProvider>
+              <DarkModeProvider>
+                <App />
+              </DarkModeProvider>
+            </AppProvider>
+          </GlobalStyles>
+        </PrimeReactProvider>
       </Provider>
     </ConfigProvider>
-  </BrowserRouter>
+  </BrowserRouter>,
   // </React.StrictMode>
 );
+

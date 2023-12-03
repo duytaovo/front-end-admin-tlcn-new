@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import TableUser from "./Tables";
+import TableUser from "./TablesMui";
 
 const ListUser = () => {
   return (
@@ -14,3 +14,4 @@ const ListUser = () => {
 };
 
 export default ListUser;
+

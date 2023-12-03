@@ -1,23 +1,19 @@
-import {
-  FormControl,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
-  Tooltip,
-} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { IconButton, Tooltip } from "@mui/material";
+import { useSelector, useDispatch } from "react-redux";
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
+import DataTable from "src/components/Table";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import path from "src/constants/path";
-import React, { useEffect, useState } from "react";
 import { Pagination, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { deleteUser, getUsers } from "src/store/user/userSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
-
 interface DataType {
   key: number;
   id?: string;
@@ -31,36 +27,49 @@ interface DataType {
   level?: number;
   levelString?: string;
 }
-
-const TableUser: React.FC = () => {
+const UserTable = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.user);
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
   const pageSize = 10; // Số phần tử trên mỗi trang
-  const columns: ColumnsType<DataType> = [
-    // { title: "Tên", dataIndex: "name", key: "name" },
-    { title: "Họ Tên", dataIndex: "fullName", key: "fullName" },
-    { title: "Giới tính", dataIndex: "gender", key: "gender" },
-    { title: "Email", dataIndex: "email", key: "email" },
-    { title: "Địa chỉ", dataIndex: "address", key: "address" },
-    { title: "Điện thoại", dataIndex: "phone", key: "phone" },
+
+  useEffect(() => {
+    dispatch(getUsers({ pageNumber: currentPage }));
+  }, [currentPage]);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page - 1);
+  };
+
+  const columns = [
+    // { field: "id", headerName: "ID", width: 70 },
+    { field: "stt", headerName: "STT", width: 70 },
+    { field: "fullName", headerName: "Tài khoản", width: 200 },
+    { field: "role", headerName: "Vai trò", width: 110 },
+    { field: "gender", headerName: "Giới tính", width: 100 },
+    { field: "phoneNumber", headerName: "Số điện thoại", width: 150 },
+    { field: "email", headerName: "Email", flex: 1 },
     {
-      title: "Action",
-      dataIndex: "",
-      key: "x",
-      render: (params) => {
-        const { key, id } = params;
+      field: "action",
+      headerName: "Tùy chọn",
+      width: 130,
+      sortable: false,
+      renderCell: (params: any) => {
+        const { row } = params;
+
         const handleDelete = async () => {
-          const res = await dispatch(deleteUser(id));
+          console.log(row.id);
+          const res = await dispatch(deleteUser(row.id));
+          console.log(res);
           unwrapResult(res);
-          const d = res?.payload;
+          const d = res?.payload.data;
           if (d?.code !== 200) return toast.error(d?.message);
           await toast.success("Xóa người dùng thành công ");
-          await dispatch(getUsers(""));
+          dispatch(getUsers({ pageNumber: currentPage }));
         };
+
         return (
           <Space>
-            <Link to={`/user/detail/${id}`}>
+            <Link to={`/user/detail/${row.id}`}>
               {" "}
               <IconButton className="text-mainColor">
                 <EditIcon
@@ -72,7 +81,7 @@ const TableUser: React.FC = () => {
               </IconButton>
             </Link>
             {/* <Link to={path.users}> */}
-            <Tooltip title="Thay đổi trạng thái" className="disabled:bg-white">
+            <Tooltip title="Thay đổi trạng thái" className="">
               <IconButton onClick={handleDelete}>
                 <DeleteIcon className="text-red-700" />
               </IconButton>
@@ -84,19 +93,14 @@ const TableUser: React.FC = () => {
     },
   ];
 
-  useEffect(() => {
-    dispatch(getUsers({ pageNumber: currentPage }));
-  }, [currentPage]);
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page - 1);
-  };
-  const originData: DataType[] = [];
+  const originData = [];
   for (let i = 0; i < user?.data?.data.length; i++) {
-    console.log(user?.data);
     originData.push({
-      key: user?.data?.data[i].id,
-      id: user?.data?.data[i].id.toString(),
+      // key: user?.data?.data[i].id,
+      id: user?.data?.data[i].id,
+      stt: user?.data?.data[i].id,
       address: user?.data?.data[i].address,
+      role: user?.data?.data[i].level === 5 ? "ADMIN" : "USER",
       email: user?.data?.data[i].email,
       fullName: user?.data?.data[i].fullName || "",
       gender: user?.data?.data[i].gender === 1 ? "Nam" : "Nữ",
@@ -115,18 +119,18 @@ const TableUser: React.FC = () => {
           Thêm mới
         </Link>
       </div>
-
-      <Table columns={columns} dataSource={originData} pagination={false} />
-      <div className="bottom-14 fixed">
-        <Pagination
-          current={currentPage + 1}
-          pageSize={pageSize}
-          total={user?.data?.totalElements}
-          onChange={handlePageChange}
-        />
-      </div>
+      <DataTable
+        rows={originData}
+        columns={columns}
+        // totalPages={totalPages}
+        totalItems={user?.data?.totalElements}
+        handleOnChange={handlePageChange}
+        current={currentPage + 1}
+        pageSize={pageSize}
+      />
     </div>
   );
 };
 
-export default TableUser;
+export default UserTable;
+

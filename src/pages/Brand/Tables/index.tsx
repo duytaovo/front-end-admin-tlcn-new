@@ -104,14 +104,17 @@ const TableBrand: React.FC = () => {
 
       <Table columns={columns} dataSource={originData} pagination={false} />
 
-      <Pagination
-        current={currentPage + 1}
-        pageSize={pageSize}
-        total={brand?.data?.totalElements}
-        onChange={handlePageChange}
-      />
+      <div className="fixed bottom-12 mt-12 right-4">
+        <Pagination
+          current={currentPage + 1}
+          pageSize={pageSize}
+          total={brand?.data?.totalElements}
+          onChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 };
 
 export default TableBrand;
+

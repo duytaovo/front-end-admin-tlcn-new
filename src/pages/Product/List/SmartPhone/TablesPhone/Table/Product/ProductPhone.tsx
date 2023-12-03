@@ -60,7 +60,7 @@ export default function ProductPhone({ product }: Props) {
           `${"/smartPhone/detail/update"}/${generateNameId({
             name: product.name,
             id: product.id.toString(),
-          })}`
+          })}`,
         );
 
         hidden();
@@ -71,13 +71,32 @@ export default function ProductPhone({ product }: Props) {
       id: 3,
       title: "Xóa",
       callback: () => {
+        const body = {
+          slug: "smartphone",
+          brandId: null,
+          characteristicId: null,
+          priceFrom: null,
+          priceTo: null,
+          specialFeatures: [],
+          smartphoneType: [],
+          ram: [],
+          storageCapacity: [],
+          charging: [],
+          screen: [],
+        };
         const handleDelete = async () => {
           const res = await dispatch(deleteSmartPhone(product.id.toString()));
           unwrapResult(res);
-          // const d = res?.payload;
+          const d = res?.payload.data;
           // if (d?.code !== 200) return toast.error(d?.message);
           await toast.success("Xóa sản phẩm thành công ");
-          await dispatch(getSmartPhones(""));
+
+          dispatch(
+            getSmartPhones({
+              body: body,
+              // params: { pageNumber: 1, pageSize: 10 },
+            }),
+          );
         };
         handleDelete();
         hidden();
@@ -171,3 +190,4 @@ export default function ProductPhone({ product }: Props) {
     </div>
   );
 }
+
