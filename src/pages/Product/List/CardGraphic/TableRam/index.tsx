@@ -40,7 +40,6 @@ const TableRam: React.FC = () => {
   const onClick = (value: string) => {
     navigate(value);
   };
-  console.log(cardGraphic);
   return (
     <div className="mx-6">
       <div className="w-full text-[24px] text-gray-500 mb-[10px] flex items-center justify-between">
@@ -147,3 +146,4 @@ const TableRam: React.FC = () => {
 };
 
 export default TableRam;
+

@@ -87,7 +87,7 @@ const UpdatePhone: React.FC = () => {
     {
       control, // control props comes from useForm (optional: if you are using FormContext)
       name: "lstProductTypeAndPrice", // unique name for your Field Array
-    }
+    },
   );
   useEffect(() => {
     dispatch(getCategorys({ pageSize: 100 }));
@@ -115,7 +115,7 @@ const UpdatePhone: React.FC = () => {
 
     setValue(
       "ram",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram
+      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram,
     );
     setValue("accessories", smartPhoneDetail?.productInfo?.accessories);
     setValue("battery", smartPhoneDetail?.battery);
@@ -124,7 +124,7 @@ const UpdatePhone: React.FC = () => {
     setValue("mass", smartPhoneDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0].color.toString()
+      smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
     );
     setValue("monitor", smartPhoneDetail?.monitor);
     setValue("networkSupport", smartPhoneDetail?.networkSupport);
@@ -132,18 +132,18 @@ const UpdatePhone: React.FC = () => {
     setValue("brand", smartPhoneDetail?.productInfo?.brandId.toString());
     setValue(
       "characteristic",
-      smartPhoneDetail?.productInfo?.characteristicId.toString()
+      smartPhoneDetail?.productInfo?.characteristicId.toString(),
     );
     setValue("name", smartPhoneDetail?.productInfo?.name);
     setValue("sim", smartPhoneDetail?.sim);
     setValue(
       "salePrice",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
     setValue("rearCamera", smartPhoneDetail?.rearCamera);
     setValue(
       "price",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
     setValue("frontCamera", smartPhoneDetail?.frontCamera);
     setValue("operatingSystem", smartPhoneDetail?.operatingSystem);
@@ -153,7 +153,6 @@ const UpdatePhone: React.FC = () => {
     setValue("launchTime", "2023");
     setValue("files", smartPhoneDetail?.productInfo.lstProductImageUrl);
   }, [smartPhoneDetail]);
-  console.log(file);
   const onSubmit = handleSubmit(async (data) => {
     let images = [];
 
@@ -188,7 +187,7 @@ const UpdatePhone: React.FC = () => {
           (item, index) => ({
             typeId: Number(
               smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[index]
-                .typeId
+                .typeId,
             ),
             ram: item?.ram,
             storageCapacity: item?.storageCapacity,
@@ -197,7 +196,7 @@ const UpdatePhone: React.FC = () => {
             salePrice: Number(item?.salePrice),
             quantity: Number(item?.quantity),
             depotId: Number(item?.depot) || 1,
-          })
+          }),
         ),
 
         lstProductImageUrl: images || [],
@@ -241,7 +240,7 @@ const UpdatePhone: React.FC = () => {
   const onClickHuy = () => {
     setValue(
       "ram",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram
+      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram,
     );
     setValue("accessories", smartPhoneDetail?.productInfo?.accessories);
     setValue("battery", smartPhoneDetail?.battery);
@@ -250,7 +249,7 @@ const UpdatePhone: React.FC = () => {
     setValue("mass", smartPhoneDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0].color.toString()
+      smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
     );
     setValue("monitor", smartPhoneDetail?.monitor);
     setValue("networkSupport", smartPhoneDetail?.networkSupport);
@@ -258,18 +257,18 @@ const UpdatePhone: React.FC = () => {
     setValue("brand", smartPhoneDetail?.productInfo?.brandId.toString());
     setValue(
       "characteristic",
-      smartPhoneDetail?.productInfo?.characteristicId.toString()
+      smartPhoneDetail?.productInfo?.characteristicId.toString(),
     );
     setValue("name", smartPhoneDetail?.productInfo?.name);
     setValue("sim", smartPhoneDetail?.sim);
     setValue(
       "salePrice",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
     setValue("rearCamera", smartPhoneDetail?.rearCamera);
     setValue(
       "price",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
     setValue("frontCamera", smartPhoneDetail?.frontCamera);
     setValue("operatingSystem", smartPhoneDetail?.operatingSystem);
@@ -595,7 +594,7 @@ const UpdatePhone: React.FC = () => {
                   </Form.Item>
                   {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
                 </li>
-              )
+              ),
             )}
             <Form.Item>
               <Button
@@ -770,7 +769,7 @@ const UpdatePhone: React.FC = () => {
         <div className="flex justify-start">
           <Form.Item label="" className="ml-[135px] mb-2 bg-green-300">
             <Button className="w-[100px]" onClick={onSubmit} type="default">
-              Lưu
+              {isSubmitting ? "Loading..." : "Lưu"}
             </Button>
           </Form.Item>
           <Form.Item label="" className="ml-[70px] mb-2">
@@ -800,3 +799,4 @@ const UpdatePhone: React.FC = () => {
 };
 
 export default () => <UpdatePhone />;
+

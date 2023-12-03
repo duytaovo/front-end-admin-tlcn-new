@@ -103,7 +103,7 @@ const NewKeyboard: React.FC = () => {
     {
       control, // control props comes from useForm (optional: if you are using FormContext)
       name: "lstProductTypeAndPrice", // unique name for your Field Array
-    }
+    },
   );
   const onSubmit = handleSubmit(async (data) => {
     let images = [];
@@ -126,7 +126,7 @@ const NewKeyboard: React.FC = () => {
     const body = JSON.stringify({
       productInfo: {
         brandId: Number(data.brand) || 1,
-        categoryId: 12,
+        categoryId: 23,
         productId: null,
         characteristicId: Number(data.characteristic) || 1,
         productCode: generateRandomString(10),
@@ -210,10 +210,10 @@ const NewKeyboard: React.FC = () => {
     <div className="bg-white shadow ">
       <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm Ram</h2>
       <Form
-        labelCol={{ span: 4 }}
+        labelCol={{ span: 6 }}
         wrapperCol={{ span: 14 }}
         layout="horizontal"
-        style={{ maxWidth: 800, padding: 6 }}
+        style={{ maxWidth: 600, padding: 6 }}
         autoComplete="off"
         noValidate
         onSubmitCapture={onSubmit}
@@ -571,3 +571,4 @@ const NewKeyboard: React.FC = () => {
 };
 
 export default () => <NewKeyboard />;
+

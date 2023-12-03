@@ -116,7 +116,7 @@ const NewCardGraphic: React.FC = () => {
     {
       control, // control props comes from useForm (optional: if you are using FormContext)
       name: "lstProductTypeAndPrice", // unique name for your Field Array
-    }
+    },
   );
   const onSubmit = handleSubmit(async (data) => {
     let images = [];
@@ -229,10 +229,10 @@ const NewCardGraphic: React.FC = () => {
     <div className="bg-white shadow ">
       <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm card đồ họa</h2>
       <Form
-        labelCol={{ span: 4 }}
+        labelCol={{ span: 6 }}
         wrapperCol={{ span: 14 }}
         layout="horizontal"
-        style={{ maxWidth: 800, padding: 6 }}
+        style={{ maxWidth: 600, padding: 6 }}
         autoComplete="off"
         noValidate
         onSubmitCapture={onSubmit}
@@ -600,3 +600,4 @@ const NewCardGraphic: React.FC = () => {
 };
 
 export default () => <NewCardGraphic />;
+

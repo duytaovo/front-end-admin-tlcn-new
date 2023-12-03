@@ -57,9 +57,7 @@ const UserTable = () => {
         const { row } = params;
 
         const handleDelete = async () => {
-          console.log(row.id);
           const res = await dispatch(deleteUser(row.id));
-          console.log(res);
           unwrapResult(res);
           const d = res?.payload.data;
           if (d?.code !== 200) return toast.error(d?.message);

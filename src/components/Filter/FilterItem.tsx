@@ -99,7 +99,6 @@ const FilterItem = ({ data, handle, scroll }: Props) => {
       const temp: any = [...arrayTemp, newKeyword];
       setArrayTemp(temp);
     }
-    console.log(smartPhone);
     // kiểm tra có tồn tại trong filter chưa
     const checkInFilter = filter.some((element) => {
       let value = Object.values(element);

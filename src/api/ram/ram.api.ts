@@ -12,14 +12,14 @@ const ramApi = {
     return http.get<SuccessResponse<any[]>>(`/manage/product/ram/${params}`);
   },
   updateRam({ _id, body }: any) {
-    return http.post<SuccessResponse<any>>(
+    return http.put<SuccessResponse<any>>(
       `/manage/product/ram/update/${_id}`,
-      body
+      body,
     );
   },
   deleteRam(idRam: string[]) {
-    return http.post<SuccessResponse<any>>(
-      `/manage/product/ram/delete/${idRam}`
+    return http.put<SuccessResponse<any>>(
+      `/manage/product/ram/delete/${idRam}`,
     );
   },
   getRamWithPageNumber(pageNumber: number) {
@@ -27,9 +27,10 @@ const ramApi = {
   },
   getRamWithPageNumberSize(pageNumber: number, pageSize: number) {
     return http.get<SuccessResponse<any>>(
-      `/manage/product/ram/${pageNumber}/${pageSize}`
+      `/manage/product/ram/${pageNumber}/${pageSize}`,
     );
   },
 };
 
 export default ramApi;
+

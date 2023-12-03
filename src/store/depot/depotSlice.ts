@@ -4,12 +4,12 @@ import { payloadCreator } from "src/utils/utils";
 
 export const getdepots = createAsyncThunk(
   "depot/getdepots",
-  payloadCreator(depotApi.getdepots)
+  payloadCreator(depotApi.getdepots),
 );
 
 export const getDetailDepot = createAsyncThunk(
   "depot/getDetailDepot",
-  payloadCreator(depotApi.getDetailDepot)
+  payloadCreator(depotApi.getDetailDepot),
 );
 
 interface IProudct {
@@ -27,7 +27,6 @@ const depotSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(getdepots.fulfilled, (state, { payload }) => {
-      console.log(payload);
       state.depot = payload.data;
     });
     builder.addCase(getDetailDepot.fulfilled, (state, { payload }) => {
@@ -38,3 +37,4 @@ const depotSlice = createSlice({
 
 const depotReducer = depotSlice.reducer;
 export default depotReducer;
+

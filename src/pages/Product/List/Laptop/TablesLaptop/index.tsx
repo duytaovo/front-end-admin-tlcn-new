@@ -130,7 +130,7 @@ const TableLaptop: React.FC = () => {
         </Link>
       </div>
 
-      <div className="mt-6 grid grid-cols-6 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="mt-6 grid grid-cols-5 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {laptop?.data?.data?.map((_laptop: any) => (
           <div className="col-span-1" key={_laptop.id}>
             <ProductLaptop product={_laptop} />
@@ -150,3 +150,4 @@ const TableLaptop: React.FC = () => {
 };
 
 export default TableLaptop;
+

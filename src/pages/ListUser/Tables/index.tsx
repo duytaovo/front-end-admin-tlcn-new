@@ -92,7 +92,6 @@ const TableUser: React.FC = () => {
   };
   const originData: DataType[] = [];
   for (let i = 0; i < user?.data?.data.length; i++) {
-    console.log(user?.data);
     originData.push({
       key: user?.data?.data[i].id,
       id: user?.data?.data[i].id.toString(),
@@ -130,3 +129,4 @@ const TableUser: React.FC = () => {
 };
 
 export default TableUser;
+

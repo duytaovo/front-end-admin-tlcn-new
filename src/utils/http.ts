@@ -125,7 +125,6 @@ export class Http {
     );
   }
   private handleRefreshToken() {
-    console.log("first refresh token");
     return this.instance
       .post<RefreshTokenReponse>(URL_REFRESH_TOKEN, {
         token: this.refreshToken,

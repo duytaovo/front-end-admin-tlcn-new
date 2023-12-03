@@ -115,7 +115,7 @@ const NewPhone: React.FC = () => {
     {
       control, // control props comes from useForm (optional: if you are using FormContext)
       name: "lstProductTypeAndPrice", // unique name for your Field Array
-    }
+    },
   );
   const onSubmit = handleSubmit(async (data) => {
     let images = [];
@@ -136,6 +136,19 @@ const NewPhone: React.FC = () => {
       return;
     }
     try {
+      const bodySmartphone = {
+        slug: "smartphone",
+        brandId: null,
+        characteristicId: null,
+        priceFrom: null,
+        priceTo: null,
+        specialFeatures: [],
+        smartphoneType: [],
+        ram: [],
+        storageCapacity: [],
+        charging: [],
+        screen: [],
+      };
       const body = JSON.stringify({
         productInfo: {
           brandId: Number(data.brand) || 1,
@@ -180,7 +193,12 @@ const NewPhone: React.FC = () => {
       const d = res?.payload?.data;
       if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Thêm sản phẩm điện thoại thành công ");
-      await dispatch(getSmartPhones(""));
+      dispatch(
+        getSmartPhones({
+          body: bodySmartphone,
+          // params: { pageNumber: 1, pageSize: 10 },
+        }),
+      );
       await navigate(path.smartPhone);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
@@ -666,7 +684,7 @@ const NewPhone: React.FC = () => {
         <div className="flex justify-start">
           <Form.Item label="" className="ml-[135px] mb-2 bg-green-300">
             <Button className="w-[100px]" onClick={onSubmit} type="default">
-              Lưu
+              {isSubmitting ? "Loading..." : "Lưu"}
             </Button>
           </Form.Item>
           <Form.Item label="" className="ml-[70px] mb-2">
@@ -696,3 +714,4 @@ const NewPhone: React.FC = () => {
 };
 
 export default () => <NewPhone />;
+

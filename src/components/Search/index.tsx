@@ -52,7 +52,6 @@ const Search = ({
     return obj[matched] || null;
   };
 
-  //console.log(match('cats wea dogs', config));
   const hanleClickSearch = (_value: string, event: any) => {
     event.preventDefault();
     const target = event.target as HTMLInputElement;

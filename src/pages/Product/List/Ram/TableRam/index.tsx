@@ -38,7 +38,9 @@ const TableRam: React.FC = () => {
           Quản lý sản phẩm
           <div>
             <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Product</InputLabel>
+              <InputLabel id="demo-simple-select-label">
+                Chọn sản phẩm
+              </InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
@@ -136,3 +138,4 @@ const TableRam: React.FC = () => {
 };
 
 export default TableRam;
+
