@@ -57,7 +57,7 @@ export default function NavbarCustom() {
     <div className="h-[50px] border-b-[0.5px_solid_rgb(231,228,228)] flex items-center text-base text-[#555]">
       <div className="w-full p-5 flex items-center justify-between">
         <div className="flex items-center border-[0.5px solid lightgray] dark">
-          <Search onChange={() => {}} placeholder="Tìm kiếm" width="300px" />
+          {/* <Search onChange={() => {}} placeholder="Tìm kiếm" width="300px" /> */}
         </div>
         <div className="flex items-center">
           <div className="">
@@ -127,3 +127,4 @@ export default function NavbarCustom() {
     </div>
   );
 }
+
