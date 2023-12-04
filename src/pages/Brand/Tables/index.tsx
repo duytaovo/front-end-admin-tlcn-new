@@ -1,23 +1,15 @@
-import {
-  FormControl,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
-  Tooltip,
-} from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { SelectChangeEvent } from "@mui/material/Select";
 import path from "src/constants/path";
 import React, { useEffect, useState } from "react";
-import { Button, Pagination, Space, Table, Typography } from "antd";
-import type { ColumnsType } from "antd/es/table";
+import { Pagination, Space } from "antd";
 import { deleteBrand, getBrands } from "src/store/brand/brandSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
+import DataTable from "src/components/Table";
 
 interface DataType {
   key: React.Key;
@@ -32,27 +24,32 @@ const TableBrand: React.FC = () => {
   const { brand } = useAppSelector((state) => state.brand);
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
   const pageSize = 10; // Số phần tử trên mỗi trang
-  const columns: ColumnsType<DataType> = [
-    // { title: "Loại sản phẩm", dataIndex: "category", key: "category" },
-    { title: "Tên thương hiệu", dataIndex: "name", key: "name" },
-    { title: "Địa chỉ", dataIndex: "address", key: "address" },
+
+  const columns = [
+    // { field: "id", headerName: "ID", width: 70 },
+    { field: "stt", headerName: "STT", width: 70 },
+    { field: "name", headerName: "Tên thương hiệu", width: 200 },
+    { field: "address", headerName: "Địa chỉ", width: 110 },
     {
-      title: "Action",
-      dataIndex: "",
-      key: "x",
-      render: (params) => {
-        const { key, id } = params;
+      field: "action",
+      headerName: "Tùy chọn",
+      width: 130,
+      sortable: false,
+      renderCell: (params: any) => {
+        const { row } = params;
+
         const handleDelete = async () => {
-          const res = await dispatch(deleteBrand(id));
+          const res = await dispatch(deleteBrand(row.id));
           unwrapResult(res);
           const d = res?.payload;
           if (d?.status !== 200) return toast.error(d?.message);
           await toast.success("Xóa nhãn hiệu thành công ");
           await dispatch(getBrands(""));
         };
+
         return (
           <Space>
-            <Link to={`${path.brandDetail}/${id}`}>
+            <Link to={`${path.brandDetail}/${row.id}`}>
               {" "}
               <IconButton className="text-mainColor">
                 <EditIcon
@@ -75,14 +72,15 @@ const TableBrand: React.FC = () => {
       },
     },
   ];
+
   useEffect(() => {
     dispatch(getBrands({ pageNumber: currentPage }));
   }, [currentPage]);
-  const originData: DataType[] = [];
+  const originData = [];
 
   for (let i = 0; i < brand?.data?.data?.length; i++) {
     originData.push({
-      key: i.toString(),
+      stt: brand?.data?.data[i].id,
       name: brand?.data?.data[i]?.name,
       address: brand?.data?.data[i]?.address,
     });
@@ -101,8 +99,15 @@ const TableBrand: React.FC = () => {
           Thêm mới
         </Link>
       </div>
-
-      <Table columns={columns} dataSource={originData} pagination={false} />
+      <DataTable
+        rows={originData}
+        columns={columns}
+        // totalPages={totalPages}
+        totalItems={brand?.data?.totalElements}
+        handleOnChange={handlePageChange}
+        current={currentPage + 1}
+        pageSize={pageSize}
+      />
 
       <div className="fixed bottom-12 mt-12 right-4">
         <Pagination

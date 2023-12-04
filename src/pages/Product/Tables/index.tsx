@@ -2,12 +2,16 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { SelectChangeEvent } from "@mui/material/Select";
-
+import * as ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 import React, { useEffect, useState } from "react";
 import { getSmartPhones } from "src/store/product/smartPhoneSlice";
 import ProductPhone from "../List/SmartPhone/TablesPhone/Table/Product";
-import { Pagination } from "antd";
+import { Button, Pagination } from "antd";
 import { Helmet } from "react-helmet-async";
+import { DownloadOutlined } from "@ant-design/icons";
+import * as jsPDF from "jspdf";
+import "jspdf-autotable";
 
 const TableProduct: React.FC = () => {
   const navigate = useNavigate();
@@ -60,7 +64,65 @@ const TableProduct: React.FC = () => {
   const handlePageChange = (page: number) => {
     setCurrentPage(page - 1);
   };
+  const exportToExcel = async (products: any) => {
+    console.log(products);
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Products");
 
+    // Add header row
+    worksheet.addRow([
+      "ID",
+      "Name",
+      "Ram",
+      "Rom",
+      "Color",
+      "Quantity",
+      "Price",
+      "SalePrice",
+      "Images",
+    ]);
+
+    // // Add data rows
+    // products.forEach((product: any) => {
+    //   worksheet.addRow([
+    //     product.id,
+    //     product.name,
+    //     product.lstProductTypeAndPrice[0].ram,
+    //     product.lstProductTypeAndPrice[0].storageCapacity,
+    //     product.lstProductTypeAndPrice[0].color,
+    //     product.lstProductTypeAndPrice[0].quantity,
+    //     product.lstProductTypeAndPrice[0].price,
+    //     product.lstProductTypeAndPrice[0].salePrice,
+    //   ]);
+    // });
+
+    products.forEach((product: any) => {
+      product.lstProductTypeAndPrice.forEach((typeAndPrice: any) => {
+        worksheet.addRow([
+          product.id,
+          product.name,
+          typeAndPrice.ram,
+          typeAndPrice.storageCapacity,
+          typeAndPrice.color,
+          typeAndPrice.quantity,
+          typeAndPrice.price,
+          typeAndPrice.salePrice,
+          // Combine image URLs into a single string separated by commas
+          product.lstImageUrl.join(","),
+        ]);
+      });
+    });
+    // Create a blob from the Excel workbook
+    const blob = await workbook.xlsx.writeBuffer();
+
+    // Save the blob as a file using file-saver
+    saveAs(
+      new Blob([blob], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      }),
+      "products.xlsx",
+    );
+  };
   return (
     <div className="mx-6">
       <Helmet>
@@ -143,6 +205,14 @@ const TableProduct: React.FC = () => {
               </Select>
             </FormControl>
           </div>
+          <Button
+            onClick={() => exportToExcel(smartPhone?.data?.data)}
+            type="link"
+            icon={<DownloadOutlined />}
+            size="small"
+          >
+            Xuất file excel
+          </Button>
         </div>
       </div>
       <div className="mt-6 grid grid-cols-5 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mb-12 h-[80%]">

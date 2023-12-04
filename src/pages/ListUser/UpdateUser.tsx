@@ -1,6 +1,7 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
+import InputFile from "src/components/InputFile";
 
 import { Button, Form, Upload } from "antd";
 import { useEffect, useState } from "react";
@@ -37,6 +38,15 @@ const FormDisabledDemo: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [file, setFile] = useState<File[]>();
+  const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
+
+  // Tạo một mảng chứa các URL tạm thời cho ảnh
+  const imageUrls: string[] = [];
+
+  for (const image of imageArray) {
+    const imageUrl = URL.createObjectURL(image);
+    imageUrls.push(imageUrl);
+  }
   const { id } = useParams();
   const [userDetail, setUserDetail] = useState<any>();
   const {
@@ -116,7 +126,9 @@ const FormDisabledDemo: React.FC = () => {
     setValue("fullName", userDetail?.fullName);
     setValue("phoneNumber", userDetail?.phoneNumber);
   };
-
+  const handleChangeFile = (file?: File[]) => {
+    setFile(file);
+  };
   return (
     <div className="bg-white shadow ">
       <h2 className="font-bold m-4 text-2xl">Cập nhật người dùng</h2>
@@ -213,17 +225,32 @@ const FormDisabledDemo: React.FC = () => {
           />
         </Form.Item>
         <Form.Item
-          name="file"
-          label="Upload"
+          name="files"
+          // rules={[{ required: true }]}
+          label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
         >
-          <Upload action="/upload.do" listType="picture-card">
-            <div>
-              <PlusOutlined />
-              <div style={{ marginTop: 8 }}>Upload</div>
+          <div className="flex flex-col items-start ">
+            <div className="my-5 w-24 space-y-5 justify-between items-center">
+              {imageUrls.map((imageUrl, index) => {
+                return (
+                  <img
+                    key={index}
+                    src={imageUrl}
+                    className="h-full rounded-md w-full  object-cover"
+                    alt="avatar"
+                  />
+                );
+              })}
             </div>
-          </Upload>
+            <InputFile label="" onChange={handleChangeFile} id="files" />
+            <div className="mt-3  flex flex-col items-center text-red-500">
+              <div>Dụng lượng file tối đa 2 MB</div>
+              <div>Định dạng:.JPEG, .PNG</div>
+            </div>
+            {/* {errors.images?.message} */}
+          </div>
         </Form.Item>
         <div className="flex justify-start">
           <Form.Item label="" className="ml-[100px] mb-2">

@@ -6,12 +6,16 @@ import React, { useEffect, useState } from "react";
 import { getSmartPhones } from "src/store/product/smartPhoneSlice";
 import ProductPhone from "./Table/Product/ProductPhone";
 import path from "src/constants/path";
-import { Pagination } from "antd";
+import { Button, Pagination } from "antd";
 import { getFilter, getSort } from "src/store/product/filterSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import FilterPhone from "../FilterPhone";
-
+import * as ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
+import { DownloadOutlined } from "@ant-design/icons";
+import "jspdf-autotable";
+import jspdf from "jspdf";
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -24,6 +28,7 @@ const MenuProps = {
 };
 const TablePhone: React.FC = () => {
   const { smartPhone } = useAppSelector((state) => state.smartPhone);
+  console.log(smartPhone);
   const navigate = useNavigate();
   const pageSize = 10; // Số phần tử trên mỗi trang
   const [choose, setChoose] = useState<any>();
@@ -36,6 +41,66 @@ const TablePhone: React.FC = () => {
   const { brand } = useAppSelector<any>((state) => state.brand);
   const { character } = useAppSelector<any>((state) => state.character);
   const [dataFilterLocal, setDataFilterLocal] = useState<any>();
+
+  const exportToExcel = async (products: any) => {
+    console.log(products);
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Products");
+
+    // Add header row
+    worksheet.addRow([
+      "ID",
+      "Name",
+      "Ram",
+      "Rom",
+      "Color",
+      "Quantity",
+      "Price",
+      "SalePrice",
+      "Images",
+    ]);
+
+    // // Add data rows
+    // products.forEach((product: any) => {
+    //   worksheet.addRow([
+    //     product.id,
+    //     product.name,
+    //     product.lstProductTypeAndPrice[0].ram,
+    //     product.lstProductTypeAndPrice[0].storageCapacity,
+    //     product.lstProductTypeAndPrice[0].color,
+    //     product.lstProductTypeAndPrice[0].quantity,
+    //     product.lstProductTypeAndPrice[0].price,
+    //     product.lstProductTypeAndPrice[0].salePrice,
+    //   ]);
+    // });
+
+    products.forEach((product: any) => {
+      product.lstProductTypeAndPrice.forEach((typeAndPrice: any) => {
+        worksheet.addRow([
+          product.id,
+          product.name,
+          typeAndPrice.ram,
+          typeAndPrice.storageCapacity,
+          typeAndPrice.color,
+          typeAndPrice.quantity,
+          typeAndPrice.price,
+          typeAndPrice.salePrice,
+          // Combine image URLs into a single string separated by commas
+          product.lstImageUrl.join(","),
+        ]);
+      });
+    });
+    // Create a blob from the Excel workbook
+    const blob = await workbook.xlsx.writeBuffer();
+
+    // Save the blob as a file using file-saver
+    saveAs(
+      new Blob([blob], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      }),
+      "products.xlsx",
+    );
+  };
   // Hàm tách mảng
   useEffect(() => {
     const separateArrays = (data: any) => {
@@ -231,7 +296,60 @@ const TablePhone: React.FC = () => {
   const onClick = (value: string) => {
     navigate(value);
   };
+  const exportToPDF = (products: any) => {
+    const columns = [
+      { header: "ID", dataKey: "id" },
+      { header: "Name", dataKey: "name" },
+      { header: "Ram", dataKey: "ram" },
+      { header: "Rom", dataKey: "storageCapacity" },
+      { header: "Color", dataKey: "color" },
+      { header: "Quantity", dataKey: "quantity" },
+      { header: "Price", dataKey: "price" },
+      { header: "SalePrice", dataKey: "salePrice" },
+      // { header: "Images", dataKey: "images" },
+    ];
 
+    const rows: any[] = [];
+
+    products.forEach((product: any) => {
+      product.lstProductTypeAndPrice.forEach((typeAndPrice: any) => {
+        rows.push({
+          id: product.id,
+          name: product.name,
+          ram: typeAndPrice.ram,
+          storageCapacity: typeAndPrice.storageCapacity,
+          color: typeAndPrice.color,
+          quantity: typeAndPrice.quantity,
+          price: typeAndPrice.price,
+          salePrice: typeAndPrice.salePrice,
+          images: product.lstImageUrl.join(","),
+        });
+      });
+    });
+
+    const doc: any = new jspdf();
+
+    doc.setFont("Roboto-Regular", "normal");
+    doc.autoTable({
+      head: [columns.map((column) => column.header)],
+      body: rows.map((row) => columns.map((column) => row[column.dataKey])),
+      styles: {
+        font: "Amiri",
+        fontStyle: "normal",
+      },
+    });
+    // doc.autoTable({
+    //   // styles: { font: "helvetica" },
+    //   styles: {
+    //     font: "Roboto-Regular",
+    //     fontStyle: "normal",
+    //   },
+    //   head: [columns.map((column) => column.header)],
+    //   body: rows.map((row) => columns.map((column) => row[column.dataKey])),
+    // });
+
+    doc.save("products.pdf");
+  };
   return (
     <div className="mx-6">
       <div className="w-full text-[24px] text-gray-500 mb-[10px] flex items-center justify-between">
@@ -307,6 +425,24 @@ const TablePhone: React.FC = () => {
                 </MenuItem>
               </Select>
             </FormControl>
+          </div>
+          <div>
+            <Button
+              onClick={() => exportToExcel(smartPhone?.data?.data)}
+              type="link"
+              icon={<DownloadOutlined />}
+              size="small"
+            >
+              Xuất file excel
+            </Button>
+            {/* <Button
+              onClick={() => exportToPDF(smartPhone?.data?.data)}
+              type="link"
+              icon={<DownloadOutlined />}
+              size="small"
+            >
+              Xuất file PDF
+            </Button> */}
           </div>
         </div>
         <Link
