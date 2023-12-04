@@ -99,7 +99,7 @@ const Login = () => {
             register={register}
             type="password"
             className="mt-2"
-            classNameEye="absolute right-[5px] h-5 w-5 cursor-pointer top-[12px]"
+            classNameEye="absolute right-[5px] h-5 w-5 cursor-pointer top-[6px]"
             errorMessage={errors.password?.message}
             placeholder="Password"
             autoComplete="on"
@@ -108,10 +108,10 @@ const Login = () => {
             <Button
               // isNext
               type="submit"
-              className="flex w-full items-center justify-center mt-2 rounded-[30px] bg-mainColor py-3 px-2 text-sm uppercase text-white hover:opacity-80"
+              className="flex w-full items-center justify-center mt-2 rounded bg-mainColor py-3 px-2 text-sm uppercase text-white hover:opacity-80"
             >
               {isSubmitting ? (
-                "Loading..."
+                <span className="text-2xl mt-4">Loading...</span>
               ) : (
                 <span className="text-2xl mt-4">Đăng nhập</span>
               )}
@@ -124,3 +124,4 @@ const Login = () => {
 };
 
 export default Login;
+

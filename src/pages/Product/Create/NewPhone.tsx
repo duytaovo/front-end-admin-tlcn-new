@@ -261,7 +261,7 @@ const NewPhone: React.FC = () => {
             className={"flex-1 text-black "}
             id="category"
             // label="Hãng xe"
-            placeholder="Vui lòng chọn"
+            placeholder="Chọn danh mục"
             defaultValue={""}
             options={category?.data}
             register={register}
@@ -279,7 +279,7 @@ const NewPhone: React.FC = () => {
             className={"flex-1 text-black  "}
             id="brand"
             // label="Hãng xe"
-            placeholder="Vui lòng chọn"
+            placeholder="Chọn hãng sx"
             defaultValue={""}
             options={brand?.data?.data}
             register={register}
@@ -297,7 +297,7 @@ const NewPhone: React.FC = () => {
             className={"flex-1 text-black"}
             id="operatingSystem"
             // label="Hãng xe"
-            placeholder="Vui lòng chọn"
+            placeholder="Chọn hệ điều hành"
             defaultValue={""}
             options={[
               { id: "iOS", name: "iOS" },
@@ -318,7 +318,7 @@ const NewPhone: React.FC = () => {
             className={"flex-1 text-black"}
             id="characteristic"
             // label="Hãng xe"
-            placeholder="Vui lòng chọn"
+            placeholder="Chọn đặc điểm "
             defaultValue={""}
             options={character?.data}
             register={register}
@@ -473,7 +473,7 @@ const NewPhone: React.FC = () => {
                     className={"flex-1 text-black"}
                     id={`lstProductTypeAndPrice.${index}.depot`}
                     // label="Hãng xe"
-                    placeholder="Vui lòng chọn"
+                    placeholder="Chọn kho hàng"
                     defaultValue={1}
                     options={depot?.data?.data}
                     register={register}

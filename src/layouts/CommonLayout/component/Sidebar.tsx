@@ -8,7 +8,7 @@ import InsertChartIcon from "@mui/icons-material/InsertChart";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useContext } from "react";
 import { DarkModeContext } from "src/contexts/darkModeContext";
 import { useTranslation } from "react-i18next";
@@ -21,11 +21,15 @@ import { clearLS } from "src/utils/auth";
 export default function Sidebar() {
   const { enable, setEnable } = useContext(DarkModeContext);
   const { t } = useTranslation("home");
+  const location = useLocation();
   const logout = () => {
     if (confirm("Bạn có muốn thoát không?")) {
       clearLS();
       window.location.reload();
     }
+  };
+  const isActive = (path: string) => {
+    return location.pathname === path;
   };
   return (
     <div className="border-r-[0.5px_solid_rgb(230,227,227)] min-h-screen bg-white sidebar">
@@ -41,7 +45,11 @@ export default function Sidebar() {
             MAIN
           </p>
           <Link to="/" style={{ textDecoration: "none" }}>
-            <li className="flex item-center p-[5px] cursor-pointer hover:bg-[#ece8ff]">
+            <li
+              className={`flex item-center p-[5px] cursor-pointer ${
+                isActive("/") ? "bg-[#ece8ff]" : ""
+              }`}
+            >
               <DashboardIcon className="text-[22px] text-mainColor" />
               <span className="text-[14px] font-[600] text-[#888] ml-[10px]">
                 {t("sidebar.dashboard")}
@@ -52,7 +60,11 @@ export default function Sidebar() {
             LISTS
           </p>
           <Link to="/users" style={{ textDecoration: "none" }}>
-            <li className="flex item-center p-[5px] cursor-pointer hover:bg-[#ece8ff]">
+            <li
+              className={`flex item-center p-[5px] cursor-pointer ${
+                isActive("/users") ? "bg-[#ece8ff]" : ""
+              }`}
+            >
               <PersonOutlineIcon className="text-[22px] text-mainColor" />
               <span className="text-[14px] font-[600] text-[#888] ml-[10px]">
                 {t("sidebar.users")}
@@ -60,7 +72,11 @@ export default function Sidebar() {
             </li>
           </Link>
           <Link to="/products" style={{ textDecoration: "none" }}>
-            <li className="flex item-center p-[5px] cursor-pointer hover:bg-[#ece8ff]">
+            <li
+              className={`flex item-center p-[5px] cursor-pointer ${
+                isActive("/products") ? "bg-[#ece8ff]" : ""
+              }`}
+            >
               <StoreIcon className="text-[22px] text-mainColor" />
               <span className="text-[14px] font-[600] text-[#888] ml-[10px]">
                 {t("sidebar.products")}
@@ -68,7 +84,11 @@ export default function Sidebar() {
             </li>
           </Link>
           <Link to="/orders" style={{ textDecoration: "none" }}>
-            <li className="flex item-center p-[5px] cursor-pointer hover:bg-[#ece8ff]">
+            <li
+              className={`flex item-center p-[5px] cursor-pointer ${
+                isActive("/orders") ? "bg-[#ece8ff]" : ""
+              }`}
+            >
               <CreditCardIcon className="text-[22px] text-mainColor" />
               <span className="text-[14px] font-[600] text-[#888] ml-[10px]">
                 {t("sidebar.orders")}
@@ -77,7 +97,11 @@ export default function Sidebar() {
           </Link>
 
           <Link to={path.categories} style={{ textDecoration: "none" }}>
-            <li className="flex item-center p-[5px] cursor-pointer hover:bg-[#ece8ff]">
+            <li
+              className={`flex item-center p-[5px] cursor-pointer ${
+                isActive("/categories") ? "bg-[#ece8ff]" : ""
+              }`}
+            >
               <CategoryOutlinedIcon className="text-[22px] text-mainColor" />
               <span className="text-[14px] font-[600] text-[#888] ml-[10px]">
                 {t("sidebar.Category")}
@@ -85,7 +109,11 @@ export default function Sidebar() {
             </li>
           </Link>
           <Link to="/brand" style={{ textDecoration: "none" }}>
-            <li className="flex item-center p-[5px] cursor-pointer hover:bg-[#ece8ff]">
+            <li
+              className={`flex item-center p-[5px] cursor-pointer ${
+                isActive("/brand") ? "bg-[#ece8ff]" : ""
+              }`}
+            >
               <LocalPoliceOutlinedIcon className="text-[22px] text-mainColor" />
               <span className="text-[14px] font-[600] text-[#888] ml-[10px]">
                 {t("sidebar.Brand")}
@@ -93,24 +121,31 @@ export default function Sidebar() {
             </li>
           </Link>
           <Link to="/feedback" style={{ textDecoration: "none" }} className="">
-            <li className="flex item-center p-[5px] cursor-pointer hover:bg-[#ece8ff]">
+            <li
+              className={`flex item-center p-[5px] cursor-pointer ${
+                isActive("/feedback") ? "bg-[#ece8ff]" : ""
+              }`}
+            >
               <FeedbackIcon className="text-[22px] text-mainColor" />
               <span className="text-[14px] font-[600] text-[#888] ml-[10px]">
                 {t("sidebar.FeedBack")}
               </span>
             </li>
           </Link>
-          <Link to="/order" style={{ textDecoration: "none" }}></Link>
+          {/* <Link to="/order" style={{ textDecoration: "none" }}></Link>
           <p className="text-[16px] font-bold text-[#999] mt-[15px] mb-[5px]">
             USEFUL
           </p>
-          <li className="flex item-center p-[5px] cursor-pointer hover:bg-[#ece8ff]">
+          <li className={`flex item-center p-[5px] cursor-pointer ${""}`}>
             <InsertChartIcon className="text-[22px] text-mainColor" />
             <span className="text-[14px] font-[600] text-[#888] ml-[10px]">
               {t("sidebar.status")}
             </span>
           </li>
-          <li className="flex item-center p-[5px] cursor-pointer hover:bg-[#ece8ff]">
+          <li
+            className={`flex item-center p-[5px] cursor-pointer
+            }`}
+          >
             <NotificationsNoneIcon className="text-[22px] text-mainColor" />
             <span className="text-[14px] font-[600] text-[#888] ml-[10px]">
               {t("sidebar.notification")}
@@ -119,15 +154,19 @@ export default function Sidebar() {
           <p className="text-[16px] font-bold text-[#999] mt-[15px] mb-[5px]">
             USER
           </p>
-          <li className="flex item-center p-[5px] cursor-pointer hover:bg-[#ece8ff]">
+          <li
+            className={`flex item-center p-[5px] cursor-pointer 
+            }`}
+          >
             <AccountCircleOutlinedIcon className="text-[22px] text-mainColor" />
             <span className="text-[14px] font-[600] text-[#888] ml-[10px]">
               {t("sidebar.profile")}
             </span>
-          </li>
+          </li> */}
           <li
             onClick={logout}
-            className="flex item-center p-[5px] cursor-pointer hover:bg-[#ece8ff]"
+            className={`flex item-center p-[5px] cursor-pointer 
+            }`}
           >
             <ExitToAppIcon className="text-[22px] text-mainColor" />
             <span className="text-[14px] font-[600] text-[#888] ml-[10px]">
@@ -153,3 +192,4 @@ export default function Sidebar() {
     </div>
   );
 }
+

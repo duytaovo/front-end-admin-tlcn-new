@@ -134,7 +134,7 @@ const FormDisabledDemo: React.FC = () => {
             className={"flex-1 text-black"}
             id="gender"
             // label="Hãng xe"
-            placeholder="Vui lòng chọn"
+            placeholder="Giới tính"
             defaultValue={""}
             options={[
               { id: 1, name: "Nam" },
@@ -253,3 +253,4 @@ const FormDisabledDemo: React.FC = () => {
 };
 
 export default () => <FormDisabledDemo />;
+
