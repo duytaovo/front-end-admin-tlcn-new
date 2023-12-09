@@ -2,7 +2,7 @@ import path from "src/constants/path";
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { routeMain } from "./routes";
-import CommonLayout from "./layouts/CommonLayout";
+import CommonLayout from "./layouts/CommonLayout/index";
 import Login from "./pages/Login";
 import AuthenticatedGuard from "./guards/AuthenticatedGuard";
 import UnAuthenticatedGuard from "./guards/UnAuthenticatedGuard";

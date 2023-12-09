@@ -205,7 +205,7 @@ const FilterPhone = ({ handle, brand, characteristic }: Props) => {
   ];
 
   return (
-    <div className="text-black max-w-[1200px] m-auto">
+    <div className="text-mainColor max-w-[1200px] m-auto">
       <Filter handle={handle} data={data} />
     </div>
   );

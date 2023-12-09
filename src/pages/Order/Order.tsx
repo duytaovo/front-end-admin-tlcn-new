@@ -3,7 +3,6 @@ import { Table } from "flowbite-react";
 import OrderDetail from "./OrderDetail";
 import "./table.scss";
 import clsx from "clsx";
-
 import { useState } from "react";
 import numberWithCommas from "src/utils/numberWithCommas";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
@@ -17,7 +16,9 @@ import {
 import { Button, Pagination } from "antd";
 import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
-
+import { DownloadOutlined } from "@ant-design/icons";
+import * as ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 const Order = ({ title }: { title?: string }) => {
   const style = (text: string) => {
     switch (text) {
@@ -110,13 +111,80 @@ const Order = ({ title }: { title?: string }) => {
   useEffect(() => {
     document.title = title || "";
   }, [title]);
+  const exportToExcel = async (order: any) => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Orders");
 
+    // Add header row
+    worksheet.addRow([
+      // "ID",
+      "Name Product",
+      "Quantity",
+      "Ram",
+      "Storage Capacity",
+      "Color",
+      "Price",
+      "Sale Price",
+      "Name Receiver",
+      "Phone Receiver",
+      "Address Receiver",
+      "Order Price",
+      "Delivery Price",
+      "Discount",
+      "Final Price",
+      "Buy Date",
+      "Payment Method",
+    ]);
+
+    order.forEach((order: any, index: number) => {
+      order.orderDetails.forEach((orderDetail: any) => {
+        worksheet.addRow([
+          orderDetail.name,
+          orderDetail.quantity,
+          orderDetail.ram,
+          orderDetail.storageCapacity,
+          orderDetail.color,
+          orderDetail.price,
+          orderDetail.salePrice,
+          order.nameReceiver,
+          order.phoneReceiver,
+          order.addressReceiver,
+          order.orderPrice,
+          order.deliveryPrice,
+          order.discount,
+          order.finalPrice,
+          order.buyDate,
+          order.paymentMethod,
+        ]);
+      });
+      worksheet.addRow([]);
+    });
+    // Create a blob from the Excel workbook
+    const blob = await workbook.xlsx.writeBuffer();
+
+    // Save the blob as a file using file-saver
+    saveAs(
+      new Blob([blob], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      }),
+      "orders.xlsx",
+    );
+  };
   return (
     <div className="h-1/2">
       <Helmet>
         <title>{"Trang quản lý đơn hàng "}</title>
         <meta name="description" />
       </Helmet>
+      <Button
+        onClick={() => exportToExcel(order?.data?.data)}
+        type="link"
+        icon={<DownloadOutlined />}
+        size="small"
+        className="mb-2"
+      >
+        Xuất file excel
+      </Button>
       <Table hoverable={true} className="bg-transparent">
         <Table.Head>
           <Table.HeadCell> Mã đơn hàng </Table.HeadCell>
@@ -199,7 +267,7 @@ const Order = ({ title }: { title?: string }) => {
                         id={_order.id}
                         onClick={() => handleAcceptDelivery(_order.id)}
                         className={clsx(
-                          "bg-yellow-500 text-xl font-medium rounded-lg  text-white"
+                          "bg-yellow-500 text-xl font-medium rounded-lg  text-white",
                         )}
                       >
                         Giao vận chuyển
@@ -211,7 +279,7 @@ const Order = ({ title }: { title?: string }) => {
                         id={_order.id}
                         onClick={() => handleAcceptSuccess(_order.id)}
                         className={clsx(
-                          "bg-blue-500 text-xl font-medium rounded-lg  text-white"
+                          "bg-blue-500 text-xl font-medium rounded-lg  text-white",
                         )}
                       >
                         Giao thành công
@@ -225,7 +293,7 @@ const Order = ({ title }: { title?: string }) => {
                         className={clsx(
                           "bg-blue-500 text-xl font-medium rounded-lg  text-white",
                           displayButtonDelivered &&
-                            "!bg-gray-100 !text-gray-700"
+                            "!bg-gray-100 !text-gray-700",
                         )}
                       >
                         Đã giao
@@ -238,7 +306,7 @@ const Order = ({ title }: { title?: string }) => {
                         onClick={() => handleAccept(_order.id)}
                         className={clsx(
                           "bg-green-500 text-xl font-medium rounded-lg  text-white",
-                          displayCancelBtn && "!bg-gray-100 !text-gray-700"
+                          displayCancelBtn && "!bg-gray-100 !text-gray-700",
                         )}
                       >
                         Xác nhận
@@ -252,7 +320,7 @@ const Order = ({ title }: { title?: string }) => {
                       onClick={() => handleCancel(_order.id)}
                       className={clsx(
                         "bg-red-500 text-xl font-medium rounded-lg  text-white",
-                        displayCancelBtn && "!bg-gray-100 !text-gray-700"
+                        displayCancelBtn && "!bg-gray-100 !text-gray-700",
                       )}
                     >
                       Hủy đơn
@@ -289,3 +357,4 @@ const Order = ({ title }: { title?: string }) => {
 };
 
 export default Order;
+

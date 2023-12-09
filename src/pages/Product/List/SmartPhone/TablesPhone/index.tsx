@@ -28,7 +28,7 @@ const MenuProps = {
 };
 const TablePhone: React.FC = () => {
   const { smartPhone } = useAppSelector((state) => state.smartPhone);
-  console.log(smartPhone);
+
   const navigate = useNavigate();
   const pageSize = 10; // Số phần tử trên mỗi trang
   const [choose, setChoose] = useState<any>();
@@ -357,7 +357,14 @@ const TablePhone: React.FC = () => {
           Quản lý sản phẩm
           <div>
             <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Điện thoại</InputLabel>
+              <InputLabel
+                id="demo-simple-select-label"
+                sx={{
+                  color: "green",
+                }}
+              >
+                Điện thoại
+              </InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
@@ -468,7 +475,7 @@ const TablePhone: React.FC = () => {
           </div>
         ))}
       </div>
-      <div className="fixed bottom-12 mt-12 right-4">
+      <div className="fixed bottom-12 mt-12 ">
         <Pagination
           current={currentPage + 1}
           pageSize={pageSize}

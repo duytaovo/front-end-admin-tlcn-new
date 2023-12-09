@@ -38,7 +38,10 @@ const TableRam: React.FC = () => {
           Quản lý sản phẩm
           <div>
             <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">
+              <InputLabel
+                id="demo-simple-select-label"
+                className="text-mainColor"
+              >
                 Chọn sản phẩm
               </InputLabel>
               <Select

@@ -21,6 +21,8 @@ import { searchApi } from "src/api/search/search.api";
 import { getResultSearch } from "src/store/search/searchSlice";
 import PopoverSearch from "src/components/Popover";
 import ItemSearch from "src/components/Search/ItemSearch";
+import { clearLS } from "src/utils/auth";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 
 const items: MenuProps["items"] = [
   {
@@ -28,20 +30,14 @@ const items: MenuProps["items"] = [
     label: (
       <button
         className=" px-2 text-left text-xl hover:text-mainColor"
-        onClick={() => changeLanguage("vi")}
+        onClick={() => {
+          if (confirm("Bạn có muốn thoát không?")) {
+            clearLS();
+            window.location.reload();
+          }
+        }}
       >
-        VN
-      </button>
-    ),
-  },
-  {
-    key: "2",
-    label: (
-      <button
-        className="px-2 text-left text-xl hover:text-mainColor "
-        onClick={() => changeLanguage("en")}
-      >
-        ENG
+        Đăng xuất
       </button>
     ),
   },
@@ -63,6 +59,12 @@ export default function NavbarCustom() {
   const [isLoading, setIsLoading] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const dispatch = useAppDispatch();
+  const logout = () => {
+    if (confirm("Bạn có muốn thoát không?")) {
+      clearLS();
+      window.location.reload();
+    }
+  };
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.pageYOffset;
@@ -209,9 +211,7 @@ export default function NavbarCustom() {
               </IconButton>
             )}
           </div>
-          <div className="flex item-center mr-5 relative">
-            <FullscreenExitOutlinedIcon className="text-xl" />
-          </div>
+
           <div className="flex item-center mr-5 relative">
             <NotificationsNoneOutlinedIcon className="text-xl" />
             <div className="w-[15px] h-[15px] bg-red-500 rounded-[50%] text-white flex items-center justify-center text-[10px] font-bold absolute -top-[5px] -r-[5px]">
@@ -224,15 +224,30 @@ export default function NavbarCustom() {
               2
             </div>
           </div>
+
           <div className="flex item-center mr-5 relative">
-            <ListOutlinedIcon className="text-xl" />
-          </div>
-          <div className="flex item-center mr-5 relative">
-            <img
+            {/* <img
               src="https://images.pexels.com/photos/941693/pexels-photo-941693.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
               alt=""
               className="w-[30px] h-[30px] rounded-[50%]"
-            />
+            /> */}
+            <div className="">
+              <CustomDropDown
+                {...customDropdownStyle}
+                menuStyle={menuStyle}
+                items={items}
+              >
+                <div className=" hover:text-mainColor flex items-center space-x-5">
+                  {/* <PersonOutlineIcon /> */}
+                  <img
+                    src="https://images.pexels.com/photos/941693/pexels-photo-941693.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
+                    alt=""
+                    className="w-[30px] h-[30px] rounded-[50%]"
+                  />
+                  <span>Admin</span>
+                </div>
+              </CustomDropDown>
+            </div>
           </div>
         </div>
       </div>

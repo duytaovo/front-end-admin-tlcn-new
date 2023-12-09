@@ -48,7 +48,7 @@ const Rom = lazy(() => import("src/pages/Product/List/Rom/Rom"));
 const Ram = lazy(() => import("src/pages/Product/List/Ram/Ram"));
 const NewRom = lazy(() => import("src/pages/Product/Create/NewRom"));
 const NewRam = lazy(() => import("src/pages/Product/Create/NewRam"));
-const Home = lazy(() => import("src/pages/Home/Home"));
+const Home = lazy(() => import("src/pages/home_new/Home"));
 const TableProduct = lazy(() => import("src/pages/Product/Tables"));
 
 const Orders = lazy(() => import("src/pages/Order"));

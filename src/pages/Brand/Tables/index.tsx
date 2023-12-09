@@ -109,14 +109,14 @@ const TableBrand: React.FC = () => {
         pageSize={pageSize}
       />
 
-      <div className="fixed bottom-12 mt-12 right-4">
+      {/* <div className="fixed bottom-12 mt-12 ">
         <Pagination
           current={currentPage + 1}
           pageSize={pageSize}
           total={brand?.data?.totalElements}
           onChange={handlePageChange}
         />
-      </div>
+      </div> */}
     </div>
   );
 };

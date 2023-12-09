@@ -12,6 +12,7 @@ import GlobalStyles from "./components/GlobalStyles";
 import { AppProvider } from "./contexts/app.context";
 import { DarkModeProvider } from "./contexts/darkModeContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+// import "./style/global.scss";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
