@@ -65,13 +65,12 @@ const NewCardGraphic: React.FC = () => {
     setValue,
     control,
     watch,
+    reset,
   } = useForm({
     resolver: yupResolver(schemaProductRam),
   });
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { category } = useAppSelector((state) => state.category);
-  const { character } = useAppSelector((state) => state.character);
   const { depot } = useAppSelector((state) => state.depot);
   const { brand } = useAppSelector((state) => state.brand);
   useEffect(() => {
@@ -92,25 +91,7 @@ const NewCardGraphic: React.FC = () => {
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("graphicsEngine", "");
-    setValue("standardBus", "");
-    setValue("capacity", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("capacity", "");
-    setValue("salePrice", "");
-    setValue("latency", "");
-    setValue("price", "");
-    setValue("outputPort", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("quantity", "");
-    setValue("led", "");
-    setValue("maximumResolution", "");
+    reset();
   }, []);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
@@ -201,25 +182,7 @@ const NewCardGraphic: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("graphicsEngine", "");
-    setValue("standardBus", "");
-    setValue("capacity", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("capacity", "");
-    setValue("salePrice", "");
-    setValue("engineClock", "");
-    setValue("price", "");
-    setValue("outputPort", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("quantity", "");
-    setValue("powerCapacity", "");
-    setValue("maximumResolution", "");
+    reset();
   };
   const handleChangeFile = (file?: File[]) => {
     setFile(file);

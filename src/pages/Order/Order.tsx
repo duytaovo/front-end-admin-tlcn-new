@@ -3,6 +3,7 @@ import { Table } from "flowbite-react";
 import OrderDetail from "./OrderDetail";
 import "./table.scss";
 import clsx from "clsx";
+import dayjs, { Dayjs } from "dayjs";
 import { useState } from "react";
 import numberWithCommas from "src/utils/numberWithCommas";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
@@ -19,6 +20,58 @@ import { Helmet } from "react-helmet-async";
 import { DownloadOutlined } from "@ant-design/icons";
 import * as ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
+import Filter from "src/components/Filter/Filter";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+const data = [
+  {
+    id: 1,
+    title: "Trạng thái đơn hàng",
+    detail: [
+      {
+        id: 1,
+        name: "Đã đặt",
+      },
+      {
+        id: 2,
+        name: "Đã xác nhận",
+      },
+      {
+        id: 3,
+        name: "Đang giao hàng",
+      },
+      {
+        id: 4,
+        name: "Đã giao hàng",
+      },
+      {
+        id: 5,
+        name: "Đã huỷ",
+      },
+    ],
+  },
+  {
+    id: 2,
+    title: "Phương thức thanh toán",
+    detail: [
+      {
+        id: 1,
+        name: "Thanh toán trực tiếp",
+      },
+      {
+        id: 2,
+        name: "Thanh toán qua VNPay",
+      },
+    ],
+  },
+  // {
+  //   id: 3,
+  //   name: "Ngày đặt hàng",
+  //   detail: [""],
+  // },
+];
+
 const Order = ({ title }: { title?: string }) => {
   const style = (text: string) => {
     switch (text) {
@@ -51,8 +104,11 @@ const Order = ({ title }: { title?: string }) => {
   };
   const [orderDetail, setOrderDetail] = useState({ index: -1, id: null });
   const dispatch = useAppDispatch();
-
+  const filter = useAppSelector((state) => state.smartPhone.filter.data); // Lấy tất cả
+  const [dataFilterLocal, setDataFilterLocal] = useState<any>();
   const { order } = useAppSelector((state) => state.orders);
+  const [value, setValue] = useState<Dayjs | null>(dayjs("2023-01-01"));
+  const [value2, setValue2] = useState<Dayjs | null>(dayjs());
 
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
   const pageSize = 10; // Số phần tử trên mỗi trang
@@ -99,10 +155,49 @@ const Order = ({ title }: { title?: string }) => {
       dispatch(getPurchases(""));
     }
   };
+  useEffect(() => {
+    const separateArrays = (data: any) => {
+      const result: any = {};
+
+      data.forEach((item: any) => {
+        const key = Object.keys(item)[0]; // Lấy tên thuộc tính (ví dụ: 'Hãng', 'Giá', ...)
+
+        if (!result[key]) {
+          result[key] = [];
+        }
+
+        result[key].push(item[key]);
+      });
+
+      return result;
+    };
+    // Gọi hàm tách mảng
+    const separatedArrays = separateArrays(filter);
+    setDataFilterLocal(separatedArrays);
+  }, [filter]);
+
+  // Kết quả
+  if (dataFilterLocal) {
+    var {
+      "Trạng thái đơn hàng": Trangthaidonhang,
+      "Phương thức thanh toán": Phuongthucthanhtoan,
+    } = dataFilterLocal;
+  }
 
   useEffect(() => {
-    dispatch(getPurchases({ pageNumber: currentPage }));
-  }, [currentPage]);
+    const body = {
+      orderStatus: Trangthaidonhang ? Trangthaidonhang : [],
+      buyDateFrom: value?.format("YYYY-MM-DD") || null,
+      buyDateTo: value2?.format("YYYY-MM-DD") || null,
+      paymentStatus: Phuongthucthanhtoan ? Phuongthucthanhtoan : [],
+    };
+    dispatch(
+      getPurchases({
+        body: body,
+        params: { pageNumber: currentPage, pageSize: 10 },
+      }),
+    );
+  }, [currentPage, value, Trangthaidonhang, Phuongthucthanhtoan]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page - 1);
@@ -170,6 +265,11 @@ const Order = ({ title }: { title?: string }) => {
       "orders.xlsx",
     );
   };
+  const [isOpen, setisOpen] = useState<boolean>(false);
+
+  const handle = (boolean: boolean) => {
+    setisOpen(boolean);
+  };
   return (
     <div className="h-1/2">
       <Helmet>
@@ -178,13 +278,33 @@ const Order = ({ title }: { title?: string }) => {
       </Helmet>
       <Button
         onClick={() => exportToExcel(order?.data?.data)}
-        type="link"
+        type="primary"
         icon={<DownloadOutlined />}
         size="small"
-        className="mb-2"
+        className="text-blue-500 mb-2"
       >
         Xuất file excel
       </Button>
+      <div className="text-mainColor max-w-[1200px] ml-5 mb-5 m-auto">
+        <Filter handle={handle} data={data} />
+      </div>
+      <div className="space-x-5">
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            label="Chọn ngày mua bắt đầu"
+            value={value}
+            onChange={(newValue) => setValue(newValue)}
+          />
+        </LocalizationProvider>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            label="Chọn ngày mua cuối cùng"
+            value={value2}
+            onChange={(newValue) => setValue2(newValue)}
+          />
+        </LocalizationProvider>
+      </div>
+
       <Table hoverable={true} className="bg-transparent">
         <Table.Head>
           <Table.HeadCell> Mã đơn hàng </Table.HeadCell>

@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import ButtonFilter from "src/components/ButtonFilter/ButtonFilter";
 import ButtonItem from "src/components/ButtonFilter/ButtonItem";
 import path from "src/constants/path";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { handleFilterStore } from "src/store/product/smartPhoneSlice";
 
 interface Props {
@@ -32,7 +32,7 @@ const FilterItem = ({ data, handle, scroll }: Props) => {
   //const navigate = useNavigate();
   // Tạo thẻ để css thêm
   // const styleElem = document.head.appendChild(document.createElement("style"));
-
+  const navigate = useNavigate();
   // Xử lý đóng mở nút
   const handleOpen = () => {
     scroll();
@@ -142,6 +142,7 @@ const FilterItem = ({ data, handle, scroll }: Props) => {
     handle(true);
     item.current.style.display = "none";
     setIsOpen(false);
+    navigate("/smartPhone");
   };
 
   const Apper = (boolean: boolean) => {
@@ -221,6 +222,18 @@ const FilterItem = ({ data, handle, scroll }: Props) => {
                     title={src?.id}
                     name={data?.title}
                   />
+                ) : data.title === "Trạng thái đơn hàng" ? (
+                  <ButtonItem
+                    nhucau={src?.name}
+                    title={src?.id}
+                    name={data?.title}
+                  />
+                ) : data.title === "Phương thức thanh toán" ? (
+                  <ButtonItem
+                    nhucau={src?.name}
+                    title={src?.id}
+                    name={data?.title}
+                  />
                 ) : (
                   <ButtonItem title={src} name={data.title} />
                 )}
@@ -232,7 +245,7 @@ const FilterItem = ({ data, handle, scroll }: Props) => {
 
         <div className={styles.itemHiden} ref={itemHiden}>
           <Link
-            to={path.smartWatchDetail}
+            to={path.smartPhone}
             className={styles.close}
             onClick={handleCancel}
           >

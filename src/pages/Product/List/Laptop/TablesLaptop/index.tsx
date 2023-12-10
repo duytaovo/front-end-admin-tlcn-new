@@ -49,78 +49,7 @@ const TableLaptop: React.FC = () => {
       <div className="w-full text-[24px] text-gray-500 mb-[10px] flex items-center justify-between">
         <div>
           Quản lý sản phẩm
-          <div>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Product</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={product}
-                label="Age"
-                onChange={handleChangeProduct}
-                MenuProps={MenuProps}
-              >
-                <MenuItem
-                  value={"Điện thoại"}
-                  onClick={() => onClick(path.smartPhone)}
-                >
-                  Điện thoại
-                </MenuItem>
-                <MenuItem value={"Laptop"} onClick={() => onClick(path.laptop)}>
-                  Laptop
-                </MenuItem>
-                <MenuItem value={"Tablet"} onClick={() => onClick("/tablet")}>
-                  Tablet
-                </MenuItem>
-                <MenuItem
-                  value={"Phụ kiện"}
-                  onClick={() => onClick("/accessory")}
-                >
-                  Phụ kiện
-                </MenuItem>
-                <MenuItem
-                  value={"Đồng hồ thông minh"}
-                  onClick={() => onClick("/smartwatch")}
-                >
-                  Đồng hồ thông minh
-                </MenuItem>
-                <MenuItem value={"Ram"} onClick={() => onClick("/ram")}>
-                  Ram
-                </MenuItem>
-                <MenuItem value={"Rom"} onClick={() => onClick("/rom")}>
-                  Rom
-                </MenuItem>
-                <MenuItem
-                  value={"processor"}
-                  onClick={() => onClick("/processor")}
-                >
-                  Processor
-                </MenuItem>
-                <MenuItem
-                  value={"cardGraphic"}
-                  onClick={() => onClick("/cardGraphic")}
-                >
-                  Card đồ họa
-                </MenuItem>
-                <MenuItem value={"mouse"} onClick={() => onClick("/mouse")}>
-                  Chuột máy tính
-                </MenuItem>
-                <MenuItem
-                  value={"loudSpeaker"}
-                  onClick={() => onClick("/loudSpeaker")}
-                >
-                  Loa nghe nhạc
-                </MenuItem>
-                <MenuItem
-                  value={"keyboard"}
-                  onClick={() => onClick("/keyboard")}
-                >
-                  Bàn phím
-                </MenuItem>
-                {/* <MenuItem value={30}></MenuItem> */}
-              </Select>
-            </FormControl>
-          </div>
+          <div></div>
         </div>
         <Link
           to={path.laptopNew}

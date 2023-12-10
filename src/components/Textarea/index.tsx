@@ -46,7 +46,7 @@ const Textarea = ({
     content: any,
     delta: any,
     source: any,
-    editor: any
+    editor: any,
   ) => {
     if (editor.getText()?.length <= 1) {
       setShowError1(true);
@@ -93,6 +93,7 @@ const Textarea = ({
             onChange={handleOnChange}
             placeholder={placeholder}
             defaultValue={defaultValue}
+            className="overscroll-auto overflow-scroll h-[50vh]"
           />
 
           {check ? null : (
@@ -124,3 +125,4 @@ const Textarea = ({
 };
 
 export default Textarea;
+

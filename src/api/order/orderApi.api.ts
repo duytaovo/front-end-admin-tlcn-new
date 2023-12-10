@@ -4,8 +4,8 @@ import http from "src/utils/http";
 const URL = "/manage/order";
 
 export const orderApi = {
-  getPurchases(params: any) {
-    return http.get<SuccessResponse<any[]>>(`${URL}`, {
+  getPurchases({ body, params }: any) {
+    return http.post<SuccessResponse<any[]>>(`${URL}`, body, {
       params,
     });
   },
@@ -25,3 +25,4 @@ export const orderApi = {
     return http.put(`${URL}/cancel/${id}`);
   },
 };
+

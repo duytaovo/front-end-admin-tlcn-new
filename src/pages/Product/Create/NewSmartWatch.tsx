@@ -65,6 +65,7 @@ const NewSmartWatch: React.FC = () => {
     register,
     setValue,
     control,
+    reset,
     watch,
   } = useForm({
     resolver: yupResolver(schemaProductSmartWatch),
@@ -93,24 +94,7 @@ const NewSmartWatch: React.FC = () => {
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("battery", "");
-    setValue("connectToOs", "");
-    setValue("cpu", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("internalMemory", "");
-    setValue("salePrice", "");
-    setValue("connector", "");
-    setValue("price", "");
-    setValue("health", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("quantity", "");
-    setValue("imageUrl", []);
+    reset();
   }, []);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
@@ -139,7 +123,7 @@ const NewSmartWatch: React.FC = () => {
     const body = JSON.stringify({
       productInfo: {
         brandId: Number(data.brand) || 1,
-        categoryId: Number(data.category) || 1,
+        categoryId: 2 || 1,
         productId: null,
         characteristicId: Number(data.characteristic) || 1,
         productCode: generateRandomString(10),
@@ -200,23 +184,7 @@ const NewSmartWatch: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("battery", "");
-    setValue("connectToOs", "");
-    setValue("cpu", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("internalMemory", "");
-    setValue("salePrice", "");
-    setValue("connector", "");
-    setValue("price", "");
-    setValue("health", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("imageUrl", []);
+    reset();
   };
   const handleChangeFile = (file?: File[]) => {
     setFile(file);

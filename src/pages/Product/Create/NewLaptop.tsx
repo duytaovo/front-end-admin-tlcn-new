@@ -67,6 +67,7 @@ const NewLaptop: React.FC = () => {
     register,
     setValue,
     watch,
+    reset,
     control,
   } = useForm({
     resolver: yupResolver(schemaLaptop),
@@ -110,28 +111,7 @@ const NewLaptop: React.FC = () => {
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("battery", "");
-    setValue("charging", "");
-    setValue("chip", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("sim", "");
-    setValue("salePrice", "");
-    setValue("rearCamera", "");
-    setValue("price", "");
-    setValue("frontCamera", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("gateway", "");
-    setValue("graphicsCard", "");
-    setValue("maximumRam", "");
-    setValue("maximumRom", "");
-    setValue("networkSupport", "");
-    setValue("imageUrl", []);
+    reset();
   }, []);
 
   const onSubmit = handleSubmit(async (data) => {
@@ -163,7 +143,7 @@ const NewLaptop: React.FC = () => {
       graphicsCardId: Number(data.graphicsCard),
       productInfo: {
         brandId: Number(data.brand),
-        categoryId: Number(data.category),
+        categoryId: 2,
         productId: null,
         characteristicId: Number(data.characteristic),
         productCode: generateRandomString(10),
@@ -224,28 +204,7 @@ const NewLaptop: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("battery", "");
-    setValue("charging", "");
-    setValue("chip", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("sim", "");
-    setValue("salePrice", "");
-    setValue("rearCamera", "");
-    setValue("price", "");
-    setValue("frontCamera", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("gateway", "");
-    setValue("graphicsCard", "");
-    setValue("maximumRam", "");
-    setValue("maximumRom", "");
-    setValue("networkSupport", "");
-    setValue("imageUrl", []);
+    reset();
   };
   const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File[]) => {
@@ -263,23 +222,6 @@ const NewLaptop: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
-        <Form.Item
-          label="Danh mục sản phẩm"
-          name=""
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="category"
-            // label="Hãng xe"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={category?.data}
-            register={register}
-          >
-            {errors.category?.message}
-          </SelectCustom>
-        </Form.Item>
         <Form.Item
           label="Hãng sản xuất"
           name="brand"

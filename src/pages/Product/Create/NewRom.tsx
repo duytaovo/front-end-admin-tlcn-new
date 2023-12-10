@@ -61,6 +61,7 @@ const NewRom: React.FC = () => {
     register,
     setValue,
     control,
+    reset,
   } = useForm({
     resolver: yupResolver(schemaProductRam),
   });
@@ -88,25 +89,7 @@ const NewRom: React.FC = () => {
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("model", "");
-    setValue("romType", "");
-    setValue("capacity", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("capacity", "");
-    setValue("salePrice", "");
-    setValue("readingSpeed", "");
-    setValue("price", "");
-    setValue("writingSpeed", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("quantity", "");
-    setValue("led", "");
-    setValue("ramTechnology", "");
+    reset();
   }, []);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
@@ -195,25 +178,7 @@ const NewRom: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("model", "");
-    setValue("romType", "");
-    setValue("capacity", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("capacity", "");
-    setValue("salePrice", "");
-    setValue("readingSpeed", "");
-    setValue("price", "");
-    setValue("writingSpeed", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("quantity", "");
-    setValue("led", "");
-    setValue("ramTechnology", "");
+    reset();
   };
   const handleChangeFile = (file?: File[]) => {
     setFile(file);

@@ -84,7 +84,7 @@ const UpdatePhone: React.FC = () => {
     {
       control, // control props comes from useForm (optional: if you are using FormContext)
       name: "lstProductTypeAndPrice", // unique name for your Field Array
-    }
+    },
   );
   useEffect(() => {
     dispatch(getCategorys({ pageSize: 100 }));
@@ -116,7 +116,7 @@ const UpdatePhone: React.FC = () => {
     setValue("mass", tabletDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      tabletDetail?.productInfo.lstProductTypeAndPrice[0].color.toString()
+      tabletDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
     );
     setValue("monitor", tabletDetail?.monitor);
     setValue("networkSupport", tabletDetail?.networkSupport);
@@ -124,18 +124,18 @@ const UpdatePhone: React.FC = () => {
     setValue("brand", tabletDetail?.productInfo?.brandId.toString());
     setValue(
       "characteristic",
-      tabletDetail?.productInfo?.characteristicId.toString()
+      tabletDetail?.productInfo?.characteristicId.toString(),
     );
     setValue("name", tabletDetail?.productInfo?.name);
     setValue("sim", tabletDetail?.sim);
     setValue(
       "salePrice",
-      tabletDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+      tabletDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
     setValue("rearCamera", tabletDetail?.rearCamera);
     setValue(
       "price",
-      tabletDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+      tabletDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
     setValue("frontCamera", tabletDetail?.frontCamera);
     setValue("operatingSystem", tabletDetail?.operatingSystem);
@@ -149,7 +149,7 @@ const UpdatePhone: React.FC = () => {
     const body = JSON.stringify({
       productInfo: {
         brandId: Number(data.brand) || 1,
-        categoryId: Number(data.category) || 1,
+        categoryId: 4,
         productId: Number(tabletDetail.productInfo.productId),
         characteristicId: Number(data.characteristic) || 1,
         productCode: tabletDetail.productInfo.productCode,
@@ -165,7 +165,7 @@ const UpdatePhone: React.FC = () => {
           (item, index) => ({
             typeId:
               Number(
-                tabletDetail?.productInfo?.lstProductTypeAndPrice[index].typeId
+                tabletDetail?.productInfo?.lstProductTypeAndPrice[index].typeId,
               ) || null,
             ram: item?.ram,
             storageCapacity: item?.storageCapacity,
@@ -174,7 +174,7 @@ const UpdatePhone: React.FC = () => {
             salePrice: Number(item?.salePrice),
             quantity: Number(item?.quantity),
             depotId: Number(item?.depot) || 1,
-          })
+          }),
         ),
 
         lstProductImageUrl: [],
@@ -231,7 +231,7 @@ const UpdatePhone: React.FC = () => {
     setValue("mass", tabletDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      tabletDetail?.productInfo.lstProductTypeAndPrice[0].color.toString()
+      tabletDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
     );
     setValue("monitor", tabletDetail?.monitor);
     setValue("networkSupport", tabletDetail?.networkSupport);
@@ -239,18 +239,18 @@ const UpdatePhone: React.FC = () => {
     setValue("brand", tabletDetail?.productInfo?.brandId.toString());
     setValue(
       "characteristic",
-      tabletDetail?.productInfo?.characteristicId.toString()
+      tabletDetail?.productInfo?.characteristicId.toString(),
     );
     setValue("name", tabletDetail?.productInfo?.name);
     setValue("sim", tabletDetail?.sim);
     setValue(
       "salePrice",
-      tabletDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+      tabletDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
     setValue("rearCamera", tabletDetail?.rearCamera);
     setValue(
       "price",
-      tabletDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+      tabletDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
     setValue("frontCamera", tabletDetail?.frontCamera);
     setValue("operatingSystem", tabletDetail?.operatingSystem);
@@ -275,7 +275,7 @@ const UpdatePhone: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
-        <Form.Item
+        {/* <Form.Item
           label="Danh mục sản phẩm"
           name=""
           rules={[{ required: true }]}
@@ -292,7 +292,7 @@ const UpdatePhone: React.FC = () => {
           >
             {errors.category?.message}
           </SelectCustom>
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item
           label="Hãng sản xuất"
           name="brand"
@@ -549,7 +549,7 @@ const UpdatePhone: React.FC = () => {
                   </Form.Item>
                   {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
                 </li>
-              )
+              ),
             )}
             <Form.Item>
               <Button
@@ -745,3 +745,4 @@ const UpdatePhone: React.FC = () => {
 };
 
 export default () => <UpdatePhone />;
+

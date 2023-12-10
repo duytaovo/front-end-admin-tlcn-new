@@ -171,7 +171,7 @@ const UpdatePhone: React.FC = () => {
     const body = JSON.stringify({
       productInfo: {
         brandId: Number(data.brand) || 1,
-        categoryId: Number(data.category) || 1,
+        categoryId: 1,
         productId: Number(smartPhoneDetail.productInfo.productId),
         characteristicId: Number(data.characteristic) || 1,
         productCode: smartPhoneDetail.productInfo.productCode,
@@ -320,7 +320,7 @@ const UpdatePhone: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
-        <Form.Item
+        {/* <Form.Item
           label="Danh mục sản phẩm"
           name=""
           rules={[{ required: true }]}
@@ -337,7 +337,7 @@ const UpdatePhone: React.FC = () => {
           >
             {errors.category?.message}
           </SelectCustom>
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item
           label="Hãng sản xuất"
           name="brand"

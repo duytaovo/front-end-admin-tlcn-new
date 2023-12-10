@@ -44,7 +44,7 @@ export const deleteSmartPhone = createAsyncThunk(
   payloadCreator(smartPhoneApi.deleteSmartPhone),
 );
 export type SmartPhone = {
-  data: ListSmartPhone[];
+  data: any[];
   pageNumber: number;
   pageSize: number;
   totalElements: number;

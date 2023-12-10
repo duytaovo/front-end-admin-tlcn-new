@@ -60,7 +60,7 @@ export default function ProductRom({ product }: Props) {
           `${"/processor/detail/update"}/${generateNameId({
             name: product.name,
             id: product.id.toString(),
-          })}`
+          })}`,
         );
 
         hidden();
@@ -72,15 +72,17 @@ export default function ProductRom({ product }: Props) {
       title: "Xóa",
       callback: () => {
         const handleDelete = async () => {
-          const res = await dispatch(deleteProcessor(product.id.toString()));
-          unwrapResult(res);
-          // const d = res?.payload;
-          // if (d?.code !== 200) return toast.error(d?.message);
-          await toast.success("Xóa sản phẩm thành công ");
-          await dispatch(getProcessor(""));
+          if (confirm("Bạn có muốn disable sản phẩm không?")) {
+            const res = await dispatch(deleteProcessor(product.id.toString()));
+            unwrapResult(res);
+            // const d = res?.payload;
+            // if (d?.code !== 200) return toast.error(d?.message);
+            await toast.success("Xóa sản phẩm thành công ");
+            await dispatch(getProcessor(""));
+          }
+          handleDelete();
+          hidden();
         };
-        handleDelete();
-        hidden();
       },
       variant: "contained",
     },
@@ -171,3 +173,4 @@ export default function ProductRom({ product }: Props) {
     </div>
   );
 }
+

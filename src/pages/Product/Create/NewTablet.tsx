@@ -63,6 +63,7 @@ const NewTablet: React.FC = () => {
     setValue,
     control,
     watch,
+    reset,
   } = useForm({
     resolver: yupResolver(schemaProductSmartPhone),
   });
@@ -90,23 +91,7 @@ const NewTablet: React.FC = () => {
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("battery", "");
-    setValue("charging", "");
-    setValue("chip", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("sim", "");
-    setValue("salePrice", "");
-    setValue("rearCamera", "");
-    setValue("price", "");
-    setValue("frontCamera", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("quantity", "");
+    reset();
   }, []);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
@@ -135,7 +120,7 @@ const NewTablet: React.FC = () => {
     const body = JSON.stringify({
       productInfo: {
         brandId: Number(data.brand) || 1,
-        categoryId: Number(data.category) || 1,
+        categoryId: 4,
         productId: null,
         characteristicId: Number(data.characteristic) || 1,
         productCode: generateRandomString(10),
@@ -197,22 +182,7 @@ const NewTablet: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("battery", "");
-    setValue("charging", "");
-    setValue("chip", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("sim", "");
-    setValue("salePrice", "");
-    setValue("rearCamera", "");
-    setValue("price", "");
-    setValue("frontCamera", "");
-    setValue("design", "");
-    setValue("dimension", "");
+    reset();
   };
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
@@ -230,7 +200,7 @@ const NewTablet: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
-        <Form.Item
+        {/* <Form.Item
           label="Danh mục sản phẩm"
           name=""
           rules={[{ required: true }]}
@@ -247,7 +217,7 @@ const NewTablet: React.FC = () => {
           >
             {errors.category?.message}
           </SelectCustom>
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item
           label="Hãng sản xuất"
           name="brand"

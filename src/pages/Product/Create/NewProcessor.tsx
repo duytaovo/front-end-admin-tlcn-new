@@ -61,6 +61,7 @@ const NewProcessor: React.FC = () => {
     register,
     setValue,
     control,
+    reset,
     watch,
   } = useForm({
     resolver: yupResolver(schemaProductRam),
@@ -87,25 +88,7 @@ const NewProcessor: React.FC = () => {
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("generation", "");
-    setValue("generationName", "");
-    setValue("capacity", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("capacity", "");
-    setValue("salePrice", "");
-    setValue("numberOfStreams", "");
-    setValue("price", "");
-    setValue("maxSpeed", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("quantity", "");
-    setValue("caching", "");
-    setValue("memoryCapacity", "");
+    reset();
   }, []);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
@@ -196,25 +179,7 @@ const NewProcessor: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("generation", "");
-    setValue("generationName", "");
-    setValue("socket", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("socket", "");
-    setValue("salePrice", "");
-    setValue("numberOfStreams", "");
-    setValue("price", "");
-    setValue("maxSpeed", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("quantity", "");
-    setValue("caching", "");
-    setValue("memoryCapacity", "");
+    reset();
   };
   const handleChangeFile = (file?: File[]) => {
     setFile(file);

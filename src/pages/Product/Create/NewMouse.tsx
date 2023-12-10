@@ -62,6 +62,7 @@ const NewMouse: React.FC = () => {
     setValue,
     control,
     watch,
+    reset,
   } = useForm({
     resolver: yupResolver(schemaProductMouse),
   });
@@ -87,17 +88,7 @@ const NewMouse: React.FC = () => {
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("salePrice", "");
-    setValue("price", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("led", "");
+    reset();
   }, []);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
@@ -188,17 +179,7 @@ const NewMouse: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("salePrice", "");
-    setValue("price", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("led", "");
+    reset();
   };
   const handleChangeFile = (file?: File[]) => {
     setFile(file);

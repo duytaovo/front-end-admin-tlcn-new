@@ -62,6 +62,7 @@ const NewKeyboard: React.FC = () => {
     setValue,
     control,
     watch,
+    reset,
   } = useForm({
     resolver: yupResolver(schemaProductKeyboard),
   });
@@ -87,17 +88,7 @@ const NewKeyboard: React.FC = () => {
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("salePrice", "");
-    setValue("price", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("led", "");
+    reset();
   }, []);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
@@ -187,20 +178,7 @@ const NewKeyboard: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("compatible", "");
-    setValue("connector", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("connector", "");
-    setValue("salePrice", "");
-    setValue("price", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("led", "");
+    reset();
   };
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
@@ -218,23 +196,6 @@ const NewKeyboard: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
-        {/* <Form.Item
-          label="Danh mục sản phẩm"
-          name=""
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="category"
-            // label="Hãng xe"
-            defaultValue={""}
-            options={category}
-            register={register}
-            isBrand={true}
-          >
-            {errors.category?.message}
-          </SelectCustom>
-        </Form.Item> */}
         <Form.Item
           label="Hãng sản xuất"
           name="brand"

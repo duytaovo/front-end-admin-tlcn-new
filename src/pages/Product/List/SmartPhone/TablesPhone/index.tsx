@@ -43,7 +43,6 @@ const TablePhone: React.FC = () => {
   const [dataFilterLocal, setDataFilterLocal] = useState<any>();
 
   const exportToExcel = async (products: any) => {
-    console.log(products);
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Products");
 
@@ -59,20 +58,6 @@ const TablePhone: React.FC = () => {
       "SalePrice",
       "Images",
     ]);
-
-    // // Add data rows
-    // products.forEach((product: any) => {
-    //   worksheet.addRow([
-    //     product.id,
-    //     product.name,
-    //     product.lstProductTypeAndPrice[0].ram,
-    //     product.lstProductTypeAndPrice[0].storageCapacity,
-    //     product.lstProductTypeAndPrice[0].color,
-    //     product.lstProductTypeAndPrice[0].quantity,
-    //     product.lstProductTypeAndPrice[0].price,
-    //     product.lstProductTypeAndPrice[0].salePrice,
-    //   ]);
-    // });
 
     products.forEach((product: any) => {
       product.lstProductTypeAndPrice.forEach((typeAndPrice: any) => {
@@ -356,7 +341,7 @@ const TablePhone: React.FC = () => {
         <div>
           Quản lý sản phẩm
           <div>
-            <FormControl fullWidth>
+            {/* <FormControl fullWidth>
               <InputLabel
                 id="demo-simple-select-label"
                 sx={{
@@ -431,14 +416,15 @@ const TablePhone: React.FC = () => {
                   Bàn phím
                 </MenuItem>
               </Select>
-            </FormControl>
+            </FormControl> */}
           </div>
           <div>
             <Button
               onClick={() => exportToExcel(smartPhone?.data?.data)}
-              type="link"
+              type="primary"
               icon={<DownloadOutlined />}
               size="small"
+              className="text-blue-500"
             >
               Xuất file excel
             </Button>

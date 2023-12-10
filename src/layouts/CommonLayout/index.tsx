@@ -57,6 +57,7 @@ const App: React.FC = () => {
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
         collapsible
+        className="h-screen overflow-scroll overscroll-auto"
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
         theme="light"

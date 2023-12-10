@@ -18,7 +18,11 @@ function ButtonItem(props: Props) {
         <img src={`https:` + props?.img} className={styles.text}></img>
       ) : (
         <span className={styles.text}>
-          {props.name === "Nhu cầu" ? props.nhucau : props.title}
+          {props.name === "Nhu cầu" ||
+          props.name === "Trạng thái đơn hàng" ||
+          props.name === "Phương thức thanh toán"
+            ? props.nhucau
+            : props.title}
         </span>
       )}
     </div>
@@ -26,3 +30,4 @@ function ButtonItem(props: Props) {
 }
 
 export default ButtonItem;
+

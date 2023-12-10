@@ -1,6 +1,6 @@
 import styles from "./filteritemtotal.module.scss";
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ButtonFilterTotal from "src/components/ButtonFilter/ButtonFilterTotal";
 import ButtonItem from "src/components/ButtonFilter/ButtonItem";
 import path from "src/constants/path";
@@ -21,7 +21,7 @@ const FilterItemTotal = ({ data, handle, scroll }: Props) => {
   const button: any = useRef<HTMLDivElement>(null);
   const itemHiden: any = useRef<HTMLDivElement>(null);
   const before: any = useRef<HTMLDivElement>(null);
-
+  const navigate = useNavigate();
   let filter = useAppSelector((state) => state.smartPhone.filter.data); // Lấy tất cả
   const { smartPhone } = useAppSelector<any>((state) => state.smartPhone); // Lấy tất cả
   const dispatch = useAppDispatch();
@@ -114,6 +114,7 @@ const FilterItemTotal = ({ data, handle, scroll }: Props) => {
     handle(true);
     item.current.style.display = "none";
     setisOpen(false);
+    navigate("/smartPhone");
   };
   const handleCancel = () => {
     filter.splice(0, filter.length);
@@ -158,6 +159,18 @@ const FilterItemTotal = ({ data, handle, scroll }: Props) => {
                             img={btn?.imageUrl?.substring("https:".length)}
                           />
                         ) : src.title === "Nhu cầu" ? (
+                          <ButtonItem
+                            nhucau={btn?.name}
+                            title={btn?.id}
+                            name={src?.title}
+                          />
+                        ) : src.title === "Trạng thái đơn hàng" ? (
+                          <ButtonItem
+                            nhucau={btn?.name}
+                            title={btn?.id}
+                            name={src?.title}
+                          />
+                        ) : src.title === "Phương thức thanh toán" ? (
                           <ButtonItem
                             nhucau={btn?.name}
                             title={btn?.id}

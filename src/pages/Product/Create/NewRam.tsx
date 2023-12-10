@@ -62,6 +62,7 @@ const NewRam: React.FC = () => {
     setValue,
     control,
     watch,
+    reset,
   } = useForm({
     resolver: yupResolver(schemaProductRam),
   });
@@ -87,25 +88,7 @@ const NewRam: React.FC = () => {
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("model", "");
-    setValue("ramType", "");
-    setValue("capacity", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("capacity", "");
-    setValue("salePrice", "");
-    setValue("latency", "");
-    setValue("price", "");
-    setValue("voltage", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("quantity", "");
-    setValue("led", "");
-    setValue("ramTechnology", "");
+    reset();
   }, []);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
@@ -196,25 +179,7 @@ const NewRam: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("model", "");
-    setValue("ramType", "");
-    setValue("capacity", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("capacity", "");
-    setValue("salePrice", "");
-    setValue("latency", "");
-    setValue("price", "");
-    setValue("voltage", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("quantity", "");
-    setValue("led", "");
-    setValue("ramTechnology", "");
+    reset();
   };
   const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File[]) => {
@@ -233,23 +198,6 @@ const NewRam: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
-        {/* <Form.Item
-          label="Danh mục sản phẩm"
-          name=""
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="category"
-            // label="Hãng xe"
-            defaultValue={""}
-            options={category}
-            register={register}
-            isBrand={true}
-          >
-            {errors.category?.message}
-          </SelectCustom>
-        </Form.Item> */}
         <Form.Item
           label="Hãng sản xuất"
           name="brand"

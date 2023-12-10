@@ -66,7 +66,7 @@ export default function ProductLaptop({ product }: Props) {
           `${"/laptop/detail/update"}/${generateNameId({
             name: product.name,
             id: product.id.toString(),
-          })}`
+          })}`,
         );
 
         hidden();
@@ -78,15 +78,17 @@ export default function ProductLaptop({ product }: Props) {
       title: "Xóa",
       callback: () => {
         const handleDelete = async () => {
-          const res = await dispatch(deleteLaptop(product.id.toString()));
-          unwrapResult(res);
-          const d = res?.payload;
-          if (d?.code !== 200) return toast.error(d?.message);
-          await toast.success("Xóa sản phẩm thành công ");
-          await dispatch(getLaptop(""));
+          if (confirm("Bạn có muốn disable sản phẩm không?")) {
+            const res = await dispatch(deleteLaptop(product.id.toString()));
+            unwrapResult(res);
+            const d = res?.payload;
+            if (d?.code !== 200) return toast.error(d?.message);
+            await toast.success("Xóa sản phẩm thành công ");
+            await dispatch(getLaptop(""));
+          }
+          handleDelete();
+          hidden();
         };
-        handleDelete();
-        hidden();
       },
       variant: "contained",
     },
@@ -129,7 +131,7 @@ export default function ProductLaptop({ product }: Props) {
                 <span className="text-lg">₫</span>
                 <span className="text-xl">
                   {formatCurrency(
-                    product?.lstProductTypeAndPrice[0]?.salePrice
+                    product?.lstProductTypeAndPrice[0]?.salePrice,
                   )}
                 </span>
               </div>
@@ -179,3 +181,4 @@ export default function ProductLaptop({ product }: Props) {
     </div>
   );
 }
+

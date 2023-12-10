@@ -213,9 +213,10 @@ const TableProduct: React.FC = () => {
           </div>
           <Button
             onClick={() => exportToExcel(smartPhone?.data?.data)}
-            type="link"
+            type="primary"
             icon={<DownloadOutlined />}
             size="small"
+            className="text-blue-500"
           >
             Xuất file excel
           </Button>

@@ -61,6 +61,7 @@ const NewPhone: React.FC = () => {
     handleSubmit,
     formState: { errors },
     setError,
+    reset,
     register,
     setValue,
     control,
@@ -92,24 +93,7 @@ const NewPhone: React.FC = () => {
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("battery", "");
-    setValue("charging", "");
-    setValue("chip", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("sim", "");
-    setValue("salePrice", "");
-    setValue("rearCamera", "");
-    setValue("price", "");
-    setValue("frontCamera", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("quantity", "");
-    setValue("files", []);
+    reset();
   }, []);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
@@ -152,7 +136,7 @@ const NewPhone: React.FC = () => {
       const body = JSON.stringify({
         productInfo: {
           brandId: Number(data.brand) || 1,
-          categoryId: Number(data.category) || 1,
+          categoryId: 1,
           productId: null,
           characteristicId: Number(data.characteristic) || 1,
           productCode: generateRandomString(10),
@@ -217,25 +201,8 @@ const NewPhone: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("battery", "");
-    setValue("charging", "");
-    setValue("chip", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("sim", "");
-    setValue("salePrice", "");
-    setValue("rearCamera", "");
-    setValue("price", "");
-    setValue("frontCamera", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("files", []);
+    reset();
   };
-  const avatar = watch("files");
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
@@ -252,7 +219,7 @@ const NewPhone: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
-        <Form.Item
+        {/* <Form.Item
           label="Danh mục sản phẩm"
           name=""
           rules={[{ required: true }]}
@@ -269,7 +236,7 @@ const NewPhone: React.FC = () => {
           >
             {errors.category?.message}
           </SelectCustom>
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item
           label="Hãng sản xuất"
           name="brand"
@@ -641,7 +608,7 @@ const NewPhone: React.FC = () => {
 
         <Form.Item
           name="files"
-          // rules={[{ required: true }]}
+          rules={[{ required: true }]}
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}

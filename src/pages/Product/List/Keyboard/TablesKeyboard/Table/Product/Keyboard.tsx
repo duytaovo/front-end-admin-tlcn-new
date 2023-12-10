@@ -8,10 +8,6 @@ import { Rate } from "antd";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { Button } from "@mui/material";
 import { useAppDispatch } from "src/hooks/useRedux";
-import {
-  deleteSmartPhone,
-  getSmartPhones,
-} from "src/store/product/smartPhoneSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import { ListSmartPhone } from "src/types/allProductsType.interface";
@@ -60,7 +56,7 @@ export default function ProductLoudSpeaker({ product }: Props) {
           `${"/keyboard/detail/update"}/${generateNameId({
             name: product.name,
             id: product.id.toString(),
-          })}`
+          })}`,
         );
 
         hidden();
@@ -72,15 +68,17 @@ export default function ProductLoudSpeaker({ product }: Props) {
       title: "Xóa",
       callback: () => {
         const handleDelete = async () => {
-          const res = await dispatch(deleteKeyboard(product.id.toString()));
-          unwrapResult(res);
-          // const d = res?.payload;
-          // if (d?.code !== 200) return toast.error(d?.message);
-          await toast.success("Xóa sản phẩm thành công ");
-          await dispatch(getKeyboard(""));
+          if (confirm("Bạn có muốn disable sản phẩm không?")) {
+            const res = await dispatch(deleteKeyboard(product.id.toString()));
+            unwrapResult(res);
+            // const d = res?.payload;
+            // if (d?.code !== 200) return toast.error(d?.message);
+            await toast.success("Xóa sản phẩm thành công ");
+            await dispatch(getKeyboard(""));
+          }
+          handleDelete();
+          hidden();
         };
-        handleDelete();
-        hidden();
       },
       variant: "contained",
     },
@@ -171,3 +169,4 @@ export default function ProductLoudSpeaker({ product }: Props) {
     </div>
   );
 }
+

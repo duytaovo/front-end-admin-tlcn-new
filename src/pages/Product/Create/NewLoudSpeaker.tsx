@@ -22,7 +22,6 @@ import InputFile from "src/components/InputFile";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
-import { addRam, getRams } from "src/store/ram/ramSlice";
 import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
 import {
   addloudSpeaker,
@@ -65,6 +64,7 @@ const NewLoudSpeaker: React.FC = () => {
     setValue,
     control,
     watch,
+    reset,
   } = useForm({
     resolver: yupResolver(schemaProductLoudSpeaker),
   });
@@ -90,16 +90,7 @@ const NewLoudSpeaker: React.FC = () => {
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("salePrice", "");
-    setValue("price", "");
-    setValue("design", "");
-    setValue("dimension", "");
+    reset();
   }, []);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
@@ -187,16 +178,7 @@ const NewLoudSpeaker: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("salePrice", "");
-    setValue("price", "");
-    setValue("design", "");
-    setValue("dimension", "");
+    reset();
   };
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
@@ -214,23 +196,6 @@ const NewLoudSpeaker: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
-        {/* <Form.Item
-          label="Danh mục sản phẩm"
-          name=""
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="category"
-            // label="Hãng xe"
-            defaultValue={""}
-            options={category}
-            register={register}
-            isBrand={true}
-          >
-            {errors.category?.message}
-          </SelectCustom>
-        </Form.Item> */}
         <Form.Item
           label="Hãng sản xuất"
           name="brand"

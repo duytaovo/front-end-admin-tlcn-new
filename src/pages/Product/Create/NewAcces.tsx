@@ -13,7 +13,6 @@ import { addUser, getUsers } from "src/store/user/userSlice";
 import { ErrorResponse } from "src/types/utils.type";
 import { isAxiosUnprocessableEntityError } from "src/utils/utils";
 import SelectCustom from "src/components/Select";
-
 import Textarea from "src/components/Textarea";
 import { schemaSmartWatch } from "src/utils/rules";
 
@@ -48,7 +47,6 @@ const MenuProps = {
   },
 };
 const FormDisabledDemo: React.FC = () => {
-  const [componentDisabled, setComponentDisabled] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [value, setValueSex] = useState(1);
 
@@ -60,6 +58,7 @@ const FormDisabledDemo: React.FC = () => {
     formState: { errors },
     setError,
     register,
+    reset,
     setValue,
   } = useForm({
     resolver: yupResolver(schemaSmartWatch),
@@ -68,13 +67,7 @@ const FormDisabledDemo: React.FC = () => {
   const navigate = useNavigate();
   const [file, setFile] = useState<File[]>();
   useEffect(() => {
-    setValue("loaiSp", "");
-    setValue("model", "");
-    setValue("mota", "");
-    setValue("name", "");
-    setValue("price", "");
-    setValue("sale", "");
-    setValue("upload", "");
+    reset();
   }, []);
 
   const onSubmit = handleSubmit(async (data) => {
@@ -113,13 +106,7 @@ const FormDisabledDemo: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("loaiSp", "");
-    setValue("model", "");
-    setValue("mota", "");
-    setValue("name", "");
-    setValue("price", "");
-    setValue("sale", "");
-    setValue("upload", "");
+    reset();
   };
 
   return (

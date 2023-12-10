@@ -91,7 +91,7 @@ const NewLaptop: React.FC = () => {
     {
       control, // control props comes from useForm (optional: if you are using FormContext)
       name: "lstProductTypeAndPrice", // unique name for your Field Array
-    }
+    },
   );
   const { laptopDetail } = useAppSelector((state) => state.laptop);
   useEffect(() => {
@@ -122,23 +122,23 @@ const NewLaptop: React.FC = () => {
     setValue("mass", laptopDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.color.toString()
+      laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.color.toString(),
     );
     setValue("monitor", laptopDetail?.monitor);
     setValue("description", laptopDetail?.productInfo?.description);
     setValue("brand", laptopDetail?.productInfo?.brandId.toString());
     setValue(
       "characteristic",
-      laptopDetail?.productInfo?.characteristicId.toString()
+      laptopDetail?.productInfo?.characteristicId.toString(),
     );
     setValue("name", laptopDetail?.productInfo?.name);
     setValue(
       "salePrice",
-      laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice.toString()
+      laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice.toString(),
     );
     setValue(
       "price",
-      laptopDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+      laptopDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
     setValue("operatingSystem", laptopDetail?.operatingSystem);
     setValue("design", laptopDetail?.productInfo?.design);
@@ -161,7 +161,7 @@ const NewLaptop: React.FC = () => {
       graphicsCardId: Number(data.graphicsCard),
       productInfo: {
         brandId: Number(data.brand),
-        categoryId: Number(data.category),
+        categoryId: 2,
         productId: Number(laptopDetail?.productInfo?.productId),
         characteristicId: Number(data.characteristic),
         productCode: laptopDetail?.productInfo?.productCode,
@@ -184,7 +184,7 @@ const NewLaptop: React.FC = () => {
             salePrice: Number(item?.salePrice),
             depotId: Number(item?.depotId) || 1,
             quantity: Number(item?.quantity),
-          })
+          }),
         ),
         lstProductImageUrl: data.imageUrl,
       },
@@ -237,7 +237,7 @@ const NewLaptop: React.FC = () => {
     setValue("mass", laptopDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.color.toString()
+      laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.color.toString(),
     );
     setValue("monitor", laptopDetail?.monitor);
     setValue("description", laptopDetail?.productInfo?.description);
@@ -245,16 +245,16 @@ const NewLaptop: React.FC = () => {
     setValue("brand", laptopDetail?.productInfo?.brandId.toString());
     setValue(
       "characteristic",
-      laptopDetail?.productInfo?.characteristicId.toString()
+      laptopDetail?.productInfo?.characteristicId.toString(),
     );
     setValue("name", laptopDetail?.productInfo?.name);
     setValue(
       "salePrice",
-      laptopDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+      laptopDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
     setValue(
       "price",
-      laptopDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+      laptopDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
     setValue("operatingSystem", laptopDetail?.operatingSystem);
     setValue("design", laptopDetail?.productInfo?.design);
@@ -278,7 +278,7 @@ const NewLaptop: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
-        <Form.Item
+        {/* <Form.Item
           label="Danh mục sản phẩm"
           name=""
           rules={[{ required: true }]}
@@ -294,7 +294,7 @@ const NewLaptop: React.FC = () => {
           >
             {errors.category?.message}
           </SelectCustom>
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item
           label="Hãng sản xuất"
           name="brand"
@@ -542,7 +542,7 @@ const NewLaptop: React.FC = () => {
                   </Form.Item>
                   {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
                 </li>
-              )
+              ),
             )}
             <Form.Item>
               <Button
@@ -748,3 +748,4 @@ const NewLaptop: React.FC = () => {
 };
 
 export default () => <NewLaptop />;
+

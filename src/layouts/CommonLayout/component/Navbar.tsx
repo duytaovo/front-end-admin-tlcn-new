@@ -23,7 +23,7 @@ import PopoverSearch from "src/components/Popover";
 import ItemSearch from "src/components/Search/ItemSearch";
 import { clearLS } from "src/utils/auth";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-
+import LogoutIcon from "@mui/icons-material/Logout";
 const items: MenuProps["items"] = [
   {
     key: "1",
@@ -48,7 +48,7 @@ const customDropdownStyle = {
   className: "px-1 mx-3 text-xl xl:p-0 xl:mr-0 hover:text-mainColor",
 };
 const menuStyle = {
-  padding: "20px 20px",
+  padding: "10px 10px",
   borderRadius: "16px",
 };
 export default function NavbarCustom() {
@@ -180,15 +180,13 @@ export default function NavbarCustom() {
               menuStyle={menuStyle}
               items={items}
             >
-              <div className=" hover:text-mainColor">
-                <LanguageIcon />
-                <span className="mx-1 text-mainColor text-xl">
-                  {currentLanguage}
-                </span>
+              <div className=" hover:text-red-500">
+                <LogoutIcon />
+                <span className="text- text-xl"></span>
               </div>
             </CustomDropDown>
           </div>
-          <div className="flex items-center mr-5 relative">
+          {/* <div className="flex items-center mr-5 relative">
             {enable === "true" ? (
               <IconButton>
                 <DarkModeOutlinedIcon
@@ -210,10 +208,10 @@ export default function NavbarCustom() {
                 />
               </IconButton>
             )}
-          </div>
+          </div> */}
 
           <div className="flex item-center mr-5 relative">
-            <NotificationsNoneOutlinedIcon className="text-xl" />
+            {/* <NotificationsNoneOutlinedIcon className="text-xl" />
             <div className="w-[15px] h-[15px] bg-red-500 rounded-[50%] text-white flex items-center justify-center text-[10px] font-bold absolute -top-[5px] -r-[5px]">
               1
             </div>
@@ -222,7 +220,7 @@ export default function NavbarCustom() {
             <ChatBubbleOutlineOutlinedIcon className="text-xl" />
             <div className="w-[15px] h-[15px] bg-red-500 rounded-[50%] text-white flex items-center justify-center text-[10px] font-bold absolute -top-[5px] -r-[5px]">
               2
-            </div>
+            </div> */}
           </div>
 
           <div className="flex item-center mr-5 relative">
