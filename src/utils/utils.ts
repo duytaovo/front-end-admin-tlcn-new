@@ -19,7 +19,7 @@ export function isAxiosError<T>(error: unknown): error is AxiosError<T> {
 }
 
 export function isAxiosUnprocessableEntityError<FormError>(
-  error: unknown
+  error: unknown,
 ): error is AxiosError<FormError> {
   return (
     isAxiosError(error) &&
@@ -28,7 +28,7 @@ export function isAxiosUnprocessableEntityError<FormError>(
 }
 
 export function isAxiosUnauthorizedError<UnauthorizedError>(
-  error: unknown
+  error: unknown,
 ): error is AxiosError<UnauthorizedError> {
   return (
     isAxiosError(error) &&
@@ -37,11 +37,11 @@ export function isAxiosUnauthorizedError<UnauthorizedError>(
 }
 
 export function isAxiosExpiredTokenError<UnauthorizedError>(
-  error: unknown
+  error: unknown,
 ): error is AxiosError<UnauthorizedError> {
   return (
     isAxiosUnauthorizedError<ErrorResponse<{ name: string; message: string }>>(
-      error
+      error,
     ) && error.response?.data?.data?.name === "EXPIRED_TOKEN"
   );
 }
@@ -50,7 +50,7 @@ const removeSpecialCharacter = (str: string) =>
   // eslint-disable-next-line no-useless-escape
   str.replace(
     /!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g,
-    ""
+    "",
   );
 
 export function formatCurrency(currency: number) {
@@ -78,7 +78,7 @@ export const generateNameId = ({ name, id }: { name: string; id: string }) => {
   return removeSpecialCharacter(name).replace(/\s/g, "-") + `-i-${id}`;
 };
 export const getAvatarUrl = (avatarName?: string) =>
-  avatarName ? `${config.baseUrl}images/${avatarName}` : "";
+  avatarName ? `${avatarName}` : "";
 
 export const generateRandomString = (length: number): string => {
   const characters =
@@ -90,3 +90,4 @@ export const generateRandomString = (length: number): string => {
   }
   return randomString;
 };
+

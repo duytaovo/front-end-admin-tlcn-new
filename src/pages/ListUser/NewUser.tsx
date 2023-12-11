@@ -28,9 +28,9 @@ const normFile = (e: any) => {
 interface FormData {
   gender: string | undefined;
   phoneNumber: string;
-  name: string;
+  // name: string;
   email: string;
-  password: string;
+  // password: string;
   fullName: string | undefined;
   address: string;
   imageUrl: string | undefined;
@@ -98,7 +98,6 @@ const FormDisabledDemo: React.FC = () => {
       });
       setIsSubmitting(true);
       const res = await dispatch(addUser(body));
-      console.log(res);
       unwrapResult(res);
 
       const d = res?.payload?.response?.data;
@@ -158,6 +157,7 @@ const FormDisabledDemo: React.FC = () => {
         <Form.Item name="email" label="Email" rules={[{ required: true }]}>
           <Input
             name="email"
+            placeholder="email"
             register={register}
             type="email"
             className=""
@@ -185,6 +185,7 @@ const FormDisabledDemo: React.FC = () => {
         >
           <Input
             name="fullName"
+            placeholder="Nguyen Van A"
             register={register}
             type="text"
             className=""
@@ -249,7 +250,7 @@ const FormDisabledDemo: React.FC = () => {
         <div className="flex justify-start">
           <Form.Item label="" className="ml-[100px] mb-2">
             <Button className="w-[100px]" onClick={onSubmit}>
-              Lưu
+              {isSubmitting ? "Loading..." : "Lưu"}
             </Button>
           </Form.Item>
           <Form.Item label="" className="ml-[20px] mb-2">

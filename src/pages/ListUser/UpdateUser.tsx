@@ -1,7 +1,6 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-import InputFile from "src/components/InputFile";
 
 import { Button, Form, Upload } from "antd";
 import { useEffect, useMemo, useState } from "react";
@@ -17,6 +16,8 @@ import { ErrorResponse } from "src/types/utils.type";
 import { schemaAddUser } from "src/utils/rules";
 import { getAvatarUrl, isAxiosUnprocessableEntityError } from "src/utils/utils";
 import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
+import { LocationForm } from "src/components/LocationForm";
+import InputFile from "./InputFile";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -27,9 +28,9 @@ const normFile = (e: any) => {
 interface FormData {
   gender: string | undefined;
   phoneNumber: string;
-  name: string;
+  // name: string;
   email: string;
-  password: string;
+  // password: string;
   fullName: string | undefined;
   address: string;
   imageUrl: string | undefined;
@@ -73,38 +74,40 @@ const FormDisabledDemo: React.FC = () => {
         setUserDetail(res.data.data);
       });
   }, []);
-
+  console.log(userDetail);
   useEffect(() => {
     setValue("address", userDetail?.address);
     setValue("email", userDetail?.email);
-    setValue("imageUrl", userDetail?.avatar);
+    setValue("imageUrl", userDetail?.imageUrl);
     setValue("fullName", userDetail?.fullName);
     setValue("phoneNumber", userDetail?.phoneNumber);
     setValue("gender", userDetail?.gender);
   }, [userDetail]);
 
   const onSubmit = handleSubmit(async (data) => {
-    let images = [];
+    let images;
 
     if (file) {
       const form = new FormData();
-      form.append("image", file);
+      form.append("files", file);
       const res = await dispatch(uploadManyImagesProductSmartPhone(form));
       unwrapResult(res);
       const d = res?.payload?.data?.data;
-      console.log(d);
-      // setValue("imageUrl", avatarName);
+      images = d[0].fileUrl;
+      setValue("imageUrl", d[0].fileUrl);
     }
 
     try {
       const body = JSON.stringify({
         email: data.email || null,
-        address: data.address + " " + addressSelect || null,
-        password: data.password || null,
-        name: data.name,
+        address: data.address,
+        password: 123456,
+        // name: data.name,
         phoneNumber: data.phoneNumber || null,
         fullName: data.fullName || null,
         gender: data.gender || null,
+        imageUrl: images,
+        isEnable: true,
       });
       setIsSubmitting(true);
       const res = await dispatch(updateUser({ id: id, body: body }));
@@ -133,7 +136,7 @@ const FormDisabledDemo: React.FC = () => {
   const onClickHuy = () => {
     setValue("address", userDetail?.address);
     setValue("email", userDetail?.email);
-    setValue("imageUrl", userDetail?.avatar);
+    setValue("imageUrl", userDetail?.imageUrl);
     setValue("fullName", userDetail?.fullName);
     setValue("phoneNumber", userDetail?.phoneNumber);
     setValue("gender", userDetail?.gender);
@@ -146,10 +149,10 @@ const FormDisabledDemo: React.FC = () => {
     <div className="bg-white shadow ">
       <h2 className="font-bold m-4 text-2xl">Cập nhật người dùng</h2>
       <Form
-        labelCol={{ span: 4 }}
+        labelCol={{ span: 6 }}
         wrapperCol={{ span: 14 }}
         layout="horizontal"
-        style={{ maxWidth: 600, padding: 5 }}
+        style={{ maxWidth: 600, padding: 4 }}
         autoComplete="off"
         noValidate
         onSubmitCapture={onSubmit}
@@ -222,6 +225,11 @@ const FormDisabledDemo: React.FC = () => {
             className=""
             errorMessage={errors.address?.message}
           />
+          {/* <LocationForm
+            onChange={(e: any) => {
+              setAddresOption(e);
+            }}
+          /> */}
         </Form.Item>
         <Form.Item
           name="phoneNumber"
@@ -250,7 +258,7 @@ const FormDisabledDemo: React.FC = () => {
                 className="h-full w-full rounded-full object-cover"
               />
             </div>
-            <InputFile label="" onChange={handleChangeFile} id="images" />
+            <InputFile onChange={handleChangeFile} />
             <div className="mt-3  flex flex-col items-center text-red-500">
               <div>Dụng lượng file tối đa 2 MB</div>
               <div>Định dạng:.JPEG, .PNG</div>
@@ -261,7 +269,7 @@ const FormDisabledDemo: React.FC = () => {
         <div className="flex justify-start">
           <Form.Item label="" className="ml-[100px] mb-2">
             <Button className="w-[100px]" onClick={onSubmit}>
-              Lưu
+              {isSubmitting ? "Loading..." : "Lưu"}
             </Button>
           </Form.Item>
           <Form.Item label="" className="ml-[20px] mb-2">

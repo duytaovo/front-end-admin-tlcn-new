@@ -102,7 +102,6 @@ export const schemaAddUser = yup.object({
       /(84|0[3|5|7|8|9])+([0-9]{8})\b/g,
       "Số điện thoại không đúng định dạng",
     ),
-  name: yup.string(),
   fullName: yup.string().required("Họ Tên là bắt buộc"),
   email: yup
     .string()
@@ -112,7 +111,6 @@ export const schemaAddUser = yup.object({
     .max(160, "Độ dài từ 5 - 160 ký tự"),
   password: yup
     .string()
-    .required("Password là bắt buộc")
     .min(6, "Độ dài từ 6 - 160 ký tự")
     .max(160, "Độ dài từ 6 - 160 ký tự"),
   address: yup.string(),
