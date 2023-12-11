@@ -320,24 +320,6 @@ const UpdatePhone: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
-        {/* <Form.Item
-          label="Danh mục sản phẩm"
-          name=""
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="category"
-            // label="Hãng xe"
-            placeholder="Vui lòng chọn"
-            defaultValue={smartPhoneDetail?.productInfo?.categoryId}
-            options={category?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.category?.message}
-          </SelectCustom>
-        </Form.Item> */}
         <Form.Item
           label="Hãng sản xuất"
           name="brand"

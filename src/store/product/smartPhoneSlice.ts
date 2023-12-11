@@ -1,9 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import smartPhoneApi from "src/api/product/smartPhone/smart-phone-api";
-import {
-  ListSmartPhone,
-  SmartPhoneDetail,
-} from "src/types/allProductsType.interface";
+import { SmartPhoneDetail } from "src/types/allProductsType.interface";
 import { payloadCreator } from "src/utils/utils";
 
 export const getSmartPhones = createAsyncThunk(
@@ -34,6 +31,7 @@ export const uploadManyImagesProductSmartPhone = createAsyncThunk(
   "smartPhone/uploadManyImagesProductSmartPhone",
   payloadCreator(smartPhoneApi.uploadManyImagesSmartPhone),
 );
+
 export const updateSmartPhone = createAsyncThunk(
   "smartPhone/updateSmartPhone",
   payloadCreator(smartPhoneApi.updateSmartPhone),

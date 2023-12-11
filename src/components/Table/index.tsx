@@ -2,7 +2,6 @@ import * as React from "react";
 import { DataGrid, GridToolbar, GridToolbarExport } from "@mui/x-data-grid";
 import { Paper } from "@mui/material";
 import "./styles.scss";
-import PaginationCustom from "../Pagination";
 import { Pagination, Space, Table } from "antd";
 import {
   GridToolbarContainer,
@@ -97,24 +96,26 @@ const DataTable = ({
           rowHeight={60}
           initialState={{
             pagination: {
-              paginationModel: { page: 0, pageSize: 5 },
+              paginationModel: {
+                pageSize: 10,
+              },
             },
           }}
-          pageSizeOptions={[5, 10]}
+          pageSizeOptions={[10]}
           // disableDensitySelector={true}
           // disableColumnMenu={true}
-          // hideFooterPagination
+          hideFooterPagination
         />
       </div>
-      {/* <div className="data-table__pagination">
+      <div className="data-table__pagination">
         <p className="data-table__total-item">{`Tổng cộng: ${totalItems}`}</p>
         <Pagination
-          current={current + 1}
+          current={current}
           pageSize={pageSize}
           total={totalItems}
           onChange={handleOnChange}
         />
-      </div> */}
+      </div>
     </Paper>
   );
 };

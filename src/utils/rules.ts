@@ -100,13 +100,22 @@ export const schemaAddUser = yup.object({
     .min(10, "Độ dài từ 10 chữ số")
     .matches(
       /(84|0[3|5|7|8|9])+([0-9]{8})\b/g,
-      "Số điện thoại không đúng định dạng"
+      "Số điện thoại không đúng định dạng",
     ),
   name: yup.string(),
   fullName: yup.string().required("Họ Tên là bắt buộc"),
-  email: yup.string().required("Email là bắt buộc"),
-  password: yup.string().required("Password là bắt buộc"),
-  address: yup.string().required("Địa chỉ là bắt buộc"),
+  email: yup
+    .string()
+    .required("Email là bắt buộc")
+    .email("Email không đúng định dạng")
+    .min(5, "Độ dài từ 5 - 160 ký tự")
+    .max(160, "Độ dài từ 5 - 160 ký tự"),
+  password: yup
+    .string()
+    .required("Password là bắt buộc")
+    .min(6, "Độ dài từ 6 - 160 ký tự")
+    .max(160, "Độ dài từ 6 - 160 ký tự"),
+  address: yup.string(),
   imageUrl: yup.string(),
 });
 
@@ -379,3 +388,4 @@ export const schemaSmartWatch = yup.object({
 export type UserSchema = yup.InferType<typeof userSchema>;
 
 export type Schema = yup.InferType<typeof schema>;
+

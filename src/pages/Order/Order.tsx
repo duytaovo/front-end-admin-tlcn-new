@@ -65,11 +65,6 @@ const data = [
       },
     ],
   },
-  // {
-  //   id: 3,
-  //   name: "Ngày đặt hàng",
-  //   detail: [""],
-  // },
 ];
 
 const Order = ({ title }: { title?: string }) => {

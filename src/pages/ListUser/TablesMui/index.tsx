@@ -57,26 +57,30 @@ const UserTable = () => {
         const { row } = params;
 
         const handleDelete = async () => {
-          const res = await dispatch(deleteUser(row.id));
-          unwrapResult(res);
-          const d = res?.payload.data;
-          if (d?.code !== 200) return toast.error(d?.message);
-          await toast.success("Xóa người dùng thành công ");
-          dispatch(getUsers({ pageNumber: currentPage }));
+          if (confirm("Bạn có muốn disable người dùng không?")) {
+            const res = await dispatch(deleteUser(row.id));
+            unwrapResult(res);
+            const d = res?.payload.data;
+            if (d?.code !== 200) return toast.error(d?.message);
+            await toast.success("Xóa người dùng thành công ");
+            dispatch(getUsers({ pageNumber: currentPage }));
+          }
         };
 
         return (
           <Space>
             <Link to={`/user/detail/${row.id}`}>
               {" "}
-              <IconButton className="text-mainColor">
-                <EditIcon
-                  className="text-mainColor"
-                  sx={{
-                    color: "",
-                  }}
-                />
-              </IconButton>
+              <Tooltip title="Cập nhật" className="">
+                <IconButton className="text-mainColor">
+                  <EditIcon
+                    className="text-mainColor"
+                    sx={{
+                      color: "",
+                    }}
+                  />
+                </IconButton>
+              </Tooltip>
             </Link>
             {/* <Link to={path.users}> */}
             <Tooltip title="Thay đổi trạng thái" className="">

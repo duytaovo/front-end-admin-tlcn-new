@@ -4,7 +4,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import InputFile from "src/components/InputFile";
 
 import { Button, Form, Upload } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -15,7 +15,8 @@ import { useAppDispatch } from "src/hooks/useRedux";
 import { getDetailUser, getUsers, updateUser } from "src/store/user/userSlice";
 import { ErrorResponse } from "src/types/utils.type";
 import { schemaAddUser } from "src/utils/rules";
-import { isAxiosUnprocessableEntityError } from "src/utils/utils";
+import { getAvatarUrl, isAxiosUnprocessableEntityError } from "src/utils/utils";
+import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -37,16 +38,20 @@ const FormDisabledDemo: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [file, setFile] = useState<File[]>();
-  const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
+  const [file, setFile] = useState<File>();
 
+  const previewImage = useMemo(() => {
+    return file ? URL.createObjectURL(file) : "";
+  }, [file]);
+  const [addressOption, setAddresOption] = useState<any>();
+  const addressSelect =
+    addressOption?.ward.name +
+    " " +
+    addressOption?.district.name +
+    " " +
+    addressOption?.city.name;
   // Tạo một mảng chứa các URL tạm thời cho ảnh
-  const imageUrls: string[] = [];
 
-  for (const image of imageArray) {
-    const imageUrl = URL.createObjectURL(image);
-    imageUrls.push(imageUrl);
-  }
   const { id } = useParams();
   const [userDetail, setUserDetail] = useState<any>();
   const {
@@ -54,10 +59,13 @@ const FormDisabledDemo: React.FC = () => {
     formState: { errors },
     setError,
     register,
+    getValues,
     setValue,
+    watch,
   } = useForm({
     resolver: yupResolver(schemaAddUser),
   });
+  const avatar = watch("imageUrl");
   useEffect(() => {
     dispatch(getDetailUser(id))
       .then(unwrapResult)
@@ -72,29 +80,32 @@ const FormDisabledDemo: React.FC = () => {
     setValue("imageUrl", userDetail?.avatar);
     setValue("fullName", userDetail?.fullName);
     setValue("phoneNumber", userDetail?.phoneNumber);
+    setValue("gender", userDetail?.gender);
   }, [userDetail]);
 
   const onSubmit = handleSubmit(async (data) => {
-    const body = JSON.stringify({
-      email: data.email,
-      address: data.address,
-      password: data.password,
-      name: data.name,
-      phoneNumber: data.phoneNumber,
-      fullname: data.fullName,
-      gender: data.gender,
-    });
-    // if (file) {
-    //   const form = new FormData();
-    //   form.append("file", file[0]);
-    //   form.append("image", file[0]);
-    //   const res = await dispatch(uploadAvatar(uploadAvatar));
-    //   unwrapResult(res);
-    // } else {
-    //   toast.warning("Cần chọn ảnh");
-    // }
+    let images = [];
+
+    if (file) {
+      const form = new FormData();
+      form.append("image", file);
+      const res = await dispatch(uploadManyImagesProductSmartPhone(form));
+      unwrapResult(res);
+      const d = res?.payload?.data?.data;
+      console.log(d);
+      // setValue("imageUrl", avatarName);
+    }
 
     try {
+      const body = JSON.stringify({
+        email: data.email || null,
+        address: data.address + " " + addressSelect || null,
+        password: data.password || null,
+        name: data.name,
+        phoneNumber: data.phoneNumber || null,
+        fullName: data.fullName || null,
+        gender: data.gender || null,
+      });
       setIsSubmitting(true);
       const res = await dispatch(updateUser({ id: id, body: body }));
       unwrapResult(res);
@@ -125,10 +136,12 @@ const FormDisabledDemo: React.FC = () => {
     setValue("imageUrl", userDetail?.avatar);
     setValue("fullName", userDetail?.fullName);
     setValue("phoneNumber", userDetail?.phoneNumber);
+    setValue("gender", userDetail?.gender);
   };
-  const handleChangeFile = (file?: File[]) => {
+  const handleChangeFile = (file?: File) => {
     setFile(file);
   };
+
   return (
     <div className="bg-white shadow ">
       <h2 className="font-bold m-4 text-2xl">Cập nhật người dùng</h2>
@@ -145,15 +158,13 @@ const FormDisabledDemo: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="gender"
-            // label="Hãng xe"
             placeholder="Giới tính"
-            defaultValue={""}
+            defaultValue={1}
             options={[
               { id: 1, name: "Nam" },
               { id: 2, name: "Nữ" },
             ]}
             register={register}
-            isBrand={true}
           >
             {errors.gender?.message}
           </SelectCustom>
@@ -173,9 +184,10 @@ const FormDisabledDemo: React.FC = () => {
           rules={[{ required: true }]}
         >
           <Input
+            defaultValue={"*******"}
             name="password"
             register={register}
-            type="text"
+            type="password"
             className=""
             errorMessage={errors.password?.message}
           />
@@ -225,26 +237,20 @@ const FormDisabledDemo: React.FC = () => {
           />
         </Form.Item>
         <Form.Item
-          name="files"
-          // rules={[{ required: true }]}
+          name="file"
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
         >
           <div className="flex flex-col items-start ">
             <div className="my-5 w-24 space-y-5 justify-between items-center">
-              {imageUrls.map((imageUrl, index) => {
-                return (
-                  <img
-                    key={index}
-                    src={imageUrl}
-                    className="h-full rounded-md w-full  object-cover"
-                    alt="avatar"
-                  />
-                );
-              })}
+              <img
+                src={previewImage || getAvatarUrl(avatar)}
+                alt=""
+                className="h-full w-full rounded-full object-cover"
+              />
             </div>
-            <InputFile label="" onChange={handleChangeFile} id="files" />
+            <InputFile label="" onChange={handleChangeFile} id="images" />
             <div className="mt-3  flex flex-col items-center text-red-500">
               <div>Dụng lượng file tối đa 2 MB</div>
               <div>Định dạng:.JPEG, .PNG</div>

@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Input from "src/components/Input";
 import InputFile from "src/components/InputFile";
+import { LocationForm } from "src/components/LocationForm";
 import SelectCustom from "src/components/Select";
 import path from "src/constants/path";
 import { useAppDispatch } from "src/hooks/useRedux";
@@ -40,7 +41,14 @@ const FormDisabledDemo: React.FC = () => {
   const navigate = useNavigate();
   const [file, setFile] = useState<File[]>();
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
-
+  const [addressOption, setAddresOption] = useState<any>();
+  const [methodTransport, setMethodTransport] = useState<any>();
+  const addressSelect =
+    addressOption?.ward.name +
+    " " +
+    addressOption?.district.name +
+    " " +
+    addressOption?.city.name;
   // Tạo một mảng chứa các URL tạm thời cho ảnh
   const imageUrls: string[] = [];
 
@@ -54,17 +62,12 @@ const FormDisabledDemo: React.FC = () => {
     setError,
     register,
     setValue,
+    reset,
   } = useForm({
     resolver: yupResolver(schemaAddUser),
   });
   useEffect(() => {
-    setValue("address", "");
-    setValue("imageUrl", "");
-    setValue("email", "");
-    setValue("password", "");
-    setValue("imageUrl", "");
-    setValue("name", "");
-    setValue("phoneNumber", "");
+    reset();
   }, []);
 
   const onSubmit = handleSubmit(async (data) => {
@@ -81,27 +84,25 @@ const FormDisabledDemo: React.FC = () => {
       for (let i = 0; i < d.length; i++) {
         images.push(d[i]?.fileUrl);
       }
-    } else {
-      toast.warning("Cần chọn ảnh");
-      return;
     }
 
     try {
       const body = JSON.stringify({
         email: data.email,
-        address: data.address,
+        address: data.address + " " + addressSelect,
         password: data.password,
-        name: data.name,
         gender: data.gender,
         phoneNumber: data.phoneNumber,
-        fullname: data.fullName,
+        fullName: data.fullName,
         imageUrl: images[0],
       });
       setIsSubmitting(true);
       const res = await dispatch(addUser(body));
+      console.log(res);
       unwrapResult(res);
-      const d = res?.payload.data;
-      if (d?.code !== 200) return toast.error(d?.message);
+
+      const d = res?.payload?.response?.data;
+      // if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Thêm người dùng thành công ");
       await dispatch(getUsers(""));
       await navigate(path.users);
@@ -122,13 +123,7 @@ const FormDisabledDemo: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("address", "");
-    setValue("imageUrl", "");
-    setValue("email", "");
-    setValue("password", "");
-    setValue("imageUrl", "");
-    setValue("name", "");
-    setValue("phoneNumber", "");
+    reset();
   };
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
@@ -149,7 +144,6 @@ const FormDisabledDemo: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="gender"
-            // label="Hãng xe"
             placeholder="Giới tính"
             defaultValue={""}
             options={[
@@ -157,7 +151,6 @@ const FormDisabledDemo: React.FC = () => {
               { id: 2, name: "Nữ" },
             ]}
             register={register}
-            isBrand={true}
           >
             {errors.gender?.message}
           </SelectCustom>
@@ -166,7 +159,7 @@ const FormDisabledDemo: React.FC = () => {
           <Input
             name="email"
             register={register}
-            type="text"
+            type="email"
             className=""
             errorMessage={errors.email?.message}
           />
@@ -184,15 +177,7 @@ const FormDisabledDemo: React.FC = () => {
             errorMessage={errors.password?.message}
           />
         </Form.Item>
-        <Form.Item name="name" label="Tên" rules={[{ required: true }]}>
-          <Input
-            name="name"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.name?.message}
-          />
-        </Form.Item>
+
         <Form.Item
           name="fullname"
           label="Họ và Tên"
@@ -206,13 +191,18 @@ const FormDisabledDemo: React.FC = () => {
             errorMessage={errors.fullName?.message}
           />
         </Form.Item>
-        <Form.Item label="Địa chỉ" name="address">
+        <Form.Item label="Số nhà, tên đường" name="address">
           <Input
             name="address"
             register={register}
             type="text"
             className=""
             errorMessage={errors.address?.message}
+          />
+          <LocationForm
+            onChange={(e: any) => {
+              setAddresOption(e);
+            }}
           />
         </Form.Item>
         <Form.Item
