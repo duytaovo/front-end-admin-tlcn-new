@@ -71,7 +71,6 @@ const NewPhone: React.FC = () => {
   });
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { category } = useAppSelector((state) => state.category);
   const { character } = useAppSelector((state) => state.character);
   const { depot } = useAppSelector((state) => state.depot);
   const { brand } = useAppSelector((state) => state.brand);
@@ -219,24 +218,6 @@ const NewPhone: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
-        {/* <Form.Item
-          label="Danh mục sản phẩm"
-          name=""
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black "}
-            id="category"
-            // label="Hãng xe"
-            placeholder="Chọn danh mục"
-            defaultValue={""}
-            options={category?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.category?.message}
-          </SelectCustom>
-        </Form.Item> */}
         <Form.Item
           label="Hãng sản xuất"
           name="brand"
@@ -255,7 +236,7 @@ const NewPhone: React.FC = () => {
             {errors.brand?.message}
           </SelectCustom>
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           label="Hệ điều hành"
           name="operatingSystem"
           rules={[{ required: true }]}
@@ -275,6 +256,20 @@ const NewPhone: React.FC = () => {
           >
             {errors.operatingSystem?.message}
           </SelectCustom>
+        </Form.Item> */}
+        <Form.Item
+          label="Hệ điều hành"
+          name="operatingSystem"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="operatingSystem"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.operatingSystem?.message}
+            placeholder="iOS"
+          />
         </Form.Item>
         <Form.Item
           label="Đặc điểm sản phẩm"

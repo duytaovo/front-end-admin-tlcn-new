@@ -12,6 +12,8 @@ import type { MenuProps } from "antd";
 import { Button, Menu } from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { clearLS } from "src/utils/auth";
+import { useAppDispatch } from "src/hooks/useRedux";
+import { handleFilterStore } from "src/store/product/smartPhoneSlice";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -66,7 +68,7 @@ const SideBarNew: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-
+  const dispatch = useAppDispatch();
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   };
@@ -97,8 +99,10 @@ const SideBarNew: React.FC = () => {
         onClick={({ item, key, keyPath, domEvent }) => {
           if (keyPath[0] !== "product") {
             navigate(keyPath[0]);
+            dispatch(handleFilterStore([]));
           } else {
             navigate(keyPath[1]);
+            dispatch(handleFilterStore([]));
           }
         }}
       />

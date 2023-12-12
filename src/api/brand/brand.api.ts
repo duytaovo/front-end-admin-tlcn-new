@@ -16,16 +16,17 @@ const brandApi = {
     return http.post<SuccessResponse<any>>(`/manage/brand/update/${_id}`, body);
   },
   deleteBrand(idBrand: string[]) {
-    return http.post<SuccessResponse<any>>(`/manage/brand/delete/${idBrand}`);
+    return http.put<SuccessResponse<any>>(`/manage/brand/delete/${idBrand}`);
   },
   getBrandWithPageNumber(pageNumber: number) {
     return http.get<SuccessResponse<any>>(`/manage/brand/${pageNumber}`);
   },
   getBrandWithPageNumberSize(pageNumber: number, pageSize: number) {
     return http.get<SuccessResponse<any>>(
-      `/manage/brand/${pageNumber}/${pageSize}`
+      `/manage/brand/${pageNumber}/${pageSize}`,
     );
   },
 };
 
 export default brandApi;
+

@@ -24,7 +24,9 @@ const TableBrand: React.FC = () => {
   const { brand } = useAppSelector((state) => state.brand);
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
   const pageSize = 10; // Số phần tử trên mỗi trang
-
+  useEffect(() => {
+    dispatch(getBrands({ pageNumber: currentPage, pageSize: 10 }));
+  }, [currentPage]);
   const columns = [
     // { field: "id", headerName: "ID", width: 70 },
     { field: "stt", headerName: "STT", width: 70 },
@@ -37,19 +39,18 @@ const TableBrand: React.FC = () => {
       sortable: false,
       renderCell: (params: any) => {
         const { row } = params;
-
         const handleDelete = async () => {
-          const res = await dispatch(deleteBrand(row.id));
+          const res = await dispatch(deleteBrand(row.stt));
           unwrapResult(res);
           const d = res?.payload;
           if (d?.status !== 200) return toast.error(d?.message);
           await toast.success("Xóa nhãn hiệu thành công ");
-          await dispatch(getBrands(""));
+          dispatch(getBrands({ pageNumber: currentPage, pageSize: 10 }));
         };
 
         return (
           <Space>
-            <Link to={`${path.brandDetail}/${row.id}`}>
+            <Link to={`/brand/detail/${row.stt}`}>
               {" "}
               <IconButton className="text-mainColor">
                 <EditIcon
@@ -73,9 +74,6 @@ const TableBrand: React.FC = () => {
     },
   ];
 
-  useEffect(() => {
-    dispatch(getBrands({ pageNumber: currentPage }));
-  }, [currentPage]);
   const originData = [];
 
   for (let i = 0; i < brand?.data?.data?.length; i++) {

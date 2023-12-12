@@ -74,7 +74,6 @@ const FormDisabledDemo: React.FC = () => {
         setUserDetail(res.data.data);
       });
   }, []);
-  console.log(userDetail);
   useEffect(() => {
     setValue("address", userDetail?.address);
     setValue("email", userDetail?.email);
@@ -181,7 +180,7 @@ const FormDisabledDemo: React.FC = () => {
             errorMessage={errors.email?.message}
           />
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           name="password"
           label="Password"
           rules={[{ required: true }]}
@@ -194,7 +193,7 @@ const FormDisabledDemo: React.FC = () => {
             className=""
             errorMessage={errors.password?.message}
           />
-        </Form.Item>
+        </Form.Item> */}
         {/* <Form.Item name="name" label="Tên" rules={[{ required: true }]}>
           <Input
             name="name"

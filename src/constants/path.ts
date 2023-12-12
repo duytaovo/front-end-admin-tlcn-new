@@ -55,6 +55,37 @@ const path = {
   keyboardDetail: "/keyboard/detail/:nameId",
   keyboardUpdate: "/keyboard/detail/update/:nameId",
   keyboardNew: "/keyboardNew",
+  /////////
+  monitor: "/monitor",
+  monitorDetail: "/monitor/detail/:nameId",
+  monitorUpdate: "/monitor/detail/update/:nameId",
+  monitorNew: "/monitorNew",
+
+  microPhone: "/microPhone",
+  microPhoneDetail: "/microPhone/detail/:nameId",
+  microPhoneUpdate: "/microPhone/detail/update/:nameId",
+  microPhoneNew: "/microPhoneNew",
+
+  mainBoard: "/mainBoard",
+  mainBoardDetail: "/mainBoard/detail/:nameId",
+  mainBoardUpdate: "/mainBoard/detail/update/:nameId",
+  mainBoardNew: "/mainBoardNew",
+
+  computerPower: "/computerPower",
+  computerPowerDetail: "/computerPower/detail/:nameId",
+  computerPowerUpdate: "/computerPower/detail/update/:nameId",
+  computerPowerNew: "/computerPowerNew",
+
+  backupCharger: "/backupCharger",
+  backupChargerDetail: "/backupCharger/detail/:nameId",
+  backupChargerUpdate: "/backupCharger/detail/update/:nameId",
+  backupChargerNew: "/backupChargerNew",
+
+  adapter: "/adapter",
+  adapterDetail: "/adapter/detail/:nameId",
+  adapterUpdate: "/adapter/detail/update/:nameId",
+  adapterNew: "/adapterNew",
+
   feedback: "/feedback",
   feedbackDetail: "/feedback/:id",
 } as const;

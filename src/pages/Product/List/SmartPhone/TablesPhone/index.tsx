@@ -213,6 +213,7 @@ const TablePhone: React.FC = () => {
       storageCapacity: ROM ? ROM : [],
       charging: PinSạc ? PinSạc : [],
       screen: ManHinh ? ManHinh : [],
+      name: null,
     };
     dispatch(
       getSmartPhones({

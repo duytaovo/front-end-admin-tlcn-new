@@ -328,12 +328,10 @@ const UpdatePhone: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="brand"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={smartPhoneDetail?.productInfo?.brandId}
             options={brand?.data?.data}
             register={register}
-            isBrand={true}
           >
             {errors.brand?.message}
           </SelectCustom>
@@ -343,21 +341,14 @@ const UpdatePhone: React.FC = () => {
           name="operatingSystem"
           rules={[{ required: true }]}
         >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="operatingSystem"
-            // label="Hãng xe"
-            placeholder="Vui lòng chọn"
-            defaultValue={smartPhoneDetail?.operatingSystem}
-            options={[
-              { id: "iOS", name: "iOS" },
-              { id: "Android", name: "android" },
-            ]}
+          <Input
+            name="operatingSystem"
             register={register}
-            isBrand={true}
-          >
-            {errors.operatingSystem?.message}
-          </SelectCustom>
+            type="text"
+            className=""
+            errorMessage={errors.operatingSystem?.message}
+            placeholder="iOS"
+          />
         </Form.Item>
         <Form.Item
           label="Đặc điểm sản phẩm"

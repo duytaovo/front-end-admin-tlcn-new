@@ -9,11 +9,13 @@ import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import path from "src/constants/path";
-import { Pagination, Space, Table } from "antd";
+import { Pagination, Space, Switch, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { deleteUser, getUsers } from "src/store/user/userSlice";
+import { deleteUser, getUsers, updateUser } from "src/store/user/userSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
+import EmojiEmotionsOutlinedIcon from "@mui/icons-material/EmojiEmotionsOutlined";
+import NoAccountsOutlinedIcon from "@mui/icons-material/NoAccountsOutlined";
 interface DataType {
   key: number;
   id?: string;
@@ -48,6 +50,7 @@ const UserTable = () => {
     { field: "gender", headerName: "Giới tính", width: 100 },
     { field: "phoneNumber", headerName: "Số điện thoại", width: 150 },
     { field: "email", headerName: "Email", flex: 1 },
+    { field: "status", headerName: "Trạng thái", flex: 1 },
     {
       field: "action",
       headerName: "Tùy chọn",
@@ -62,16 +65,36 @@ const UserTable = () => {
             unwrapResult(res);
             const d = res?.payload.data;
             if (d?.code !== 200) return toast.error(d?.message);
-            await toast.success("Xóa người dùng thành công ");
+            await toast.success("Disable người dùng thành công  ");
             dispatch(getUsers({ pageNumber: currentPage }));
           }
         };
-
+        const onChange = async () => {
+          if (confirm("Bạn có muốn enable người dùng không?")) {
+            const body = JSON.stringify({
+              email: null,
+              address: null,
+              password: 123456,
+              // name: data.name,
+              phoneNumber: null,
+              fullName: null,
+              gender: null,
+              imageUrl: null,
+              isEnable: true,
+            });
+            const res = await dispatch(updateUser({ id: row.id, body: body }));
+            unwrapResult(res);
+            const d = res?.payload.data;
+            // if (d?.code !== 200) return toast.error(d?.message);
+            await toast.success("Enable người dùng thành công ");
+            dispatch(getUsers({ pageNumber: currentPage }));
+          }
+        };
         return (
           <Space>
             <Link to={`/user/detail/${row.id}`}>
               {" "}
-              <Tooltip title="Cập nhật" className="">
+              <Tooltip title="Cập nhật thông tin" className="">
                 <IconButton className="text-mainColor">
                   <EditIcon
                     className="text-mainColor"
@@ -82,10 +105,20 @@ const UserTable = () => {
                 </IconButton>
               </Tooltip>
             </Link>
-            {/* <Link to={path.users}> */}
-            <Tooltip title="Thay đổi trạng thái" className="">
+            {/* <Switch onChange={onChange} />; */}
+            <Tooltip title="Enable" className="">
+              <IconButton onClick={onChange} className="text-mainColor">
+                <EmojiEmotionsOutlinedIcon
+                  className="text-blue-500"
+                  sx={{
+                    color: "",
+                  }}
+                />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Disable" className="">
               <IconButton onClick={handleDelete}>
-                <DeleteIcon className="text-red-700" />
+                <NoAccountsOutlinedIcon className="text-red-700" />
               </IconButton>
             </Tooltip>
             {/* </Link> */}
@@ -104,6 +137,7 @@ const UserTable = () => {
       address: user?.data?.data[i].address,
       role: user?.data?.data[i].level === 5 ? "ADMIN" : "USER",
       email: user?.data?.data[i].email,
+      status: user?.data?.data[i].isEnable === true ? "ACTIVE" : "DISABLED",
       fullName: user?.data?.data[i].fullName || "",
       gender: user?.data?.data[i].gender === 1 ? "Nam" : "Nữ",
       phoneNumber: user?.data?.data[i].phoneNumber,

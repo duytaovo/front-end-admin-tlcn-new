@@ -283,7 +283,7 @@ const Order = ({ title }: { title?: string }) => {
       <div className="text-mainColor max-w-[1200px] ml-5 mb-5 m-auto">
         <Filter handle={handle} data={data} />
       </div>
-      <div className="space-x-5">
+      <div className="space-x-5 ml-5 mb-5">
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
             label="Chọn ngày mua bắt đầu"

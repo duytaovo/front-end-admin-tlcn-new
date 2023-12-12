@@ -25,6 +25,12 @@ import keyboardReducer from "./accessory/keyboard";
 import loudSpeakerReducer from "./accessory/loudSpeaker";
 import filterReducer from "./product/filterSlice";
 import searchSlice from "./search/searchSlice";
+import adapterReducer from "./accessory/adapter";
+import backupChargerReducer from "./accessory/backupCharger";
+import monitorReducer from "./accessory/monitor";
+import computerPowerReducer from "./accessory/computerPower";
+import mainboardReducer from "./accessory/mainboard";
+import microphoneReducer from "./accessory/microphone";
 
 export const store = configureStore({
   reducer: {
@@ -36,6 +42,12 @@ export const store = configureStore({
     smartWatch: smartWatchReducer,
     laptop: laptopReducer,
     tablet: tabletReducer,
+    adapter: adapterReducer,
+    backupCharger: backupChargerReducer,
+    monitor: monitorReducer,
+    computerPower: computerPowerReducer,
+    mainboard: mainboardReducer,
+    microphone: microphoneReducer,
     category: categoryReducer,
     mouse: mouseReducer,
     keyboard: keyboardReducer,

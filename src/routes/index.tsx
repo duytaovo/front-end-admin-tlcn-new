@@ -1,5 +1,9 @@
 import { lazy } from "react";
 import path from "src/constants/path";
+import NewMonitor from "src/pages/Product/Create/NewMonitor";
+import MonitorDetail from "src/pages/Product/Detail/Monitor_Detail";
+import ListMonitor from "src/pages/Product/List/Monitor/ListMonitor";
+import UpdateMonitor from "src/pages/Product/Update/UpdateMonitor";
 
 const MouseDetail = lazy(() => import("src/pages/Product/Detail/Mouse_Detail"));
 const KeyboardDetail = lazy(
@@ -336,6 +340,103 @@ export const routeMain = [
   {
     path: path.feedback,
     Component: TableFeedback,
+  },
+  /////////////////
+  {
+    path: path.monitor,
+    Component: ListMonitor,
+  },
+  {
+    path: path.monitorNew,
+    Component: NewMonitor,
+  },
+  {
+    path: path.monitorDetail,
+    Component: MonitorDetail,
+  },
+  {
+    path: path.monitorUpdate,
+    Component: UpdateMonitor,
+  },
+  {
+    path: path.microPhone,
+    Component: ListMonitor,
+  },
+  {
+    path: path.microPhoneNew,
+    Component: NewMonitor,
+  },
+  {
+    path: path.microPhoneDetail,
+    Component: MonitorDetail,
+  },
+  {
+    path: path.microPhoneUpdate,
+    Component: UpdateMonitor,
+  },
+  {
+    path: path.mainBoard,
+    Component: ListMonitor,
+  },
+  {
+    path: path.mainBoardNew,
+    Component: NewMonitor,
+  },
+  {
+    path: path.mainBoardDetail,
+    Component: MonitorDetail,
+  },
+  {
+    path: path.mainBoardUpdate,
+    Component: UpdateMonitor,
+  },
+  {
+    path: path.backupCharger,
+    Component: ListMonitor,
+  },
+  {
+    path: path.backupChargerNew,
+    Component: NewMonitor,
+  },
+  {
+    path: path.backupChargerDetail,
+    Component: MonitorDetail,
+  },
+  {
+    path: path.backupChargerUpdate,
+    Component: UpdateMonitor,
+  },
+  {
+    path: path.computerPower,
+    Component: ListMonitor,
+  },
+  {
+    path: path.computerPowerNew,
+    Component: NewMonitor,
+  },
+  {
+    path: path.computerPowerDetail,
+    Component: MonitorDetail,
+  },
+  {
+    path: path.computerPowerUpdate,
+    Component: UpdateMonitor,
+  },
+  {
+    path: path.adapter,
+    Component: ListMonitor,
+  },
+  {
+    path: path.adapterNew,
+    Component: NewMonitor,
+  },
+  {
+    path: path.adapterDetail,
+    Component: MonitorDetail,
+  },
+  {
+    path: path.adapterUpdate,
+    Component: UpdateMonitor,
   },
   {
     path: "*",
