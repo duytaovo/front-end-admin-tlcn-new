@@ -40,21 +40,12 @@ const mainboardlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // builder.addCase(addmainboard.fulfilled, (state, { payload }) => {
-    //   state.mainboard = payload.data;
-    // });
     builder.addCase(getMainboard.fulfilled, (state, { payload }) => {
       state.mainboard = payload.data;
     });
     builder.addCase(getDetailMainboard.fulfilled, (state, { payload }) => {
       state.mainboardDetail = payload.data;
     });
-    // builder.addCase(updatemainboard.fulfilled, (state, { payload }) => {
-    //   [state.mainboardDetail, ...payload.data];
-    // });
-    // builder.addCase(deletemainboard.fulfilled, (state, { payload }) => {
-    //   state.mainboard = payload.data;
-    // });
   },
 });
 

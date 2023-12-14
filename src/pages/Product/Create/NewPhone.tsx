@@ -1,7 +1,7 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Form } from "antd";
+import { Button, Form, Modal } from "antd";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -57,6 +57,20 @@ interface FormData {
 
 const NewPhone: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   const {
     handleSubmit,
     formState: { errors },
@@ -102,8 +116,9 @@ const NewPhone: React.FC = () => {
   );
   const onSubmit = handleSubmit(async (data) => {
     let images = [];
-
     if (file) {
+      showModal();
+      setIsSubmitting(true);
       const form = new FormData();
       for (let i = 0; i < file.length; i++) {
         form.append("files", file[i]);
@@ -155,7 +170,7 @@ const NewPhone: React.FC = () => {
             price: Number(item?.price),
             salePrice: Number(item?.salePrice),
             quantity: Number(item?.quantity),
-            depotId: Number(item?.depot) || 1,
+            depotId: Number(item?.depot),
           })),
 
           lstProductImageUrl: images || [],
@@ -170,12 +185,12 @@ const NewPhone: React.FC = () => {
         charging: data.charging,
         networkSupport: data.networkSupport,
       });
-      setIsSubmitting(true);
+
       const res = await dispatch(addSmartPhone(body));
       unwrapResult(res);
       const d = res?.payload?.data;
       if (d?.code !== 200) return toast.error(d?.message);
-      await toast.success("Thêm sản phẩm điện thoại thành công ");
+      await toast.success("Thêm sản phẩm thành công ");
       dispatch(
         getSmartPhones({
           body: bodySmartphone,
@@ -197,6 +212,7 @@ const NewPhone: React.FC = () => {
       }
     } finally {
       setIsSubmitting(false);
+      handleOk();
     }
   });
   const onClickHuy = () => {
@@ -210,8 +226,8 @@ const NewPhone: React.FC = () => {
     <div className="bg-white shadow ">
       <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm điện thoại</h2>
       <Form
-        labelCol={{ span: 6 }}
-        wrapperCol={{ span: 14 }}
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 18 }}
         layout="horizontal"
         style={{ maxWidth: 600, padding: 6 }}
         autoComplete="off"
@@ -224,7 +240,7 @@ const NewPhone: React.FC = () => {
           rules={[{ required: true }]}
         >
           <SelectCustom
-            className={"flex-1 text-black  "}
+            className={" text-black  "}
             id="brand"
             // label="Hãng xe"
             placeholder="Chọn hãng sx"
@@ -236,27 +252,6 @@ const NewPhone: React.FC = () => {
             {errors.brand?.message}
           </SelectCustom>
         </Form.Item>
-        {/* <Form.Item
-          label="Hệ điều hành"
-          name="operatingSystem"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="operatingSystem"
-            // label="Hãng xe"
-            placeholder="Chọn hệ điều hành"
-            defaultValue={""}
-            options={[
-              { id: "iOS", name: "iOS" },
-              { id: "Android", name: "android" },
-            ]}
-            register={register}
-            isBrand={true}
-          >
-            {errors.operatingSystem?.message}
-          </SelectCustom>
-        </Form.Item> */}
         <Form.Item
           label="Hệ điều hành"
           name="operatingSystem"
@@ -436,11 +431,10 @@ const NewPhone: React.FC = () => {
                     id={`lstProductTypeAndPrice.${index}.depot`}
                     // label="Hãng xe"
                     placeholder="Chọn kho hàng"
-                    defaultValue={1}
                     options={depot?.data?.data}
                     register={register}
                   >
-                    {errors.depot?.message}
+                    {errors.depotId?.message}
                   </SelectCustom>
                 </Form.Item>
                 <div className="flex justify-between space-x-1">
@@ -671,6 +665,14 @@ const NewPhone: React.FC = () => {
           </Form.Item>
         </div>
       </Form>
+      <Modal
+        title="Thêm sản phẩm"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>Đang xử lý, vui lòng đợi...</p>
+      </Modal>
     </div>
   );
 };

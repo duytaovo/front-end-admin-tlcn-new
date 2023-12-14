@@ -4,7 +4,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { Button, Form } from "antd";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Input from "src/components/Input";
 import path from "src/constants/path";
@@ -13,6 +13,7 @@ import { ErrorResponse } from "src/types/utils.type";
 import { schemaProductLoudSpeaker, schemaProductRam } from "src/utils/rules";
 import {
   generateRandomString,
+  getIdFromNameId,
   isAxiosUnprocessableEntityError,
 } from "src/utils/utils";
 import SelectCustom from "src/components/Select";
@@ -26,7 +27,9 @@ import { addRam, getRams } from "src/store/ram/ramSlice";
 import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
 import {
   addloudSpeaker,
+  getDetailloudSpeaker,
   getloudSpeaker,
+  updateloudSpeaker,
 } from "src/store/accessory/loudSpeaker";
 
 const normFile = (e: any) => {
@@ -55,8 +58,21 @@ interface FormData {
   salePrice: string | undefined;
 }
 
-const NewLoudSpeaker: React.FC = () => {
+const UpdateLoudSpeaker: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const {
     handleSubmit,
     formState: { errors },
@@ -65,9 +81,14 @@ const NewLoudSpeaker: React.FC = () => {
     setValue,
     control,
     watch,
+    getValues,
   } = useForm({
     resolver: yupResolver(schemaProductLoudSpeaker),
   });
+  const { nameId } = useParams();
+  const id = getIdFromNameId(nameId as string);
+  // const { brand } = useAppSelector((state) => state.brand);
+  const { loudSpeakerDetail } = useAppSelector((state) => state.loudSpeaker);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { depot } = useAppSelector((state) => state.depot);
@@ -78,34 +99,91 @@ const NewLoudSpeaker: React.FC = () => {
     dispatch(getBrands({ pageSize: 100 }));
     dispatch(getdepots({ pageSize: 100 }));
   }, []);
-
+  useEffect(() => {
+    dispatch(getDetailloudSpeaker(id));
+  }, [id]);
   const [file, setFile] = useState<File[]>();
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
+  const [imageUrls, setImages] = useState<string[]>([]);
 
   // Tạo một mảng chứa các URL tạm thời cho ảnh
-  const imageUrls: string[] = [];
 
   for (const image of imageArray) {
     const imageUrl = URL.createObjectURL(image);
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("salePrice", "");
-    setValue("price", "");
-    setValue("design", "");
-    setValue("dimension", "");
-  }, []);
+    setImages(loudSpeakerDetail.productInfo.lstProductImageUrl);
+
+    const productInfo = loudSpeakerDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
+    setValue("accessories", loudSpeakerDetail?.productInfo?.accessories);
+    setValue("totalCapacity", loudSpeakerDetail?.totalCapacity);
+    setValue("time", loudSpeakerDetail?.time);
+    setValue("connection", loudSpeakerDetail?.connection);
+    setValue("mass", loudSpeakerDetail?.productInfo?.mass.toString());
+    setValue(
+      "color",
+      loudSpeakerDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
+    );
+    setValue("utilities", loudSpeakerDetail?.utilities);
+    setValue("control", loudSpeakerDetail?.control);
+    setValue("description", loudSpeakerDetail?.productInfo?.description);
+    setValue("brand", loudSpeakerDetail?.productInfo?.brandId.toString());
+    setValue(
+      "characteristic",
+      loudSpeakerDetail?.productInfo?.characteristicId.toString(),
+    );
+    setValue("name", loudSpeakerDetail?.productInfo?.name);
+    setValue(
+      "salePrice",
+      loudSpeakerDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
+    );
+    setValue(
+      "price",
+      loudSpeakerDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
+    );
+    setValue("design", loudSpeakerDetail?.productInfo?.design);
+    setValue("dimension", loudSpeakerDetail?.productInfo?.dimension);
+    setValue("category", loudSpeakerDetail?.productInfo?.categoryId.toString());
+    setValue("launchTime", "2023");
+    setValue("files", loudSpeakerDetail?.productInfo.lstProductImageUrl);
+  }, [loudSpeakerDetail]);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
       control, // control props comes from useForm (optional: if you are using FormContext)
       name: "lstProductTypeAndPrice", // unique name for your Field Array
-    }
+    },
   );
   const onSubmit = handleSubmit(async (data) => {
     let images = [];
@@ -148,7 +226,7 @@ const NewLoudSpeaker: React.FC = () => {
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
           quantity: Number(item?.quantity),
-          depotId: Number(item?.depot) || 1,
+          depotId: Number(item?.depotId),
         })),
 
         lstProductImageUrl: images || [],
@@ -163,11 +241,11 @@ const NewLoudSpeaker: React.FC = () => {
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(addloudSpeaker(body));
+      const res = await dispatch(updateloudSpeaker(body));
       unwrapResult(res);
       const d = res?.payload?.data;
       if (d?.code !== 200) return toast.error(d?.message);
-      await toast.success("Thêm sản phẩm thành công ");
+      await toast.success("Cập nhật sản phẩm thành công ");
       await dispatch(getloudSpeaker(""));
       await navigate(path.loudSpeaker);
     } catch (error: any) {
@@ -187,50 +265,114 @@ const NewLoudSpeaker: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("salePrice", "");
-    setValue("price", "");
-    setValue("design", "");
-    setValue("dimension", "");
+    setImages(loudSpeakerDetail.productInfo.lstProductImageUrl);
+
+    const productInfo = loudSpeakerDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
+    setValue("accessories", loudSpeakerDetail?.productInfo?.accessories);
+    setValue("totalCapacity", loudSpeakerDetail?.totalCapacity);
+    setValue("time", loudSpeakerDetail?.time);
+    setValue("connection", loudSpeakerDetail?.connection);
+    setValue("mass", loudSpeakerDetail?.productInfo?.mass.toString());
+    setValue(
+      "color",
+      loudSpeakerDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
+    );
+    setValue("utilities", loudSpeakerDetail?.utilities);
+    setValue("control", loudSpeakerDetail?.control);
+    setValue("description", loudSpeakerDetail?.productInfo?.description);
+    setValue("brand", loudSpeakerDetail?.productInfo?.brandId.toString());
+    setValue(
+      "characteristic",
+      loudSpeakerDetail?.productInfo?.characteristicId.toString(),
+    );
+    setValue("name", loudSpeakerDetail?.productInfo?.name);
+    setValue(
+      "salePrice",
+      loudSpeakerDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
+    );
+    setValue(
+      "price",
+      loudSpeakerDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
+    );
+    setValue("design", loudSpeakerDetail?.productInfo?.design);
+    setValue("dimension", loudSpeakerDetail?.productInfo?.dimension);
+    setValue("category", loudSpeakerDetail?.productInfo?.categoryId.toString());
+    setValue("launchTime", "2023");
+    setValue("files", loudSpeakerDetail?.productInfo.lstProductImageUrl);
   };
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
+  const handleEditImage = (index: number) => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+
+    fileInput.addEventListener("change", (event) => {
+      const selectedFile = (event.target as HTMLInputElement).files?.[0];
+
+      if (selectedFile) {
+        const currentImages = getValues("files") || [];
+        currentImages[index] = selectedFile;
+        setValue("files", currentImages);
+
+        // Update the image preview immediately
+        setImages((prevImages) => {
+          const updatedImages = [...prevImages];
+          updatedImages[index] = URL.createObjectURL(selectedFile);
+          return updatedImages;
+        });
+      }
+    });
+
+    fileInput.click();
+  };
 
   return (
     <div className="bg-white shadow ">
-      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm loa nghe nhạc</h2>
+      <h2 className="font-bold m-4 text-2xl">
+        Cập nhật sản phẩm loa nghe nhạc
+      </h2>
       <Form
-        labelCol={{ span: 4 }}
+        labelCol={{ span: 6 }}
         wrapperCol={{ span: 14 }}
         layout="horizontal"
-        style={{ maxWidth: 800, padding: 6 }}
+        style={{ maxWidth: 600, padding: 6 }}
         autoComplete="off"
         noValidate
         onSubmitCapture={onSubmit}
       >
-        {/* <Form.Item
-          label="Danh mục sản phẩm"
-          name=""
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="category"
-            // label="Hãng xe"
-            defaultValue={""}
-            options={category}
-            register={register}
-            isBrand={true}
-          >
-            {errors.category?.message}
-          </SelectCustom>
-        </Form.Item> */}
         <Form.Item
           label="Hãng sản xuất"
           name="brand"
@@ -339,11 +481,11 @@ const NewLoudSpeaker: React.FC = () => {
                     className={"flex-1 text-black"}
                     id={`lstProductTypeAndPrice.${index}.depot`}
                     // label="Hãng xe"
-                    defaultValue={1}
+
                     options={depot?.data?.data}
                     register={register}
                   >
-                    {/* {errors.depot?.message} */}
+                    {/* {errors.depotId?.message} */}
                   </SelectCustom>
                 </Form.Item>
                 <div className="flex justify-between space-x-1">
@@ -510,7 +652,7 @@ const NewLoudSpeaker: React.FC = () => {
         <div className="flex justify-start">
           <Form.Item label="" className="ml-[135px] mb-2 bg-green-300">
             <Button className="w-[100px]" onClick={onSubmit} type="default">
-              Lưu
+              {isSubmitting ? "Loading..." : "Lưu"}
             </Button>
           </Form.Item>
           <Form.Item label="" className="ml-[70px] mb-2">
@@ -539,4 +681,5 @@ const NewLoudSpeaker: React.FC = () => {
   );
 };
 
-export default () => <NewLoudSpeaker />;
+export default () => <UpdateLoudSpeaker />;
+

@@ -1,7 +1,7 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Form } from "antd";
+import { Button, Form, Modal } from "antd";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -55,6 +55,20 @@ interface FormData {
 
 const NewTablet: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   const {
     handleSubmit,
     formState: { errors },
@@ -103,6 +117,8 @@ const NewTablet: React.FC = () => {
     let images = [];
 
     if (file) {
+      showModal();
+      setIsSubmitting(true);
       const form = new FormData();
       for (let i = 0; i < file.length; i++) {
         form.append("files", file[i]);
@@ -140,7 +156,7 @@ const NewTablet: React.FC = () => {
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
           quantity: Number(item?.quantity),
-          depotId: Number(item?.depot) || 1,
+          depotId: Number(item?.depotId),
         })),
 
         lstProductImageUrl: images || [],
@@ -157,7 +173,6 @@ const NewTablet: React.FC = () => {
     });
 
     try {
-      setIsSubmitting(true);
       const res = await dispatch(addTablet(body));
       unwrapResult(res);
       const d = res?.payload?.data;
@@ -179,6 +194,7 @@ const NewTablet: React.FC = () => {
       }
     } finally {
       setIsSubmitting(false);
+      handleOk();
     }
   });
   const onClickHuy = () => {
@@ -419,11 +435,10 @@ const NewTablet: React.FC = () => {
                     id={`lstProductTypeAndPrice.${index}.depot`}
                     // label="Hãng xe"
                     placeholder="Vui lòng chọn"
-                    defaultValue={1}
                     options={depot?.data?.data}
                     register={register}
                   >
-                    {errors.depot?.message}
+                    {errors.depotId?.message}
                   </SelectCustom>
                 </Form.Item>
                 <div className="flex justify-between space-x-1">
@@ -629,7 +644,7 @@ const NewTablet: React.FC = () => {
         <div className="flex justify-start">
           <Form.Item label="" className="ml-[135px] mb-2 bg-green-300">
             <Button className="w-[100px]" onClick={onSubmit} type="default">
-              Lưu
+              {isSubmitting ? "Loading..." : "Lưu"}
             </Button>
           </Form.Item>
           <Form.Item label="" className="ml-[70px] mb-2">
@@ -654,6 +669,14 @@ const NewTablet: React.FC = () => {
           </Form.Item>
         </div>
       </Form>
+      <Modal
+        title="Thêm sản phẩm"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>Đang xử lý, vui lòng đợi...</p>
+      </Modal>
     </div>
   );
 };

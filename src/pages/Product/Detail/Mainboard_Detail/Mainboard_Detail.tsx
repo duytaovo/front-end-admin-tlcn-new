@@ -9,12 +9,13 @@ import { Button, Modal, Rate } from "antd";
 import DOMPurify from "dompurify";
 import RatingFeedback from "../../../../components/Rating";
 import Tag from "../../../../components/Tag/Tag";
+import { getDetailMainboard } from "src/store/accessory/mainboard";
 
-export default function AdapterDetail() {
+export default function MainboardDetail() {
   // const { t } = useTranslation(["product"]);
   const { nameId } = useParams();
   const dispatch = useAppDispatch();
-  const { smartPhoneDetail } = useAppSelector((state) => state.smartPhone);
+  const { mainboardDetail } = useAppSelector((state) => state.mainboard);
   const id = getIdFromNameId(nameId as string);
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5]);
   const [activeImage, setActiveImage] = useState("");
@@ -22,31 +23,31 @@ export default function AdapterDetail() {
 
   const currentImages = useMemo(
     () =>
-      smartPhoneDetail?.productInfo?.lstProductImageUrl
-        ? smartPhoneDetail?.productInfo?.lstProductImageUrl.slice(
+      mainboardDetail?.productInfo?.lstProductImageUrl
+        ? mainboardDetail?.productInfo?.lstProductImageUrl.slice(
             ...currentIndexImages,
           )
         : [],
-    [smartPhoneDetail, currentIndexImages],
+    [mainboardDetail, currentIndexImages],
   );
 
   useEffect(() => {
     if (
-      smartPhoneDetail &&
-      smartPhoneDetail?.productInfo?.lstProductImageUrl?.length > 0
+      mainboardDetail &&
+      mainboardDetail?.productInfo?.lstProductImageUrl?.length > 0
     ) {
-      setActiveImage(smartPhoneDetail?.productInfo?.lstProductImageUrl[0]);
+      setActiveImage(mainboardDetail?.productInfo?.lstProductImageUrl[0]);
     }
-  }, [smartPhoneDetail, activeImage]);
+  }, [mainboardDetail, activeImage]);
 
   useEffect(() => {
-    dispatch(getDetailPhone(id));
+    dispatch(getDetailMainboard(id));
   }, [id]);
 
   const next = () => {
     if (
       currentIndexImages[1] <
-      smartPhoneDetail?.productInfo.lstProductImageUrl.length
+      mainboardDetail?.productInfo.lstProductImageUrl.length
     ) {
       setCurrentIndexImages((prev) => [prev[0] + 1, prev[1] + 1]);
     }
@@ -96,15 +97,15 @@ export default function AdapterDetail() {
     setIsModalOpen(false);
   };
 
-  if (!smartPhoneDetail) return null;
+  if (!mainboardDetail) return null;
 
   return (
     <div className="bg-gray-200 py-6">
       <Helmet>
-        <title>{smartPhoneDetail?.productInfo?.name}</title>
+        <title>{mainboardDetail?.productInfo?.name}</title>
         <meta
           name="description"
-          content={convert(smartPhoneDetail?.productInfo?.description, {
+          content={convert(mainboardDetail?.productInfo?.description, {
             limits: {
               maxInputLength: 50000,
             },
@@ -122,7 +123,7 @@ export default function AdapterDetail() {
               >
                 <img
                   src={activeImage}
-                  alt={smartPhoneDetail?.productInfo?.name}
+                  alt={mainboardDetail?.productInfo?.name}
                   className="absolute left-0 top-0 h-full w-full bg-white object-cover"
                   ref={imageRef}
                 />
@@ -157,7 +158,7 @@ export default function AdapterDetail() {
                     >
                       <img
                         src={img}
-                        alt={smartPhoneDetail?.productInfo?.name}
+                        alt={mainboardDetail?.productInfo?.name}
                         className="absolute left-0 top-0 h-full w-full cursor-pointer bg-white object-cover"
                       />
                       {isActive && (
@@ -189,17 +190,17 @@ export default function AdapterDetail() {
             </div>
             <div className="col-span-7">
               <h1 className="text-4xl font-medium uppercase">
-                {smartPhoneDetail?.productInfo?.name}
+                {mainboardDetail?.productInfo?.name}
               </h1>
               <div className="mt-8 flex items-center">
                 <div className="flex items-center">
                   <span className="mr-1 border-b border-b-orange text-orange">
-                    {smartPhoneDetail?.productInfo?.star}
+                    {mainboardDetail?.productInfo?.star}
                   </span>
                   <Rate
                     allowHalf
                     defaultValue={Number(
-                      smartPhoneDetail?.productInfo?.totalReview,
+                      mainboardDetail?.productInfo?.totalReview,
                     )}
                     disabled
                   />
@@ -209,14 +210,14 @@ export default function AdapterDetail() {
                 <div>
                   <span>
                     {formatNumberToSocialStyle(
-                      Number(smartPhoneDetail?.productInfo?.totalReview),
+                      Number(mainboardDetail?.productInfo?.totalReview),
                     )}
                   </span>
                   <span className="ml-1 text-gray-500">Đã xem</span>
                 </div>
               </div>
               <div className="space-x-3 mt-4 flex justify-start align-baseline">
-                <Tag productData={smartPhoneDetail} />
+                <Tag productData={mainboardDetail} />
               </div>
             </div>
           </div>
@@ -234,67 +235,67 @@ export default function AdapterDetail() {
           <div className="block space-y-2">
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Màn hình :</h4>
-              <h5>{smartPhoneDetail?.monitor}</h5>
+              <h5>{mainboardDetail?.monitor}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Hệ điều hành :</h4>
-              <h5>{smartPhoneDetail?.operatingSystem}</h5>
+              <h5>{mainboardDetail?.operatingSystem}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Camera chính :</h4>
-              <h5>{smartPhoneDetail?.rearCamera}</h5>
+              <h5>{mainboardDetail?.rearCamera}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Camera trước :</h4>
-              <h5>{smartPhoneDetail?.frontCamera}</h5>
+              <h5>{mainboardDetail?.frontCamera}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Chip :</h4>
-              <h5>{smartPhoneDetail?.chip}</h5>
+              <h5>{mainboardDetail?.chip}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Sim :</h4>
-              <h5>{smartPhoneDetail?.sim}</h5>
+              <h5>{mainboardDetail?.sim}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Pin :</h4>
-              <h5>{smartPhoneDetail?.monitor}</h5>
+              <h5>{mainboardDetail?.monitor}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Sạc nhanh:</h4>
-              <h5>{smartPhoneDetail?.charging}</h5>
+              <h5>{mainboardDetail?.charging}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Hỗ trợ mạng:</h4>
-              <h5>{smartPhoneDetail?.networkSupport}</h5>
+              <h5>{mainboardDetail?.networkSupport}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Phụ kiện:</h4>
-              <h5>{smartPhoneDetail?.productInfo.accessories}</h5>
+              <h5>{mainboardDetail?.productInfo?.accessories}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Năm ra mắt:</h4>
-              <h5>{smartPhoneDetail?.productInfo.launchTime}</h5>
+              <h5>{mainboardDetail?.productInfo?.launchTime}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Thiết kế:</h4>
-              <h5>{smartPhoneDetail?.productInfo.design}</h5>
+              <h5>{mainboardDetail?.productInfo?.design}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Khối lượng:</h4>
-              <h5>{smartPhoneDetail?.productInfo.mass}</h5>
+              <h5>{mainboardDetail?.productInfo?.mass}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Ram:</h4>
               <h5>
-                {smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0]?.ram}
+                {mainboardDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram}
               </h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Bộ nhớ trong:</h4>
               <h5>
                 {
-                  smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0]
+                  mainboardDetail?.productInfo.lstProductTypeAndPrice[0]
                     ?.storageCapacity
                 }
               </h5>
@@ -312,7 +313,7 @@ export default function AdapterDetail() {
               <div
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(
-                    smartPhoneDetail?.productInfo?.description,
+                    mainboardDetail?.productInfo?.description,
                   ),
                 }}
               />

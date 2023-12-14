@@ -1,14 +1,14 @@
 import { Helmet } from "react-helmet-async";
-import TableMonitor from "./TablesMicrophone";
+import TableMicrophone from "./TablesMicrophone";
 
-export default function ListMonitor() {
+export default function ListMicrophone() {
   return (
     <div>
       <Helmet>
-        <title>{"Trang quản lý màn hình máy tính"}</title>
+        <title>{"Trang quản lý microphone"}</title>
         <meta name="description" />
       </Helmet>
-      <TableMonitor />
+      <TableMicrophone />
     </div>
   );
 }

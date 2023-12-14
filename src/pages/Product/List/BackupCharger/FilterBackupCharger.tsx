@@ -1,6 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Filter from "src/components/Filter/Filter";
-import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 
 export interface DataPropsPhone {
   id: number;

@@ -1,5 +1,4 @@
 import { Link, useNavigate } from "react-router-dom";
-import path from "src/constants/path";
 import {
   formatCurrency,
   formatNumberToSocialStyle,
@@ -9,13 +8,13 @@ import { Rate } from "antd";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { Button } from "@mui/material";
 import { useAppDispatch } from "src/hooks/useRedux";
-import {
-  deleteSmartPhone,
-  getSmartPhones,
-} from "src/store/product/smartPhoneSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import { ListSmartPhone } from "src/types/allProductsType.interface";
+import {
+  deleteBackupCharger,
+  getBackupCharger,
+} from "src/store/accessory/backupCharger";
 
 interface Props {
   product: ListSmartPhone;
@@ -57,7 +56,7 @@ export default function ProductBackupCharger({ product }: Props) {
       title: "Sửa",
       callback: () => {
         navigate(
-          `${"/smartPhone/detail/update"}/${generateNameId({
+          `${"/backupCharger/detail/update"}/${generateNameId({
             name: product.name,
             id: product.id.toString(),
           })}`,
@@ -72,29 +71,17 @@ export default function ProductBackupCharger({ product }: Props) {
       title: "Xóa",
       callback: () => {
         if (confirm("Bạn có muốn disable sản phẩm không?")) {
-          const body = {
-            slug: "smartphone",
-            brandId: null,
-            characteristicId: null,
-            priceFrom: null,
-            priceTo: null,
-            specialFeatures: [],
-            smartphoneType: [],
-            ram: [],
-            storageCapacity: [],
-            charging: [],
-            screen: [],
-          };
           const handleDelete = async () => {
-            const res = await dispatch(deleteSmartPhone(product.id.toString()));
+            const res = await dispatch(
+              deleteBackupCharger(product.id.toString()),
+            );
             unwrapResult(res);
             const d = res?.payload.data;
             // if (d?.code !== 200) return toast.error(d?.message);
             await toast.success("Xóa sản phẩm thành công ");
 
             dispatch(
-              getSmartPhones({
-                body: body,
+              getBackupCharger({
                 // params: { pageNumber: 1, pageSize: 10 },
               }),
             );
@@ -116,7 +103,7 @@ export default function ProductBackupCharger({ product }: Props) {
   return (
     <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <Link
-        to={`${"/smartPhone/detail"}/${generateNameId({
+        to={`${"/backupCharger/detail"}/${generateNameId({
           name: product.name,
           id: product.id.toString(),
         })}`}

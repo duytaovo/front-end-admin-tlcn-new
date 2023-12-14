@@ -28,10 +28,10 @@ export default function LaptopDetail() {
     () =>
       laptopDetail?.productInfo?.lstProductImageUrl
         ? laptopDetail?.productInfo?.lstProductImageUrl.slice(
-            ...currentIndexImages
+            ...currentIndexImages,
           )
         : [],
-    [laptopDetail, currentIndexImages]
+    [laptopDetail, currentIndexImages],
   );
 
   useEffect(() => {
@@ -205,7 +205,7 @@ export default function LaptopDetail() {
                   <span>
                     {" "}
                     {formatNumberToSocialStyle(
-                      Number(laptopDetail?.productInfo?.totalReview) || 1520
+                      Number(laptopDetail?.productInfo?.totalReview) || 1520,
                     )}
                   </span>
                   <span className="ml-1 text-gray-500">Đã xem</span>
@@ -294,7 +294,7 @@ export default function LaptopDetail() {
               <div
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(
-                    laptopDetail?.productInfo?.description
+                    laptopDetail?.productInfo?.description,
                   ),
                 }}
               />
@@ -320,3 +320,4 @@ export default function LaptopDetail() {
     </div>
   );
 }
+

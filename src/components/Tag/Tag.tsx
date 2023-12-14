@@ -5,11 +5,11 @@ import { Button } from "antd";
 
 const Tag = ({ productData, onClick }: any) => {
   const [price, setPrice] = useState(
-    productData?.productInfo?.lstProductTypeAndPrice[0].price,
+    productData?.productInfo?.lstProductTypeAndPrice[0]?.price,
   );
 
   const [salePrice, setSalePrice] = useState(
-    productData?.productInfo?.lstProductTypeAndPrice[0].salePrice,
+    productData?.productInfo?.lstProductTypeAndPrice[0]?.salePrice,
   );
 
   const [selectedRam, setSelectedRam] = useState<string | null>(null);
@@ -50,7 +50,7 @@ const Tag = ({ productData, onClick }: any) => {
     // Lấy danh sách loại RAM unique từ dữ liệu sản phẩm
     const uniqueRams: any = [
       ...new Set(
-        productData?.productInfo?.lstProductTypeAndPrice.map(
+        productData?.productInfo?.lstProductTypeAndPrice?.map(
           (item: any) => item.ram,
         ),
       ),
@@ -77,7 +77,7 @@ const Tag = ({ productData, onClick }: any) => {
     // Lấy danh sách loại RAM unique từ dữ liệu sản phẩm
     const uniqueRoms: any = [
       ...new Set(
-        productData?.productInfo?.lstProductTypeAndPrice.map(
+        productData?.productInfo?.lstProductTypeAndPrice?.map(
           (item: any) => item.storageCapacity,
         ),
       ),
@@ -130,12 +130,12 @@ const Tag = ({ productData, onClick }: any) => {
         );
 
       if (selectedProduct) {
-        setPrice(selectedProduct.price);
-        setSalePrice(selectedProduct.salePrice);
+        setPrice(selectedProduct?.price);
+        setSalePrice(selectedProduct?.salePrice);
         onClick &&
           onClick({
-            price: selectedProduct.price,
-            salePrice: selectedProduct.salePrice,
+            price: selectedProduct?.price,
+            salePrice: selectedProduct?.salePrice,
           });
       }
     }
@@ -229,11 +229,11 @@ const Tag = ({ productData, onClick }: any) => {
                 // type={active ? "primary" : "default"}
                 key={index}
                 onClick={() => {
-                  setSelectedColor(product.color);
+                  setSelectedColor(product?.color);
                 }}
                 disabled={product.quantity === 0} // Ví dụ: Disable nút nếu hết hàng
               >
-                {product.color}
+                {product?.color}
               </Button>
             );
           })}

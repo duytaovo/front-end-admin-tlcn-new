@@ -1,11 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { formatNumberToSocialStyle, getIdFromNameId } from "src/utils/utils";
-import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import { convert } from "html-to-text";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
-import { getDetailPhone } from "src/store/product/smartPhoneSlice";
 import { Button, Modal, Rate } from "antd";
 import DOMPurify from "dompurify";
 import RatingFeedback from "../../../../components/Rating";
@@ -26,10 +24,10 @@ export default function MouseDetail() {
     () =>
       mouseDetail?.productInfo?.lstProductImageUrl
         ? mouseDetail?.productInfo?.lstProductImageUrl.slice(
-            ...currentIndexImages
+            ...currentIndexImages,
           )
         : [],
-    [mouseDetail, currentIndexImages]
+    [mouseDetail, currentIndexImages],
   );
 
   useEffect(() => {
@@ -208,7 +206,7 @@ export default function MouseDetail() {
                 <div>
                   <span>
                     {formatNumberToSocialStyle(
-                      Number(mouseDetail?.productInfo?.totalReview)
+                      Number(mouseDetail?.productInfo?.totalReview),
                     )}
                   </span>
                   <span className="ml-1 text-gray-500">Đã xem</span>
@@ -311,7 +309,7 @@ export default function MouseDetail() {
               <div
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(
-                    mouseDetail?.productInfo?.description
+                    mouseDetail?.productInfo?.description,
                   ),
                 }}
               />
@@ -342,3 +340,4 @@ export default function MouseDetail() {
     </div>
   );
 }
+

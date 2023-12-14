@@ -5,7 +5,7 @@ export default function ListComputerPower() {
   return (
     <div>
       <Helmet>
-        <title>{"Trang quản lý màn hình máy tính"}</title>
+        <title>{"Trang quản lý năng lượng máy tính"}</title>
         <meta name="description" />
       </Helmet>
       <TablesComputerPower />

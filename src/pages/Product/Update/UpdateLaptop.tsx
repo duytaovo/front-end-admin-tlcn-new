@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Form } from "antd";
+import { Button, Form, Modal } from "antd";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -32,6 +32,7 @@ import {
 } from "src/store/product/laptopSlice ";
 import { PlusOutlined } from "@ant-design/icons";
 import { getdepots } from "src/store/depot/depotSlice";
+import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -60,8 +61,21 @@ interface FormData {
   monitor: string;
 }
 
-const NewLaptop: React.FC = () => {
+const UpdateLaptop: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   const {
     handleSubmit,
@@ -71,6 +85,7 @@ const NewLaptop: React.FC = () => {
     setValue,
     watch,
     control,
+    getValues,
   } = useForm({
     resolver: yupResolver(schemaLaptop),
   });
@@ -78,7 +93,6 @@ const NewLaptop: React.FC = () => {
   const id = getIdFromNameId(nameId as string);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { category } = useAppSelector((state) => state.category);
   const { cardGraphic } = useAppSelector((state) => state.cardGraphic);
   const { ram } = useAppSelector((state) => state.ram);
   const { depot } = useAppSelector((state) => state.depot);
@@ -108,48 +122,72 @@ const NewLaptop: React.FC = () => {
 
   const [file, setFile] = useState<File[]>();
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
+  const [imageUrls, setImages] = useState<string[]>([]);
 
   // Tạo một mảng chứa các URL tạm thời cho ảnh
-  const imageUrls: string[] = [];
 
   for (const image of imageArray) {
     const imageUrl = URL.createObjectURL(image);
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue("ram", laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram);
-    setValue("accessories", laptopDetail?.productInfo?.accessories);
-    setValue("mass", laptopDetail?.productInfo?.mass.toString());
-    setValue(
-      "color",
-      laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.color.toString(),
-    );
-    setValue("monitor", laptopDetail?.monitor);
-    setValue("description", laptopDetail?.productInfo?.description);
-    setValue("brand", laptopDetail?.productInfo?.brandId.toString());
-    setValue(
-      "characteristic",
-      laptopDetail?.productInfo?.characteristicId.toString(),
-    );
-    setValue("name", laptopDetail?.productInfo?.name);
-    setValue(
-      "salePrice",
-      laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice.toString(),
-    );
-    setValue(
-      "price",
-      laptopDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
-    );
+    const productInfo = laptopDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
     setValue("operatingSystem", laptopDetail?.operatingSystem);
     setValue("design", laptopDetail?.productInfo?.design);
     setValue("dimension", laptopDetail?.productInfo?.dimension);
     setValue("category", laptopDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
     setValue("gateway", laptopDetail?.gateway);
+    setValue("ram", String(laptopDetail?.ramId));
     setValue("imageUrl", laptopDetail?.productInfo?.lstProductImageUrl);
   }, [laptopDetail]);
 
   const onSubmit = handleSubmit(async (data) => {
+    let images = [];
+
+    if (file) {
+      const form = new FormData();
+      for (let i = 0; i < file.length; i++) {
+        form.append("files", file[i]);
+      }
+      const res = await dispatch(uploadManyImagesProductSmartPhone(form));
+      unwrapResult(res);
+      const d = res?.payload?.data?.data;
+      for (let i = 0; i < d.length; i++) {
+        images.push(d[i]?.fileUrl);
+      }
+    }
     const body: any = JSON.stringify({
       gateway: data.gateway,
       special: data.special,
@@ -186,7 +224,7 @@ const NewLaptop: React.FC = () => {
             quantity: Number(item?.quantity),
           }),
         ),
-        lstProductImageUrl: data.imageUrl,
+        lstProductImageUrl: images || [],
       },
       monitor: data.monitor,
       operatingSystem: data.operatingSystem,
@@ -198,13 +236,6 @@ const NewLaptop: React.FC = () => {
       charging: data.charging,
       networkSupport: data.networkSupport,
     });
-    // if (file) {
-    //   const form = new FormData();
-    //   form.append("file", file[0]);
-    //   form.append("image", file[0]);
-    // } else {
-    //   toast.warning("Cần chọn ảnh");
-    // }
 
     try {
       setIsSubmitting(true);
@@ -232,7 +263,38 @@ const NewLaptop: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("ram", laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram);
+    const productInfo = laptopDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
     setValue("accessories", laptopDetail?.productInfo?.accessories);
     setValue("mass", laptopDetail?.productInfo?.mass.toString());
     setValue(
@@ -266,6 +328,31 @@ const NewLaptop: React.FC = () => {
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
+
+  const handleEditImage = (index: number) => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+
+    fileInput.addEventListener("change", (event) => {
+      const selectedFile = (event.target as HTMLInputElement).files?.[0];
+
+      if (selectedFile) {
+        const currentImages = getValues("imageUrl") || [];
+        currentImages[index] = selectedFile;
+        setValue("imageUrl", currentImages);
+
+        // Update the image preview immediately
+        setImages((prevImages) => {
+          const updatedImages = [...prevImages];
+          updatedImages[index] = URL.createObjectURL(selectedFile);
+          return updatedImages;
+        });
+      }
+    });
+
+    fileInput.click();
+  };
   return (
     <div className="bg-white shadow ">
       <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm laptop</h2>
@@ -278,23 +365,6 @@ const NewLaptop: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
-        {/* <Form.Item
-          label="Danh mục sản phẩm"
-          name=""
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="category"
-            // label="Hãng xe"
-            placeholder="Vui lòng chọn"
-            defaultValue={laptopDetail?.productInfo.categoryId}
-            options={category?.data}
-            register={register}
-          >
-            {errors.category?.message}
-          </SelectCustom>
-        </Form.Item> */}
         <Form.Item
           label="Hãng sản xuất"
           name="brand"
@@ -317,20 +387,14 @@ const NewLaptop: React.FC = () => {
           name="operatingSystem"
           rules={[{ required: true }]}
         >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="operatingSystem"
-            // label="Hãng xe"
-            placeholder="Vui lòng chọn"
-            defaultValue={"macOs"}
-            options={[
-              { id: "macOs", name: "macOs" },
-              { id: "Windows", name: "Windows" },
-            ]}
+          <Input
+            name="operatingSystem"
             register={register}
-          >
-            {errors.operatingSystem?.message}
-          </SelectCustom>
+            type="text"
+            className=""
+            errorMessage={errors.operatingSystem?.message}
+            placeholder=" macOs "
+          />
         </Form.Item>
         <Form.Item
           label="Đặc điểm sản phẩm"
@@ -342,7 +406,7 @@ const NewLaptop: React.FC = () => {
             id="characteristic"
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
-            defaultValue={laptopDetail?.productInfo.characteristicId}
+            defaultValue={6}
             options={character?.data}
             register={register}
           >
@@ -440,7 +504,6 @@ const NewLaptop: React.FC = () => {
                         key={index} // important to include key with field's id
                         register={register}
                         placeholder="8Gb"
-                        defaultValue={item.ram}
                       />
                     </Form.Item>
                     <Form.Item
@@ -453,7 +516,6 @@ const NewLaptop: React.FC = () => {
                         key={index} // important to include key with field's id
                         register={register}
                         placeholder="1TB"
-                        defaultValue={item.storageCapacity}
                       />
                     </Form.Item>
                   </div>
@@ -468,7 +530,6 @@ const NewLaptop: React.FC = () => {
                         key={index} // important to include key with field's id
                         register={register}
                         placeholder="45000000"
-                        defaultValue={item.price}
                       />
                     </Form.Item>
                     <Form.Item
@@ -481,7 +542,6 @@ const NewLaptop: React.FC = () => {
                         key={index} // important to include key with field's id
                         register={register}
                         placeholder="44000000"
-                        defaultValue={item.salePrice}
                       />
                     </Form.Item>
                   </div>
@@ -495,11 +555,10 @@ const NewLaptop: React.FC = () => {
                       id={`lstProductTypeAndPrice.${index}.depot`}
                       // label="Hãng xe"
                       placeholder="Vui lòng chọn"
-                      defaultValue={item.depotId}
                       options={depot?.data?.data}
                       register={register}
                     >
-                      {errors.depot?.message}
+                      {errors.depotId?.message}
                     </SelectCustom>
                   </Form.Item>
                   <div>
@@ -512,7 +571,6 @@ const NewLaptop: React.FC = () => {
                         name={`lstProductTypeAndPrice.${index}.quantity`}
                         key={index} // important to include key with field's id
                         register={register}
-                        defaultValue={item.quantity}
                         placeholder="1000"
                       />
                     </Form.Item>
@@ -639,7 +697,7 @@ const NewLaptop: React.FC = () => {
             id="ramId"
             // label="Hãng xe"
             placeholder="Vui lòng chọn"
-            defaultValue={laptopDetail?.ramId}
+            defaultValue={2}
             options={ram?.data?.data}
             register={register}
           >
@@ -674,7 +732,6 @@ const NewLaptop: React.FC = () => {
         </Form.Item>
         <Form.Item
           name="file"
-          //
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
@@ -683,12 +740,22 @@ const NewLaptop: React.FC = () => {
             <div className="my-5 w-24 space-y-5 justify-between items-center">
               {imageUrls.map((imageUrl, index) => {
                 return (
-                  <img
-                    key={index}
-                    src={imageUrl}
-                    className="h-full rounded-md w-full  object-cover"
-                    alt="avatar"
-                  />
+                  <div key={index}>
+                    <img
+                      src={imageUrl}
+                      alt={`Image ${index + 1}`}
+                      width="100"
+                      height="100"
+                      className="h-full rounded-md w-full  object-cover"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => handleEditImage(index)}
+                    >
+                      Edit
+                    </button>
+                  </div>
                 );
               })}
             </div>
@@ -718,7 +785,7 @@ const NewLaptop: React.FC = () => {
         <div className="flex justify-start">
           <Form.Item label="" className="ml-[135px] mb-2 bg-green-300">
             <Button className="w-[100px]" onClick={onSubmit} type="default">
-              Lưu
+              {isSubmitting ? "Loading..." : "Lưu"}
             </Button>
           </Form.Item>
           <Form.Item label="" className="ml-[70px] mb-2">
@@ -735,7 +802,7 @@ const NewLaptop: React.FC = () => {
             <Button
               className="w-[100px]"
               onClick={() => {
-                navigate(path.smartPhone);
+                navigate(path.laptop);
               }}
             >
               Hủy
@@ -743,9 +810,17 @@ const NewLaptop: React.FC = () => {
           </Form.Item>
         </div>
       </Form>
+      <Modal
+        title="Cập nhật sản phẩm"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>Đang xử lý, vui lòng đợi...</p>
+      </Modal>
     </div>
   );
 };
 
-export default () => <NewLaptop />;
+export default () => <UpdateLaptop />;
 

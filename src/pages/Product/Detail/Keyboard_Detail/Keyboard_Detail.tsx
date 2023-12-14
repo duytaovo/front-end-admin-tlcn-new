@@ -10,6 +10,7 @@ import { Button, Modal, Rate } from "antd";
 import DOMPurify from "dompurify";
 import RatingFeedback from "../../../../components/Rating";
 import Tag from "../../../../components/Tag/Tag";
+import { getDetailkeyboard } from "src/store/accessory/keyboard";
 
 export default function KeyboardDetail() {
   // const { t } = useTranslation(["product"]);
@@ -25,10 +26,10 @@ export default function KeyboardDetail() {
     () =>
       smartPhoneDetail?.productInfo?.lstProductImageUrl
         ? smartPhoneDetail?.productInfo?.lstProductImageUrl.slice(
-            ...currentIndexImages
+            ...currentIndexImages,
           )
         : [],
-    [smartPhoneDetail, currentIndexImages]
+    [smartPhoneDetail, currentIndexImages],
   );
 
   useEffect(() => {
@@ -41,7 +42,7 @@ export default function KeyboardDetail() {
   }, [smartPhoneDetail]);
 
   useEffect(() => {
-    dispatch(getDetailPhone(id));
+    dispatch(getDetailkeyboard(id));
   }, [id]);
 
   const next = () => {
@@ -200,7 +201,7 @@ export default function KeyboardDetail() {
                   <Rate
                     allowHalf
                     defaultValue={Number(
-                      smartPhoneDetail?.productInfo?.totalReview
+                      smartPhoneDetail?.productInfo?.totalReview,
                     )}
                     disabled
                   />
@@ -210,7 +211,7 @@ export default function KeyboardDetail() {
                 <div>
                   <span>
                     {formatNumberToSocialStyle(
-                      Number(smartPhoneDetail?.productInfo?.totalReview)
+                      Number(smartPhoneDetail?.productInfo?.totalReview),
                     )}
                   </span>
                   <span className="ml-1 text-gray-500">Đã xem</span>
@@ -271,24 +272,24 @@ export default function KeyboardDetail() {
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Phụ kiện:</h4>
-              <h5>{smartPhoneDetail?.productInfo.accessories}</h5>
+              <h5>{smartPhoneDetail?.productInfo?.accessories}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Năm ra mắt:</h4>
-              <h5>{smartPhoneDetail?.productInfo.launchTime}</h5>
+              <h5>{smartPhoneDetail?.productInfo?.launchTime}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Thiết kế:</h4>
-              <h5>{smartPhoneDetail?.productInfo.design}</h5>
+              <h5>{smartPhoneDetail?.productInfo?.design}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Khối lượng:</h4>
-              <h5>{smartPhoneDetail?.productInfo.mass}</h5>
+              <h5>{smartPhoneDetail?.productInfo?.mass}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Ram:</h4>
               <h5>
-                {smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0]?.ram}
+                {smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram}
               </h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
@@ -313,7 +314,7 @@ export default function KeyboardDetail() {
               <div
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(
-                    smartPhoneDetail?.productInfo?.description
+                    smartPhoneDetail?.productInfo?.description,
                   ),
                 }}
               />
@@ -344,3 +345,4 @@ export default function KeyboardDetail() {
     </div>
   );
 }
+

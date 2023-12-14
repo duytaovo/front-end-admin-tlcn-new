@@ -1,5 +1,4 @@
 import { Link, useNavigate } from "react-router-dom";
-import path from "src/constants/path";
 import {
   formatCurrency,
   formatNumberToSocialStyle,
@@ -9,13 +8,10 @@ import { Rate } from "antd";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { Button } from "@mui/material";
 import { useAppDispatch } from "src/hooks/useRedux";
-import {
-  deleteSmartPhone,
-  getSmartPhones,
-} from "src/store/product/smartPhoneSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import { ListSmartPhone } from "src/types/allProductsType.interface";
+import { deleteMainboard, getMainboard } from "src/store/accessory/mainboard";
 
 interface Props {
   product: ListSmartPhone;
@@ -57,7 +53,7 @@ export default function ProductMainboard({ product }: Props) {
       title: "Sửa",
       callback: () => {
         navigate(
-          `${"/smartPhone/detail/update"}/${generateNameId({
+          `${"/mainboard/detail/update"}/${generateNameId({
             name: product.name,
             id: product.id.toString(),
           })}`,
@@ -72,29 +68,16 @@ export default function ProductMainboard({ product }: Props) {
       title: "Xóa",
       callback: () => {
         if (confirm("Bạn có muốn disable sản phẩm không?")) {
-          const body = {
-            slug: "smartphone",
-            brandId: null,
-            characteristicId: null,
-            priceFrom: null,
-            priceTo: null,
-            specialFeatures: [],
-            smartphoneType: [],
-            ram: [],
-            storageCapacity: [],
-            charging: [],
-            screen: [],
-          };
           const handleDelete = async () => {
-            const res = await dispatch(deleteSmartPhone(product.id.toString()));
+            const res = await dispatch(deleteMainboard(product.id.toString()));
             unwrapResult(res);
             const d = res?.payload.data;
             // if (d?.code !== 200) return toast.error(d?.message);
             await toast.success("Xóa sản phẩm thành công ");
 
             dispatch(
-              getSmartPhones({
-                body: body,
+              getMainboard({
+                // body: body,
                 // params: { pageNumber: 1, pageSize: 10 },
               }),
             );
@@ -116,7 +99,7 @@ export default function ProductMainboard({ product }: Props) {
   return (
     <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <Link
-        to={`${"/smartPhone/detail"}/${generateNameId({
+        to={`${"/mainboard/detail"}/${generateNameId({
           name: product.name,
           id: product.id.toString(),
         })}`}

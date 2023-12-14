@@ -137,7 +137,6 @@ const data3: DataPropsPhone[] = [
     detail: ["OLED", "LCD", "Amoled"],
   },
 ];
-
 interface Props {
   handle: (boolean: boolean) => void;
   brand: any;

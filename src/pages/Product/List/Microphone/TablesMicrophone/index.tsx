@@ -1,12 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
-import { SelectChangeEvent } from "@mui/material/Select";
 import React, { useEffect, useState } from "react";
-import { getSmartPhones } from "src/store/product/smartPhoneSlice";
 import ProductPhone from "./Table/Product/ProductMicrophone";
 import path from "src/constants/path";
 import { Button, Pagination } from "antd";
-import { getFilter, getSort } from "src/store/product/filterSlice";
+import { getSort } from "src/store/product/filterSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import FilterPhone from "../FilterMicrophone";
@@ -14,11 +12,10 @@ import * as ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { DownloadOutlined } from "@ant-design/icons";
 import "jspdf-autotable";
-import jspdf from "jspdf";
+import { getMicrophone } from "src/store/accessory/microphone";
 
 const TableMicrophone: React.FC = () => {
-  const { smartPhone } = useAppSelector((state) => state.smartPhone);
-  const navigate = useNavigate();
+  const { microphone } = useAppSelector((state) => state.microphone);
   const pageSize = 10; // Số phần tử trên mỗi trang
   const [choose, setChoose] = useState<any>();
   const [chooseCharac, setChooseCharac] = useState<any>();
@@ -203,9 +200,9 @@ const TableMicrophone: React.FC = () => {
       screen: ManHinh ? ManHinh : [],
     };
     dispatch(
-      getSmartPhones({
-        body: body,
-        params: { pageNumber: currentPage, pageSize: 10, sort: chooseBox },
+      getMicrophone({
+        // body: body,
+        // params: { pageNumber: currentPage, pageSize: 10, sort: chooseBox },
       }),
     );
   }, [
@@ -224,22 +221,7 @@ const TableMicrophone: React.FC = () => {
   ]);
 
   useEffect(() => {
-    const body = {
-      slug: "smartphone",
-      brandId: choose?.id ? [choose?.id] : null,
-      characteristicId: chooseCharac ? [chooseCharac] : null,
-    };
-    dispatch(
-      getSmartPhones({
-        body: body,
-        params: { pageNumber: currentPage, pageSize: 10 },
-      }),
-    );
-  }, [currentPage, choose, chooseCharac]);
-
-  useEffect(() => {
     dispatch(getSort(""));
-    dispatch(getFilter({ slug: "smartphone" }));
     dispatch(getBrands({ slug: "smartphone" }));
     dispatch(getCharacters({ categorySlug: "smartphone" }));
   }, []);
@@ -247,82 +229,10 @@ const TableMicrophone: React.FC = () => {
   const handlePageChange = (page: number) => {
     setCurrentPage(page - 1);
   };
-  const [product, setProduct] = React.useState("");
   const handle = (boolean: boolean) => {
     setisOpen(boolean);
   };
 
-  const handleSetChoose = (choose: any) => {
-    setChoose(choose);
-  };
-
-  const handleSetChooseCharac = (choose: any) => {
-    setChooseCharac(choose);
-  };
-
-  const handleSetChooseBox = (choose: any) => {
-    setChooseBox(choose);
-  };
-  const handleChangeProduct = (event: SelectChangeEvent) => {
-    setProduct(event.target.value as string);
-  };
-  const onClick = (value: string) => {
-    navigate(value);
-  };
-  const exportToPDF = (products: any) => {
-    const columns = [
-      { header: "ID", dataKey: "id" },
-      { header: "Name", dataKey: "name" },
-      { header: "Ram", dataKey: "ram" },
-      { header: "Rom", dataKey: "storageCapacity" },
-      { header: "Color", dataKey: "color" },
-      { header: "Quantity", dataKey: "quantity" },
-      { header: "Price", dataKey: "price" },
-      { header: "SalePrice", dataKey: "salePrice" },
-      // { header: "Images", dataKey: "images" },
-    ];
-
-    const rows: any[] = [];
-
-    products.forEach((product: any) => {
-      product.lstProductTypeAndPrice.forEach((typeAndPrice: any) => {
-        rows.push({
-          id: product.id,
-          name: product.name,
-          ram: typeAndPrice.ram,
-          storageCapacity: typeAndPrice.storageCapacity,
-          color: typeAndPrice.color,
-          quantity: typeAndPrice.quantity,
-          price: typeAndPrice.price,
-          salePrice: typeAndPrice.salePrice,
-          images: product.lstImageUrl.join(","),
-        });
-      });
-    });
-
-    const doc: any = new jspdf();
-
-    doc.setFont("Roboto-Regular", "normal");
-    doc.autoTable({
-      head: [columns.map((column) => column.header)],
-      body: rows.map((row) => columns.map((column) => row[column.dataKey])),
-      styles: {
-        font: "Amiri",
-        fontStyle: "normal",
-      },
-    });
-    // doc.autoTable({
-    //   // styles: { font: "helvetica" },
-    //   styles: {
-    //     font: "Roboto-Regular",
-    //     fontStyle: "normal",
-    //   },
-    //   head: [columns.map((column) => column.header)],
-    //   body: rows.map((row) => columns.map((column) => row[column.dataKey])),
-    // });
-
-    doc.save("products.pdf");
-  };
   return (
     <div className="mx-6">
       <div className="w-full text-[24px] text-gray-500 mb-[10px] flex items-center justify-between">
@@ -331,7 +241,7 @@ const TableMicrophone: React.FC = () => {
           <div></div>
           <div>
             <Button
-              onClick={() => exportToExcel(smartPhone?.data?.data)}
+              onClick={() => exportToExcel(microphone?.data?.data)}
               type="primary"
               icon={<DownloadOutlined />}
               size="small"
@@ -339,34 +249,19 @@ const TableMicrophone: React.FC = () => {
             >
               Xuất file excel
             </Button>
-            {/* <Button
-              onClick={() => exportToPDF(smartPhone?.data?.data)}
-              type="link"
-              icon={<DownloadOutlined />}
-              size="small"
-            >
-              Xuất file PDF
-            </Button> */}
           </div>
         </div>
         <Link
-          to={path.smartPhoneNew}
+          to={path.microPhoneNew}
           className="no-underline text-green-500 text-lg font-medium border-[1px] border-solid border-[green] p-3 rounded cursor-pointer"
         >
           Thêm mới
         </Link>
       </div>
       <FilterPhone handle={handle} brand={brand} characteristic={character} />
-      {/* <QuickLinkPhone
-        handleSetChoose={handleSetChoose}
-        choose={choose}
-        handleSetChooseCharac={handleSetChooseCharac}
-        chooseCharac={chooseCharac}
-        brand={brand}
-        characteristic={character}
-      /> */}
+
       <div className="mt-6 grid grid-cols-5 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 h-[80%] mb-10">
-        {smartPhone?.data?.data?.map((_smartPhone: any) => (
+        {microphone?.data?.data?.map((_smartPhone: any) => (
           <div className="col-span-1" key={_smartPhone.id}>
             <ProductPhone product={_smartPhone} />
           </div>
@@ -376,7 +271,7 @@ const TableMicrophone: React.FC = () => {
         <Pagination
           current={currentPage + 1}
           pageSize={pageSize}
-          total={smartPhone?.data?.totalElements}
+          total={microphone?.data?.totalElements}
           onChange={handlePageChange}
         />
       </div>

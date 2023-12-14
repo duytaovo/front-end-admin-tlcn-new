@@ -4,26 +4,26 @@ import { payloadCreator } from "src/utils/utils";
 
 export const getBrands = createAsyncThunk(
   "brand/getBrands",
-  payloadCreator(brandApi.getBrands)
+  payloadCreator(brandApi.getBrands),
 );
 
 export const getDetailbrand = createAsyncThunk(
   "brand/getDetailBrand",
-  payloadCreator(brandApi.getDetailBrand)
+  payloadCreator(brandApi.getDetailBrand),
 );
 export const addBrand = createAsyncThunk(
   "brand/addBrand",
-  payloadCreator(brandApi.addBrand)
+  payloadCreator(brandApi.addBrand),
 );
 
 export const updateBrand = createAsyncThunk(
   "brand/updateBrand",
-  payloadCreator(brandApi.updateBrand)
+  payloadCreator(brandApi.updateBrand),
 );
 
 export const deleteBrand = createAsyncThunk(
   "brand/deleteBrand",
-  payloadCreator(brandApi.deleteBrand)
+  payloadCreator(brandApi.deleteBrand),
 );
 
 interface IProudct {
@@ -40,23 +40,15 @@ const brandSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // builder.addCase(addBrand.fulfilled, (state, { payload }) => {
-    //   state.brand = payload.data;
-    // });
     builder.addCase(getBrands.fulfilled, (state, { payload }) => {
       state.brand = payload.data;
     });
     builder.addCase(getDetailbrand.fulfilled, (state, { payload }) => {
       state.brandDetail = payload.data;
     });
-    // builder.addCase(updatebrand.fulfilled, (state, { payload }) => {
-    //   [state.brandDetail, ...payload.data];
-    // });
-    // builder.addCase(deletebrand.fulfilled, (state, { payload }) => {
-    //   state.brand = payload.data;
-    // });
   },
 });
 
 const brandReducer = brandSlice.reducer;
 export default brandReducer;
+

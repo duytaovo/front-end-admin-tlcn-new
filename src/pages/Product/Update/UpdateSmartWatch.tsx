@@ -18,13 +18,17 @@ import SelectCustom from "src/components/Select";
 
 import Textarea from "src/components/Textarea";
 import { getCategorys } from "src/store/category/categorySlice";
-import { getDetailPhone } from "src/store/product/smartPhoneSlice";
+import {
+  getDetailPhone,
+  uploadManyImagesProductSmartPhone,
+} from "src/store/product/smartPhoneSlice";
 import InputFile from "src/components/InputFile";
 import { PlusOutlined } from "@ant-design/icons";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
 import {
+  getDetailSmartWatch,
   getSmartWatch,
   updateSmartWatch,
 } from "src/store/product/smartwatchSlice";
@@ -55,23 +59,22 @@ interface FormData {
   salePrice: string | undefined;
   monitor: string;
 }
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-type brand = {
-  id: number;
-  name: string;
-};
 
-const UpdatePhone: React.FC = () => {
+const UpdateSmartWatch: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const {
     handleSubmit,
     formState: { errors },
@@ -80,6 +83,7 @@ const UpdatePhone: React.FC = () => {
     setValue,
     watch,
     control,
+    getValues,
   } = useForm({
     resolver: yupResolver(schemaProductSmartWatch),
   });
@@ -96,7 +100,7 @@ const UpdatePhone: React.FC = () => {
     {
       control, // control props comes from useForm (optional: if you are using FormContext)
       name: "lstProductTypeAndPrice", // unique name for your Field Array
-    }
+    },
   );
   useEffect(() => {
     dispatch(getCategorys({ pageSize: 100 }));
@@ -106,24 +110,54 @@ const UpdatePhone: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(getDetailPhone(id));
+    dispatch(getDetailSmartWatch(id));
   }, [id]);
 
   const [file, setFile] = useState<File[]>();
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
+  const [imageUrls, setImages] = useState<string[]>([]);
 
   // Tạo một mảng chứa các URL tạm thời cho ảnh
-  const imageUrls: string[] = [];
 
   for (const image of imageArray) {
     const imageUrl = URL.createObjectURL(image);
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue(
-      "ram",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram
-    );
+    setImages(smartWatchDetail.productInfo.lstProductImageUrl);
+
+    const productInfo = smartWatchDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
     setValue("accessories", smartWatchDetail?.productInfo?.accessories);
     setValue("battery", smartWatchDetail?.battery);
     setValue("charging", smartWatchDetail?.charging);
@@ -131,7 +165,7 @@ const UpdatePhone: React.FC = () => {
     setValue("mass", smartWatchDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.color.toString()
+      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.color.toString(),
     );
     setValue("monitor", smartWatchDetail?.monitor);
     setValue("networkSupport", smartWatchDetail?.networkSupport);
@@ -139,18 +173,18 @@ const UpdatePhone: React.FC = () => {
     setValue("brand", smartWatchDetail?.productInfo?.brandId.toString());
     setValue(
       "characteristic",
-      smartWatchDetail?.productInfo?.characteristicId.toString()
+      smartWatchDetail?.productInfo?.characteristicId.toString(),
     );
     setValue("name", smartWatchDetail?.productInfo?.name);
     setValue("sim", smartWatchDetail?.sim);
     setValue(
       "salePrice",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
     setValue("rearCamera", smartWatchDetail?.rearCamera);
     setValue(
       "price",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
     setValue("frontCamera", smartWatchDetail?.frontCamera);
     setValue("operatingSystem", smartWatchDetail?.operatingSystem);
@@ -162,6 +196,21 @@ const UpdatePhone: React.FC = () => {
   }, [smartWatchDetail]);
 
   const onSubmit = handleSubmit(async (data) => {
+    let images = [];
+    // showModal();
+    setIsSubmitting(true);
+    if (file) {
+      const form = new FormData();
+      for (let i = 0; i < file.length; i++) {
+        form.append("files", file[i]);
+      }
+      const res = await dispatch(uploadManyImagesProductSmartPhone(form));
+      unwrapResult(res);
+      const d = res?.payload?.data?.data;
+      for (let i = 0; i < d.length; i++) {
+        images.push(d[i]?.fileUrl);
+      }
+    }
     const body = JSON.stringify({
       productInfo: {
         brandId: Number(data.brand) || 1,
@@ -181,7 +230,7 @@ const UpdatePhone: React.FC = () => {
           (item, index) => ({
             typeId: Number(
               smartWatchDetail?.productInfo?.lstProductTypeAndPrice[index]
-                .typeId
+                .typeId,
             ),
             ram: item?.ram,
             storageCapacity: item?.storageCapacity,
@@ -189,8 +238,8 @@ const UpdatePhone: React.FC = () => {
             price: Number(item?.price),
             salePrice: Number(item?.salePrice),
             quantity: Number(item?.quantity),
-            depotId: Number(item?.depot) || 1,
-          })
+            depotId: Number(item?.depotId),
+          }),
         ),
         lstProductImageUrl: data.imageUrl,
       },
@@ -203,13 +252,6 @@ const UpdatePhone: React.FC = () => {
       battery: data.battery,
       connectToOs: data.connectToOs,
     });
-    // if (file) {
-    //   const form = new FormData();
-    //   form.append("file", file[0]);
-    //   form.append("image", file[0]);
-    // } else {
-    //   toast.warning("Cần chọn ảnh");
-    // }
 
     try {
       setIsSubmitting(true);
@@ -239,7 +281,7 @@ const UpdatePhone: React.FC = () => {
   const onClickHuy = () => {
     setValue(
       "ram",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram
+      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram,
     );
     setValue("accessories", smartWatchDetail?.productInfo?.accessories);
     setValue("battery", smartWatchDetail?.battery);
@@ -248,7 +290,7 @@ const UpdatePhone: React.FC = () => {
     setValue("mass", smartWatchDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      smartWatchDetail?.productInfo.lstProductTypeAndPrice[0].color.toString()
+      smartWatchDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
     );
     setValue("monitor", smartWatchDetail?.monitor);
     setValue("networkSupport", smartWatchDetail?.networkSupport);
@@ -256,18 +298,18 @@ const UpdatePhone: React.FC = () => {
     setValue("brand", smartWatchDetail?.productInfo?.brandId.toString());
     setValue(
       "characteristic",
-      smartWatchDetail?.productInfo?.characteristicId.toString()
+      smartWatchDetail?.productInfo?.characteristicId.toString(),
     );
     setValue("name", smartWatchDetail?.productInfo?.name);
     setValue("sim", smartWatchDetail?.sim);
     setValue(
       "salePrice",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
     setValue("rearCamera", smartWatchDetail?.rearCamera);
     setValue(
       "price",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
     setValue("frontCamera", smartWatchDetail?.frontCamera);
     setValue("operatingSystem", smartWatchDetail?.operatingSystem);
@@ -281,7 +323,30 @@ const UpdatePhone: React.FC = () => {
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
+  const handleEditImage = (index: number) => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
 
+    fileInput.addEventListener("change", (event) => {
+      const selectedFile = (event.target as HTMLInputElement).files?.[0];
+
+      if (selectedFile) {
+        const currentImages = getValues("files") || [];
+        currentImages[index] = selectedFile;
+        setValue("files", currentImages);
+
+        // Update the image preview immediately
+        setImages((prevImages) => {
+          const updatedImages = [...prevImages];
+          updatedImages[index] = URL.createObjectURL(selectedFile);
+          return updatedImages;
+        });
+      }
+    });
+
+    fileInput.click();
+  };
   return (
     <div className="bg-white shadow ">
       <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm smartwatch</h2>
@@ -511,11 +576,10 @@ const UpdatePhone: React.FC = () => {
                     className={"flex-1 text-black"}
                     id={`lstProductTypeAndPrice.${index}.depot`}
                     placeholder="Vui lòng chọn"
-                    defaultValue={1}
                     options={depot?.data?.data}
                     register={register}
                   >
-                    {errors.depot?.message}
+                    {errors.depotId?.message}
                   </SelectCustom>
                 </Form.Item>
                 <div className="flex justify-between space-x-1">
@@ -711,7 +775,7 @@ const UpdatePhone: React.FC = () => {
         <div className="flex justify-start">
           <Form.Item label="" className="ml-[135px] mb-2 bg-green-300">
             <Button className="w-[100px]" onClick={onSubmit} type="default">
-              Lưu
+              {isSubmitting ? "Loading..." : "Lưu"}
             </Button>
           </Form.Item>
           <Form.Item label="" className="ml-[70px] mb-2">
@@ -740,4 +804,5 @@ const UpdatePhone: React.FC = () => {
   );
 };
 
-export default () => <UpdatePhone />;
+export default () => <UpdateSmartWatch />;
+

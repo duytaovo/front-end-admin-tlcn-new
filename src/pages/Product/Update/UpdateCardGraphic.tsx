@@ -1,7 +1,7 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Form } from "antd";
+import { Button, Form, Modal } from "antd";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -23,8 +23,6 @@ import InputFile from "src/components/InputFile";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
-
-import { getDetailRom, getRoms, updateRom } from "src/store/rom/romSlice";
 import {
   getCardGraphic,
   getDetailCardGraphic,
@@ -58,8 +56,21 @@ interface FormData {
   monitor: string;
 }
 
-const NewRam: React.FC = () => {
+const UpdateCard: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const {
     handleSubmit,
     formState: { errors },
@@ -68,15 +79,15 @@ const NewRam: React.FC = () => {
     setValue,
     control,
     watch,
+    getValues,
   } = useForm({
     resolver: yupResolver(schemaProductRam),
   });
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { nameId } = useParams();
-  const { cardGraphic } = useAppSelector((state) => state.cardGraphic);
+  const { cardGraphicDetail } = useAppSelector((state) => state.cardGraphic);
   const id = getIdFromNameId(nameId as string);
-  const { category } = useAppSelector((state) => state.category);
   const { character } = useAppSelector((state) => state.character);
   const { depot } = useAppSelector((state) => state.depot);
   const { brand } = useAppSelector((state) => state.brand);
@@ -94,59 +105,87 @@ const NewRam: React.FC = () => {
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
 
   // Tạo một mảng chứa các URL tạm thời cho ảnh
-  const imageUrls: string[] = [];
+  const [imageUrls, setImages] = useState<string[]>([]);
 
   for (const image of imageArray) {
     const imageUrl = URL.createObjectURL(image);
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue(
-      "ram",
-      cardGraphic?.productInfo?.lstProductTypeAndPrice[0]?.cardGraphic
-    );
-    setValue("accessories", cardGraphic?.productInfo?.accessories);
-    setValue("mass", cardGraphic?.productInfo?.mass.toString());
+    const productInfo = cardGraphicDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
+    setValue("accessories", cardGraphicDetail?.productInfo?.accessories);
+    setValue("mass", cardGraphicDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      cardGraphic?.productInfo.lstProductTypeAndPrice[0].color.toString()
+      cardGraphicDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
     );
-    setValue("monitor", cardGraphic?.monitor);
-    setValue("description", cardGraphic?.productInfo?.description);
-    setValue("brand", cardGraphic?.productInfo?.brandId.toString());
+    setValue("monitor", cardGraphicDetail?.monitor);
+    setValue("description", cardGraphicDetail?.productInfo?.description);
+    setValue("brand", cardGraphicDetail?.productInfo?.brandId.toString());
     setValue(
       "characteristic",
-      cardGraphic?.productInfo?.characteristicId.toString()
+      cardGraphicDetail?.productInfo?.characteristicId.toString(),
     );
-    setValue("name", cardGraphic?.productInfo?.name);
+    setValue("name", cardGraphicDetail?.productInfo?.name);
     setValue(
       "salePrice",
-      cardGraphic?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+      cardGraphicDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
     setValue(
       "price",
-      cardGraphic?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+      cardGraphicDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
-    setValue("operatingSystem", cardGraphic?.operatingSystem);
-    setValue("design", cardGraphic?.productInfo?.design);
-    setValue("dimension", cardGraphic?.productInfo?.dimension);
-    setValue("category", cardGraphic?.productInfo?.categoryId.toString());
+    setValue("operatingSystem", cardGraphicDetail?.operatingSystem);
+    setValue("design", cardGraphicDetail?.productInfo?.design);
+    setValue("dimension", cardGraphicDetail?.productInfo?.dimension);
+    setValue("category", cardGraphicDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("imageUrl", cardGraphic?.productInfo.lstProductImageUrl);
-    setValue("graphicsEngine", cardGraphic?.graphicsEngine);
-    setValue("standardBus", cardGraphic?.standardBus);
-    setValue("memory", cardGraphic?.memory);
-    setValue("memorySpeed", cardGraphic?.memorySpeed);
-    setValue("engineClock", cardGraphic?.engineClock);
-    setValue("maxSpeed", cardGraphic?.maxSpeed);
-    setValue("caching", cardGraphic?.caching);
-    setValue("maximumResolution", cardGraphic?.maximumResolution);
-  }, [cardGraphic]);
+    setValue("imageUrl", cardGraphicDetail?.productInfo.lstProductImageUrl);
+    setValue("graphicsEngine", cardGraphicDetail?.graphicsEngine);
+    setValue("standardBus", cardGraphicDetail?.standardBus);
+    setValue("memory", cardGraphicDetail?.memory);
+    setValue("memorySpeed", cardGraphicDetail?.memorySpeed);
+    setValue("engineClock", cardGraphicDetail?.engineClock);
+    setValue("maxSpeed", cardGraphicDetail?.maxSpeed);
+    setValue("caching", cardGraphicDetail?.caching);
+    setValue("maximumResolution", cardGraphicDetail?.maximumResolution);
+  }, [cardGraphicDetail]);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
       control, // control props comes fprocessor useForm (optional: if you are using FormContext)
       name: "lstProductTypeAndPrice", // unique name for your Field Array
-    }
+    },
   );
   const onSubmit = handleSubmit(async (data) => {
     const body = JSON.stringify({
@@ -164,16 +203,21 @@ const NewRam: React.FC = () => {
         launchTime: 2023,
         accessories: data?.accessories,
         productStatus: 100,
-        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
-          typeId: null,
-          ram: item?.ram,
-          storageCapacity: item?.storageCapacity,
-          color: item?.color,
-          price: Number(item?.price),
-          salePrice: Number(item?.salePrice),
-          quantity: Number(item?.quantity),
-          depotId: Number(item?.depot) || 1,
-        })),
+        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map(
+          (item, index) => ({
+            typeId: Number(
+              cardGraphicDetail?.productInfo?.lstProductTypeAndPrice[index]
+                ?.typeId,
+            ),
+            ram: item?.ram,
+            storageCapacity: item?.storageCapacity,
+            color: item?.color,
+            price: Number(item?.price),
+            salePrice: Number(item?.salePrice),
+            quantity: Number(item?.quantity),
+            depotId: Number(item?.depot),
+          }),
+        ),
 
         lstProductImageUrl: [],
       },
@@ -196,7 +240,7 @@ const NewRam: React.FC = () => {
       if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Cập nhật sản phẩm thành công ");
       await dispatch(getCardGraphic(""));
-      await navigate(path.rom);
+      await navigate(path.cardGrap);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
@@ -214,49 +258,103 @@ const NewRam: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue(
-      "ram",
-      cardGraphic?.productInfo?.lstProductTypeAndPrice[0]?.cardGraphic
-    );
-    setValue("accessories", cardGraphic?.productInfo?.accessories);
-    setValue("mass", cardGraphic?.productInfo?.mass.toString());
+    setImages(cardGraphicDetail?.productInfo.lstProductImageUrl);
+
+    const productInfo = cardGraphicDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
+    setValue("accessories", cardGraphicDetail?.productInfo?.accessories);
+    setValue("mass", cardGraphicDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      cardGraphic?.productInfo.lstProductTypeAndPrice[0].color.toString()
+      cardGraphicDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
     );
-    setValue("monitor", cardGraphic?.monitor);
-    setValue("description", cardGraphic?.productInfo?.description);
-    setValue("brand", cardGraphic?.productInfo?.brandId.toString());
+    setValue("monitor", cardGraphicDetail?.monitor);
+    setValue("description", cardGraphicDetail?.productInfo?.description);
+    setValue("brand", cardGraphicDetail?.productInfo?.brandId.toString());
     setValue(
       "characteristic",
-      cardGraphic?.productInfo?.characteristicId.toString()
+      cardGraphicDetail?.productInfo?.characteristicId.toString(),
     );
-    setValue("name", cardGraphic?.productInfo?.name);
+    setValue("name", cardGraphicDetail?.productInfo?.name);
     setValue(
       "salePrice",
-      cardGraphic?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+      cardGraphicDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
     setValue(
       "price",
-      cardGraphic?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+      cardGraphicDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
-    setValue("operatingSystem", cardGraphic?.operatingSystem);
-    setValue("design", cardGraphic?.productInfo?.design);
-    setValue("dimension", cardGraphic?.productInfo?.dimension);
-    setValue("category", cardGraphic?.productInfo?.categoryId.toString());
+    setValue("operatingSystem", cardGraphicDetail?.operatingSystem);
+    setValue("design", cardGraphicDetail?.productInfo?.design);
+    setValue("dimension", cardGraphicDetail?.productInfo?.dimension);
+    setValue("category", cardGraphicDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("imageUrl", cardGraphic?.productInfo.lstProductImageUrl);
-    setValue("graphicsEngine", cardGraphic?.graphicsEngine);
-    setValue("standardBus", cardGraphic?.standardBus);
-    setValue("memory", cardGraphic?.memory);
-    setValue("memorySpeed", cardGraphic?.memorySpeed);
-    setValue("engineClock", cardGraphic?.engineClock);
-    setValue("maxSpeed", cardGraphic?.maxSpeed);
-    setValue("caching", cardGraphic?.caching);
-    setValue("maximumResolution", cardGraphic?.maximumResolution);
+    setValue("imageUrl", cardGraphicDetail?.productInfo.lstProductImageUrl);
+    setValue("graphicsEngine", cardGraphicDetail?.graphicsEngine);
+    setValue("standardBus", cardGraphicDetail?.standardBus);
+    setValue("memory", cardGraphicDetail?.memory);
+    setValue("memorySpeed", cardGraphicDetail?.memorySpeed);
+    setValue("engineClock", cardGraphicDetail?.engineClock);
+    setValue("maxSpeed", cardGraphicDetail?.maxSpeed);
+    setValue("caching", cardGraphicDetail?.caching);
+    setValue("maximumResolution", cardGraphicDetail?.maximumResolution);
   };
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
+  };
+  const handleEditImage = (index: number) => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+
+    fileInput.addEventListener("change", (event) => {
+      const selectedFile = (event.target as HTMLInputElement).files?.[0];
+
+      if (selectedFile) {
+        const currentImages = getValues("files") || [];
+        currentImages[index] = selectedFile;
+        setValue("files", currentImages);
+
+        // Update the image preview immediately
+        setImages((prevImages) => {
+          const updatedImages = [...prevImages];
+          updatedImages[index] = URL.createObjectURL(selectedFile);
+          return updatedImages;
+        });
+      }
+    });
+
+    fileInput.click();
   };
 
   return (
@@ -271,24 +369,6 @@ const NewRam: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
-        {/* <Form.Item
-          label="Danh mục sản phẩm"
-          name=""
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="category"
-            // label="Hãng xe"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={category?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.category?.message}
-          </SelectCustom>
-        </Form.Item> */}
         <Form.Item
           label="Hãng sản xuất"
           name="brand"
@@ -473,11 +553,10 @@ const NewRam: React.FC = () => {
                     id={`lstProductTypeAndPrice.${index}.depot`}
                     // label="Hãng xe"
                     placeholder="Vui lòng chọn"
-                    defaultValue={1}
                     options={depot?.data?.data}
                     register={register}
                   >
-                    {errors.depot?.message}
+                    {errors.depotId?.message}
                   </SelectCustom>
                 </Form.Item>
                 <div className="flex justify-between space-x-1">
@@ -632,7 +711,6 @@ const NewRam: React.FC = () => {
 
         <Form.Item
           name="file"
-          // rules={[{ required: true }]}
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
@@ -641,12 +719,22 @@ const NewRam: React.FC = () => {
             <div className="my-5 w-24 space-y-5 justify-between items-center">
               {imageUrls.map((imageUrl, index) => {
                 return (
-                  <img
-                    key={index}
-                    src={imageUrl}
-                    className="h-full rounded-md w-full  object-cover"
-                    alt="avatar"
-                  />
+                  <div key={index}>
+                    <img
+                      src={imageUrl}
+                      alt={`Image ${index + 1}`}
+                      width="100"
+                      height="100"
+                      className="h-full rounded-md w-full  object-cover"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => handleEditImage(index)}
+                    >
+                      Edit
+                    </button>
+                  </div>
                 );
               })}
             </div>
@@ -675,7 +763,7 @@ const NewRam: React.FC = () => {
         <div className="flex justify-start">
           <Form.Item label="" className="ml-[135px] mb-2 bg-green-300">
             <Button className="w-[100px]" onClick={onSubmit} type="default">
-              Lưu
+              {isSubmitting ? "Loading..." : "Lưu"}
             </Button>
           </Form.Item>
           <Form.Item label="" className="ml-[70px] mb-2">
@@ -692,7 +780,7 @@ const NewRam: React.FC = () => {
             <Button
               className="w-[100px]"
               onClick={() => {
-                navigate(path.smartPhone);
+                navigate(path.cardGrap);
               }}
             >
               Hủy
@@ -700,8 +788,17 @@ const NewRam: React.FC = () => {
           </Form.Item>
         </div>
       </Form>
+      <Modal
+        title="Cập nhật sản phẩm"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>Đang xử lý, vui lòng đợi...</p>
+      </Modal>
     </div>
   );
 };
 
-export default () => <NewRam />;
+export default () => <UpdateCard />;
+

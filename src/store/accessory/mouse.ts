@@ -4,26 +4,26 @@ import { payloadCreator } from "src/utils/utils";
 
 export const getMouse = createAsyncThunk(
   "mouse/getMouse",
-  payloadCreator(mouseApi.getMouses)
+  payloadCreator(mouseApi.getMouses),
 );
 
 export const getDetailMouse = createAsyncThunk(
   "mouse/getDetailMouse",
-  payloadCreator(mouseApi.getDetailMouse)
+  payloadCreator(mouseApi.getDetailMouse),
 );
 export const addMouse = createAsyncThunk(
   "mouse/addMouse",
-  payloadCreator(mouseApi.addMouse)
+  payloadCreator(mouseApi.addMouse),
 );
 
 export const updateMouse = createAsyncThunk(
   "mouse/updateMouse",
-  payloadCreator(mouseApi.updateMouse)
+  payloadCreator(mouseApi.updateMouse),
 );
 
 export const deleteMouse = createAsyncThunk(
   "mouse/deleteMouse",
-  payloadCreator(mouseApi.deleteMouse)
+  payloadCreator(mouseApi.deleteMouse),
 );
 
 interface IProudct {
@@ -40,23 +40,15 @@ const Mouselice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // builder.addCase(addmouse.fulfilled, (state, { payload }) => {
-    //   state.mouse = payload.data;
-    // });
     builder.addCase(getMouse.fulfilled, (state, { payload }) => {
       state.mouse = payload.data;
     });
     builder.addCase(getDetailMouse.fulfilled, (state, { payload }) => {
       state.mouseDetail = payload.data;
     });
-    // builder.addCase(updatemouse.fulfilled, (state, { payload }) => {
-    //   [state.mouseDetail, ...payload.data];
-    // });
-    // builder.addCase(deletemouse.fulfilled, (state, { payload }) => {
-    //   state.mouse = payload.data;
-    // });
   },
 });
 
 const mouseReducer = Mouselice.reducer;
 export default mouseReducer;
+

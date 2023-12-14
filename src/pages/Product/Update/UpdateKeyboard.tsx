@@ -18,7 +18,6 @@ import SelectCustom from "src/components/Select";
 
 import Textarea from "src/components/Textarea";
 import { getCategorys } from "src/store/category/categorySlice";
-import { getDetailPhone } from "src/store/product/smartPhoneSlice";
 import InputFile from "src/components/InputFile";
 import { PlusOutlined } from "@ant-design/icons";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
@@ -28,6 +27,7 @@ import {
   getSmartWatch,
   updateSmartWatch,
 } from "src/store/product/smartwatchSlice";
+import { getDetailkeyboard } from "src/store/accessory/keyboard";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -55,20 +55,6 @@ interface FormData {
   salePrice: string | undefined;
   monitor: string;
 }
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-type brand = {
-  id: number;
-  name: string;
-};
 
 const UpdateLoudSpeaker: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -88,7 +74,7 @@ const UpdateLoudSpeaker: React.FC = () => {
   const { category } = useAppSelector((state) => state.category);
   const { nameId } = useParams();
   const id = getIdFromNameId(nameId as string);
-  const { smartWatchDetail } = useAppSelector((state) => state.smartWatch);
+  const { keyboardDetail } = useAppSelector((state) => state.keyboard);
   const { character } = useAppSelector((state) => state.character);
   const { depot } = useAppSelector((state) => state.depot);
   const { brand } = useAppSelector((state) => state.brand);
@@ -96,7 +82,7 @@ const UpdateLoudSpeaker: React.FC = () => {
     {
       control, // control props comes from useForm (optional: if you are using FormContext)
       name: "lstProductTypeAndPrice", // unique name for your Field Array
-    }
+    },
   );
   useEffect(() => {
     dispatch(getCategorys({ pageSize: 100 }));
@@ -106,7 +92,7 @@ const UpdateLoudSpeaker: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(getDetailPhone(id));
+    dispatch(getDetailkeyboard(id));
   }, [id]);
 
   const [file, setFile] = useState<File[]>();
@@ -122,53 +108,53 @@ const UpdateLoudSpeaker: React.FC = () => {
   useEffect(() => {
     setValue(
       "ram",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram
+      keyboardDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram,
     );
-    setValue("accessories", smartWatchDetail?.productInfo?.accessories);
-    setValue("battery", smartWatchDetail?.battery);
-    setValue("charging", smartWatchDetail?.charging);
-    setValue("chip", smartWatchDetail?.chip);
-    setValue("mass", smartWatchDetail?.productInfo?.mass.toString());
+    setValue("accessories", keyboardDetail?.productInfo?.accessories);
+    setValue("battery", keyboardDetail?.battery);
+    setValue("charging", keyboardDetail?.charging);
+    setValue("chip", keyboardDetail?.chip);
+    setValue("mass", keyboardDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.color.toString()
+      keyboardDetail?.productInfo?.lstProductTypeAndPrice[0]?.color.toString(),
     );
-    setValue("monitor", smartWatchDetail?.monitor);
-    setValue("networkSupport", smartWatchDetail?.networkSupport);
-    setValue("description", smartWatchDetail?.productInfo?.description);
-    setValue("brand", smartWatchDetail?.productInfo?.brandId.toString());
+    setValue("monitor", keyboardDetail?.monitor);
+    setValue("networkSupport", keyboardDetail?.networkSupport);
+    setValue("description", keyboardDetail?.productInfo?.description);
+    setValue("brand", keyboardDetail?.productInfo?.brandId.toString());
     setValue(
       "characteristic",
-      smartWatchDetail?.productInfo?.characteristicId.toString()
+      keyboardDetail?.productInfo?.characteristicId.toString(),
     );
-    setValue("name", smartWatchDetail?.productInfo?.name);
-    setValue("sim", smartWatchDetail?.sim);
+    setValue("name", keyboardDetail?.productInfo?.name);
+    setValue("sim", keyboardDetail?.sim);
     setValue(
       "salePrice",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+      keyboardDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
-    setValue("rearCamera", smartWatchDetail?.rearCamera);
+    setValue("rearCamera", keyboardDetail?.rearCamera);
     setValue(
       "price",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+      keyboardDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
-    setValue("frontCamera", smartWatchDetail?.frontCamera);
-    setValue("operatingSystem", smartWatchDetail?.operatingSystem);
-    setValue("design", smartWatchDetail?.productInfo?.design);
-    setValue("dimension", smartWatchDetail?.productInfo?.dimension);
-    setValue("category", smartWatchDetail?.productInfo?.categoryId.toString());
+    setValue("frontCamera", keyboardDetail?.frontCamera);
+    setValue("operatingSystem", keyboardDetail?.operatingSystem);
+    setValue("design", keyboardDetail?.productInfo?.design);
+    setValue("dimension", keyboardDetail?.productInfo?.dimension);
+    setValue("category", keyboardDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("imageUrl", smartWatchDetail?.productInfo.lstProductImageUrl);
-  }, [smartWatchDetail]);
+    setValue("imageUrl", keyboardDetail?.productInfo.lstProductImageUrl);
+  }, [keyboardDetail]);
 
   const onSubmit = handleSubmit(async (data) => {
     const body = JSON.stringify({
       productInfo: {
         brandId: Number(data.brand) || 1,
         categoryId: Number(data.category),
-        productId: smartWatchDetail.productInfo.productId,
+        productId: keyboardDetail.productInfo.productId,
         characteristicId: Number(data.characteristic) || 1,
-        productCode: smartWatchDetail.productInfo.productCode,
+        productCode: keyboardDetail.productInfo.productCode,
         name: data.name,
         description: data?.description,
         design: data?.design,
@@ -180,8 +166,7 @@ const UpdateLoudSpeaker: React.FC = () => {
         lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map(
           (item, index) => ({
             typeId: Number(
-              smartWatchDetail?.productInfo?.lstProductTypeAndPrice[index]
-                .typeId
+              keyboardDetail?.productInfo?.lstProductTypeAndPrice[index].typeId,
             ),
             ram: item?.ram,
             storageCapacity: item?.storageCapacity,
@@ -189,8 +174,8 @@ const UpdateLoudSpeaker: React.FC = () => {
             price: Number(item?.price),
             salePrice: Number(item?.salePrice),
             quantity: Number(item?.quantity),
-            depotId: Number(item?.depot) || 1,
-          })
+            depotId: Number(item?.depotId),
+          }),
         ),
         lstProductImageUrl: data.imageUrl,
       },
@@ -203,13 +188,6 @@ const UpdateLoudSpeaker: React.FC = () => {
       battery: data.battery,
       connectToOs: data.connectToOs,
     });
-    // if (file) {
-    //   const form = new FormData();
-    //   form.append("file", file[0]);
-    //   form.append("image", file[0]);
-    // } else {
-    //   toast.warning("Cần chọn ảnh");
-    // }
 
     try {
       setIsSubmitting(true);
@@ -239,52 +217,51 @@ const UpdateLoudSpeaker: React.FC = () => {
   const onClickHuy = () => {
     setValue(
       "ram",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram
+      keyboardDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram,
     );
-    setValue("accessories", smartWatchDetail?.productInfo?.accessories);
-    setValue("battery", smartWatchDetail?.battery);
-    setValue("charging", smartWatchDetail?.charging);
-    setValue("chip", smartWatchDetail?.chip);
-    setValue("mass", smartWatchDetail?.productInfo?.mass.toString());
+    setValue("accessories", keyboardDetail?.productInfo?.accessories);
+    setValue("battery", keyboardDetail?.battery);
+    setValue("charging", keyboardDetail?.charging);
+    setValue("chip", keyboardDetail?.chip);
+    setValue("mass", keyboardDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      smartWatchDetail?.productInfo.lstProductTypeAndPrice[0].color.toString()
+      keyboardDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
     );
-    setValue("monitor", smartWatchDetail?.monitor);
-    setValue("networkSupport", smartWatchDetail?.networkSupport);
-    setValue("description", smartWatchDetail?.productInfo?.description);
-    setValue("brand", smartWatchDetail?.productInfo?.brandId.toString());
+    setValue("monitor", keyboardDetail?.monitor);
+    setValue("networkSupport", keyboardDetail?.networkSupport);
+    setValue("description", keyboardDetail?.productInfo?.description);
+    setValue("brand", keyboardDetail?.productInfo?.brandId.toString());
     setValue(
       "characteristic",
-      smartWatchDetail?.productInfo?.characteristicId.toString()
+      keyboardDetail?.productInfo?.characteristicId.toString(),
     );
-    setValue("name", smartWatchDetail?.productInfo?.name);
-    setValue("sim", smartWatchDetail?.sim);
+    setValue("name", keyboardDetail?.productInfo?.name);
+    setValue("sim", keyboardDetail?.sim);
     setValue(
       "salePrice",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+      keyboardDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
-    setValue("rearCamera", smartWatchDetail?.rearCamera);
+    setValue("rearCamera", keyboardDetail?.rearCamera);
     setValue(
       "price",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+      keyboardDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
-    setValue("frontCamera", smartWatchDetail?.frontCamera);
-    setValue("operatingSystem", smartWatchDetail?.operatingSystem);
-    setValue("design", smartWatchDetail?.productInfo?.design);
-    setValue("dimension", smartWatchDetail?.productInfo?.dimension);
-    setValue("category", smartWatchDetail?.productInfo?.categoryId.toString());
+    setValue("frontCamera", keyboardDetail?.frontCamera);
+    setValue("operatingSystem", keyboardDetail?.operatingSystem);
+    setValue("design", keyboardDetail?.productInfo?.design);
+    setValue("dimension", keyboardDetail?.productInfo?.dimension);
+    setValue("category", keyboardDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("imageUrl", smartWatchDetail?.productInfo.lstProductImageUrl);
+    setValue("imageUrl", keyboardDetail?.productInfo.lstProductImageUrl);
   };
-  const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
 
   return (
     <div className="bg-white shadow ">
-      <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm smartwatch</h2>
+      <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm </h2>
       <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
@@ -511,11 +488,10 @@ const UpdateLoudSpeaker: React.FC = () => {
                     className={"flex-1 text-black"}
                     id={`lstProductTypeAndPrice.${index}.depot`}
                     placeholder="Vui lòng chọn"
-                    defaultValue={1}
                     options={depot?.data?.data}
                     register={register}
                   >
-                    {errors.depot?.message}
+                    {errors.depotId?.message}
                   </SelectCustom>
                 </Form.Item>
                 <div className="flex justify-between space-x-1">
@@ -711,7 +687,7 @@ const UpdateLoudSpeaker: React.FC = () => {
         <div className="flex justify-start">
           <Form.Item label="" className="ml-[135px] mb-2 bg-green-300">
             <Button className="w-[100px]" onClick={onSubmit} type="default">
-              Lưu
+              {isSubmitting ? "Loading..." : "Lưu"}
             </Button>
           </Form.Item>
           <Form.Item label="" className="ml-[70px] mb-2">
@@ -728,7 +704,7 @@ const UpdateLoudSpeaker: React.FC = () => {
             <Button
               className="w-[100px]"
               onClick={() => {
-                navigate(path.smartPhone);
+                navigate(path.keyboard);
               }}
             >
               Hủy
@@ -741,3 +717,4 @@ const UpdateLoudSpeaker: React.FC = () => {
 };
 
 export default () => <UpdateLoudSpeaker />;
+

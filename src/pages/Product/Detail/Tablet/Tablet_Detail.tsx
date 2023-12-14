@@ -23,19 +23,19 @@ export default function TabletDetail() {
   const [activeImage, setActiveImage] = useState("");
   const imageRef = useRef<HTMLImageElement>(null);
   const [price, setPrice] = useState(
-    tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.price
+    tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.price,
   );
   const [salePrice, setSalePrice] = useState(
-    tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
+    tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice,
   );
   const currentImages = useMemo(
     () =>
       tabletDetail?.productInfo?.lstProductImageUrl
         ? tabletDetail?.productInfo?.lstProductImageUrl.slice(
-            ...currentIndexImages
+            ...currentIndexImages,
           )
         : [],
-    [tabletDetail, currentIndexImages]
+    [tabletDetail, currentIndexImages],
   );
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function TabletDetail() {
   useEffect(() => {
     setPrice(tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.price);
     setSalePrice(
-      tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
+      tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice,
     );
   }, [tabletDetail]);
   const next = () => {
@@ -85,12 +85,12 @@ export default function TabletDetail() {
     ) {
       setPrice(tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.price);
       setSalePrice(
-        tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
+        tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice,
       );
     } else {
       setPrice(tabletDetail?.productInfo?.lstProductTypeAndPrice[1]?.price);
       setSalePrice(
-        tabletDetail?.productInfo?.lstProductTypeAndPrice[1]?.salePrice
+        tabletDetail?.productInfo?.lstProductTypeAndPrice[1]?.salePrice,
       );
     }
   };
@@ -240,7 +240,7 @@ export default function TabletDetail() {
                 <div>
                   <span>
                     {formatNumberToSocialStyle(
-                      Number(tabletDetail?.productInfo?.totalReview) || 1520
+                      Number(tabletDetail?.productInfo?.totalReview) || 1520,
                     )}
                   </span>
                   <span className="ml-1 text-gray-500">Đã xem</span>
@@ -265,66 +265,68 @@ export default function TabletDetail() {
           <div className="block space-y-2">
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Màn hình :</h4>
-              <h5>{tabletDetail.monitor}</h5>
+              <h5>{tabletDetail?.monitor}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Hệ điều hành :</h4>
-              <h5>{tabletDetail.operatingSystem}</h5>
+              <h5>{tabletDetail?.operatingSystem}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Camera chính :</h4>
-              <h5>{tabletDetail.rearCamera}</h5>
+              <h5>{tabletDetail?.rearCamera}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Camera trước :</h4>
-              <h5>{tabletDetail.frontCamera}</h5>
+              <h5>{tabletDetail?.frontCamera}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Chip :</h4>
-              <h5>{tabletDetail.chip}</h5>
+              <h5>{tabletDetail?.chip}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Sim :</h4>
-              <h5>{tabletDetail.sim}</h5>
+              <h5>{tabletDetail?.sim}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Pin :</h4>
-              <h5>{tabletDetail.monitor}</h5>
+              <h5>{tabletDetail?.monitor}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Sạc nhanh:</h4>
-              <h5>{tabletDetail.charging}</h5>
+              <h5>{tabletDetail?.charging}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Hỗ trợ mạng:</h4>
-              <h5>{tabletDetail.networkSupport}</h5>
+              <h5>{tabletDetail?.networkSupport}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Phụ kiện:</h4>
-              <h5>{tabletDetail.productInfo.accessories}</h5>
+              <h5>{tabletDetail?.productInfo?.accessories}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Năm ra mắt:</h4>
-              <h5>{tabletDetail.productInfo.launchTime}</h5>
+              <h5>{tabletDetail?.productInfo?.launchTime}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Thiết kế:</h4>
-              <h5>{tabletDetail.productInfo.design}</h5>
+              <h5>{tabletDetail?.productInfo?.design}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Khối lượng:</h4>
-              <h5>{tabletDetail.productInfo.mass}</h5>
+              <h5>{tabletDetail?.productInfo?.mass}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Ram:</h4>
-              <h5>{tabletDetail.productInfo.lstProductTypeAndPrice[0].ram}</h5>
+              <h5>
+                {tabletDetail?.productInfo?.lstProductTypeAndPrice[0].ram}
+              </h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Bộ nhớ trong:</h4>
               <h5>
                 {
-                  tabletDetail.productInfo.lstProductTypeAndPrice[0]
-                    .storageCapacity
+                  tabletDetail?.productInfo?.lstProductTypeAndPrice[0]
+                    ?.storageCapacity
                 }
               </h5>
             </div>
@@ -341,7 +343,7 @@ export default function TabletDetail() {
               <div
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(
-                    tabletDetail?.productInfo?.description
+                    tabletDetail?.productInfo?.description,
                   ),
                 }}
               />
@@ -367,3 +369,4 @@ export default function TabletDetail() {
     </div>
   );
 }
+

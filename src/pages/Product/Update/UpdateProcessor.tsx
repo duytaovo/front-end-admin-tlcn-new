@@ -103,29 +103,29 @@ const NewRam: React.FC = () => {
   useEffect(() => {
     setValue(
       "ram",
-      processor?.productInfo?.lstProductTypeAndPrice[0]?.processor
+      processor?.productInfo?.lstProductTypeAndPrice[0]?.processor,
     );
     setValue("accessories", processor?.productInfo?.accessories);
     setValue("mass", processor?.productInfo?.mass.toString());
     setValue(
       "color",
-      processor?.productInfo.lstProductTypeAndPrice[0].color.toString()
+      processor?.productInfo.lstProductTypeAndPrice[0].color.toString(),
     );
     setValue("monitor", processor?.monitor);
     setValue("description", processor?.productInfo?.description);
     setValue("brand", processor?.productInfo?.brandId.toString());
     setValue(
       "characteristic",
-      processor?.productInfo?.characteristicId.toString()
+      processor?.productInfo?.characteristicId.toString(),
     );
     setValue("name", processor?.productInfo?.name);
     setValue(
       "salePrice",
-      processor?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+      processor?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
     setValue(
       "price",
-      processor?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+      processor?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
     setValue("operatingSystem", processor?.operatingSystem);
     setValue("design", processor?.productInfo?.design);
@@ -146,7 +146,7 @@ const NewRam: React.FC = () => {
     {
       control, // control props comes fprocessor useForm (optional: if you are using FormContext)
       name: "lstProductTypeAndPrice", // unique name for your Field Array
-    }
+    },
   );
   const onSubmit = handleSubmit(async (data) => {
     const body = JSON.stringify({
@@ -172,7 +172,7 @@ const NewRam: React.FC = () => {
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
           quantity: Number(item?.quantity),
-          depotId: Number(item?.depot) || 1,
+          depotId: Number(item?.depotId),
         })),
 
         lstProductImageUrl: [],
@@ -216,29 +216,29 @@ const NewRam: React.FC = () => {
   const onClickHuy = () => {
     setValue(
       "ram",
-      processor?.productInfo?.lstProductTypeAndPrice[0]?.processor
+      processor?.productInfo?.lstProductTypeAndPrice[0]?.processor,
     );
     setValue("accessories", processor?.productInfo?.accessories);
     setValue("mass", processor?.productInfo?.mass.toString());
     setValue(
       "color",
-      processor?.productInfo.lstProductTypeAndPrice[0].color.toString()
+      processor?.productInfo.lstProductTypeAndPrice[0].color.toString(),
     );
     setValue("monitor", processor?.monitor);
     setValue("description", processor?.productInfo?.description);
     setValue("brand", processor?.productInfo?.brandId.toString());
     setValue(
       "characteristic",
-      processor?.productInfo?.characteristicId.toString()
+      processor?.productInfo?.characteristicId.toString(),
     );
     setValue("name", processor?.productInfo?.name);
     setValue(
       "salePrice",
-      processor?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+      processor?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
     setValue(
       "price",
-      processor?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+      processor?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
     setValue("operatingSystem", processor?.operatingSystem);
     setValue("design", processor?.productInfo?.design);
@@ -494,11 +494,10 @@ const NewRam: React.FC = () => {
                     id={`lstProductTypeAndPrice.${index}.depot`}
                     // label="Hãng xe"
                     placeholder="Vui lòng chọn"
-                    defaultValue={1}
                     options={depot}
                     register={register}
                   >
-                    {errors.depot?.message}
+                    {errors.depotId?.message}
                   </SelectCustom>
                 </Form.Item>
                 <div className="flex justify-between space-x-1">
@@ -696,7 +695,7 @@ const NewRam: React.FC = () => {
         <div className="flex justify-start">
           <Form.Item label="" className="ml-[135px] mb-2 bg-green-300">
             <Button className="w-[100px]" onClick={onSubmit} type="default">
-              Lưu
+              {isSubmitting ? "Loading..." : "Lưu"}
             </Button>
           </Form.Item>
           <Form.Item label="" className="ml-[70px] mb-2">
@@ -726,3 +725,4 @@ const NewRam: React.FC = () => {
 };
 
 export default () => <NewRam />;
+

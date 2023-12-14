@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Form } from "antd";
+import { Button, Form, Modal } from "antd";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -59,6 +59,19 @@ interface FormData {
 
 const UpdatePhone: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const {
     handleSubmit,
     formState: { errors },
@@ -72,10 +85,8 @@ const UpdatePhone: React.FC = () => {
     resolver: yupResolver(schemaProductSmartPhone),
   });
   const [imageUrls, setImages] = useState<string[]>([]);
-  const [data, setData] = useState<any>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { category } = useAppSelector((state) => state.category);
   const { nameId } = useParams();
   const id = getIdFromNameId(nameId as string);
   // const { brand } = useAppSelector((state) => state.brand);
@@ -113,10 +124,38 @@ const UpdatePhone: React.FC = () => {
   useEffect(() => {
     setImages(smartPhoneDetail.productInfo.lstProductImageUrl);
 
-    setValue(
-      "ram",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram,
-    );
+    const productInfo = smartPhoneDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
     setValue("accessories", smartPhoneDetail?.productInfo?.accessories);
     setValue("battery", smartPhoneDetail?.battery);
     setValue("charging", smartPhoneDetail?.charging);
@@ -154,8 +193,10 @@ const UpdatePhone: React.FC = () => {
     setValue("files", smartPhoneDetail?.productInfo.lstProductImageUrl);
   }, [smartPhoneDetail]);
   const onSubmit = handleSubmit(async (data) => {
+    console.log(data);
     let images = [];
-
+    // showModal();
+    setIsSubmitting(true);
     if (file) {
       const form = new FormData();
       for (let i = 0; i < file.length; i++) {
@@ -168,12 +209,13 @@ const UpdatePhone: React.FC = () => {
         images.push(d[i]?.fileUrl);
       }
     }
+    data?.lstProductTypeAndPrice?.map((item, index) => console.log(item));
     const body = JSON.stringify({
       productInfo: {
-        brandId: Number(data.brand) || 1,
+        brandId: Number(data.brand),
         categoryId: 1,
         productId: Number(smartPhoneDetail.productInfo.productId),
-        characteristicId: Number(data.characteristic) || 1,
+        characteristicId: Number(data.characteristic),
         productCode: smartPhoneDetail.productInfo.productCode,
         name: data.name,
         description: data?.description,
@@ -187,7 +229,7 @@ const UpdatePhone: React.FC = () => {
           (item, index) => ({
             typeId: Number(
               smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[index]
-                .typeId,
+                ?.typeId,
             ),
             ram: item?.ram,
             storageCapacity: item?.storageCapacity,
@@ -195,7 +237,7 @@ const UpdatePhone: React.FC = () => {
             price: Number(item?.price),
             salePrice: Number(item?.salePrice),
             quantity: Number(item?.quantity),
-            depotId: Number(item?.depot) || 1,
+            depotId: Number(item?.depot),
           }),
         ),
 
@@ -213,13 +255,30 @@ const UpdatePhone: React.FC = () => {
     });
 
     try {
-      setIsSubmitting(true);
+      const bodyGet = {
+        slug: "smartphone",
+        brandId: null,
+        characteristicId: null,
+        priceFrom: null,
+        priceTo: null,
+        specialFeatures: [],
+        smartphoneType: [],
+        ram: [],
+        storageCapacity: [],
+        charging: [],
+        screen: [],
+      };
       const res = await dispatch(updateSmartPhone({ id, body }));
       unwrapResult(res);
       const d = res?.payload?.data;
-      if (d?.code !== 200) return toast.error(d?.message);
+      // if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Chỉnh sửa thành công ");
-      await dispatch(getSmartPhones(""));
+      await dispatch(
+        getSmartPhones({
+          body: bodyGet,
+          // params: { pageNumber: 1, pageSize: 10 },
+        }),
+      );
       await navigate(path.smartPhone);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
@@ -235,13 +294,42 @@ const UpdatePhone: React.FC = () => {
       }
     } finally {
       setIsSubmitting(false);
+      handleOk();
     }
   });
   const onClickHuy = () => {
-    setValue(
-      "ram",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram,
-    );
+    const productInfo = smartPhoneDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
     setValue("accessories", smartPhoneDetail?.productInfo?.accessories);
     setValue("battery", smartPhoneDetail?.battery);
     setValue("charging", smartPhoneDetail?.charging);
@@ -319,6 +407,7 @@ const UpdatePhone: React.FC = () => {
         autoComplete="off"
         noValidate
         onSubmitCapture={onSubmit}
+        initialValues={{ smartPhoneDetail }}
       >
         <Form.Item
           label="Hãng sản xuất"
@@ -452,122 +541,117 @@ const UpdatePhone: React.FC = () => {
         >
           <ul>
             {smartPhoneDetail?.productInfo?.lstProductTypeAndPrice?.map(
-              (item, index) => (
-                <li key={index}>
-                  <div className="flex justify-between space-x-1">
-                    <Form.Item
-                      label="Ram"
-                      name={`lstProductTypeAndPrice.${index}.ram`}
-                      rules={[{ required: true }]}
-                    >
-                      <Input
+              (item, index) => {
+                return (
+                  <li key={index}>
+                    <div className="flex justify-between space-x-1">
+                      <Form.Item
+                        label="Ram"
                         name={`lstProductTypeAndPrice.${index}.ram`}
-                        key={index} // important to include key with field's id
-                        register={register}
-                        placeholder="8Gb"
-                        defaultValue={item.ram}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      label="Bộ nhớ trong"
-                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      rules={[{ required: true }]}
-                    >
-                      <Input
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.ram`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="8Gb"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label="Bộ nhớ trong"
                         name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                        key={index} // important to include key with field's id
-                        register={register}
-                        placeholder="1TB"
-                        defaultValue={item.storageCapacity}
-                      />
-                    </Form.Item>
-                  </div>
-                  <div className="flex justify-between space-x-1">
-                    <Form.Item
-                      label="Giá"
-                      name={`lstProductTypeAndPrice.${index}.price`}
-                      rules={[{ required: true }]}
-                    >
-                      <Input
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.storageCapacity`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="1TB"
+                        />
+                      </Form.Item>
+                    </div>
+                    <div className="flex justify-between space-x-1">
+                      <Form.Item
+                        label="Giá"
                         name={`lstProductTypeAndPrice.${index}.price`}
-                        key={index} // important to include key with field's id
-                        register={register}
-                        placeholder="45000000"
-                        defaultValue={item.price}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      label="Giá khuyến mãi"
-                      name={`lstProductTypeAndPrice.${index}.salePrice`}
-                      rules={[{ required: true }]}
-                    >
-                      <Input
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.price`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="45000000"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label="Giá khuyến mãi"
                         name={`lstProductTypeAndPrice.${index}.salePrice`}
-                        key={index} // important to include key with field's id
-                        register={register}
-                        placeholder="44000000"
-                        defaultValue={item.salePrice}
-                      />
-                    </Form.Item>
-                  </div>
-                  <Form.Item
-                    label="Kho hàng"
-                    name={`lstProductTypeAndPrice.${index}.depot`}
-                    rules={[{ required: true }]}
-                  >
-                    <SelectCustom
-                      className={"flex-1 text-black"}
-                      id={`lstProductTypeAndPrice.${index}.depot`}
-                      // label="Hãng xe"
-                      placeholder="Vui lòng chọn"
-                      defaultValue={item.depotId}
-                      options={depot?.data?.data}
-                      register={register}
-                    >
-                      {errors.depot?.message}
-                    </SelectCustom>
-                  </Form.Item>
-                  <div>
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.salePrice`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="44000000"
+                        />
+                      </Form.Item>
+                    </div>
                     <Form.Item
-                      label="Số lượng sản phẩm"
-                      name={`lstProductTypeAndPrice.${index}.quantity`}
+                      label="Kho hàng"
+                      name={`lstProductTypeAndPrice.${index}.depot`}
                       rules={[{ required: true }]}
                     >
-                      <Input
+                      <SelectCustom
+                        className={"flex-1 text-black"}
+                        id={`lstProductTypeAndPrice.${index}.depot`}
+                        placeholder="Vui lòng chọn"
+                        defaultValue={item.depotId}
+                        options={depot?.data?.data}
+                        register={register}
+                      >
+                        {errors.depotId?.message}
+                      </SelectCustom>
+                    </Form.Item>
+                    <div>
+                      <Form.Item
+                        label="Số lượng sản phẩm"
                         name={`lstProductTypeAndPrice.${index}.quantity`}
-                        key={index} // important to include key with field's id
-                        register={register}
-                        defaultValue={item.quantity}
-                        placeholder="1000"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      label="Màu"
-                      name={`lstProductTypeAndPrice.${index}.color`}
-                      rules={[{ required: true }]}
-                    >
-                      <Input
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.quantity`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="1000"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label="Màu"
                         name={`lstProductTypeAndPrice.${index}.color`}
-                        key={index} // important to include key with field's id
-                        register={register}
-                        defaultValue={item.color}
-                        placeholder="Titan tự nhiên"
-                      />
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.color`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="Titan tự nhiên"
+                        />
+                      </Form.Item>
+                    </div>
+                    <Form.Item>
+                      <Button
+                        type="default"
+                        onClick={() => remove(index)}
+                        block
+                        icon={<PlusOutlined />}
+                      >
+                        Xóa trường này
+                      </Button>
                     </Form.Item>
-                  </div>
-                  <Form.Item>
-                    <Button
-                      type="default"
-                      onClick={() => remove(index)}
-                      block
-                      icon={<PlusOutlined />}
-                    >
-                      Xóa trường này
-                    </Button>
-                  </Form.Item>
-                  {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
-                </li>
-              ),
+                    {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
+                  </li>
+                );
+              },
             )}
             <Form.Item>
               <Button
@@ -767,6 +851,14 @@ const UpdatePhone: React.FC = () => {
           </Form.Item>
         </div>
       </Form>
+      <Modal
+        title="Cập nhật sản phẩm"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>Đang xử lý, vui lòng đợi...</p>
+      </Modal>
     </div>
   );
 };

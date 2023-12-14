@@ -16,6 +16,7 @@ interface Props<TFieldValues extends FieldValues>
   register?: UseFormRegister<TFieldValues>;
   rules?: RegisterOptions;
   name: FieldPath<TFieldValues>;
+  defaultValue?: any;
 }
 
 export default function Input<TFieldValues extends FieldValues = FieldValues>({
@@ -27,6 +28,7 @@ export default function Input<TFieldValues extends FieldValues = FieldValues>({
   classNameInput = "p-3 w-full text-black outline-none border border-gray-300 focus:border-gray-500 rounded focus:shadow-sm",
   classNameError = "mt-1 text-red-600 min-h-[1.25rem] text-sm",
   classNameEye = "absolute top-[8px] right-[25px] mr-5 h-5 w-5 cursor-pointer text-black",
+  defaultValue,
   ...rest
 }: Props<TFieldValues>) {
   const [openEye, setOpenEye] = useState(false);
@@ -50,6 +52,7 @@ export default function Input<TFieldValues extends FieldValues = FieldValues>({
         {...registerResult}
         {...rest}
         type={handleType()}
+        defaultValue={defaultValue}
       />
       {rest.type === "password" && openEye && (
         <svg
@@ -103,3 +106,4 @@ export default function Input<TFieldValues extends FieldValues = FieldValues>({
     </div>
   );
 }
+

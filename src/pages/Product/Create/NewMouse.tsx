@@ -1,7 +1,7 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Form } from "antd";
+import { Button, Form, Modal } from "antd";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +22,6 @@ import InputFile from "src/components/InputFile";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
-import { addRam, getRams } from "src/store/ram/ramSlice";
 import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
 import { addMouse, getMouse } from "src/store/accessory/mouse";
 
@@ -54,6 +53,19 @@ interface FormData {
 
 const NewMouse: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const {
     handleSubmit,
     formState: { errors },
@@ -100,6 +112,8 @@ const NewMouse: React.FC = () => {
     let images = [];
 
     if (file) {
+      showModal();
+      setIsSubmitting(true);
       const form = new FormData();
       for (let i = 0; i < file.length; i++) {
         form.append("files", file[i]);
@@ -137,7 +151,7 @@ const NewMouse: React.FC = () => {
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
           quantity: Number(item?.quantity),
-          depotId: Number(item?.depot) || 1,
+          depotId: Number(item?.depotId),
         })),
 
         lstProductImageUrl: images || [],
@@ -154,7 +168,6 @@ const NewMouse: React.FC = () => {
     });
 
     try {
-      setIsSubmitting(true);
       const res = await dispatch(addMouse(body));
       unwrapResult(res);
       const d = res?.payload?.data;
@@ -176,6 +189,7 @@ const NewMouse: React.FC = () => {
       }
     } finally {
       setIsSubmitting(false);
+      handleOk();
     }
   });
   const onClickHuy = () => {
@@ -305,7 +319,7 @@ const NewMouse: React.FC = () => {
                     className={"flex-1 text-black"}
                     id={`lstProductTypeAndPrice.${index}.depot`}
                     // label="Hãng xe"
-                    defaultValue={1}
+
                     options={depot?.data?.data}
                     register={register}
                   ></SelectCustom>
@@ -510,7 +524,7 @@ const NewMouse: React.FC = () => {
         <div className="flex justify-start">
           <Form.Item label="" className="ml-[135px] mb-2 bg-green-300">
             <Button className="w-[100px]" onClick={onSubmit} type="default">
-              Lưu
+              {isSubmitting ? "Loading..." : "Lưu"}
             </Button>
           </Form.Item>
           <Form.Item label="" className="ml-[70px] mb-2">
@@ -535,6 +549,14 @@ const NewMouse: React.FC = () => {
           </Form.Item>
         </div>
       </Form>
+      <Modal
+        title="Thêm sản phẩm"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>Đang xử lý, vui lòng đợi...</p>
+      </Modal>
     </div>
   );
 };

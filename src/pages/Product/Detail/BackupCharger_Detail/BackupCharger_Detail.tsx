@@ -9,12 +9,15 @@ import { Button, Modal, Rate } from "antd";
 import DOMPurify from "dompurify";
 import RatingFeedback from "../../../../components/Rating";
 import Tag from "../../../../components/Tag/Tag";
+import { getDetailBackupCharger } from "src/store/accessory/backupCharger";
 
 export default function BackupChargerDetail() {
   // const { t } = useTranslation(["product"]);
   const { nameId } = useParams();
   const dispatch = useAppDispatch();
-  const { smartPhoneDetail } = useAppSelector((state) => state.smartPhone);
+  const { backupChargerDetail } = useAppSelector(
+    (state) => state.backupCharger,
+  );
   const id = getIdFromNameId(nameId as string);
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5]);
   const [activeImage, setActiveImage] = useState("");
@@ -22,31 +25,31 @@ export default function BackupChargerDetail() {
 
   const currentImages = useMemo(
     () =>
-      smartPhoneDetail?.productInfo?.lstProductImageUrl
-        ? smartPhoneDetail?.productInfo?.lstProductImageUrl.slice(
+      backupChargerDetail?.productInfo?.lstProductImageUrl
+        ? backupChargerDetail?.productInfo?.lstProductImageUrl.slice(
             ...currentIndexImages,
           )
         : [],
-    [smartPhoneDetail, currentIndexImages],
+    [backupChargerDetail, currentIndexImages],
   );
 
   useEffect(() => {
     if (
-      smartPhoneDetail &&
-      smartPhoneDetail?.productInfo?.lstProductImageUrl?.length > 0
+      backupChargerDetail &&
+      backupChargerDetail?.productInfo?.lstProductImageUrl?.length > 0
     ) {
-      setActiveImage(smartPhoneDetail?.productInfo?.lstProductImageUrl[0]);
+      setActiveImage(backupChargerDetail?.productInfo?.lstProductImageUrl[0]);
     }
-  }, [smartPhoneDetail, activeImage]);
+  }, [backupChargerDetail, activeImage]);
 
   useEffect(() => {
-    dispatch(getDetailPhone(id));
+    dispatch(getDetailBackupCharger(id));
   }, [id]);
 
   const next = () => {
     if (
       currentIndexImages[1] <
-      smartPhoneDetail?.productInfo.lstProductImageUrl.length
+      backupChargerDetail?.productInfo.lstProductImageUrl.length
     ) {
       setCurrentIndexImages((prev) => [prev[0] + 1, prev[1] + 1]);
     }
@@ -96,15 +99,15 @@ export default function BackupChargerDetail() {
     setIsModalOpen(false);
   };
 
-  if (!smartPhoneDetail) return null;
+  if (!backupChargerDetail) return null;
 
   return (
     <div className="bg-gray-200 py-6">
       <Helmet>
-        <title>{smartPhoneDetail?.productInfo?.name}</title>
+        <title>{backupChargerDetail?.productInfo?.name}</title>
         <meta
           name="description"
-          content={convert(smartPhoneDetail?.productInfo?.description, {
+          content={convert(backupChargerDetail?.productInfo?.description, {
             limits: {
               maxInputLength: 50000,
             },
@@ -122,7 +125,7 @@ export default function BackupChargerDetail() {
               >
                 <img
                   src={activeImage}
-                  alt={smartPhoneDetail?.productInfo?.name}
+                  alt={backupChargerDetail?.productInfo?.name}
                   className="absolute left-0 top-0 h-full w-full bg-white object-cover"
                   ref={imageRef}
                 />
@@ -157,7 +160,7 @@ export default function BackupChargerDetail() {
                     >
                       <img
                         src={img}
-                        alt={smartPhoneDetail?.productInfo?.name}
+                        alt={backupChargerDetail?.productInfo?.name}
                         className="absolute left-0 top-0 h-full w-full cursor-pointer bg-white object-cover"
                       />
                       {isActive && (
@@ -189,17 +192,17 @@ export default function BackupChargerDetail() {
             </div>
             <div className="col-span-7">
               <h1 className="text-4xl font-medium uppercase">
-                {smartPhoneDetail?.productInfo?.name}
+                {backupChargerDetail?.productInfo?.name}
               </h1>
               <div className="mt-8 flex items-center">
                 <div className="flex items-center">
                   <span className="mr-1 border-b border-b-orange text-orange">
-                    {smartPhoneDetail?.productInfo?.star}
+                    {backupChargerDetail?.productInfo?.star}
                   </span>
                   <Rate
                     allowHalf
                     defaultValue={Number(
-                      smartPhoneDetail?.productInfo?.totalReview,
+                      backupChargerDetail?.productInfo?.totalReview,
                     )}
                     disabled
                   />
@@ -209,14 +212,14 @@ export default function BackupChargerDetail() {
                 <div>
                   <span>
                     {formatNumberToSocialStyle(
-                      Number(smartPhoneDetail?.productInfo?.totalReview),
+                      Number(backupChargerDetail?.productInfo?.totalReview),
                     )}
                   </span>
                   <span className="ml-1 text-gray-500">Đã xem</span>
                 </div>
               </div>
               <div className="space-x-3 mt-4 flex justify-start align-baseline">
-                <Tag productData={smartPhoneDetail} />
+                <Tag productData={backupChargerDetail} />
               </div>
             </div>
           </div>
@@ -234,67 +237,70 @@ export default function BackupChargerDetail() {
           <div className="block space-y-2">
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Màn hình :</h4>
-              <h5>{smartPhoneDetail?.monitor}</h5>
+              <h5>{backupChargerDetail?.monitor}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Hệ điều hành :</h4>
-              <h5>{smartPhoneDetail?.operatingSystem}</h5>
+              <h5>{backupChargerDetail?.operatingSystem}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Camera chính :</h4>
-              <h5>{smartPhoneDetail?.rearCamera}</h5>
+              <h5>{backupChargerDetail?.rearCamera}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Camera trước :</h4>
-              <h5>{smartPhoneDetail?.frontCamera}</h5>
+              <h5>{backupChargerDetail?.frontCamera}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Chip :</h4>
-              <h5>{smartPhoneDetail?.chip}</h5>
+              <h5>{backupChargerDetail?.chip}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Sim :</h4>
-              <h5>{smartPhoneDetail?.sim}</h5>
+              <h5>{backupChargerDetail?.sim}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Pin :</h4>
-              <h5>{smartPhoneDetail?.monitor}</h5>
+              <h5>{backupChargerDetail?.monitor}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Sạc nhanh:</h4>
-              <h5>{smartPhoneDetail?.charging}</h5>
+              <h5>{backupChargerDetail?.charging}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Hỗ trợ mạng:</h4>
-              <h5>{smartPhoneDetail?.networkSupport}</h5>
+              <h5>{backupChargerDetail?.networkSupport}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Phụ kiện:</h4>
-              <h5>{smartPhoneDetail?.productInfo.accessories}</h5>
+              <h5>{backupChargerDetail?.productInfo?.accessories}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Năm ra mắt:</h4>
-              <h5>{smartPhoneDetail?.productInfo.launchTime}</h5>
+              <h5>{backupChargerDetail?.productInfo?.launchTime}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Thiết kế:</h4>
-              <h5>{smartPhoneDetail?.productInfo.design}</h5>
+              <h5>{backupChargerDetail?.productInfo?.design}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Khối lượng:</h4>
-              <h5>{smartPhoneDetail?.productInfo.mass}</h5>
+              <h5>{backupChargerDetail?.productInfo?.mass}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Ram:</h4>
               <h5>
-                {smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0]?.ram}
+                {
+                  backupChargerDetail?.productInfo?.lstProductTypeAndPrice[0]
+                    ?.ram
+                }
               </h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Bộ nhớ trong:</h4>
               <h5>
                 {
-                  smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0]
+                  backupChargerDetail?.productInfo?.lstProductTypeAndPrice[0]
                     ?.storageCapacity
                 }
               </h5>
@@ -312,7 +318,7 @@ export default function BackupChargerDetail() {
               <div
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(
-                    smartPhoneDetail?.productInfo?.description,
+                    backupChargerDetail?.productInfo?.description,
                   ),
                 }}
               />

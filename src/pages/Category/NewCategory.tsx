@@ -112,7 +112,7 @@ const NewBrand: React.FC = () => {
   };
   return (
     <div className="bg-white shadow ">
-      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm điện thoại</h2>
+      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm </h2>
       <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
@@ -177,7 +177,7 @@ const NewBrand: React.FC = () => {
         <div className="flex justify-start">
           <Form.Item label="" className="ml-[115px] mb-2">
             <Button className="w-[100px]" onClick={onSubmit}>
-              Lưu
+              {isSubmitting ? "Loading..." : "Lưu"}
             </Button>
           </Form.Item>
           <Form.Item label="" className="ml-[50px] mb-2">
@@ -202,3 +202,4 @@ const NewBrand: React.FC = () => {
 };
 
 export default () => <NewBrand />;
+

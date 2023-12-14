@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import adapterApi from "src/api/accessory/adapter/adapter-api";
 import { payloadCreator } from "src/utils/utils";
 
-export const getAapter = createAsyncThunk(
+export const getAdapter = createAsyncThunk(
   "adapter/getAapter",
   payloadCreator(adapterApi.getAdapters),
 );
@@ -40,7 +40,7 @@ const adapterlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getAapter.fulfilled, (state, { payload }) => {
+    builder.addCase(getAdapter.fulfilled, (state, { payload }) => {
       state.adapter = payload.data;
     });
     builder.addCase(getDetailAdapter.fulfilled, (state, { payload }) => {

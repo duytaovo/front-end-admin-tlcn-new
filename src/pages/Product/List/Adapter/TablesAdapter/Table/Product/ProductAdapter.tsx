@@ -16,6 +16,7 @@ import {
 import { unwrapResult } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import { ListSmartPhone } from "src/types/allProductsType.interface";
+import { deleteAdapter } from "src/store/accessory/adapter";
 
 interface Props {
   product: ListSmartPhone;
@@ -57,7 +58,7 @@ export default function ProductAdapter({ product }: Props) {
       title: "Sửa",
       callback: () => {
         navigate(
-          `${"/smartPhone/detail/update"}/${generateNameId({
+          `${"/adapter/detail/update"}/${generateNameId({
             name: product.name,
             id: product.id.toString(),
           })}`,
@@ -72,21 +73,8 @@ export default function ProductAdapter({ product }: Props) {
       title: "Xóa",
       callback: () => {
         if (confirm("Bạn có muốn disable sản phẩm không?")) {
-          const body = {
-            slug: "smartphone",
-            brandId: null,
-            characteristicId: null,
-            priceFrom: null,
-            priceTo: null,
-            specialFeatures: [],
-            smartphoneType: [],
-            ram: [],
-            storageCapacity: [],
-            charging: [],
-            screen: [],
-          };
           const handleDelete = async () => {
-            const res = await dispatch(deleteSmartPhone(product.id.toString()));
+            const res = await dispatch(deleteAdapter(product.id.toString()));
             unwrapResult(res);
             const d = res?.payload.data;
             // if (d?.code !== 200) return toast.error(d?.message);
@@ -94,7 +82,7 @@ export default function ProductAdapter({ product }: Props) {
 
             dispatch(
               getSmartPhones({
-                body: body,
+                // body: body,
                 // params: { pageNumber: 1, pageSize: 10 },
               }),
             );
@@ -116,7 +104,7 @@ export default function ProductAdapter({ product }: Props) {
   return (
     <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <Link
-        to={`${"/smartPhone/detail"}/${generateNameId({
+        to={`${"/adapter/detail"}/${generateNameId({
           name: product.name,
           id: product.id.toString(),
         })}`}

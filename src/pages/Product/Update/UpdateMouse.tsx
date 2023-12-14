@@ -62,6 +62,7 @@ const NewMouse: React.FC = () => {
     setValue,
     control,
     watch,
+    getValues,
   } = useForm({
     resolver: yupResolver(schemaProductMouse),
   });
@@ -78,9 +79,9 @@ const NewMouse: React.FC = () => {
 
   const [file, setFile] = useState<File[]>();
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
+  const [imageUrls, setImages] = useState<string[]>([]);
 
   // Tạo một mảng chứa các URL tạm thời cho ảnh
-  const imageUrls: string[] = [];
 
   for (const image of imageArray) {
     const imageUrl = URL.createObjectURL(image);
@@ -103,7 +104,7 @@ const NewMouse: React.FC = () => {
     {
       control, // control props comes from useForm (optional: if you are using FormContext)
       name: "lstProductTypeAndPrice", // unique name for your Field Array
-    }
+    },
   );
   const onSubmit = handleSubmit(async (data) => {
     let images = [];
@@ -146,7 +147,7 @@ const NewMouse: React.FC = () => {
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
           quantity: Number(item?.quantity),
-          depotId: Number(item?.depot) || 1,
+          depotId: Number(item?.depotId),
         })),
 
         lstProductImageUrl: images || [],
@@ -324,7 +325,7 @@ const NewMouse: React.FC = () => {
                     className={"flex-1 text-black"}
                     id={`lstProductTypeAndPrice.${index}.depot`}
                     // label="Hãng xe"
-                    defaultValue={1}
+
                     options={depot?.data?.data}
                     register={register}
                   ></SelectCustom>
@@ -529,7 +530,7 @@ const NewMouse: React.FC = () => {
         <div className="flex justify-start">
           <Form.Item label="" className="ml-[135px] mb-2 bg-green-300">
             <Button className="w-[100px]" onClick={onSubmit} type="default">
-              Lưu
+              {isSubmitting ? "Loading..." : "Lưu"}
             </Button>
           </Form.Item>
           <Form.Item label="" className="ml-[70px] mb-2">
@@ -559,3 +560,4 @@ const NewMouse: React.FC = () => {
 };
 
 export default () => <NewMouse />;
+

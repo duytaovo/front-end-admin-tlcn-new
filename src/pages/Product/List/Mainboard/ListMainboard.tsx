@@ -1,14 +1,14 @@
 import { Helmet } from "react-helmet-async";
-import TableAdapter from "./TablesMainboard";
+import TableMainboard from "./TablesMainboard";
 
-export default function ListAdapter() {
+export default function ListMainboard() {
   return (
     <div>
       <Helmet>
-        <title>{"Trang quản lý màn hình máy tính"}</title>
+        <title>{"Trang quản lý main máy tính"}</title>
         <meta name="description" />
       </Helmet>
-      <TableAdapter />
+      <TableMainboard />
     </div>
   );
 }

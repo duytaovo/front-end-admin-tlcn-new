@@ -40,21 +40,12 @@ const microphonelice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // builder.addCase(addmicrophone.fulfilled, (state, { payload }) => {
-    //   state.microphone = payload.data;
-    // });
     builder.addCase(getMicrophone.fulfilled, (state, { payload }) => {
       state.microphone = payload.data;
     });
     builder.addCase(getDetailMicrophone.fulfilled, (state, { payload }) => {
       state.microphoneDetail = payload.data;
     });
-    // builder.addCase(updatemicrophone.fulfilled, (state, { payload }) => {
-    //   [state.microphoneDetail, ...payload.data];
-    // });
-    // builder.addCase(deletemicrophone.fulfilled, (state, { payload }) => {
-    //   state.microphone = payload.data;
-    // });
   },
 });
 

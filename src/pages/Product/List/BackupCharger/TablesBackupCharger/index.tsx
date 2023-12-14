@@ -1,37 +1,24 @@
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
-import { SelectChangeEvent } from "@mui/material/Select";
 import React, { useEffect, useState } from "react";
-import { getSmartPhones } from "src/store/product/smartPhoneSlice";
-import ProductPhone from "./Table/Product/ProductMonitor";
+import ProductPhone from "./Table/Product/ProductBackupCharger";
 import path from "src/constants/path";
 import { Button, Pagination } from "antd";
-import { getFilter, getSort } from "src/store/product/filterSlice";
+import { getSort } from "src/store/product/filterSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
-import FilterPhone from "../FilterMonitor";
+import FilterPhone from "../FilterBackupCharger";
 import * as ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { DownloadOutlined } from "@ant-design/icons";
 import "jspdf-autotable";
-import jspdf from "jspdf";
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 150,
-    },
-  },
-};
-const TableMonitor: React.FC = () => {
-  const { smartPhone } = useAppSelector((state) => state.smartPhone);
+import { getBackupCharger } from "src/store/accessory/backupCharger";
+
+const TableBackupCharger: React.FC = () => {
+  const { backupCharger } = useAppSelector((state) => state.backupCharger);
   const navigate = useNavigate();
   const pageSize = 10; // Số phần tử trên mỗi trang
-  const [choose, setChoose] = useState<any>();
-  const [chooseCharac, setChooseCharac] = useState<any>();
+
   const [chooseBox, setChooseBox] = useState<any>();
   const [isOpen, setisOpen] = useState<boolean>(false);
   const dispatch = useAppDispatch();
@@ -214,9 +201,9 @@ const TableMonitor: React.FC = () => {
       screen: ManHinh ? ManHinh : [],
     };
     dispatch(
-      getSmartPhones({
-        body: body,
-        params: { pageNumber: currentPage, pageSize: 10, sort: chooseBox },
+      getBackupCharger({
+        // body: body,
+        // params: { pageNumber: currentPage, pageSize: 10, sort: chooseBox },
       }),
     );
   }, [
@@ -235,22 +222,7 @@ const TableMonitor: React.FC = () => {
   ]);
 
   useEffect(() => {
-    const body = {
-      slug: "smartphone",
-      brandId: choose?.id ? [choose?.id] : null,
-      characteristicId: chooseCharac ? [chooseCharac] : null,
-    };
-    dispatch(
-      getSmartPhones({
-        body: body,
-        params: { pageNumber: currentPage, pageSize: 10 },
-      }),
-    );
-  }, [currentPage, choose, chooseCharac]);
-
-  useEffect(() => {
     dispatch(getSort(""));
-    dispatch(getFilter({ slug: "smartphone" }));
     dispatch(getBrands({ slug: "smartphone" }));
     dispatch(getCharacters({ categorySlug: "smartphone" }));
   }, []);
@@ -263,77 +235,6 @@ const TableMonitor: React.FC = () => {
     setisOpen(boolean);
   };
 
-  const handleSetChoose = (choose: any) => {
-    setChoose(choose);
-  };
-
-  const handleSetChooseCharac = (choose: any) => {
-    setChooseCharac(choose);
-  };
-
-  const handleSetChooseBox = (choose: any) => {
-    setChooseBox(choose);
-  };
-  const handleChangeProduct = (event: SelectChangeEvent) => {
-    setProduct(event.target.value as string);
-  };
-  const onClick = (value: string) => {
-    navigate(value);
-  };
-  const exportToPDF = (products: any) => {
-    const columns = [
-      { header: "ID", dataKey: "id" },
-      { header: "Name", dataKey: "name" },
-      { header: "Ram", dataKey: "ram" },
-      { header: "Rom", dataKey: "storageCapacity" },
-      { header: "Color", dataKey: "color" },
-      { header: "Quantity", dataKey: "quantity" },
-      { header: "Price", dataKey: "price" },
-      { header: "SalePrice", dataKey: "salePrice" },
-      // { header: "Images", dataKey: "images" },
-    ];
-
-    const rows: any[] = [];
-
-    products.forEach((product: any) => {
-      product.lstProductTypeAndPrice.forEach((typeAndPrice: any) => {
-        rows.push({
-          id: product.id,
-          name: product.name,
-          ram: typeAndPrice.ram,
-          storageCapacity: typeAndPrice.storageCapacity,
-          color: typeAndPrice.color,
-          quantity: typeAndPrice.quantity,
-          price: typeAndPrice.price,
-          salePrice: typeAndPrice.salePrice,
-          images: product.lstImageUrl.join(","),
-        });
-      });
-    });
-
-    const doc: any = new jspdf();
-
-    doc.setFont("Roboto-Regular", "normal");
-    doc.autoTable({
-      head: [columns.map((column) => column.header)],
-      body: rows.map((row) => columns.map((column) => row[column.dataKey])),
-      styles: {
-        font: "Amiri",
-        fontStyle: "normal",
-      },
-    });
-    // doc.autoTable({
-    //   // styles: { font: "helvetica" },
-    //   styles: {
-    //     font: "Roboto-Regular",
-    //     fontStyle: "normal",
-    //   },
-    //   head: [columns.map((column) => column.header)],
-    //   body: rows.map((row) => columns.map((column) => row[column.dataKey])),
-    // });
-
-    doc.save("products.pdf");
-  };
   return (
     <div className="mx-6">
       <div className="w-full text-[24px] text-gray-500 mb-[10px] flex items-center justify-between">
@@ -342,7 +243,7 @@ const TableMonitor: React.FC = () => {
           <div></div>
           <div>
             <Button
-              onClick={() => exportToExcel(smartPhone?.data?.data)}
+              onClick={() => exportToExcel(backupCharger?.data?.data)}
               type="primary"
               icon={<DownloadOutlined />}
               size="small"
@@ -350,34 +251,19 @@ const TableMonitor: React.FC = () => {
             >
               Xuất file excel
             </Button>
-            {/* <Button
-              onClick={() => exportToPDF(smartPhone?.data?.data)}
-              type="link"
-              icon={<DownloadOutlined />}
-              size="small"
-            >
-              Xuất file PDF
-            </Button> */}
           </div>
         </div>
         <Link
-          to={path.smartPhoneNew}
+          to={path.backupChargerNew}
           className="no-underline text-green-500 text-lg font-medium border-[1px] border-solid border-[green] p-3 rounded cursor-pointer"
         >
           Thêm mới
         </Link>
       </div>
       <FilterPhone handle={handle} brand={brand} characteristic={character} />
-      {/* <QuickLinkPhone
-        handleSetChoose={handleSetChoose}
-        choose={choose}
-        handleSetChooseCharac={handleSetChooseCharac}
-        chooseCharac={chooseCharac}
-        brand={brand}
-        characteristic={character}
-      /> */}
+
       <div className="mt-6 grid grid-cols-5 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 h-[80%] mb-10">
-        {smartPhone?.data?.data?.map((_smartPhone: any) => (
+        {backupCharger?.data?.data?.map((_smartPhone: any) => (
           <div className="col-span-1" key={_smartPhone.id}>
             <ProductPhone product={_smartPhone} />
           </div>
@@ -387,7 +273,7 @@ const TableMonitor: React.FC = () => {
         <Pagination
           current={currentPage + 1}
           pageSize={pageSize}
-          total={smartPhone?.data?.totalElements}
+          total={backupCharger?.data?.totalElements}
           onChange={handlePageChange}
         />
       </div>
@@ -395,5 +281,5 @@ const TableMonitor: React.FC = () => {
   );
 };
 
-export default TableMonitor;
+export default TableBackupCharger;
 

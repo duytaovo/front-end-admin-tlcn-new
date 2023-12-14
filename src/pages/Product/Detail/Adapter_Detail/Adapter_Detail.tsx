@@ -9,12 +9,13 @@ import { Button, Modal, Rate } from "antd";
 import DOMPurify from "dompurify";
 import RatingFeedback from "../../../../components/Rating";
 import Tag from "../../../../components/Tag/Tag";
+import { getDetailAdapter } from "src/store/accessory/adapter";
 
 export default function AdapterDetail() {
   // const { t } = useTranslation(["product"]);
   const { nameId } = useParams();
   const dispatch = useAppDispatch();
-  const { smartPhoneDetail } = useAppSelector((state) => state.smartPhone);
+  const { adapterDetail } = useAppSelector((state) => state.adapter);
   const id = getIdFromNameId(nameId as string);
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5]);
   const [activeImage, setActiveImage] = useState("");
@@ -22,31 +23,31 @@ export default function AdapterDetail() {
 
   const currentImages = useMemo(
     () =>
-      smartPhoneDetail?.productInfo?.lstProductImageUrl
-        ? smartPhoneDetail?.productInfo?.lstProductImageUrl.slice(
+      adapterDetail?.productInfo?.lstProductImageUrl
+        ? adapterDetail?.productInfo?.lstProductImageUrl.slice(
             ...currentIndexImages,
           )
         : [],
-    [smartPhoneDetail, currentIndexImages],
+    [adapterDetail, currentIndexImages],
   );
 
   useEffect(() => {
     if (
-      smartPhoneDetail &&
-      smartPhoneDetail?.productInfo?.lstProductImageUrl?.length > 0
+      adapterDetail &&
+      adapterDetail?.productInfo?.lstProductImageUrl?.length > 0
     ) {
-      setActiveImage(smartPhoneDetail?.productInfo?.lstProductImageUrl[0]);
+      setActiveImage(adapterDetail?.productInfo?.lstProductImageUrl[0]);
     }
-  }, [smartPhoneDetail, activeImage]);
+  }, [adapterDetail, activeImage]);
 
   useEffect(() => {
-    dispatch(getDetailPhone(id));
+    dispatch(getDetailAdapter(id));
   }, [id]);
 
   const next = () => {
     if (
       currentIndexImages[1] <
-      smartPhoneDetail?.productInfo.lstProductImageUrl.length
+      adapterDetail?.productInfo.lstProductImageUrl.length
     ) {
       setCurrentIndexImages((prev) => [prev[0] + 1, prev[1] + 1]);
     }
@@ -96,15 +97,15 @@ export default function AdapterDetail() {
     setIsModalOpen(false);
   };
 
-  if (!smartPhoneDetail) return null;
+  if (!adapterDetail) return null;
 
   return (
     <div className="bg-gray-200 py-6">
       <Helmet>
-        <title>{smartPhoneDetail?.productInfo?.name}</title>
+        <title>{adapterDetail?.productInfo?.name}</title>
         <meta
           name="description"
-          content={convert(smartPhoneDetail?.productInfo?.description, {
+          content={convert(adapterDetail?.productInfo?.description, {
             limits: {
               maxInputLength: 50000,
             },
@@ -122,7 +123,7 @@ export default function AdapterDetail() {
               >
                 <img
                   src={activeImage}
-                  alt={smartPhoneDetail?.productInfo?.name}
+                  alt={adapterDetail?.productInfo?.name}
                   className="absolute left-0 top-0 h-full w-full bg-white object-cover"
                   ref={imageRef}
                 />
@@ -157,7 +158,7 @@ export default function AdapterDetail() {
                     >
                       <img
                         src={img}
-                        alt={smartPhoneDetail?.productInfo?.name}
+                        alt={adapterDetail?.productInfo?.name}
                         className="absolute left-0 top-0 h-full w-full cursor-pointer bg-white object-cover"
                       />
                       {isActive && (
@@ -189,17 +190,17 @@ export default function AdapterDetail() {
             </div>
             <div className="col-span-7">
               <h1 className="text-4xl font-medium uppercase">
-                {smartPhoneDetail?.productInfo?.name}
+                {adapterDetail?.productInfo?.name}
               </h1>
               <div className="mt-8 flex items-center">
                 <div className="flex items-center">
                   <span className="mr-1 border-b border-b-orange text-orange">
-                    {smartPhoneDetail?.productInfo?.star}
+                    {adapterDetail?.productInfo?.star}
                   </span>
                   <Rate
                     allowHalf
                     defaultValue={Number(
-                      smartPhoneDetail?.productInfo?.totalReview,
+                      adapterDetail?.productInfo?.totalReview,
                     )}
                     disabled
                   />
@@ -209,14 +210,14 @@ export default function AdapterDetail() {
                 <div>
                   <span>
                     {formatNumberToSocialStyle(
-                      Number(smartPhoneDetail?.productInfo?.totalReview),
+                      Number(adapterDetail?.productInfo?.totalReview),
                     )}
                   </span>
                   <span className="ml-1 text-gray-500">Đã xem</span>
                 </div>
               </div>
               <div className="space-x-3 mt-4 flex justify-start align-baseline">
-                <Tag productData={smartPhoneDetail} />
+                <Tag productData={adapterDetail} />
               </div>
             </div>
           </div>
@@ -234,67 +235,67 @@ export default function AdapterDetail() {
           <div className="block space-y-2">
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Màn hình :</h4>
-              <h5>{smartPhoneDetail?.monitor}</h5>
+              <h5>{adapterDetail?.monitor}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Hệ điều hành :</h4>
-              <h5>{smartPhoneDetail?.operatingSystem}</h5>
+              <h5>{adapterDetail?.operatingSystem}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Camera chính :</h4>
-              <h5>{smartPhoneDetail?.rearCamera}</h5>
+              <h5>{adapterDetail?.rearCamera}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Camera trước :</h4>
-              <h5>{smartPhoneDetail?.frontCamera}</h5>
+              <h5>{adapterDetail?.frontCamera}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Chip :</h4>
-              <h5>{smartPhoneDetail?.chip}</h5>
+              <h5>{adapterDetail?.chip}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Sim :</h4>
-              <h5>{smartPhoneDetail?.sim}</h5>
+              <h5>{adapterDetail?.sim}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Pin :</h4>
-              <h5>{smartPhoneDetail?.monitor}</h5>
+              <h5>{adapterDetail?.monitor}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Sạc nhanh:</h4>
-              <h5>{smartPhoneDetail?.charging}</h5>
+              <h5>{adapterDetail?.charging}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Hỗ trợ mạng:</h4>
-              <h5>{smartPhoneDetail?.networkSupport}</h5>
+              <h5>{adapterDetail?.networkSupport}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Phụ kiện:</h4>
-              <h5>{smartPhoneDetail?.productInfo.accessories}</h5>
+              <h5>{adapterDetail?.productInfo?.accessories}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Năm ra mắt:</h4>
-              <h5>{smartPhoneDetail?.productInfo.launchTime}</h5>
+              <h5>{adapterDetail?.productInfo?.launchTime}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Thiết kế:</h4>
-              <h5>{smartPhoneDetail?.productInfo.design}</h5>
+              <h5>{adapterDetail?.productInfo?.design}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Khối lượng:</h4>
-              <h5>{smartPhoneDetail?.productInfo.mass}</h5>
+              <h5>{adapterDetail?.productInfo?.mass}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Ram:</h4>
               <h5>
-                {smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0]?.ram}
+                {adapterDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram}
               </h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Bộ nhớ trong:</h4>
               <h5>
                 {
-                  smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0]
+                  adapterDetail?.productInfo?.lstProductTypeAndPrice[0]
                     ?.storageCapacity
                 }
               </h5>
@@ -312,7 +313,7 @@ export default function AdapterDetail() {
               <div
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(
-                    smartPhoneDetail?.productInfo?.description,
+                    adapterDetail?.productInfo?.description,
                   ),
                 }}
               />
@@ -326,20 +327,6 @@ export default function AdapterDetail() {
           <RatingFeedback />
         </div>
       </div>
-      {/* <div className="mt-8">
-        <div className="container">
-          <div className="uppercase text-gray-400">CÓ THỂ BẠN CŨNG THÍCH</div>
-          {productsData && (
-            <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-              {productsData.data.data.products.map((product) => (
-                <div className="col-span-1" key={product._id}>
-                  <Product product={product} />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div> */}
     </div>
   );
 }

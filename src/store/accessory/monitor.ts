@@ -40,21 +40,12 @@ const monitorlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // builder.addCase(addmonitor.fulfilled, (state, { payload }) => {
-    //   state.monitor = payload.data;
-    // });
     builder.addCase(getMonitor.fulfilled, (state, { payload }) => {
       state.monitor = payload.data;
     });
     builder.addCase(getDetailMonitor.fulfilled, (state, { payload }) => {
       state.monitorDetail = payload.data;
     });
-    // builder.addCase(updatemonitor.fulfilled, (state, { payload }) => {
-    //   [state.monitorDetail, ...payload.data];
-    // });
-    // builder.addCase(deletemonitor.fulfilled, (state, { payload }) => {
-    //   state.monitor = payload.data;
-    // });
   },
 });
 

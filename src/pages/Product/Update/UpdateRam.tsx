@@ -105,7 +105,7 @@ const NewRam: React.FC = () => {
     setValue("mass", ram?.productInfo?.mass.toString());
     setValue(
       "color",
-      ram?.productInfo.lstProductTypeAndPrice[0].color.toString()
+      ram?.productInfo.lstProductTypeAndPrice[0].color.toString(),
     );
     setValue("monitor", ram?.monitor);
     setValue("description", ram?.productInfo?.description);
@@ -114,11 +114,11 @@ const NewRam: React.FC = () => {
     setValue("name", ram?.productInfo?.name);
     setValue(
       "salePrice",
-      ram?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+      ram?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
     setValue(
       "price",
-      ram?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+      ram?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
     setValue("operatingSystem", ram?.operatingSystem);
     setValue("design", ram?.productInfo?.design);
@@ -139,7 +139,7 @@ const NewRam: React.FC = () => {
     {
       control, // control props comes from useForm (optional: if you are using FormContext)
       name: "lstProductTypeAndPrice", // unique name for your Field Array
-    }
+    },
   );
   const onSubmit = handleSubmit(async (data) => {
     const body = JSON.stringify({
@@ -165,7 +165,7 @@ const NewRam: React.FC = () => {
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
           quantity: Number(item?.quantity),
-          depotId: Number(item?.depot) || 1,
+          depotId: Number(item?.depotId),
         })),
 
         lstProductImageUrl: [],
@@ -212,7 +212,7 @@ const NewRam: React.FC = () => {
     setValue("mass", ram?.productInfo?.mass.toString());
     setValue(
       "color",
-      ram?.productInfo.lstProductTypeAndPrice[0].color.toString()
+      ram?.productInfo.lstProductTypeAndPrice[0].color.toString(),
     );
     setValue("monitor", ram?.monitor);
     setValue("description", ram?.productInfo?.description);
@@ -221,11 +221,11 @@ const NewRam: React.FC = () => {
     setValue("name", ram?.productInfo?.name);
     setValue(
       "salePrice",
-      ram?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString()
+      ram?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
     setValue(
       "price",
-      ram?.productInfo?.lstProductTypeAndPrice[0].price.toString()
+      ram?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
     setValue("operatingSystem", ram?.operatingSystem);
     setValue("design", ram?.productInfo?.design);
@@ -481,11 +481,10 @@ const NewRam: React.FC = () => {
                     id={`lstProductTypeAndPrice.${index}.depot`}
                     // label="Hãng xe"
                     placeholder="Vui lòng chọn"
-                    defaultValue={1}
                     options={depot}
                     register={register}
                   >
-                    {errors.depot?.message}
+                    {errors.depotId?.message}
                   </SelectCustom>
                 </Form.Item>
                 <div className="flex justify-between space-x-1">
@@ -683,7 +682,7 @@ const NewRam: React.FC = () => {
         <div className="flex justify-start">
           <Form.Item label="" className="ml-[135px] mb-2 bg-green-300">
             <Button className="w-[100px]" onClick={onSubmit} type="default">
-              Lưu
+              {isSubmitting ? "Loading..." : "Lưu"}
             </Button>
           </Form.Item>
           <Form.Item label="" className="ml-[70px] mb-2">
@@ -713,3 +712,4 @@ const NewRam: React.FC = () => {
 };
 
 export default () => <NewRam />;
+

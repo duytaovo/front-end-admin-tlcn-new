@@ -165,7 +165,7 @@ const NewBrand: React.FC = () => {
         <div className="flex justify-start">
           <Form.Item label="" className="ml-[115px] mb-2">
             <Button className="w-[100px]" onClick={onSubmit}>
-              Lưu
+              {isSubmitting ? "Loading..." : "Lưu"}
             </Button>
           </Form.Item>
           <Form.Item label="" className="ml-[50px] mb-2">

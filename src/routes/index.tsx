@@ -1,8 +1,31 @@
 import { lazy } from "react";
 import path from "src/constants/path";
+import NewAdapter from "src/pages/Product/Create/NewAdapter";
+import NewBackup from "src/pages/Product/Create/NewBackup";
+import NewComputerPower from "src/pages/Product/Create/NewComputerPower";
+import NewMainboard from "src/pages/Product/Create/NewMainboard";
+import NewMicrophone from "src/pages/Product/Create/NewMicrophone";
 import NewMonitor from "src/pages/Product/Create/NewMonitor";
+import AdapterDetail from "src/pages/Product/Detail/Adapter_Detail/Adapter_Detail";
+import BackupChargerDetail from "src/pages/Product/Detail/BackupCharger_Detail/BackupCharger_Detail";
+import CardGrabphicDetail from "src/pages/Product/Detail/CardGrabphic_Detail";
+import ComputerPowerDetail from "src/pages/Product/Detail/ComputerPower_Detail/ComputerPower_Detail";
+import Mainboard_Detail from "src/pages/Product/Detail/Mainboard_Detail";
+import Microphone_Detail from "src/pages/Product/Detail/Microphone_Detail";
 import MonitorDetail from "src/pages/Product/Detail/Monitor_Detail";
+import ProcessorDetail from "src/pages/Product/Detail/Processor_Detail";
+import RamDetail from "src/pages/Product/Detail/Ram_Detail";
+import RomDetail from "src/pages/Product/Detail/Rom_Detail";
+import ListAdapter from "src/pages/Product/List/Adapter/ListAdapter";
+import ListBackupCharger from "src/pages/Product/List/BackupCharger/ListBackupCharger";
+import ListComputerPower from "src/pages/Product/List/ComputerPower/ListComputerPower";
+import ListMainboard from "src/pages/Product/List/Mainboard/ListMainboard";
+import ListMicrophone from "src/pages/Product/List/Microphone/ListMicrophone";
 import ListMonitor from "src/pages/Product/List/Monitor/ListMonitor";
+import UpdateBackupCharger from "src/pages/Product/Update/UpdateBackupCharger";
+import UpdateComputerPower from "src/pages/Product/Update/UpdateComputerPower";
+import UpdateMainboard from "src/pages/Product/Update/UpdateMainboard";
+import UpdateMicrophone from "src/pages/Product/Update/UpdateMicrophone";
 import UpdateMonitor from "src/pages/Product/Update/UpdateMonitor";
 
 const MouseDetail = lazy(() => import("src/pages/Product/Detail/Mouse_Detail"));
@@ -199,7 +222,7 @@ export const routeMain = [
   },
   {
     path: path.ramDetail,
-    Component: Ram,
+    Component: RamDetail,
   },
   {
     path: path.ramNew,
@@ -211,7 +234,7 @@ export const routeMain = [
   },
   {
     path: path.romDetail,
-    Component: Ram,
+    Component: RomDetail,
   },
   {
     path: path.romNew,
@@ -223,7 +246,11 @@ export const routeMain = [
   },
   {
     path: path.processorDetail,
-    Component: Processor,
+    Component: ProcessorDetail,
+  },
+  {
+    path: path.cardGrapDetail,
+    Component: CardGrabphicDetail,
   },
   {
     path: path.processorNew,
@@ -235,7 +262,7 @@ export const routeMain = [
   },
   {
     path: path.processorDetail,
-    Component: CardGraphic,
+    Component: CardGrabphicDetail,
   },
   {
     path: path.cardGrapNew,
@@ -360,79 +387,79 @@ export const routeMain = [
   },
   {
     path: path.microPhone,
-    Component: ListMonitor,
+    Component: ListMicrophone,
   },
   {
     path: path.microPhoneNew,
-    Component: NewMonitor,
+    Component: NewMicrophone,
   },
   {
     path: path.microPhoneDetail,
-    Component: MonitorDetail,
+    Component: Microphone_Detail,
   },
   {
     path: path.microPhoneUpdate,
-    Component: UpdateMonitor,
+    Component: UpdateMicrophone,
   },
   {
     path: path.mainBoard,
-    Component: ListMonitor,
+    Component: ListMainboard,
   },
   {
     path: path.mainBoardNew,
-    Component: NewMonitor,
+    Component: NewMainboard,
   },
   {
     path: path.mainBoardDetail,
-    Component: MonitorDetail,
+    Component: Mainboard_Detail,
   },
   {
     path: path.mainBoardUpdate,
-    Component: UpdateMonitor,
+    Component: UpdateMainboard,
   },
   {
     path: path.backupCharger,
-    Component: ListMonitor,
+    Component: ListBackupCharger,
   },
   {
     path: path.backupChargerNew,
-    Component: NewMonitor,
+    Component: NewBackup,
   },
   {
     path: path.backupChargerDetail,
-    Component: MonitorDetail,
+    Component: BackupChargerDetail,
   },
   {
     path: path.backupChargerUpdate,
-    Component: UpdateMonitor,
+    Component: UpdateBackupCharger,
   },
   {
     path: path.computerPower,
-    Component: ListMonitor,
+    Component: ListComputerPower,
   },
   {
     path: path.computerPowerNew,
-    Component: NewMonitor,
+    Component: NewComputerPower,
   },
   {
     path: path.computerPowerDetail,
-    Component: MonitorDetail,
+    Component: ComputerPowerDetail,
   },
   {
     path: path.computerPowerUpdate,
-    Component: UpdateMonitor,
+    Component: UpdateComputerPower,
   },
   {
     path: path.adapter,
-    Component: ListMonitor,
+    Component: ListAdapter,
   },
   {
     path: path.adapterNew,
-    Component: NewMonitor,
+    Component: NewAdapter,
   },
   {
     path: path.adapterDetail,
-    Component: MonitorDetail,
+    Component: AdapterDetail,
   },
   {
     path: path.adapterUpdate,

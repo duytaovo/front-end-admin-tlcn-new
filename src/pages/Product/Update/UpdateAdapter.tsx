@@ -1,6 +1,7 @@
+import { PlusOutlined } from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Form } from "antd";
+import { Button, Form, Modal } from "antd";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -9,26 +10,25 @@ import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
-import { schemaProductSmartPhone } from "src/utils/rules";
+import { schemaAdapter } from "src/utils/rules";
 import {
+  generateRandomString,
   getIdFromNameId,
   isAxiosUnprocessableEntityError,
 } from "src/utils/utils";
 import SelectCustom from "src/components/Select";
-
 import Textarea from "src/components/Textarea";
 import { getCategorys } from "src/store/category/categorySlice";
-import {
-  getDetailPhone,
-  getSmartPhones,
-  updateSmartPhone,
-  uploadManyImagesProductSmartPhone,
-} from "src/store/product/smartPhoneSlice";
+import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
 import InputFile from "src/components/InputFile";
-import { PlusOutlined } from "@ant-design/icons";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
+import {
+  getAdapter,
+  getDetailAdapter,
+  updateAdapter,
+} from "src/store/accessory/adapter";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -48,61 +48,63 @@ interface FormData {
   mass: string | undefined;
   launchTime: string | undefined;
   accessories: string | undefined;
-  productStatus: number | undefined;
+  productStatus: string | undefined;
   ram: string;
   storageCapacity: string;
   color: string;
   price: string;
   salePrice: string | undefined;
-  monitor: string;
 }
 
 const UpdateAdapter: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const {
     handleSubmit,
     formState: { errors },
     setError,
+    reset,
     register,
     setValue,
     getValues,
-    watch,
     control,
   } = useForm({
-    resolver: yupResolver(schemaProductSmartPhone),
+    resolver: yupResolver(schemaAdapter),
   });
-  const [imageUrls, setImages] = useState<string[]>([]);
-  const [data, setData] = useState<any>(null);
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const { category } = useAppSelector((state) => state.category);
   const { nameId } = useParams();
+
   const id = getIdFromNameId(nameId as string);
   // const { brand } = useAppSelector((state) => state.brand);
-  const { smartPhoneDetail } = useAppSelector((state) => state.smartPhone);
+  const { adapterDetail } = useAppSelector((state) => state.adapter);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { character } = useAppSelector((state) => state.character);
   const { depot } = useAppSelector((state) => state.depot);
   const { brand } = useAppSelector((state) => state.brand);
-  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
-    {
-      control, // control props comes from useForm (optional: if you are using FormContext)
-      name: "lstProductTypeAndPrice", // unique name for your Field Array
-    },
-  );
   useEffect(() => {
     dispatch(getCategorys({ pageSize: 100 }));
     dispatch(getCharacters({ pageSize: 100 }));
     dispatch(getBrands({ pageSize: 100 }));
     dispatch(getdepots({ pageSize: 100 }));
   }, []);
-
-  useEffect(() => {
-    dispatch(getDetailPhone(id));
-  }, [id]);
-
+  const [imageUrls, setImages] = useState<string[]>([]);
   const [file, setFile] = useState<File[]>();
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
-
+  useEffect(() => {
+    dispatch(getDetailAdapter(id));
+  }, [id]);
   // Tạo một mảng chứa các URL tạm thời cho ảnh
 
   for (const image of imageArray) {
@@ -111,51 +113,80 @@ const UpdateAdapter: React.FC = () => {
   }
 
   useEffect(() => {
-    setImages(smartPhoneDetail.productInfo.lstProductImageUrl);
+    setImages(adapterDetail.productInfo.lstProductImageUrl);
 
-    setValue(
-      "ram",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram,
-    );
-    setValue("accessories", smartPhoneDetail?.productInfo?.accessories);
-    setValue("battery", smartPhoneDetail?.battery);
-    setValue("charging", smartPhoneDetail?.charging);
-    setValue("chip", smartPhoneDetail?.chip);
-    setValue("mass", smartPhoneDetail?.productInfo?.mass.toString());
+    const productInfo = adapterDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
+    setValue("accessories", adapterDetail?.productInfo?.accessories);
+    setValue("adapterType", adapterDetail?.adapterType);
+    setValue("model", adapterDetail?.model);
+    setValue("input", adapterDetail?.input);
+    setValue("mass", adapterDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
+      adapterDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
     );
-    setValue("monitor", smartPhoneDetail?.monitor);
-    setValue("networkSupport", smartPhoneDetail?.networkSupport);
-    setValue("description", smartPhoneDetail?.productInfo?.description);
-    setValue("brand", smartPhoneDetail?.productInfo?.brandId.toString());
+    setValue("output", adapterDetail?.output);
+    setValue("maximumCapacity", adapterDetail?.maximumCapacity);
+    setValue("description", adapterDetail?.productInfo?.description);
+    setValue("brand", adapterDetail?.productInfo?.brandId.toString());
     setValue(
       "characteristic",
-      smartPhoneDetail?.productInfo?.characteristicId.toString(),
+      adapterDetail?.productInfo?.characteristicId.toString(),
     );
-    setValue("name", smartPhoneDetail?.productInfo?.name);
-    setValue("sim", smartPhoneDetail?.sim);
+    setValue("name", adapterDetail?.productInfo?.name);
+    setValue("technology", adapterDetail?.technology);
     setValue(
       "salePrice",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
+      adapterDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
-    setValue("rearCamera", smartPhoneDetail?.rearCamera);
-    setValue(
-      "price",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
-    );
-    setValue("frontCamera", smartPhoneDetail?.frontCamera);
-    setValue("operatingSystem", smartPhoneDetail?.operatingSystem);
-    setValue("design", smartPhoneDetail?.productInfo?.design);
-    setValue("dimension", smartPhoneDetail?.productInfo?.dimension);
-    setValue("category", smartPhoneDetail?.productInfo?.categoryId.toString());
+
+    setValue("design", adapterDetail?.productInfo?.design);
+    setValue("dimension", adapterDetail?.productInfo?.dimension);
+    setValue("category", adapterDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("files", smartPhoneDetail?.productInfo.lstProductImageUrl);
-  }, [smartPhoneDetail]);
+  }, [adapterDetail]);
+
+  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
+    {
+      control, // control props comes from useForm (optional: if you are using FormContext)
+      name: "lstProductTypeAndPrice", // unique name for your Field Array
+    },
+  );
   const onSubmit = handleSubmit(async (data) => {
     let images = [];
-
+    showModal();
+    setIsSubmitting(true);
     if (file) {
       const form = new FormData();
       for (let i = 0; i < file.length; i++) {
@@ -167,67 +198,65 @@ const UpdateAdapter: React.FC = () => {
       for (let i = 0; i < d.length; i++) {
         images.push(d[i]?.fileUrl);
       }
+    } else {
+      toast.warning("Cần chọn ảnh");
+      return;
     }
-    const body = JSON.stringify({
-      productInfo: {
-        brandId: Number(data.brand) || 1,
-        categoryId: 1,
-        productId: Number(smartPhoneDetail.productInfo.productId),
-        characteristicId: Number(data.characteristic) || 1,
-        productCode: smartPhoneDetail.productInfo.productCode,
-        name: data.name,
-        description: data?.description,
-        design: data?.design,
-        dimension: data?.dimension,
-        mass: Number(data?.mass),
-        launchTime: 2023,
-        accessories: data?.accessories,
-        productStatus: 100,
-        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map(
-          (item, index) => ({
-            typeId: Number(
-              smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[index]
-                .typeId,
-            ),
-            ram: item?.ram,
-            storageCapacity: item?.storageCapacity,
-            color: item?.color,
-            price: Number(item?.price),
-            salePrice: Number(item?.salePrice),
-            quantity: Number(item?.quantity),
-            depotId: Number(item?.depot) || 1,
-          }),
-        ),
-
-        lstProductImageUrl: images || [],
-      },
-      monitor: data.monitor,
-      operatingSystem: data.operatingSystem,
-      rearCamera: data.rearCamera,
-      frontCamera: data.frontCamera,
-      chip: data.chip,
-      sim: data.sim,
-      battery: data.battery,
-      charging: data.charging,
-      networkSupport: data.networkSupport,
-    });
-
     try {
-      setIsSubmitting(true);
-      const res = await dispatch(updateSmartPhone({ id, body }));
+      const body = JSON.stringify({
+        productInfo: {
+          brandId: Number(data.brand) || 1,
+          categoryId: 20,
+          productId: null,
+          characteristicId: Number(data.characteristic) || 1,
+          productCode: generateRandomString(10),
+          name: data.name,
+          description: data?.description,
+          design: data?.design,
+          dimension: data?.dimension,
+          mass: Number(data?.mass),
+          launchTime: data.launchTime,
+          accessories: data?.accessories,
+          productStatus: 100,
+          lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map(
+            (item, index) => ({
+              typeId: Number(
+                adapterDetail?.productInfo?.lstProductTypeAndPrice[index]
+                  ?.typeId,
+              ),
+              ram: item?.ram,
+              storageCapacity: item?.storageCapacity,
+              color: item?.color,
+              price: Number(item?.price),
+              salePrice: Number(item?.salePrice),
+              quantity: Number(item?.quantity),
+              depotId: Number(item?.depot),
+            }),
+          ),
+
+          lstProductImageUrl: images || [],
+        },
+        adapterType: data.adapterType,
+        model: data.model,
+        input: data.input,
+        output: data.output,
+        maximumCapacity: data.maximumCapacity,
+        technology: data.technology,
+      });
+      const res = await dispatch(updateAdapter(body));
       unwrapResult(res);
       const d = res?.payload?.data;
       if (d?.code !== 200) return toast.error(d?.message);
-      await toast.success("Chỉnh sửa thành công ");
-      await dispatch(getSmartPhones(""));
-      await navigate(path.smartPhone);
+      await toast.success("Cập nhật sản phẩm thành công ");
+      dispatch(getAdapter({}));
+      await navigate(path.adapter);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
         if (formError) {
           Object.keys(formError).forEach((key) => {
             setError(key as keyof FormData, {
-              // message: formError[key as keyof FormData],
+              message: formError[key as keyof FormData],
               type: "Server",
             });
           });
@@ -237,52 +266,74 @@ const UpdateAdapter: React.FC = () => {
       setIsSubmitting(false);
     }
   });
-  const onClickHuy = () => {
-    setValue(
-      "ram",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram,
-    );
-    setValue("accessories", smartPhoneDetail?.productInfo?.accessories);
-    setValue("battery", smartPhoneDetail?.battery);
-    setValue("charging", smartPhoneDetail?.charging);
-    setValue("chip", smartPhoneDetail?.chip);
-    setValue("mass", smartPhoneDetail?.productInfo?.mass.toString());
-    setValue(
-      "color",
-      smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
-    );
-    setValue("monitor", smartPhoneDetail?.monitor);
-    setValue("networkSupport", smartPhoneDetail?.networkSupport);
-    setValue("description", smartPhoneDetail?.productInfo?.description);
-    setValue("brand", smartPhoneDetail?.productInfo?.brandId.toString());
-    setValue(
-      "characteristic",
-      smartPhoneDetail?.productInfo?.characteristicId.toString(),
-    );
-    setValue("name", smartPhoneDetail?.productInfo?.name);
-    setValue("sim", smartPhoneDetail?.sim);
-    setValue(
-      "salePrice",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
-    );
-    setValue("rearCamera", smartPhoneDetail?.rearCamera);
-    setValue(
-      "price",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
-    );
-    setValue("frontCamera", smartPhoneDetail?.frontCamera);
-    setValue("operatingSystem", smartPhoneDetail?.operatingSystem);
-    setValue("design", smartPhoneDetail?.productInfo?.design);
-    setValue("dimension", smartPhoneDetail?.productInfo?.dimension);
-    setValue("category", smartPhoneDetail?.productInfo?.categoryId.toString());
-    setValue("launchTime", "2023");
-    setValue("files", smartPhoneDetail?.productInfo.lstProductImageUrl);
-  };
 
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
+  const onClickHuy = () => {
+    setImages(adapterDetail.productInfo.lstProductImageUrl);
 
+    const productInfo = adapterDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
+    setValue("accessories", adapterDetail?.productInfo?.accessories);
+    setValue("adapterType", adapterDetail?.adapterType);
+    setValue("model", adapterDetail?.model);
+    setValue("input", adapterDetail?.input);
+    setValue("mass", adapterDetail?.productInfo?.mass.toString());
+    setValue(
+      "color",
+      adapterDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
+    );
+    setValue("output", adapterDetail?.output);
+    setValue("maximumCapacity", adapterDetail?.maximumCapacity);
+    setValue("description", adapterDetail?.productInfo?.description);
+    setValue("brand", adapterDetail?.productInfo?.brandId.toString());
+    setValue(
+      "characteristic",
+      adapterDetail?.productInfo?.characteristicId.toString(),
+    );
+    setValue("name", adapterDetail?.productInfo?.name);
+    setValue("technology", adapterDetail?.technology);
+    setValue(
+      "salePrice",
+      adapterDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
+    );
+
+    setValue("design", adapterDetail?.productInfo?.design);
+    setValue("dimension", adapterDetail?.productInfo?.dimension);
+    setValue("category", adapterDetail?.productInfo?.categoryId.toString());
+    setValue("launchTime", "2023");
+  };
   const handleEditImage = (index: number) => {
     const fileInput = document.createElement("input");
     fileInput.type = "file";
@@ -307,15 +358,14 @@ const UpdateAdapter: React.FC = () => {
 
     fileInput.click();
   };
-
   return (
     <div className="bg-white shadow ">
-      <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm điện thoại</h2>
+      <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm </h2>
       <Form
-        labelCol={{ span: 4 }}
+        labelCol={{ span: 6 }}
         wrapperCol={{ span: 14 }}
         layout="horizontal"
-        style={{ maxWidth: 800, padding: 6 }}
+        style={{ maxWidth: 600, padding: 6 }}
         autoComplete="off"
         noValidate
         onSubmitCapture={onSubmit}
@@ -326,11 +376,11 @@ const UpdateAdapter: React.FC = () => {
           rules={[{ required: true }]}
         >
           <SelectCustom
-            className={"flex-1 text-black"}
+            className={"flex-1 text-black  "}
             id="brand"
             // label="Hãng xe"
-            placeholder="Vui lòng chọn"
-            defaultValue={smartPhoneDetail?.productInfo?.brandId}
+            placeholder="Chọn hãng sx"
+            defaultValue={""}
             options={brand?.data?.data}
             register={register}
             isBrand={true}
@@ -339,25 +389,18 @@ const UpdateAdapter: React.FC = () => {
           </SelectCustom>
         </Form.Item>
         <Form.Item
-          label="Hệ điều hành"
-          name="operatingSystem"
+          label="Loại bộ chuyển"
+          name="model"
           rules={[{ required: true }]}
         >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="operatingSystem"
-            // label="Hãng xe"
-            placeholder="Vui lòng chọn"
-            defaultValue={smartPhoneDetail?.operatingSystem}
-            options={[
-              { id: "iOS", name: "iOS" },
-              { id: "Android", name: "android" },
-            ]}
+          <Input
+            placeholder="Type c"
+            name="model"
             register={register}
-            isBrand={true}
-          >
-            {errors.operatingSystem?.message}
-          </SelectCustom>
+            type="text"
+            className=""
+            errorMessage={errors.model?.message}
+          />
         </Form.Item>
         <Form.Item
           label="Đặc điểm sản phẩm"
@@ -368,8 +411,8 @@ const UpdateAdapter: React.FC = () => {
             className={"flex-1 text-black"}
             id="characteristic"
             // label="Hãng xe"
-            placeholder="Vui lòng chọn"
-            defaultValue={smartPhoneDetail?.productInfo?.characteristicId}
+            placeholder="Chọn đặc điểm "
+            defaultValue={""}
             options={character?.data}
             register={register}
             isBrand={true}
@@ -460,124 +503,115 @@ const UpdateAdapter: React.FC = () => {
           rules={[{ required: true }]}
         >
           <ul>
-            {smartPhoneDetail?.productInfo?.lstProductTypeAndPrice?.map(
-              (item, index) => (
-                <li key={index}>
-                  <div className="flex justify-between space-x-1">
-                    <Form.Item
-                      label="Ram"
-                      name={`lstProductTypeAndPrice.${index}.ram`}
-                      rules={[{ required: true }]}
-                    >
-                      <Input
-                        name={`lstProductTypeAndPrice.${index}.ram`}
-                        key={index} // important to include key with field's id
-                        register={register}
-                        placeholder="8Gb"
-                        defaultValue={item.ram}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      label="Bộ nhớ trong"
-                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      rules={[{ required: true }]}
-                    >
-                      <Input
-                        name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                        key={index} // important to include key with field's id
-                        register={register}
-                        placeholder="1TB"
-                        defaultValue={item.storageCapacity}
-                      />
-                    </Form.Item>
-                  </div>
-                  <div className="flex justify-between space-x-1">
-                    <Form.Item
-                      label="Giá"
-                      name={`lstProductTypeAndPrice.${index}.price`}
-                      rules={[{ required: true }]}
-                    >
-                      <Input
-                        name={`lstProductTypeAndPrice.${index}.price`}
-                        key={index} // important to include key with field's id
-                        register={register}
-                        placeholder="45000000"
-                        defaultValue={item.price}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      label="Giá khuyến mãi"
-                      name={`lstProductTypeAndPrice.${index}.salePrice`}
-                      rules={[{ required: true }]}
-                    >
-                      <Input
-                        name={`lstProductTypeAndPrice.${index}.salePrice`}
-                        key={index} // important to include key with field's id
-                        register={register}
-                        placeholder="44000000"
-                        defaultValue={item.salePrice}
-                      />
-                    </Form.Item>
-                  </div>
+            {fields.map((item, index) => (
+              <li key={item.id}>
+                <div className="flex justify-between space-x-1">
                   <Form.Item
-                    label="Kho hàng"
-                    name={`lstProductTypeAndPrice.${index}.depot`}
+                    label="Ram"
+                    name={`lstProductTypeAndPrice.${index}.ram`}
                     rules={[{ required: true }]}
                   >
-                    <SelectCustom
-                      className={"flex-1 text-black"}
-                      id={`lstProductTypeAndPrice.${index}.depot`}
-                      // label="Hãng xe"
-                      placeholder="Vui lòng chọn"
-                      defaultValue={item.depotId}
-                      options={depot?.data?.data}
+                    <Input
+                      name={`lstProductTypeAndPrice.${index}.ram`}
+                      key={item.id} // important to include key with field's id
                       register={register}
-                    >
-                      {errors.depot?.message}
-                    </SelectCustom>
+                      placeholder="8Gb"
+                    />
                   </Form.Item>
-                  <div>
-                    <Form.Item
-                      label="Số lượng sản phẩm"
+                  <Form.Item
+                    label="Bộ nhớ trong"
+                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
+                    rules={[{ required: true }]}
+                  >
+                    <Input
+                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
+                      key={item.id} // important to include key with field's id
+                      register={register}
+                      placeholder="1TB"
+                    />
+                  </Form.Item>
+                </div>
+                <div className="flex justify-between space-x-1">
+                  <Form.Item
+                    label="Giá"
+                    name={`lstProductTypeAndPrice.${index}.price`}
+                    rules={[{ required: true }]}
+                  >
+                    <Input
+                      name={`lstProductTypeAndPrice.${index}.price`}
+                      key={item.id} // important to include key with field's id
+                      register={register}
+                      placeholder="45000000"
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Giá khuyến mãi"
+                    name={`lstProductTypeAndPrice.${index}.salePrice`}
+                    rules={[{ required: true }]}
+                  >
+                    <Input
+                      name={`lstProductTypeAndPrice.${index}.salePrice`}
+                      key={item.id} // important to include key with field's id
+                      register={register}
+                      placeholder="44000000"
+                    />
+                  </Form.Item>
+                </div>
+                <Form.Item
+                  label="Kho hàng"
+                  name={`lstProductTypeAndPrice.${index}.depot`}
+                  rules={[{ required: true }]}
+                >
+                  <SelectCustom
+                    className={"flex-1 text-black"}
+                    id={`lstProductTypeAndPrice.${index}.depot`}
+                    // label="Hãng xe"
+                    placeholder="Chọn kho hàng"
+                    options={depot?.data?.data}
+                    register={register}
+                  >
+                    {errors.depotId?.message}
+                  </SelectCustom>
+                </Form.Item>
+                <div className="flex justify-between space-x-1">
+                  <Form.Item
+                    label="Số lượng sản phẩm"
+                    name={`lstProductTypeAndPrice.${index}.quantity`}
+                    rules={[{ required: true }]}
+                  >
+                    <Input
                       name={`lstProductTypeAndPrice.${index}.quantity`}
-                      rules={[{ required: true }]}
-                    >
-                      <Input
-                        name={`lstProductTypeAndPrice.${index}.quantity`}
-                        key={index} // important to include key with field's id
-                        register={register}
-                        defaultValue={item.quantity}
-                        placeholder="1000"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      label="Màu"
-                      name={`lstProductTypeAndPrice.${index}.color`}
-                      rules={[{ required: true }]}
-                    >
-                      <Input
-                        name={`lstProductTypeAndPrice.${index}.color`}
-                        key={index} // important to include key with field's id
-                        register={register}
-                        defaultValue={item.color}
-                        placeholder="Titan tự nhiên"
-                      />
-                    </Form.Item>
-                  </div>
-                  <Form.Item>
-                    <Button
-                      type="default"
-                      onClick={() => remove(index)}
-                      block
-                      icon={<PlusOutlined />}
-                    >
-                      Xóa trường này
-                    </Button>
+                      key={item.id} // important to include key with field's id
+                      register={register}
+                      placeholder="1000"
+                    />
                   </Form.Item>
-                  {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
-                </li>
-              ),
-            )}
+                  <Form.Item
+                    label="Màu"
+                    name={`lstProductTypeAndPrice.${index}.color`}
+                    rules={[{ required: true }]}
+                  >
+                    <Input
+                      name={`lstProductTypeAndPrice.${index}.color`}
+                      key={item.id} // important to include key with field's id
+                      register={register}
+                      placeholder="Titan tự nhiên"
+                    />
+                  </Form.Item>
+                </div>
+                <Form.Item>
+                  <Button
+                    type="default"
+                    onClick={() => remove(index)}
+                    block
+                    icon={<PlusOutlined />}
+                  >
+                    Xóa trường này
+                  </Button>
+                </Form.Item>
+                {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
+              </li>
+            ))}
             <Form.Item>
               <Button
                 type="dashed"
@@ -599,101 +633,67 @@ const UpdateAdapter: React.FC = () => {
           </ul>
         </Form.Item>
 
-        <Form.Item label="Màn hình" name="monitor" rules={[{ required: true }]}>
+        <Form.Item
+          label="Loại bộ chuyển"
+          name="adapterType"
+          rules={[{ required: true }]}
+        >
           <Input
-            name="monitor"
+            name="adapterType"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.monitor?.message}
+            errorMessage={errors.adapterType?.message}
             placeholder="6.7 - Tần số quét 120 Hz"
           />
         </Form.Item>
 
-        <Form.Item
-          label="Camera trước"
-          name="frontCamera"
-          rules={[{ required: true }]}
-        >
+        <Form.Item label="Đầu ra" name="output" rules={[{ required: true }]}>
           <Input
-            name="frontCamera"
+            name="output"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.frontCamera?.message}
+            errorMessage={errors.output?.message}
             placeholder="12 MP"
           />
         </Form.Item>
+        <Form.Item label="Đầu vào" name="input" rules={[{ required: true }]}>
+          <Input
+            name="input"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.input?.message}
+            placeholder=""
+          />
+        </Form.Item>
         <Form.Item
-          label="Camera sau"
-          name="rearCamera"
+          label="Công suất tối đa"
+          name="maximumCapacity"
           rules={[{ required: true }]}
         >
           <Input
-            name="rearCamera"
+            name="maximumCapacity"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.rearCamera?.message}
-            placeholder="Chính 48 MP & Phụ 12 MP, 12 MP"
-          />
-        </Form.Item>
-        <Form.Item label="Chip" name="chip" rules={[{ required: true }]}>
-          <Input
-            name="chip"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.chip?.message}
+            errorMessage={errors.maximumCapacity?.message}
             placeholder="Apple A17 Pro 6 nhân"
           />
         </Form.Item>
-        <Form.Item label="Sim" name="sim" rules={[{ required: true }]}>
-          <Input
-            name="sim"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.sim?.message}
-            placeholder="1 Nano SIM & 1 eSIM"
-          />
-        </Form.Item>
-        <Form.Item label="Pin" name="battery" rules={[{ required: true }]}>
-          <Input
-            name="battery"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.battery?.message}
-            placeholder="4422 mAh"
-          />
-        </Form.Item>
         <Form.Item
-          label="Sạc nhanh"
-          name="charging"
+          label="Công nghệ"
+          name="technology"
           rules={[{ required: true }]}
         >
           <Input
-            name="charging"
+            name="technology"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.charging?.message}
-            placeholder="20 W"
-          />
-        </Form.Item>
-        <Form.Item
-          label="Hỗ trợ mạng"
-          name="networkSupport"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="networkSupport"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.networkSupport?.message}
-            placeholder="5G"
+            errorMessage={errors.technology?.message}
+            placeholder=""
           />
         </Form.Item>
 
@@ -740,7 +740,7 @@ const UpdateAdapter: React.FC = () => {
           rules={[{ required: true }]}
         >
           <Textarea
-            defaultValue={smartPhoneDetail?.productInfo?.description}
+            defaultValue="Mô tả sản phẩm"
             id="description"
             isUpdate={false}
             register={register}
@@ -768,7 +768,7 @@ const UpdateAdapter: React.FC = () => {
             <Button
               className="w-[100px]"
               onClick={() => {
-                navigate(path.smartPhone);
+                navigate(path.adapter);
               }}
             >
               Hủy
@@ -776,6 +776,14 @@ const UpdateAdapter: React.FC = () => {
           </Form.Item>
         </div>
       </Form>
+      <Modal
+        title="Cập nhật sản phẩm"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>Đang xử lý, vui lòng đợi...</p>
+      </Modal>
     </div>
   );
 };

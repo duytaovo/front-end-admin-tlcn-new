@@ -40,21 +40,12 @@ const computerPowerlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // builder.addCase(addComputerPower.fulfilled, (state, { payload }) => {
-    //   state.computerPower = payload.data;
-    // });
     builder.addCase(getComputerPower.fulfilled, (state, { payload }) => {
       state.computerPower = payload.data;
     });
     builder.addCase(getDetailComputerPower.fulfilled, (state, { payload }) => {
       state.computerPowerDetail = payload.data;
     });
-    // builder.addCase(computerPower.fulfilled, (state, { payload }) => {
-    //   [state.computerPowerDetail, ...payload.data];
-    // });
-    // builder.addCase(computerPower.fulfilled, (state, { payload }) => {
-    //   state.computerPower = payload.data;
-    // });
   },
 });
 

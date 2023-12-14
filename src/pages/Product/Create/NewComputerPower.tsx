@@ -1,7 +1,7 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Form } from "antd";
+import { Button, Form, Modal } from "antd";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
-import { schemaProductSmartPhone } from "src/utils/rules";
+import { schemaComputerPower, schemaProductSmartPhone } from "src/utils/rules";
 import {
   generateRandomString,
   isAxiosUnprocessableEntityError,
@@ -18,15 +18,15 @@ import {
 import SelectCustom from "src/components/Select";
 import Textarea from "src/components/Textarea";
 import { getCategorys } from "src/store/category/categorySlice";
-import {
-  addSmartPhone,
-  getSmartPhones,
-  uploadManyImagesProductSmartPhone,
-} from "src/store/product/smartPhoneSlice";
+import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
 import InputFile from "src/components/InputFile";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
+import {
+  addComputerPower,
+  getComputerPower,
+} from "src/store/accessory/computerPower";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -52,11 +52,23 @@ interface FormData {
   color: string;
   price: string;
   salePrice: string | undefined;
-  monitor: string;
 }
 
 const NewComputerPower: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const {
     handleSubmit,
     formState: { errors },
@@ -66,7 +78,7 @@ const NewComputerPower: React.FC = () => {
     setValue,
     control,
   } = useForm({
-    resolver: yupResolver(schemaProductSmartPhone),
+    resolver: yupResolver(schemaComputerPower),
   });
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -104,6 +116,8 @@ const NewComputerPower: React.FC = () => {
     let images = [];
 
     if (file) {
+      showModal();
+      setIsSubmitting(true);
       const form = new FormData();
       for (let i = 0; i < file.length; i++) {
         form.append("files", file[i]);
@@ -119,23 +133,10 @@ const NewComputerPower: React.FC = () => {
       return;
     }
     try {
-      const bodySmartphone = {
-        slug: "smartphone",
-        brandId: null,
-        characteristicId: null,
-        priceFrom: null,
-        priceTo: null,
-        specialFeatures: [],
-        smartphoneType: [],
-        ram: [],
-        storageCapacity: [],
-        charging: [],
-        screen: [],
-      };
       const body = JSON.stringify({
         productInfo: {
           brandId: Number(data.brand) || 1,
-          categoryId: 1,
+          categoryId: 19,
           productId: null,
           characteristicId: Number(data.characteristic) || 1,
           productCode: generateRandomString(10),
@@ -155,34 +156,33 @@ const NewComputerPower: React.FC = () => {
             price: Number(item?.price),
             salePrice: Number(item?.salePrice),
             quantity: Number(item?.quantity),
-            depotId: Number(item?.depot) || 1,
+            depotId: Number(item?.depotId),
           })),
 
           lstProductImageUrl: images || [],
         },
-        monitor: data.monitor,
-        operatingSystem: data.operatingSystem,
-        rearCamera: data.rearCamera,
-        frontCamera: data.frontCamera,
-        chip: data.chip,
-        sim: data.sim,
-        battery: data.battery,
-        charging: data.charging,
-        networkSupport: data.networkSupport,
+        model: data.model,
+        pfc: data.pfc,
+        efficiency: data.efficiency,
+        modular: data.modular,
+        voltage: data.voltage,
+        outputPower: data.outputPower,
+        powerExcursion: data.powerExcursion,
+        frequency: data.frequency,
+        fan: data.fan,
+        certifications: "",
       });
-      setIsSubmitting(true);
-      const res = await dispatch(addSmartPhone(body));
+      const res = await dispatch(addComputerPower(body));
       unwrapResult(res);
       const d = res?.payload?.data;
       if (d?.code !== 200) return toast.error(d?.message);
-      await toast.success("Thêm sản phẩm điện thoại thành công ");
+      await toast.success("Thêm sản phẩm thành công ");
       dispatch(
-        getSmartPhones({
-          body: bodySmartphone,
+        getComputerPower({
           // params: { pageNumber: 1, pageSize: 10 },
         }),
       );
-      await navigate(path.smartPhone);
+      await navigate(path.computerPower);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
@@ -197,6 +197,7 @@ const NewComputerPower: React.FC = () => {
       }
     } finally {
       setIsSubmitting(false);
+      handleOk();
     }
   });
   const onClickHuy = () => {
@@ -208,7 +209,7 @@ const NewComputerPower: React.FC = () => {
 
   return (
     <div className="bg-white shadow ">
-      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm điện thoại</h2>
+      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm </h2>
       <Form
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 14 }}
@@ -218,24 +219,6 @@ const NewComputerPower: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
-        {/* <Form.Item
-          label="Danh mục sản phẩm"
-          name=""
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black "}
-            id="category"
-            // label="Hãng xe"
-            placeholder="Chọn danh mục"
-            defaultValue={""}
-            options={category?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.category?.message}
-          </SelectCustom>
-        </Form.Item> */}
         <Form.Item
           label="Hãng sản xuất"
           name="brand"
@@ -254,27 +237,7 @@ const NewComputerPower: React.FC = () => {
             {errors.brand?.message}
           </SelectCustom>
         </Form.Item>
-        <Form.Item
-          label="Hệ điều hành"
-          name="operatingSystem"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="operatingSystem"
-            // label="Hãng xe"
-            placeholder="Chọn hệ điều hành"
-            defaultValue={""}
-            options={[
-              { id: "iOS", name: "iOS" },
-              { id: "Android", name: "android" },
-            ]}
-            register={register}
-            isBrand={true}
-          >
-            {errors.operatingSystem?.message}
-          </SelectCustom>
-        </Form.Item>
+
         <Form.Item
           label="Đặc điểm sản phẩm"
           name="characteristic"
@@ -440,11 +403,10 @@ const NewComputerPower: React.FC = () => {
                     id={`lstProductTypeAndPrice.${index}.depot`}
                     // label="Hãng xe"
                     placeholder="Chọn kho hàng"
-                    defaultValue={1}
                     options={depot?.data?.data}
                     register={register}
                   >
-                    {errors.depot?.message}
+                    {errors.depotId?.message}
                   </SelectCustom>
                 </Form.Item>
                 <div className="flex justify-between space-x-1">
@@ -507,100 +469,100 @@ const NewComputerPower: React.FC = () => {
           </ul>
         </Form.Item>
 
-        <Form.Item label="Màn hình" name="monitor" rules={[{ required: true }]}>
+        <Form.Item label="Kiểu" name="model" rules={[{ required: true }]}>
           <Input
-            name="monitor"
+            name="model"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.monitor?.message}
+            errorMessage={errors.model?.message}
             placeholder="6.7 - Tần số quét 120 Hz"
           />
         </Form.Item>
 
-        <Form.Item
-          label="Camera trước"
-          name="frontCamera"
-          rules={[{ required: true }]}
-        >
+        <Form.Item label="Mô đun" name="modular" rules={[{ required: true }]}>
           <Input
-            name="frontCamera"
+            name="modular"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.frontCamera?.message}
+            errorMessage={errors.modular?.message}
             placeholder="12 MP"
           />
         </Form.Item>
         <Form.Item
-          label="Camera sau"
-          name="rearCamera"
+          label="Hiệu quả"
+          name="efficiency"
           rules={[{ required: true }]}
         >
           <Input
-            name="rearCamera"
+            name="efficiency"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.rearCamera?.message}
+            errorMessage={errors.efficiency?.message}
             placeholder="Chính 48 MP & Phụ 12 MP, 12 MP"
           />
         </Form.Item>
-        <Form.Item label="Chip" name="chip" rules={[{ required: true }]}>
+        <Form.Item label="Vôn" name="voltage" rules={[{ required: true }]}>
           <Input
-            name="chip"
+            name="voltage"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.chip?.message}
-            placeholder="Apple A17 Pro 6 nhân"
+            errorMessage={errors.voltage?.message}
+            placeholder=""
           />
         </Form.Item>
-        <Form.Item label="Sim" name="sim" rules={[{ required: true }]}>
+        <Form.Item
+          label="Công suất ra"
+          name="outputPower"
+          rules={[{ required: true }]}
+        >
           <Input
-            name="sim"
+            name="outputPower"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.sim?.message}
-            placeholder="1 Nano SIM & 1 eSIM"
+            errorMessage={errors.outputPower?.message}
+            // placeholder="1 Nano SIM & 1 eSIM"
           />
         </Form.Item>
-        <Form.Item label="Pin" name="battery" rules={[{ required: true }]}>
+        <Form.Item
+          label="Năng lượng"
+          name="powerExcursion"
+          rules={[{ required: true }]}
+        >
           <Input
-            name="battery"
+            name="powerExcursion"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.battery?.message}
+            errorMessage={errors.powerExcursion?.message}
             placeholder="4422 mAh"
           />
         </Form.Item>
         <Form.Item
-          label="Sạc nhanh"
-          name="charging"
+          label="Tính thường xuyên"
+          name="frequency"
           rules={[{ required: true }]}
         >
           <Input
-            name="charging"
+            name="frequency"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.charging?.message}
+            errorMessage={errors.frequency?.message}
             placeholder="20 W"
           />
         </Form.Item>
-        <Form.Item
-          label="Hỗ trợ mạng"
-          name="networkSupport"
-          rules={[{ required: true }]}
-        >
+        <Form.Item label="Quạt" name="fan" rules={[{ required: true }]}>
           <Input
-            name="networkSupport"
+            name="fan"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.networkSupport?.message}
+            errorMessage={errors.fan?.message}
             placeholder="5G"
           />
         </Form.Item>
@@ -675,6 +637,14 @@ const NewComputerPower: React.FC = () => {
           </Form.Item>
         </div>
       </Form>
+      <Modal
+        title="Thêm sản phẩm"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>Đang xử lý, vui lòng đợi...</p>
+      </Modal>
     </div>
   );
 };
