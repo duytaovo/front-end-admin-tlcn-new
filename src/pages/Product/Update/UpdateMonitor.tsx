@@ -9,7 +9,7 @@ import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
-import { schemaMonitor, schemaProductSmartPhone } from "src/utils/rules";
+import { schemaMonitor } from "src/utils/rules";
 import {
   getIdFromNameId,
   isAxiosUnprocessableEntityError,
@@ -18,17 +18,18 @@ import SelectCustom from "src/components/Select";
 
 import Textarea from "src/components/Textarea";
 import { getCategorys } from "src/store/category/categorySlice";
-import {
-  getDetailPhone,
-  getSmartPhones,
-  updateSmartPhone,
-  uploadManyImagesProductSmartPhone,
-} from "src/store/product/smartPhoneSlice";
+import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
 import InputFile from "src/components/InputFile";
 import { PlusOutlined } from "@ant-design/icons";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
+import { getDetailMouse } from "src/store/accessory/mouse";
+import {
+  getDetailMonitor,
+  getMonitor,
+  updateMonitor,
+} from "src/store/accessory/monitor";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -96,7 +97,7 @@ const UpdateMonitor: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(getDetailPhone(id));
+    dispatch(getDetailMonitor(id));
   }, [id]);
 
   const [file, setFile] = useState<File[]>();
@@ -176,7 +177,7 @@ const UpdateMonitor: React.FC = () => {
         design: data?.design,
         dimension: data?.dimension,
         mass: Number(data?.mass),
-        launchTime: 2023,
+        launchTime: Number(data?.launchTime),
         accessories: data?.accessories,
         productStatus: 100,
         lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map(
@@ -190,7 +191,7 @@ const UpdateMonitor: React.FC = () => {
             price: Number(item?.price),
             salePrice: Number(item?.salePrice),
             quantity: Number(item?.quantity),
-            depotId: Number(item?.depotId),
+            depotId: Number(item?.depot),
           }),
         ),
 
@@ -210,13 +211,13 @@ const UpdateMonitor: React.FC = () => {
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(updateSmartPhone({ id, body }));
+      const res = await dispatch(updateMonitor({ id, body }));
       unwrapResult(res);
       const d = res?.payload?.data;
       if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Chỉnh sửa thành công ");
-      await dispatch(getSmartPhones(""));
-      await navigate(path.smartPhone);
+      await dispatch(getMonitor(""));
+      await navigate(path.monitor);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
@@ -689,8 +690,7 @@ const UpdateMonitor: React.FC = () => {
         </Form.Item>
 
         <Form.Item
-          name="files"
-          rules={[{ required: true }]}
+          name="file"
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
@@ -699,16 +699,26 @@ const UpdateMonitor: React.FC = () => {
             <div className="my-5 w-24 space-y-5 justify-between items-center">
               {imageUrls.map((imageUrl, index) => {
                 return (
-                  <img
-                    key={index}
-                    src={imageUrl}
-                    className="h-full rounded-md w-full  object-cover"
-                    alt="avatar"
-                  />
+                  <div key={index}>
+                    <img
+                      src={imageUrl}
+                      alt={`Image ${index + 1}`}
+                      width="100"
+                      height="100"
+                      className="h-full rounded-md w-full  object-cover"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => handleEditImage(index)}
+                    >
+                      Edit
+                    </button>
+                  </div>
                 );
               })}
             </div>
-            <InputFile label="" onChange={handleChangeFile} id="files" />
+            <InputFile label="" onChange={handleChangeFile} id="images" />
             <div className="mt-3  flex flex-col items-center text-red-500">
               <div>Dụng lượng file tối đa 2 MB</div>
               <div>Định dạng:.JPEG, .PNG</div>
@@ -750,7 +760,7 @@ const UpdateMonitor: React.FC = () => {
             <Button
               className="w-[100px]"
               onClick={() => {
-                navigate(path.smartPhone);
+                navigate(path.monitor);
               }}
             >
               Hủy

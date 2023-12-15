@@ -51,7 +51,7 @@ interface FormData {
   salePrice: string | undefined;
 }
 
-const NewAdapter: React.FC = () => {
+const NewMicrophone: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -134,17 +134,17 @@ const NewAdapter: React.FC = () => {
     try {
       const body = JSON.stringify({
         productInfo: {
-          brandId: Number(data.brand) || 1,
-          categoryId: 1,
+          brandId: Number(data.brand),
+          categoryId: 26,
           productId: null,
-          characteristicId: Number(data.characteristic) || 1,
+          characteristicId: Number(data.characteristic),
           productCode: generateRandomString(10),
           name: data.name,
           description: data?.description,
           design: data?.design,
           dimension: data?.dimension,
           mass: Number(data?.mass),
-          launchTime: 2023,
+          launchTime: Number(data?.launchTime),
           accessories: data?.accessories,
           productStatus: 100,
           lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
@@ -155,7 +155,7 @@ const NewAdapter: React.FC = () => {
             price: Number(item?.price),
             salePrice: Number(item?.salePrice),
             quantity: Number(item?.quantity),
-            depotId: Number(item?.depotId),
+            depotId: Number(item?.depot),
           })),
 
           lstProductImageUrl: images || [],
@@ -170,13 +170,13 @@ const NewAdapter: React.FC = () => {
       unwrapResult(res);
       const d = res?.payload?.data;
       if (d?.code !== 200) return toast.error(d?.message);
-      await toast.success("Thêm sản phẩm  thành công ");
+      await toast.success("Thêm sản phẩm thành công ");
       dispatch(
         getMicrophone({
           // params: { pageNumber: 1, pageSize: 10 },
         }),
       );
-      await navigate(path.smartPhone);
+      await navigate(path.microPhone);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
@@ -565,7 +565,7 @@ const NewAdapter: React.FC = () => {
             <Button
               className="w-[100px]"
               onClick={() => {
-                navigate(path.smartPhone);
+                navigate(path.microPhone);
               }}
             >
               Hủy
@@ -578,6 +578,7 @@ const NewAdapter: React.FC = () => {
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
+        centered
       >
         <p>Đang xử lý, vui lòng đợi...</p>
       </Modal>
@@ -585,5 +586,5 @@ const NewAdapter: React.FC = () => {
   );
 };
 
-export default () => <NewAdapter />;
+export default () => <NewMicrophone />;
 

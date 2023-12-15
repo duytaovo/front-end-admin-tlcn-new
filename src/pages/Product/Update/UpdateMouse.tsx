@@ -4,7 +4,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { Button, Form } from "antd";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Input from "src/components/Input";
 import path from "src/constants/path";
@@ -13,6 +13,7 @@ import { ErrorResponse } from "src/types/utils.type";
 import { schemaProductMouse } from "src/utils/rules";
 import {
   generateRandomString,
+  getIdFromNameId,
   isAxiosUnprocessableEntityError,
 } from "src/utils/utils";
 import SelectCustom from "src/components/Select";
@@ -22,9 +23,13 @@ import InputFile from "src/components/InputFile";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
-import { addRam, getRams } from "src/store/ram/ramSlice";
 import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
-import { addMouse, getMouse } from "src/store/accessory/mouse";
+import {
+  addMouse,
+  getDetailMouse,
+  getMouse,
+  updateMouse,
+} from "src/store/accessory/mouse";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -66,6 +71,8 @@ const NewMouse: React.FC = () => {
   } = useForm({
     resolver: yupResolver(schemaProductMouse),
   });
+  const { mouseDetail } = useAppSelector((state) => state.mouse);
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { depot } = useAppSelector((state) => state.depot);
@@ -76,7 +83,12 @@ const NewMouse: React.FC = () => {
     dispatch(getBrands({ pageSize: 100 }));
     dispatch(getdepots({ pageSize: 100 }));
   }, []);
+  const { nameId } = useParams();
 
+  const id = getIdFromNameId(nameId as string);
+  useEffect(() => {
+    dispatch(getDetailMouse(id));
+  }, [id]);
   const [file, setFile] = useState<File[]>();
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
   const [imageUrls, setImages] = useState<string[]>([]);
@@ -88,18 +100,75 @@ const NewMouse: React.FC = () => {
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("salePrice", "");
-    setValue("price", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("led", "");
-  }, []);
+    setImages(mouseDetail.productInfo.lstProductImageUrl);
+
+    const productInfo = mouseDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
+    setValue("accessories", mouseDetail?.productInfo?.accessories);
+    setValue("compatible", mouseDetail?.compatible);
+    setValue("resolution", mouseDetail?.resolution);
+    setValue("connector", mouseDetail?.connector);
+    setValue("mass", mouseDetail?.productInfo?.mass.toString());
+    setValue(
+      "color",
+      mouseDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
+    );
+    setValue("led", mouseDetail?.led);
+    setValue("softwareSupport", mouseDetail?.softwareSupport);
+    setValue("description", mouseDetail?.productInfo?.description);
+    setValue("brand", mouseDetail?.productInfo?.brandId.toString());
+    setValue(
+      "characteristic",
+      mouseDetail?.productInfo?.characteristicId.toString(),
+    );
+    setValue("name", mouseDetail?.productInfo?.name);
+    setValue("batteryType", mouseDetail?.batteryType);
+    setValue(
+      "salePrice",
+      mouseDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
+    );
+    setValue("time", mouseDetail?.time);
+    setValue(
+      "price",
+      mouseDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
+    );
+    setValue("chargingPort", mouseDetail?.chargingPort);
+    setValue("design", mouseDetail?.productInfo?.design);
+    setValue("dimension", mouseDetail?.productInfo?.dimension);
+    setValue("category", mouseDetail?.productInfo?.categoryId.toString());
+    setValue("launchTime", "2023");
+    setValue("files", mouseDetail?.productInfo.lstProductImageUrl);
+  }, [mouseDetail]);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
       control, // control props comes from useForm (optional: if you are using FormContext)
@@ -136,7 +205,7 @@ const NewMouse: React.FC = () => {
         design: data?.design,
         dimension: data?.dimension,
         mass: Number(data?.mass),
-        launchTime: 2023,
+        launchTime: Number(data?.launchTime),
         accessories: data?.accessories,
         productStatus: 100,
         lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
@@ -147,7 +216,7 @@ const NewMouse: React.FC = () => {
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
           quantity: Number(item?.quantity),
-          depotId: Number(item?.depotId),
+          depotId: Number(item?.depot),
         })),
 
         lstProductImageUrl: images || [],
@@ -165,7 +234,7 @@ const NewMouse: React.FC = () => {
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(addMouse(body));
+      const res = await dispatch(updateMouse({ id, body }));
       unwrapResult(res);
       const d = res?.payload?.data;
       if (d?.code !== 200) return toast.error(d?.message);
@@ -204,7 +273,30 @@ const NewMouse: React.FC = () => {
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
+  const handleEditImage = (index: number) => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
 
+    fileInput.addEventListener("change", (event) => {
+      const selectedFile = (event.target as HTMLInputElement).files?.[0];
+
+      if (selectedFile) {
+        const currentImages = getValues("files") || [];
+        currentImages[index] = selectedFile;
+        setValue("files", currentImages);
+
+        // Update the image preview immediately
+        setImages((prevImages) => {
+          const updatedImages = [...prevImages];
+          updatedImages[index] = URL.createObjectURL(selectedFile);
+          return updatedImages;
+        });
+      }
+    });
+
+    fileInput.click();
+  };
   return (
     <div className="bg-white shadow ">
       <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm chuột máy tính</h2>
@@ -487,7 +579,7 @@ const NewMouse: React.FC = () => {
         </Form.Item>
 
         <Form.Item
-          name="files"
+          name="file"
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
@@ -496,16 +588,26 @@ const NewMouse: React.FC = () => {
             <div className="my-5 w-24 space-y-5 justify-between items-center">
               {imageUrls.map((imageUrl, index) => {
                 return (
-                  <img
-                    key={index}
-                    src={imageUrl}
-                    className="h-full rounded-md w-full  object-cover"
-                    alt="avatar"
-                  />
+                  <div key={index}>
+                    <img
+                      src={imageUrl}
+                      alt={`Image ${index + 1}`}
+                      width="100"
+                      height="100"
+                      className="h-full rounded-md w-full  object-cover"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => handleEditImage(index)}
+                    >
+                      Edit
+                    </button>
+                  </div>
                 );
               })}
             </div>
-            <InputFile label="" onChange={handleChangeFile} id="files" />
+            <InputFile label="" onChange={handleChangeFile} id="images" />
             <div className="mt-3  flex flex-col items-center text-red-500">
               <div>Dụng lượng file tối đa 2 MB</div>
               <div>Định dạng:.JPEG, .PNG</div>
@@ -547,7 +649,7 @@ const NewMouse: React.FC = () => {
             <Button
               className="w-[100px]"
               onClick={() => {
-                navigate(path.smartPhone);
+                navigate(path.mouse);
               }}
             >
               Hủy

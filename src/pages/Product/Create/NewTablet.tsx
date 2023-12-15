@@ -135,17 +135,17 @@ const NewTablet: React.FC = () => {
     }
     const body = JSON.stringify({
       productInfo: {
-        brandId: Number(data.brand) || 1,
+        brandId: Number(data.brand),
         categoryId: 4,
         productId: null,
-        characteristicId: Number(data.characteristic) || 1,
+        characteristicId: Number(data.characteristic),
         productCode: generateRandomString(10),
         name: data.name,
         description: data?.description,
         design: data?.design,
         dimension: data?.dimension,
         mass: Number(data?.mass),
-        launchTime: 2023,
+        launchTime: Number(data?.launchTime),
         accessories: data?.accessories,
         productStatus: 100,
         lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
@@ -156,7 +156,7 @@ const NewTablet: React.FC = () => {
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
           quantity: Number(item?.quantity),
-          depotId: Number(item?.depotId),
+          depotId: Number(item?.depot),
         })),
 
         lstProductImageUrl: images || [],
@@ -216,24 +216,6 @@ const NewTablet: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
-        {/* <Form.Item
-          label="Danh mục sản phẩm"
-          name=""
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black "}
-            id="category"
-            // label="Hãng xe"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={category?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.category?.message}
-          </SelectCustom>
-        </Form.Item> */}
         <Form.Item
           label="Hãng sản xuất"
           name="brand"
@@ -674,6 +656,7 @@ const NewTablet: React.FC = () => {
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
+        centered
       >
         <p>Đang xử lý, vui lòng đợi...</p>
       </Modal>

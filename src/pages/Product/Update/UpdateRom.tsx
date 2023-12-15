@@ -23,13 +23,9 @@ import InputFile from "src/components/InputFile";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
-import {
-  addRam,
-  getDetailRam,
-  getRams,
-  updateRam,
-} from "src/store/ram/ramSlice";
+
 import { getDetailRom, getRoms, updateRom } from "src/store/rom/romSlice";
+import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -74,7 +70,7 @@ const NewRam: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { nameId } = useParams();
-  const { rom } = useAppSelector((state) => state.rom);
+  const { romDetail } = useAppSelector((state) => state.rom);
   const id = getIdFromNameId(nameId as string);
   const { category } = useAppSelector((state) => state.category);
   const { character } = useAppSelector((state) => state.character);
@@ -101,59 +97,112 @@ const NewRam: React.FC = () => {
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue("ram", rom?.productInfo?.lstProductTypeAndPrice[0]?.rom);
-    setValue("accessories", rom?.productInfo?.accessories);
-    setValue("mass", rom?.productInfo?.mass.toString());
+    const productInfo = romDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
+    setValue(
+      "ram",
+      romDetail?.productInfo?.lstProductTypeAndPrice[0]?.romDetail,
+    );
+    setValue("accessories", romDetail?.productInfo?.accessories);
+    setValue("mass", romDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      rom?.productInfo.lstProductTypeAndPrice[0].color.toString(),
+      romDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
     );
-    setValue("monitor", rom?.monitor);
-    setValue("description", rom?.productInfo?.description);
-    setValue("brand", rom?.productInfo?.brandId.toString());
-    setValue("characteristic", rom?.productInfo?.characteristicId.toString());
-    setValue("name", rom?.productInfo?.name);
+    setValue("monitor", romDetail?.monitor);
+    setValue("description", romDetail?.productInfo?.description);
+    setValue("brand", romDetail?.productInfo?.brandId.toString());
+    setValue(
+      "characteristic",
+      romDetail?.productInfo?.characteristicId.toString(),
+    );
+    setValue("name", romDetail?.productInfo?.name);
     setValue(
       "salePrice",
-      rom?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
+      romDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
     setValue(
       "price",
-      rom?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
+      romDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
-    setValue("operatingSystem", rom?.operatingSystem);
-    setValue("design", rom?.productInfo?.design);
-    setValue("dimension", rom?.productInfo?.dimension);
-    setValue("category", rom?.productInfo?.categoryId.toString());
+    setValue("operatingSystem", romDetail?.operatingSystem);
+    setValue("design", romDetail?.productInfo?.design);
+    setValue("dimension", romDetail?.productInfo?.dimension);
+    setValue("category", romDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("imageUrl", rom?.productInfo.lstProductImageUrl);
-    setValue("model", rom?.model);
-    setValue("connect", rom?.connect);
-    setValue("capacity", rom?.capacity);
-    setValue("romType", rom?.romType);
-    setValue("readingSpeed", rom?.readingSpeed);
-    setValue("writingSpeed", rom?.voltage);
-  }, [rom]);
+    setValue("imageUrl", romDetail?.productInfo.lstProductImageUrl);
+    setValue("model", romDetail?.model);
+    setValue("connect", romDetail?.connect);
+    setValue("capacity", romDetail?.capacity);
+    setValue("romType", romDetail?.romType);
+    setValue("readingSpeed", romDetail?.readingSpeed);
+    setValue("writingSpeed", romDetail?.voltage);
+  }, [romDetail]);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
-      control, // control props comes from useForm (optional: if you are using FormContext)
+      control, // control props comes fromDetail useForm (optional: if you are using FormContext)
       name: "lstProductTypeAndPrice", // unique name for your Field Array
     },
   );
   const onSubmit = handleSubmit(async (data) => {
+    let images = [];
+    // showModal();
+    setIsSubmitting(true);
+    if (file) {
+      const form = new FormData();
+      for (let i = 0; i < file.length; i++) {
+        form.append("files", file[i]);
+      }
+      const res = await dispatch(uploadManyImagesProductSmartPhone(form));
+      unwrapResult(res);
+      const d = res?.payload?.data?.data;
+      for (let i = 0; i < d.length; i++) {
+        images.push(d[i]?.fileUrl);
+      }
+    }
     const body = JSON.stringify({
       productInfo: {
-        brandId: Number(data.brand) || 1,
-        categoryId: Number(data.category) || 1,
+        brandId: Number(data.brand),
+        categoryId: Number(data.category),
         productId: null,
-        characteristicId: Number(data.characteristic) || 1,
+        characteristicId: Number(data.characteristic),
         productCode: generateRandomString(10),
         name: data.name,
         description: data?.description,
         design: data?.design,
         dimension: data?.dimension,
         mass: Number(data?.mass),
-        launchTime: 2023,
+        launchTime: Number(data?.launchTime),
         accessories: data?.accessories,
         productStatus: 100,
         lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
@@ -164,10 +213,10 @@ const NewRam: React.FC = () => {
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
           quantity: Number(item?.quantity),
-          depotId: Number(item?.depotId),
+          depotId: Number(item?.depot),
         })),
 
-        lstProductImageUrl: [],
+        lstProductImageUrl: images || [],
       },
       ramFor: true,
       model: data.model,
@@ -188,7 +237,7 @@ const NewRam: React.FC = () => {
       if (d?.code !== 201) return toast.error(d?.message);
       await toast.success("Cập nhật sản phẩm thành công ");
       await dispatch(getRoms(""));
-      await navigate(path.rom);
+      await navigate(path.romDetail);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
@@ -206,38 +255,73 @@ const NewRam: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("ram", rom?.productInfo?.lstProductTypeAndPrice[0]?.rom);
-    setValue("accessories", rom?.productInfo?.accessories);
-    setValue("mass", rom?.productInfo?.mass.toString());
+    const productInfo = romDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
+
+    setValue("accessories", romDetail?.productInfo?.accessories);
+    setValue("mass", romDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      rom?.productInfo.lstProductTypeAndPrice[0].color.toString(),
+      romDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
     );
-    setValue("monitor", rom?.monitor);
-    setValue("description", rom?.productInfo?.description);
-    setValue("brand", rom?.productInfo?.brandId.toString());
-    setValue("characteristic", rom?.productInfo?.characteristicId.toString());
-    setValue("name", rom?.productInfo?.name);
+    setValue("monitor", romDetail?.monitor);
+    setValue("description", romDetail?.productInfo?.description);
+    setValue("brand", romDetail?.productInfo?.brandId.toString());
+    setValue(
+      "characteristic",
+      romDetail?.productInfo?.characteristicId.toString(),
+    );
+    setValue("name", romDetail?.productInfo?.name);
     setValue(
       "salePrice",
-      rom?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
+      romDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
     setValue(
       "price",
-      rom?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
+      romDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
-    setValue("operatingSystem", rom?.operatingSystem);
-    setValue("design", rom?.productInfo?.design);
-    setValue("dimension", rom?.productInfo?.dimension);
-    setValue("category", rom?.productInfo?.categoryId.toString());
+    setValue("operatingSystem", romDetail?.operatingSystem);
+    setValue("design", romDetail?.productInfo?.design);
+    setValue("dimension", romDetail?.productInfo?.dimension);
+    setValue("category", romDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("imageUrl", rom?.productInfo.lstProductImageUrl);
-    setValue("model", rom?.model);
-    setValue("connect", rom?.connect);
-    setValue("capacity", rom?.capacity);
-    setValue("romType", rom?.romType);
-    setValue("readingSpeed", rom?.readingSpeed);
-    setValue("writingSpeed", rom?.voltage);
+    setValue("imageUrl", romDetail?.productInfo.lstProductImageUrl);
+    setValue("model", romDetail?.model);
+    setValue("connect", romDetail?.connect);
+    setValue("capacity", romDetail?.capacity);
+    setValue("romType", romDetail?.romDetailType);
+    setValue("readingSpeed", romDetail?.readingSpeed);
+    setValue("writingSpeed", romDetail?.voltage);
   };
   const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File[]) => {
@@ -696,7 +780,7 @@ const NewRam: React.FC = () => {
             <Button
               className="w-[100px]"
               onClick={() => {
-                navigate(path.smartPhone);
+                navigate(path.rom);
               }}
             >
               Hủy

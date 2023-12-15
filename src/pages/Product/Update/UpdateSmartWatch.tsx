@@ -213,17 +213,17 @@ const UpdateSmartWatch: React.FC = () => {
     }
     const body = JSON.stringify({
       productInfo: {
-        brandId: Number(data.brand) || 1,
+        brandId: Number(data.brand),
         categoryId: Number(data.category),
         productId: smartWatchDetail.productInfo.productId,
-        characteristicId: Number(data.characteristic) || 1,
+        characteristicId: Number(data.characteristic),
         productCode: smartWatchDetail.productInfo.productCode,
         name: data.name,
         description: data?.description,
         design: data?.design,
         dimension: data?.dimension,
         mass: Number(data?.mass),
-        launchTime: 2023,
+        launchTime: Number(data?.launchTime),
         accessories: data?.accessories,
         productStatus: 100,
         lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map(
@@ -238,10 +238,10 @@ const UpdateSmartWatch: React.FC = () => {
             price: Number(item?.price),
             salePrice: Number(item?.salePrice),
             quantity: Number(item?.quantity),
-            depotId: Number(item?.depotId),
+            depotId: Number(item?.depot),
           }),
         ),
-        lstProductImageUrl: data.imageUrl,
+        lstProductImageUrl: images || [],
       },
       monitor: data.monitor,
       operatingSystem: data.operatingSystem,
@@ -258,7 +258,7 @@ const UpdateSmartWatch: React.FC = () => {
       const res = await dispatch(updateSmartWatch({ id, body }));
       unwrapResult(res);
       const d = res?.payload?.data;
-      if (d?.code !== 200) return toast.error(d?.message);
+      // if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Chỉnh sửa thành công ");
       await dispatch(getSmartWatch(""));
       await navigate(path.smartWatch);
@@ -279,10 +279,40 @@ const UpdateSmartWatch: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue(
-      "ram",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram,
-    );
+    setImages(smartWatchDetail.productInfo.lstProductImageUrl);
+
+    const productInfo = smartWatchDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
     setValue("accessories", smartWatchDetail?.productInfo?.accessories);
     setValue("battery", smartWatchDetail?.battery);
     setValue("charging", smartWatchDetail?.charging);
@@ -732,7 +762,6 @@ const UpdateSmartWatch: React.FC = () => {
 
         <Form.Item
           name="file"
-          // rules={[{ required: true }]}
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
@@ -741,12 +770,22 @@ const UpdateSmartWatch: React.FC = () => {
             <div className="my-5 w-24 space-y-5 justify-between items-center">
               {imageUrls.map((imageUrl, index) => {
                 return (
-                  <img
-                    key={index}
-                    src={imageUrl}
-                    className="h-full rounded-md w-full  object-cover"
-                    alt="avatar"
-                  />
+                  <div key={index}>
+                    <img
+                      src={imageUrl}
+                      alt={`Image ${index + 1}`}
+                      width="100"
+                      height="100"
+                      className="h-full rounded-md w-full  object-cover"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => handleEditImage(index)}
+                    >
+                      Edit
+                    </button>
+                  </div>
                 );
               })}
             </div>
@@ -792,7 +831,7 @@ const UpdateSmartWatch: React.FC = () => {
             <Button
               className="w-[100px]"
               onClick={() => {
-                navigate(path.smartPhone);
+                navigate(path.smartWatch);
               }}
             >
               Hủy

@@ -28,9 +28,7 @@ const normFile = (e: any) => {
 interface FormData {
   gender: string | undefined;
   phoneNumber: string;
-  // name: string;
   email: string;
-  // password: string;
   fullName: string | undefined;
   address: string;
   imageUrl: string | undefined;
@@ -86,6 +84,7 @@ const FormDisabledDemo: React.FC = () => {
   const onSubmit = handleSubmit(async (data) => {
     let images;
 
+    setIsSubmitting(true);
     if (file) {
       const form = new FormData();
       form.append("files", file);
@@ -101,18 +100,16 @@ const FormDisabledDemo: React.FC = () => {
         email: data.email || null,
         address: data.address,
         password: 123456,
-        // name: data.name,
         phoneNumber: data.phoneNumber || null,
         fullName: data.fullName || null,
         gender: data.gender || null,
         imageUrl: images,
         isEnable: true,
       });
-      setIsSubmitting(true);
       const res = await dispatch(updateUser({ id: id, body: body }));
       unwrapResult(res);
       const d = res?.payload;
-      if (d?.code !== 200) return toast.error(d?.message);
+      // if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Cập nhật người dùng thành công ");
       await dispatch(getUsers(""));
       await navigate(path.users);
@@ -161,6 +158,7 @@ const FormDisabledDemo: React.FC = () => {
             className={"flex-1 text-black"}
             id="gender"
             placeholder="Giới tính"
+            defaultValue={1}
             options={[
               { id: 1, name: "Nam" },
               { id: 2, name: "Nữ" },

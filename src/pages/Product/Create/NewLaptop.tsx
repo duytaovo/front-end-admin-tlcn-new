@@ -178,7 +178,7 @@ const NewLaptop: React.FC = () => {
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
           quantity: Number(item?.quantity),
-          depotId: Number(item?.depotId),
+          depotId: Number(item?.depot),
         })),
         lstProductImageUrl: images || [],
       },
@@ -739,6 +739,7 @@ const NewLaptop: React.FC = () => {
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
+        centered
       >
         <p>Đang xử lý, vui lòng đợi...</p>
       </Modal>

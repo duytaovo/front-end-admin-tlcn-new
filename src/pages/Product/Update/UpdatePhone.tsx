@@ -193,9 +193,8 @@ const UpdatePhone: React.FC = () => {
     setValue("files", smartPhoneDetail?.productInfo.lstProductImageUrl);
   }, [smartPhoneDetail]);
   const onSubmit = handleSubmit(async (data) => {
-    console.log(data);
     let images = [];
-    // showModal();
+    showModal();
     setIsSubmitting(true);
     if (file) {
       const form = new FormData();
@@ -222,7 +221,7 @@ const UpdatePhone: React.FC = () => {
         design: data?.design,
         dimension: data?.dimension,
         mass: Number(data?.mass),
-        launchTime: 2023,
+        launchTime: Number(data?.launchTime),
         accessories: data?.accessories,
         productStatus: 100,
         lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map(
@@ -856,6 +855,7 @@ const UpdatePhone: React.FC = () => {
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
+        centered
       >
         <p>Đang xử lý, vui lòng đợi...</p>
       </Modal>

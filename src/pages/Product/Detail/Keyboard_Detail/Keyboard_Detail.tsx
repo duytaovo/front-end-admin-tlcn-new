@@ -1,11 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { formatNumberToSocialStyle, getIdFromNameId } from "src/utils/utils";
-import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import { convert } from "html-to-text";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
-import { getDetailPhone } from "src/store/product/smartPhoneSlice";
 import { Button, Modal, Rate } from "antd";
 import DOMPurify from "dompurify";
 import RatingFeedback from "../../../../components/Rating";
@@ -16,7 +14,7 @@ export default function KeyboardDetail() {
   // const { t } = useTranslation(["product"]);
   const { nameId } = useParams();
   const dispatch = useAppDispatch();
-  const { smartPhoneDetail } = useAppSelector((state) => state.smartPhone);
+  const { keyboardDetail } = useAppSelector((state) => state.keyboard);
   const id = getIdFromNameId(nameId as string);
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5]);
   const [activeImage, setActiveImage] = useState("");
@@ -24,22 +22,22 @@ export default function KeyboardDetail() {
 
   const currentImages = useMemo(
     () =>
-      smartPhoneDetail?.productInfo?.lstProductImageUrl
-        ? smartPhoneDetail?.productInfo?.lstProductImageUrl.slice(
+      keyboardDetail?.productInfo?.lstProductImageUrl
+        ? keyboardDetail?.productInfo?.lstProductImageUrl.slice(
             ...currentIndexImages,
           )
         : [],
-    [smartPhoneDetail, currentIndexImages],
+    [keyboardDetail, currentIndexImages],
   );
 
   useEffect(() => {
     if (
-      smartPhoneDetail &&
-      smartPhoneDetail?.productInfo?.lstProductImageUrl?.length > 0
+      keyboardDetail &&
+      keyboardDetail?.productInfo?.lstProductImageUrl?.length > 0
     ) {
-      setActiveImage(smartPhoneDetail?.productInfo?.lstProductImageUrl[0]);
+      setActiveImage(keyboardDetail?.productInfo?.lstProductImageUrl[0]);
     }
-  }, [smartPhoneDetail]);
+  }, [keyboardDetail]);
 
   useEffect(() => {
     dispatch(getDetailkeyboard(id));
@@ -48,7 +46,7 @@ export default function KeyboardDetail() {
   const next = () => {
     if (
       currentIndexImages[1] <
-      smartPhoneDetail?.productInfo.lstProductImageUrl.length
+      keyboardDetail?.productInfo.lstProductImageUrl.length
     ) {
       setCurrentIndexImages((prev) => [prev[0] + 1, prev[1] + 1]);
     }
@@ -98,15 +96,15 @@ export default function KeyboardDetail() {
     setIsModalOpen(false);
   };
 
-  if (!smartPhoneDetail) return null;
+  if (!keyboardDetail) return null;
 
   return (
     <div className="bg-gray-200 py-6">
       <Helmet>
-        <title>{smartPhoneDetail?.productInfo?.name}</title>
+        <title>{keyboardDetail?.productInfo?.name}</title>
         <meta
           name="description"
-          content={convert(smartPhoneDetail?.productInfo?.description, {
+          content={convert(keyboardDetail?.productInfo?.description, {
             limits: {
               maxInputLength: 50000,
             },
@@ -124,7 +122,7 @@ export default function KeyboardDetail() {
               >
                 <img
                   src={activeImage}
-                  alt={smartPhoneDetail?.productInfo?.name}
+                  alt={keyboardDetail?.productInfo?.name}
                   className="absolute left-0 top-0 h-full w-full bg-white object-cover"
                   ref={imageRef}
                 />
@@ -159,7 +157,7 @@ export default function KeyboardDetail() {
                     >
                       <img
                         src={img}
-                        alt={smartPhoneDetail?.productInfo?.name}
+                        alt={keyboardDetail?.productInfo?.name}
                         className="absolute left-0 top-0 h-full w-full cursor-pointer bg-white object-cover"
                       />
                       {isActive && (
@@ -191,17 +189,17 @@ export default function KeyboardDetail() {
             </div>
             <div className="col-span-7">
               <h1 className="text-4xl font-medium uppercase">
-                {smartPhoneDetail?.productInfo?.name}
+                {keyboardDetail?.productInfo?.name}
               </h1>
               <div className="mt-8 flex items-center">
                 <div className="flex items-center">
                   <span className="mr-1 border-b border-b-orange text-orange">
-                    {smartPhoneDetail?.productInfo?.star}
+                    {keyboardDetail?.productInfo?.star}
                   </span>
                   <Rate
                     allowHalf
                     defaultValue={Number(
-                      smartPhoneDetail?.productInfo?.totalReview,
+                      keyboardDetail?.productInfo?.totalReview,
                     )}
                     disabled
                   />
@@ -211,14 +209,14 @@ export default function KeyboardDetail() {
                 <div>
                   <span>
                     {formatNumberToSocialStyle(
-                      Number(smartPhoneDetail?.productInfo?.totalReview),
+                      Number(keyboardDetail?.productInfo?.totalReview),
                     )}
                   </span>
                   <span className="ml-1 text-gray-500">Đã xem</span>
                 </div>
               </div>
               <div className="space-x-3 mt-4 flex justify-start align-baseline">
-                <Tag productData={smartPhoneDetail} />
+                <Tag productData={keyboardDetail} />
               </div>
             </div>
           </div>
@@ -236,67 +234,67 @@ export default function KeyboardDetail() {
           <div className="block space-y-2">
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Màn hình :</h4>
-              <h5>{smartPhoneDetail?.monitor}</h5>
+              <h5>{keyboardDetail?.monitor}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Hệ điều hành :</h4>
-              <h5>{smartPhoneDetail?.operatingSystem}</h5>
+              <h5>{keyboardDetail?.operatingSystem}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Camera chính :</h4>
-              <h5>{smartPhoneDetail?.rearCamera}</h5>
+              <h5>{keyboardDetail?.rearCamera}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Camera trước :</h4>
-              <h5>{smartPhoneDetail?.frontCamera}</h5>
+              <h5>{keyboardDetail?.frontCamera}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Chip :</h4>
-              <h5>{smartPhoneDetail?.chip}</h5>
+              <h5>{keyboardDetail?.chip}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Sim :</h4>
-              <h5>{smartPhoneDetail?.sim}</h5>
+              <h5>{keyboardDetail?.sim}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Pin :</h4>
-              <h5>{smartPhoneDetail?.monitor}</h5>
+              <h5>{keyboardDetail?.monitor}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Sạc nhanh:</h4>
-              <h5>{smartPhoneDetail?.charging}</h5>
+              <h5>{keyboardDetail?.charging}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Hỗ trợ mạng:</h4>
-              <h5>{smartPhoneDetail?.networkSupport}</h5>
+              <h5>{keyboardDetail?.networkSupport}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Phụ kiện:</h4>
-              <h5>{smartPhoneDetail?.productInfo?.accessories}</h5>
+              <h5>{keyboardDetail?.productInfo?.accessories}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Năm ra mắt:</h4>
-              <h5>{smartPhoneDetail?.productInfo?.launchTime}</h5>
+              <h5>{keyboardDetail?.productInfo?.launchTime}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Thiết kế:</h4>
-              <h5>{smartPhoneDetail?.productInfo?.design}</h5>
+              <h5>{keyboardDetail?.productInfo?.design}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Khối lượng:</h4>
-              <h5>{smartPhoneDetail?.productInfo?.mass}</h5>
+              <h5>{keyboardDetail?.productInfo?.mass}</h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Ram:</h4>
               <h5>
-                {smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram}
+                {keyboardDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram}
               </h5>
             </div>
             <div className="flex justify-start align-baseline space-x-4">
               <h4 className="font-bold">Bộ nhớ trong:</h4>
               <h5>
                 {
-                  smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0]
+                  keyboardDetail?.productInfo.lstProductTypeAndPrice[0]
                     ?.storageCapacity
                 }
               </h5>
@@ -314,7 +312,7 @@ export default function KeyboardDetail() {
               <div
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(
-                    smartPhoneDetail?.productInfo?.description,
+                    keyboardDetail?.productInfo?.description,
                   ),
                 }}
               />

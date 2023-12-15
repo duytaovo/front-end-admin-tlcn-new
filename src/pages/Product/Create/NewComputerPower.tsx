@@ -138,7 +138,7 @@ const NewComputerPower: React.FC = () => {
           brandId: Number(data.brand) || 1,
           categoryId: 19,
           productId: null,
-          characteristicId: Number(data.characteristic) || 1,
+          characteristicId: Number(data.characteristic),
           productCode: generateRandomString(10),
           name: data.name,
           description: data?.description,
@@ -642,6 +642,7 @@ const NewComputerPower: React.FC = () => {
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
+        centered
       >
         <p>Đang xử lý, vui lòng đợi...</p>
       </Modal>

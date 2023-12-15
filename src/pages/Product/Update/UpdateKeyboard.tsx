@@ -27,7 +27,11 @@ import {
   getSmartWatch,
   updateSmartWatch,
 } from "src/store/product/smartwatchSlice";
-import { getDetailkeyboard } from "src/store/accessory/keyboard";
+import {
+  getDetailkeyboard,
+  getKeyboard,
+  updateKeyboard,
+} from "src/store/accessory/keyboard";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -66,11 +70,14 @@ const UpdateLoudSpeaker: React.FC = () => {
     setValue,
     watch,
     control,
+    getValues,
   } = useForm({
     resolver: yupResolver(schemaProductSmartWatch),
   });
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [imageUrls, setImages] = useState<string[]>([]);
+
   const { category } = useAppSelector((state) => state.category);
   const { nameId } = useParams();
   const id = getIdFromNameId(nameId as string);
@@ -99,17 +106,46 @@ const UpdateLoudSpeaker: React.FC = () => {
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
 
   // Tạo một mảng chứa các URL tạm thời cho ảnh
-  const imageUrls: string[] = [];
 
   for (const image of imageArray) {
     const imageUrl = URL.createObjectURL(image);
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue(
-      "ram",
-      keyboardDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram,
-    );
+    setImages(keyboardDetail.productInfo.lstProductImageUrl);
+
+    const productInfo = keyboardDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
     setValue("accessories", keyboardDetail?.productInfo?.accessories);
     setValue("battery", keyboardDetail?.battery);
     setValue("charging", keyboardDetail?.charging);
@@ -174,7 +210,7 @@ const UpdateLoudSpeaker: React.FC = () => {
             price: Number(item?.price),
             salePrice: Number(item?.salePrice),
             quantity: Number(item?.quantity),
-            depotId: Number(item?.depotId),
+            depotId: Number(item?.depot),
           }),
         ),
         lstProductImageUrl: data.imageUrl,
@@ -191,12 +227,12 @@ const UpdateLoudSpeaker: React.FC = () => {
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(updateSmartWatch({ id, body }));
+      const res = await dispatch(updateKeyboard({ id, body }));
       unwrapResult(res);
       const d = res?.payload?.data;
       if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Chỉnh sửa thành công ");
-      await dispatch(getSmartWatch(""));
+      await dispatch(getKeyboard(""));
       await navigate(path.smartWatch);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
@@ -215,10 +251,40 @@ const UpdateLoudSpeaker: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue(
-      "ram",
-      keyboardDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram,
-    );
+    setImages(keyboardDetail.productInfo.lstProductImageUrl);
+
+    const productInfo = keyboardDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
     setValue("accessories", keyboardDetail?.productInfo?.accessories);
     setValue("battery", keyboardDetail?.battery);
     setValue("charging", keyboardDetail?.charging);
@@ -258,7 +324,30 @@ const UpdateLoudSpeaker: React.FC = () => {
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
+  const handleEditImage = (index: number) => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
 
+    fileInput.addEventListener("change", (event) => {
+      const selectedFile = (event.target as HTMLInputElement).files?.[0];
+
+      if (selectedFile) {
+        const currentImages = getValues("files") || [];
+        currentImages[index] = selectedFile;
+        setValue("files", currentImages);
+
+        // Update the image preview immediately
+        setImages((prevImages) => {
+          const updatedImages = [...prevImages];
+          updatedImages[index] = URL.createObjectURL(selectedFile);
+          return updatedImages;
+        });
+      }
+    });
+
+    fileInput.click();
+  };
   return (
     <div className="bg-white shadow ">
       <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm </h2>

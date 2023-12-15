@@ -220,7 +220,7 @@ const UpdateLaptop: React.FC = () => {
             color: item?.color,
             price: Number(item?.price),
             salePrice: Number(item?.salePrice),
-            depotId: Number(item?.depotId) || 1,
+            depotId: Number(item?.depot),
             quantity: Number(item?.quantity),
           }),
         ),
@@ -815,6 +815,7 @@ const UpdateLaptop: React.FC = () => {
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
+        centered
       >
         <p>Đang xử lý, vui lòng đợi...</p>
       </Modal>

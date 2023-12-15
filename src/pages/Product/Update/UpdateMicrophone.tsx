@@ -18,18 +18,17 @@ import SelectCustom from "src/components/Select";
 
 import Textarea from "src/components/Textarea";
 import { getCategorys } from "src/store/category/categorySlice";
-import {
-  getDetailPhone,
-  getSmartPhones,
-  updateSmartPhone,
-  uploadManyImagesProductSmartPhone,
-} from "src/store/product/smartPhoneSlice";
+import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
 import InputFile from "src/components/InputFile";
 import { PlusOutlined } from "@ant-design/icons";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
-import { getDetailMicrophone } from "src/store/accessory/microphone";
+import {
+  getDetailMicrophone,
+  getMicrophone,
+  updateMicrophone,
+} from "src/store/accessory/microphone";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -75,7 +74,6 @@ const UpdateMicrophone: React.FC = () => {
   const [data, setData] = useState<any>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { category } = useAppSelector((state) => state.category);
   const { nameId } = useParams();
   const id = getIdFromNameId(nameId as string);
   // const { brand } = useAppSelector((state) => state.brand);
@@ -113,10 +111,40 @@ const UpdateMicrophone: React.FC = () => {
   useEffect(() => {
     setImages(microphoneDetail.productInfo.lstProductImageUrl);
 
-    setValue(
-      "ram",
-      microphoneDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram,
-    );
+    setImages(microphoneDetail.productInfo.lstProductImageUrl);
+
+    const productInfo = microphoneDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
     setValue("accessories", microphoneDetail?.productInfo?.accessories);
     setValue("compatible", microphoneDetail?.compatible);
     setValue("jack", microphoneDetail?.jack);
@@ -204,13 +232,13 @@ const UpdateMicrophone: React.FC = () => {
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(updateSmartPhone({ id, body }));
+      const res = await dispatch(updateMicrophone({ id, body }));
       unwrapResult(res);
       const d = res?.payload?.data;
       if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Chỉnh sửa thành công ");
-      await dispatch(getSmartPhones(""));
-      await navigate(path.smartPhone);
+      await dispatch(getMicrophone(""));
+      await navigate(path.microPhone);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
@@ -229,6 +257,41 @@ const UpdateMicrophone: React.FC = () => {
   });
   const onClickHuy = () => {
     setImages(microphoneDetail.productInfo.lstProductImageUrl);
+
+    setImages(microphoneDetail.productInfo.lstProductImageUrl);
+
+    const productInfo = microphoneDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
 
     setValue(
       "ram",
@@ -597,8 +660,7 @@ const UpdateMicrophone: React.FC = () => {
         </Form.Item>
 
         <Form.Item
-          name="files"
-          rules={[{ required: true }]}
+          name="file"
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
@@ -607,16 +669,26 @@ const UpdateMicrophone: React.FC = () => {
             <div className="my-5 w-24 space-y-5 justify-between items-center">
               {imageUrls.map((imageUrl, index) => {
                 return (
-                  <img
-                    key={index}
-                    src={imageUrl}
-                    className="h-full rounded-md w-full  object-cover"
-                    alt="avatar"
-                  />
+                  <div key={index}>
+                    <img
+                      src={imageUrl}
+                      alt={`Image ${index + 1}`}
+                      width="100"
+                      height="100"
+                      className="h-full rounded-md w-full  object-cover"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => handleEditImage(index)}
+                    >
+                      Edit
+                    </button>
+                  </div>
                 );
               })}
             </div>
-            <InputFile label="" onChange={handleChangeFile} id="files" />
+            <InputFile label="" onChange={handleChangeFile} id="images" />
             <div className="mt-3  flex flex-col items-center text-red-500">
               <div>Dụng lượng file tối đa 2 MB</div>
               <div>Định dạng:.JPEG, .PNG</div>
@@ -658,7 +730,7 @@ const UpdateMicrophone: React.FC = () => {
             <Button
               className="w-[100px]"
               onClick={() => {
-                navigate(path.smartPhone);
+                navigate(path.microPhone);
               }}
             >
               Hủy

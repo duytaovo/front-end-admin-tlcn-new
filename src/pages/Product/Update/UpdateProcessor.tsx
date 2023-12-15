@@ -67,6 +67,7 @@ const NewRam: React.FC = () => {
     register,
     setValue,
     control,
+    getValues,
     watch,
   } = useForm({
     resolver: yupResolver(schemaProductRam),
@@ -94,17 +95,46 @@ const NewRam: React.FC = () => {
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
 
   // Tạo một mảng chứa các URL tạm thời cho ảnh
-  const imageUrls: string[] = [];
+  const [imageUrls, setImages] = useState<string[]>([]);
 
   for (const image of imageArray) {
     const imageUrl = URL.createObjectURL(image);
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue(
-      "ram",
-      processor?.productInfo?.lstProductTypeAndPrice[0]?.processor,
-    );
+    const productInfo = processor?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
+
     setValue("accessories", processor?.productInfo?.accessories);
     setValue("mass", processor?.productInfo?.mass.toString());
     setValue(
@@ -260,6 +290,30 @@ const NewRam: React.FC = () => {
     setFile(file);
   };
 
+  const handleEditImage = (index: number) => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+
+    fileInput.addEventListener("change", (event) => {
+      const selectedFile = (event.target as HTMLInputElement).files?.[0];
+
+      if (selectedFile) {
+        const currentImages = getValues("files") || [];
+        currentImages[index] = selectedFile;
+        setValue("files", currentImages);
+
+        // Update the image preview immediately
+        setImages((prevImages) => {
+          const updatedImages = [...prevImages];
+          updatedImages[index] = URL.createObjectURL(selectedFile);
+          return updatedImages;
+        });
+      }
+    });
+
+    fileInput.click();
+  };
   return (
     <div className="bg-white shadow ">
       <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm thành công</h2>
@@ -652,7 +706,6 @@ const NewRam: React.FC = () => {
 
         <Form.Item
           name="file"
-          // rules={[{ required: true }]}
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
@@ -661,12 +714,22 @@ const NewRam: React.FC = () => {
             <div className="my-5 w-24 space-y-5 justify-between items-center">
               {imageUrls.map((imageUrl, index) => {
                 return (
-                  <img
-                    key={index}
-                    src={imageUrl}
-                    className="h-full rounded-md w-full  object-cover"
-                    alt="avatar"
-                  />
+                  <div key={index}>
+                    <img
+                      src={imageUrl}
+                      alt={`Image ${index + 1}`}
+                      width="100"
+                      height="100"
+                      className="h-full rounded-md w-full  object-cover"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => handleEditImage(index)}
+                    >
+                      Edit
+                    </button>
+                  </div>
                 );
               })}
             </div>
@@ -712,7 +775,7 @@ const NewRam: React.FC = () => {
             <Button
               className="w-[100px]"
               onClick={() => {
-                navigate(path.smartPhone);
+                navigate(path.processor);
               }}
             >
               Hủy

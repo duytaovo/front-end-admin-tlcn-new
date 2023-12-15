@@ -952,6 +952,7 @@ export const schemaMainboard = yup.object({
   price: yup.string(),
   salePrice: yup.string(),
   lstProductTypeAndPrice: yup.array(),
+  files: yup.array(),
 
   mainboardFor: yup.boolean(),
   model: yup.string(),

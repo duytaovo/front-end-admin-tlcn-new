@@ -23,12 +23,7 @@ import InputFile from "src/components/InputFile";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
-import {
-  addRam,
-  getDetailRam,
-  getRams,
-  updateRam,
-} from "src/store/ram/ramSlice";
+import { getDetailRam, getRams, updateRam } from "src/store/ram/ramSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -67,13 +62,14 @@ const NewRam: React.FC = () => {
     setValue,
     control,
     watch,
+    getValues,
   } = useForm({
     resolver: yupResolver(schemaProductRam),
   });
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { nameId } = useParams();
-  const { ram } = useAppSelector((state) => state.ram);
+  const { ramDetail } = useAppSelector((state) => state.ram);
   const id = getIdFromNameId(nameId as string);
   const { category } = useAppSelector((state) => state.category);
   const { character } = useAppSelector((state) => state.character);
@@ -91,50 +87,56 @@ const NewRam: React.FC = () => {
   }, [id]);
   const [file, setFile] = useState<File[]>();
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
+  const [imageUrls, setImages] = useState<string[]>([]);
 
   // Tạo một mảng chứa các URL tạm thời cho ảnh
-  const imageUrls: string[] = [];
 
   for (const image of imageArray) {
     const imageUrl = URL.createObjectURL(image);
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setValue("ram", ram?.productInfo?.lstProductTypeAndPrice[0]?.ram);
-    setValue("accessories", ram?.productInfo?.accessories);
-    setValue("mass", ram?.productInfo?.mass.toString());
+    setValue(
+      "ram",
+      ramDetail?.productInfo?.lstProductTypeAndPrice[0]?.ramDetail,
+    );
+    setValue("accessories", ramDetail?.productInfo?.accessories);
+    setValue("mass", ramDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      ram?.productInfo.lstProductTypeAndPrice[0].color.toString(),
+      ramDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
     );
-    setValue("monitor", ram?.monitor);
-    setValue("description", ram?.productInfo?.description);
-    setValue("brand", ram?.productInfo?.brandId.toString());
-    setValue("characteristic", ram?.productInfo?.characteristicId.toString());
-    setValue("name", ram?.productInfo?.name);
+    setValue("monitor", ramDetail?.monitor);
+    setValue("description", ramDetail?.productInfo?.description);
+    setValue("brand", ramDetail?.productInfo?.brandId.toString());
+    setValue(
+      "characteristic",
+      ramDetail?.productInfo?.characteristicId.toString(),
+    );
+    setValue("name", ramDetail?.productInfo?.name);
     setValue(
       "salePrice",
-      ram?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
+      ramDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
     setValue(
       "price",
-      ram?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
+      ramDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
-    setValue("operatingSystem", ram?.operatingSystem);
-    setValue("design", ram?.productInfo?.design);
-    setValue("dimension", ram?.productInfo?.dimension);
-    setValue("category", ram?.productInfo?.categoryId.toString());
+    setValue("operatingSystem", ramDetail?.operatingSystem);
+    setValue("design", ramDetail?.productInfo?.design);
+    setValue("dimension", ramDetail?.productInfo?.dimension);
+    setValue("category", ramDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("imageUrl", ram?.productInfo.lstProductImageUrl);
-    setValue("model", ram?.model);
-    setValue("bus", ram?.bus);
-    setValue("capacity", ram?.capacity);
-    setValue("ramType", ram?.ramType);
-    setValue("latency", ram?.latency);
-    setValue("voltage", ram?.voltage);
-    setValue("led", ram?.led);
-    setValue("ramTechnology", ram?.ramTechnology);
-  }, [ram]);
+    setValue("imageUrl", ramDetail?.productInfo.lstProductImageUrl);
+    setValue("model", ramDetail?.model);
+    setValue("bus", ramDetail?.bus);
+    setValue("capacity", ramDetail?.capacity);
+    setValue("ramType", ramDetail?.ramType);
+    setValue("latency", ramDetail?.latency);
+    setValue("voltage", ramDetail?.voltage);
+    setValue("led", ramDetail?.led);
+    setValue("ramTechnology", ramDetail?.ramTechnology);
+  }, [ramDetail]);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
       control, // control props comes from useForm (optional: if you are using FormContext)
@@ -159,7 +161,7 @@ const NewRam: React.FC = () => {
         productStatus: 100,
         lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
           typeId: null,
-          ram: item?.ram,
+          ramDetail: item?.ramDetail,
           storageCapacity: item?.storageCapacity,
           color: item?.color,
           price: Number(item?.price),
@@ -170,7 +172,7 @@ const NewRam: React.FC = () => {
 
         lstProductImageUrl: [],
       },
-      ramFor: true,
+      ramDetailFor: true,
       model: data.model,
       ramType: data.ramType,
       capacity: data.capacity,
@@ -189,7 +191,7 @@ const NewRam: React.FC = () => {
       if (d?.code !== 201) return toast.error(d?.message);
       await toast.success("Cập nhật sản phẩm thành công ");
       await dispatch(getRams(""));
-      await navigate(path.ram);
+      await navigate(path.ramDetail);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
@@ -207,46 +209,71 @@ const NewRam: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("ram", ram?.productInfo?.lstProductTypeAndPrice[0]?.ram);
-    setValue("accessories", ram?.productInfo?.accessories);
-    setValue("mass", ram?.productInfo?.mass.toString());
+    setValue("accessories", ramDetail?.productInfo?.accessories);
+    setValue("mass", ramDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      ram?.productInfo.lstProductTypeAndPrice[0].color.toString(),
+      ramDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
     );
-    setValue("monitor", ram?.monitor);
-    setValue("description", ram?.productInfo?.description);
-    setValue("brand", ram?.productInfo?.brandId.toString());
-    setValue("characteristic", ram?.productInfo?.characteristicId.toString());
-    setValue("name", ram?.productInfo?.name);
+    setValue("monitor", ramDetail?.monitor);
+    setValue("description", ramDetail?.productInfo?.description);
+    setValue("brand", ramDetail?.productInfo?.brandId.toString());
+    setValue(
+      "characteristic",
+      ramDetail?.productInfo?.characteristicId.toString(),
+    );
+    setValue("name", ramDetail?.productInfo?.name);
     setValue(
       "salePrice",
-      ram?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
+      ramDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
     setValue(
       "price",
-      ram?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
+      ramDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
-    setValue("operatingSystem", ram?.operatingSystem);
-    setValue("design", ram?.productInfo?.design);
-    setValue("dimension", ram?.productInfo?.dimension);
-    setValue("category", ram?.productInfo?.categoryId.toString());
+    setValue("operatingSystem", ramDetail?.operatingSystem);
+    setValue("design", ramDetail?.productInfo?.design);
+    setValue("dimension", ramDetail?.productInfo?.dimension);
+    setValue("category", ramDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("imageUrl", ram?.productInfo.lstProductImageUrl);
-    setValue("model", ram?.model);
-    setValue("bus", ram?.bus);
-    setValue("capacity", ram?.capacity);
-    setValue("ramType", ram?.ramType);
-    setValue("latency", ram?.latency);
-    setValue("voltage", ram?.voltage);
-    setValue("led", ram?.led);
-    setValue("ramTechnology", ram?.ramTechnology);
+    setValue("imageUrl", ramDetail?.productInfo.lstProductImageUrl);
+    setValue("model", ramDetail?.model);
+    setValue("bus", ramDetail?.bus);
+    setValue("capacity", ramDetail?.capacity);
+    setValue("ramType", ramDetail?.ramType);
+    setValue("latency", ramDetail?.latency);
+    setValue("voltage", ramDetail?.voltage);
+    setValue("led", ramDetail?.led);
+    setValue("ramTechnology", ramDetail?.ramTechnology);
   };
   const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
+  const handleEditImage = (index: number) => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
 
+    fileInput.addEventListener("change", (event) => {
+      const selectedFile = (event.target as HTMLInputElement).files?.[0];
+
+      if (selectedFile) {
+        const currentImages = getValues("files") || [];
+        currentImages[index] = selectedFile;
+        setValue("files", currentImages);
+
+        // Update the image preview immediately
+        setImages((prevImages) => {
+          const updatedImages = [...prevImages];
+          updatedImages[index] = URL.createObjectURL(selectedFile);
+          return updatedImages;
+        });
+      }
+    });
+
+    fileInput.click();
+  };
   return (
     <div className="bg-white shadow ">
       <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm thành công</h2>
@@ -639,7 +666,6 @@ const NewRam: React.FC = () => {
 
         <Form.Item
           name="file"
-          // rules={[{ required: true }]}
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
@@ -648,12 +674,22 @@ const NewRam: React.FC = () => {
             <div className="my-5 w-24 space-y-5 justify-between items-center">
               {imageUrls.map((imageUrl, index) => {
                 return (
-                  <img
-                    key={index}
-                    src={imageUrl}
-                    className="h-full rounded-md w-full  object-cover"
-                    alt="avatar"
-                  />
+                  <div key={index}>
+                    <img
+                      src={imageUrl}
+                      alt={`Image ${index + 1}`}
+                      width="100"
+                      height="100"
+                      className="h-full rounded-md w-full  object-cover"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => handleEditImage(index)}
+                    >
+                      Edit
+                    </button>
+                  </div>
                 );
               })}
             </div>
@@ -699,7 +735,7 @@ const NewRam: React.FC = () => {
             <Button
               className="w-[100px]"
               onClick={() => {
-                navigate(path.smartPhone);
+                navigate(path.ram);
               }}
             >
               Hủy

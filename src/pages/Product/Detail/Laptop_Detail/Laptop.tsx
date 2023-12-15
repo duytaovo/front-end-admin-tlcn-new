@@ -1,11 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  formatCurrency,
-  formatNumberToSocialStyle,
-  getIdFromNameId,
-  rateSale,
-} from "src/utils/utils";
+import { formatNumberToSocialStyle, getIdFromNameId } from "src/utils/utils";
 import { Helmet } from "react-helmet-async";
 import { convert } from "html-to-text";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";

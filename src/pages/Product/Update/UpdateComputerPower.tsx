@@ -79,6 +79,7 @@ const UpdateComputerPower: React.FC = () => {
     register,
     setValue,
     control,
+    getValues,
   } = useForm({
     resolver: yupResolver(schemaComputerPower),
   });
@@ -147,10 +148,7 @@ const UpdateComputerPower: React.FC = () => {
         },
       );
     }
-    setValue(
-      "ram",
-      computerPowerDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram,
-    );
+
     setValue("accessories", computerPowerDetail?.productInfo?.accessories);
     setValue("model", computerPowerDetail?.model);
     setValue("pfc", computerPowerDetail?.pfc);
@@ -217,10 +215,10 @@ const UpdateComputerPower: React.FC = () => {
     try {
       const body = JSON.stringify({
         productInfo: {
-          brandId: Number(data.brand) || 1,
+          brandId: Number(data.brand),
           categoryId: 19,
           productId: null,
-          characteristicId: Number(data.characteristic) || 1,
+          characteristicId: Number(data.characteristic),
           productCode: generateRandomString(10),
           name: data.name,
           description: data?.description,
@@ -367,7 +365,30 @@ const UpdateComputerPower: React.FC = () => {
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
+  const handleEditImage = (index: number) => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
 
+    fileInput.addEventListener("change", (event) => {
+      const selectedFile = (event.target as HTMLInputElement).files?.[0];
+
+      if (selectedFile) {
+        const currentImages = getValues("files") || [];
+        currentImages[index] = selectedFile;
+        setValue("files", currentImages);
+
+        // Update the image preview immediately
+        setImages((prevImages) => {
+          const updatedImages = [...prevImages];
+          updatedImages[index] = URL.createObjectURL(selectedFile);
+          return updatedImages;
+        });
+      }
+    });
+
+    fileInput.click();
+  };
   return (
     <div className="bg-white shadow ">
       <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm </h2>
@@ -729,8 +750,7 @@ const UpdateComputerPower: React.FC = () => {
         </Form.Item>
 
         <Form.Item
-          name="files"
-          rules={[{ required: true }]}
+          name="file"
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
@@ -739,16 +759,26 @@ const UpdateComputerPower: React.FC = () => {
             <div className="my-5 w-24 space-y-5 justify-between items-center">
               {imageUrls.map((imageUrl, index) => {
                 return (
-                  <img
-                    key={index}
-                    src={imageUrl}
-                    className="h-full rounded-md w-full  object-cover"
-                    alt="avatar"
-                  />
+                  <div key={index}>
+                    <img
+                      src={imageUrl}
+                      alt={`Image ${index + 1}`}
+                      width="100"
+                      height="100"
+                      className="h-full rounded-md w-full  object-cover"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => handleEditImage(index)}
+                    >
+                      Edit
+                    </button>
+                  </div>
                 );
               })}
             </div>
-            <InputFile label="" onChange={handleChangeFile} id="files" />
+            <InputFile label="" onChange={handleChangeFile} id="images" />
             <div className="mt-3  flex flex-col items-center text-red-500">
               <div>Dụng lượng file tối đa 2 MB</div>
               <div>Định dạng:.JPEG, .PNG</div>
@@ -803,6 +833,7 @@ const UpdateComputerPower: React.FC = () => {
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
+        centered
       >
         <p>Đang xử lý, vui lòng đợi...</p>
       </Modal>

@@ -1,8 +1,6 @@
-import { PlusOutlined } from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-
-import { Button, Form, Upload } from "antd";
+import { Button, Form, Modal, Upload } from "antd";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -37,7 +35,20 @@ interface FormData {
 }
 const FormDisabledDemo: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const dispatch = useAppDispatch();
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const navigate = useNavigate();
   const [file, setFile] = useState<File[]>();
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
@@ -72,6 +83,8 @@ const FormDisabledDemo: React.FC = () => {
 
   const onSubmit = handleSubmit(async (data) => {
     let images = [];
+    showModal();
+    setIsSubmitting(true);
 
     if (file) {
       const form = new FormData();
@@ -96,7 +109,6 @@ const FormDisabledDemo: React.FC = () => {
         fullName: data.fullName,
         imageUrl: images[0],
       });
-      setIsSubmitting(true);
       const res = await dispatch(addUser(body));
       unwrapResult(res);
 
@@ -119,6 +131,7 @@ const FormDisabledDemo: React.FC = () => {
       }
     } finally {
       setIsSubmitting(false);
+      handleOk();
     }
   });
   const onClickHuy = () => {
@@ -270,6 +283,15 @@ const FormDisabledDemo: React.FC = () => {
           </Form.Item>
         </div>
       </Form>
+      <Modal
+        title="Thêm người dùng"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        centered
+      >
+        <p>Đang xử lý, vui lòng đợi...</p>
+      </Modal>
     </div>
   );
 };

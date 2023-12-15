@@ -142,7 +142,7 @@ const NewAdapter: React.FC = () => {
           design: data?.design,
           dimension: data?.dimension,
           mass: Number(data?.mass),
-          launchTime: data.launchTime,
+          launchTime: Number(data.launchTime),
           accessories: data?.accessories,
           productStatus: 100,
           lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
@@ -153,7 +153,7 @@ const NewAdapter: React.FC = () => {
             price: Number(item?.price),
             salePrice: Number(item?.salePrice),
             quantity: Number(item?.quantity),
-            depotId: Number(item?.depotId),
+            depotId: Number(item?.depot),
           })),
 
           lstProductImageUrl: images || [],
@@ -168,7 +168,7 @@ const NewAdapter: React.FC = () => {
       const res = await dispatch(addAdapter(body));
       unwrapResult(res);
       const d = res?.payload?.data;
-      if (d?.code !== 200) return toast.error(d?.message);
+      // if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Thêm sản phẩm thành công ");
       dispatch(getAdapter({}));
       await navigate(path.adapter);
@@ -403,7 +403,6 @@ const NewAdapter: React.FC = () => {
                   <SelectCustom
                     className={"flex-1 text-black"}
                     id={`lstProductTypeAndPrice.${index}.depot`}
-                    // label="Hãng xe"
                     placeholder="Chọn kho hàng"
                     options={depot?.data?.data}
                     register={register}
@@ -610,6 +609,7 @@ const NewAdapter: React.FC = () => {
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
+        centered
       >
         <p>Đang xử lý, vui lòng đợi...</p>
       </Modal>

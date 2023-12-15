@@ -131,17 +131,17 @@ const NewRam: React.FC = () => {
     }
     const body = JSON.stringify({
       productInfo: {
-        brandId: Number(data.brand) || 1,
+        brandId: Number(data.brand),
         categoryId: 12,
         productId: null,
-        characteristicId: Number(data.characteristic) || 1,
+        characteristicId: Number(data.characteristic),
         productCode: generateRandomString(10),
         name: data.name,
         description: data?.description,
         design: data?.design,
         dimension: data?.dimension,
         mass: Number(data?.mass),
-        launchTime: 2023,
+        launchTime: Number(data?.launchTime),
         accessories: data?.accessories,
         productStatus: 100,
         lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
@@ -152,7 +152,7 @@ const NewRam: React.FC = () => {
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
           quantity: Number(item?.quantity),
-          depotId: Number(item?.depotId),
+          depotId: Number(item?.depot),
         })),
 
         lstProductImageUrl: images || [],
@@ -542,6 +542,7 @@ const NewRam: React.FC = () => {
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
+        centered
       >
         <p>Đang xử lý, vui lòng đợi...</p>
       </Modal>

@@ -25,7 +25,7 @@ const FilterItem = ({ data, handle, scroll }: Props) => {
 
   //redux + logic
   const filter = useAppSelector((state) => state.smartPhone.filter.data); // Lấy tất cả
-  const { smartPhone } = useAppSelector<any>((state) => state.smartPhone); // Lấy tất cả
+  const { smartPhone } = useAppSelector((state) => state.smartPhone); // Lấy tất cả
 
   const [arrayTemp, setArrayTemp] = useState([]); // Lấy giá trị trong một khung
   const dispatch = useAppDispatch();

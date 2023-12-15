@@ -215,7 +215,7 @@ const UpdateAdapter: React.FC = () => {
           design: data?.design,
           dimension: data?.dimension,
           mass: Number(data?.mass),
-          launchTime: data.launchTime,
+          launchTime: Number(data.launchTime),
           accessories: data?.accessories,
           productStatus: 100,
           lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map(
@@ -781,6 +781,7 @@ const UpdateAdapter: React.FC = () => {
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
+        centered
       >
         <p>Đang xử lý, vui lòng đợi...</p>
       </Modal>

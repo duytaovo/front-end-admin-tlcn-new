@@ -1,11 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  formatCurrency,
-  formatNumberToSocialStyle,
-  getIdFromNameId,
-  rateSale,
-} from "src/utils/utils";
+import { formatNumberToSocialStyle, getIdFromNameId } from "src/utils/utils";
 import { Helmet } from "react-helmet-async";
 import { convert } from "html-to-text";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
@@ -24,19 +19,19 @@ export default function SmartWatchDetail() {
   const [activeImage, setActiveImage] = useState("");
   const imageRef = useRef<HTMLImageElement>(null);
   const [price, setPrice] = useState(
-    smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.price
+    smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.price,
   );
   const [salePrice, setSalePrice] = useState(
-    smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
+    smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice,
   );
   const currentImages = useMemo(
     () =>
       smartWatchDetail?.productInfo?.lstProductImageUrl
         ? smartWatchDetail?.productInfo?.lstProductImageUrl.slice(
-            ...currentIndexImages
+            ...currentIndexImages,
           )
         : [],
-    [smartWatchDetail, currentIndexImages]
+    [smartWatchDetail, currentIndexImages],
   );
 
   useEffect(() => {
@@ -54,7 +49,7 @@ export default function SmartWatchDetail() {
   useEffect(() => {
     setPrice(smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.price);
     setSalePrice(
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
+      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice,
     );
   }, [smartWatchDetail]);
   const next = () => {
@@ -86,12 +81,12 @@ export default function SmartWatchDetail() {
     ) {
       setPrice(smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.price);
       setSalePrice(
-        smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice
+        smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice,
       );
     } else {
       setPrice(smartWatchDetail?.productInfo?.lstProductTypeAndPrice[1]?.price);
       setSalePrice(
-        smartWatchDetail?.productInfo?.lstProductTypeAndPrice[1]?.salePrice
+        smartWatchDetail?.productInfo?.lstProductTypeAndPrice[1]?.salePrice,
       );
     }
   };
@@ -241,7 +236,8 @@ export default function SmartWatchDetail() {
                 <div>
                   <span>
                     {formatNumberToSocialStyle(
-                      Number(smartWatchDetail?.productInfo?.totalReview) || 1520
+                      Number(smartWatchDetail?.productInfo?.totalReview) ||
+                        1520,
                     )}
                   </span>
                   <span className="ml-1 text-gray-500">Đã xem</span>
@@ -324,7 +320,7 @@ export default function SmartWatchDetail() {
               <div
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(
-                    smartWatchDetail?.productInfo?.description
+                    smartWatchDetail?.productInfo?.description,
                   ),
                 }}
               />
@@ -350,3 +346,4 @@ export default function SmartWatchDetail() {
     </div>
   );
 }
+

@@ -153,7 +153,6 @@ const UpdateTablet: React.FC = () => {
       );
     }
 
-    setValue("ram", tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram);
     setValue("accessories", tabletDetail?.productInfo?.accessories);
     setValue("battery", tabletDetail?.battery);
     setValue("charging", tabletDetail?.charging);
@@ -217,7 +216,7 @@ const UpdateTablet: React.FC = () => {
         design: data?.design,
         dimension: data?.dimension,
         mass: Number(data?.mass),
-        launchTime: 2023,
+        launchTime: Number(data?.launchTime),
         accessories: data?.accessories,
         productStatus: 100,
         lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map(
@@ -232,7 +231,7 @@ const UpdateTablet: React.FC = () => {
             price: Number(item?.price),
             salePrice: Number(item?.salePrice),
             quantity: Number(item?.quantity),
-            depotId: Number(item?.depotId),
+            depotId: Number(item?.depot),
           }),
         ),
 
@@ -275,6 +274,38 @@ const UpdateTablet: React.FC = () => {
     }
   });
   const onClickHuy = () => {
+    const productInfo = tabletDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
     setValue("ram", tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram);
     setValue("accessories", tabletDetail?.productInfo?.accessories);
     setValue("battery", tabletDetail?.battery);
@@ -309,7 +340,7 @@ const UpdateTablet: React.FC = () => {
     setValue("design", tabletDetail?.productInfo?.design);
     setValue("dimension", tabletDetail?.productInfo?.dimension);
     setValue("category", tabletDetail?.productInfo?.categoryId.toString());
-    setValue("launchTime", "2023");
+    setValue("launchTime", tabletDetail?.productInfo?.launchTime);
   };
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
@@ -799,7 +830,7 @@ const UpdateTablet: React.FC = () => {
             <Button
               className="w-[100px]"
               onClick={() => {
-                navigate(path.smartPhone);
+                navigate(path.tablet);
               }}
             >
               Hủy
@@ -812,6 +843,7 @@ const UpdateTablet: React.FC = () => {
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
+        centered
       >
         <p>Đang xử lý, vui lòng đợi...</p>
       </Modal>

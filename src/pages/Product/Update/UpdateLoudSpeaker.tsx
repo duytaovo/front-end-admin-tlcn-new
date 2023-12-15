@@ -205,10 +205,10 @@ const UpdateLoudSpeaker: React.FC = () => {
     }
     const body = JSON.stringify({
       productInfo: {
-        brandId: Number(data.brand) || 1,
+        brandId: Number(data.brand),
         categoryId: 12,
         productId: null,
-        characteristicId: Number(data.characteristic) || 1,
+        characteristicId: Number(data.characteristic),
         productCode: generateRandomString(10),
         name: data.name,
         description: data?.description,
@@ -226,7 +226,7 @@ const UpdateLoudSpeaker: React.FC = () => {
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
           quantity: Number(item?.quantity),
-          depotId: Number(item?.depotId),
+          depotId: Number(item?.depot),
         })),
 
         lstProductImageUrl: images || [],
@@ -609,7 +609,7 @@ const UpdateLoudSpeaker: React.FC = () => {
         </Form.Item>
 
         <Form.Item
-          name="files"
+          name="file"
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
@@ -618,16 +618,26 @@ const UpdateLoudSpeaker: React.FC = () => {
             <div className="my-5 w-24 space-y-5 justify-between items-center">
               {imageUrls.map((imageUrl, index) => {
                 return (
-                  <img
-                    key={index}
-                    src={imageUrl}
-                    className="h-full rounded-md w-full  object-cover"
-                    alt="avatar"
-                  />
+                  <div key={index}>
+                    <img
+                      src={imageUrl}
+                      alt={`Image ${index + 1}`}
+                      width="100"
+                      height="100"
+                      className="h-full rounded-md w-full  object-cover"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => handleEditImage(index)}
+                    >
+                      Edit
+                    </button>
+                  </div>
                 );
               })}
             </div>
-            <InputFile label="" onChange={handleChangeFile} id="files" />
+            <InputFile label="" onChange={handleChangeFile} id="images" />
             <div className="mt-3  flex flex-col items-center text-red-500">
               <div>Dụng lượng file tối đa 2 MB</div>
               <div>Định dạng:.JPEG, .PNG</div>
