@@ -34,8 +34,6 @@ const normFile = (e: any) => {
 
 interface FormData {
   brand: string;
-  category: string;
-  characteristic: string;
   name: string;
   description: string;
   design: string | undefined;
@@ -44,9 +42,6 @@ interface FormData {
   launchTime: string | undefined;
   accessories: string | undefined;
   productStatus: string | undefined;
-  ram: string;
-  storageCapacity: string;
-  color: string;
   price: string;
   salePrice: string | undefined;
 }
@@ -135,7 +130,7 @@ const NewAdapter: React.FC = () => {
           brandId: Number(data.brand) || 1,
           categoryId: 20,
           productId: null,
-          characteristicId: Number(data.characteristic) || 1,
+          characteristicId: 12,
           productCode: generateRandomString(10),
           name: data.name,
           description: data?.description,
@@ -147,9 +142,6 @@ const NewAdapter: React.FC = () => {
           productStatus: 100,
           lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
             typeId: null,
-            ram: item?.ram,
-            storageCapacity: item?.storageCapacity,
-            color: item?.color,
             price: Number(item?.price),
             salePrice: Number(item?.salePrice),
             quantity: Number(item?.quantity),
@@ -216,12 +208,10 @@ const NewAdapter: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black  "}
             id="brand"
-            // label="Hãng xe"
             placeholder="Chọn hãng sx"
             defaultValue={""}
             options={brand?.data?.data}
             register={register}
-            isBrand={true}
           >
             {errors.brand?.message}
           </SelectCustom>
@@ -241,30 +231,11 @@ const NewAdapter: React.FC = () => {
           />
         </Form.Item>
         <Form.Item
-          label="Đặc điểm sản phẩm"
-          name="characteristic"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="characteristic"
-            // label="Hãng xe"
-            placeholder="Chọn đặc điểm "
-            defaultValue={""}
-            options={character?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.characteristic?.message}
-          </SelectCustom>
-        </Form.Item>
-        <Form.Item
           label="Tên sản phẩm"
           name="name"
           rules={[{ required: true }]}
         >
           <Input
-            placeholder="Điện thoại iPhone 15 Pro Max 1TB"
             name="name"
             register={register}
             type="text"
@@ -343,32 +314,6 @@ const NewAdapter: React.FC = () => {
           <ul>
             {fields.map((item, index) => (
               <li key={item.id}>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Ram"
-                    name={`lstProductTypeAndPrice.${index}.ram`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.ram`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="8Gb"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1TB"
-                    />
-                  </Form.Item>
-                </div>
                 <div className="flex justify-between space-x-1">
                   <Form.Item
                     label="Giá"
@@ -481,7 +426,6 @@ const NewAdapter: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.adapterType?.message}
-            placeholder="6.7 - Tần số quét 120 Hz"
           />
         </Form.Item>
 
@@ -492,7 +436,6 @@ const NewAdapter: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.output?.message}
-            placeholder="12 MP"
           />
         </Form.Item>
         <Form.Item label="Đầu vào" name="input" rules={[{ required: true }]}>
@@ -502,7 +445,6 @@ const NewAdapter: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.input?.message}
-            placeholder=""
           />
         </Form.Item>
         <Form.Item
@@ -516,7 +458,6 @@ const NewAdapter: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.maximumCapacity?.message}
-            placeholder="Apple A17 Pro 6 nhân"
           />
         </Form.Item>
         <Form.Item
@@ -530,7 +471,6 @@ const NewAdapter: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.technology?.message}
-            placeholder=""
           />
         </Form.Item>
 

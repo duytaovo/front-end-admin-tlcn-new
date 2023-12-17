@@ -15,14 +15,7 @@ export const addSmartWatch = createAsyncThunk(
   "smartWatch/addSmartWatch",
   payloadCreator(smartWatchApi.addSmartWatch),
 );
-// export const uploadImageProduct = createAsyncThunk(
-//   "smartWatch/uploadImageProduct",
-//   payloadCreator(smartWatchApi.)
-// );
-// export const uploadImagesProduct = createAsyncThunk(
-//   "smartWatch/uploadImagesProduct",
-//   payloadCreator(smartWatchApi.uploadImagesProduct)
-// );
+
 export const updateSmartWatch = createAsyncThunk(
   "smartWatch/updateSmartWatch",
   payloadCreator(smartWatchApi.updateSmartWatch),

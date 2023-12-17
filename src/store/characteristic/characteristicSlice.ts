@@ -4,26 +4,26 @@ import { payloadCreator } from "src/utils/utils";
 
 export const getCharacters = createAsyncThunk(
   "character/getCharacters",
-  payloadCreator(characterApi.getCharacters)
+  payloadCreator(characterApi.getCharacters),
 );
 
 export const getDetailCharacter = createAsyncThunk(
   "character/getDetailCharacter",
-  payloadCreator(characterApi.getDetailCharacter)
+  payloadCreator(characterApi.getDetailCharacter),
 );
 export const addCharacter = createAsyncThunk(
   "character/addCharacter",
-  payloadCreator(characterApi.addCharacter)
+  payloadCreator(characterApi.addCharacter),
 );
 
 export const updateCharacter = createAsyncThunk(
   "character/updateCharacter",
-  payloadCreator(characterApi.updateCharacter)
+  payloadCreator(characterApi.updateCharacter),
 );
 
 export const deleteCharacter = createAsyncThunk(
   "character/deleteCharacter",
-  payloadCreator(characterApi.deleteCharacter)
+  payloadCreator(characterApi.deleteCharacter),
 );
 
 interface IProudct {
@@ -47,10 +47,11 @@ const characterSlice = createSlice({
       state.character = payload.data;
     });
     builder.addCase(getDetailCharacter.fulfilled, (state, { payload }) => {
-      state.characterDetail = payload.data;
+      state.characterDetail = payload.data?.data;
     });
   },
 });
 
 const characterReducer = characterSlice.reducer;
 export default characterReducer;
+

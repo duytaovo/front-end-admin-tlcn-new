@@ -34,8 +34,6 @@ const normFile = (e: any) => {
 
 interface FormData {
   brand: string;
-  category: string;
-  characteristic: string;
   name: string;
   description: string;
   design: string | undefined;
@@ -44,9 +42,6 @@ interface FormData {
   launchTime: string | undefined;
   accessories: string | undefined;
   productStatus: string | undefined;
-  ram: string;
-  storageCapacity: string;
-  color: string;
   price: string;
   salePrice: string | undefined;
   monitor: string;
@@ -134,7 +129,7 @@ const NewProcessor: React.FC = () => {
         brandId: Number(data.brand),
         categoryId: 14,
         productId: null,
-        characteristicId: Number(data.characteristic),
+        characteristicId: 12,
         productCode: generateRandomString(10),
         name: data.name,
         description: data?.description,
@@ -146,9 +141,6 @@ const NewProcessor: React.FC = () => {
         productStatus: 100,
         lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
           typeId: null,
-          ram: item?.ram,
-          storageCapacity: item?.storageCapacity,
-          color: item?.color,
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
           quantity: Number(item?.quantity),
@@ -161,6 +153,7 @@ const NewProcessor: React.FC = () => {
       generation: data.generation,
       generationName: data.generationName,
       socket: data.socket,
+      cpuSpeed: data.cpuSpeed,
       multiplier: Number(data.multiplier),
       numberOfStreams: Number(data.numberOfStreams),
       maxSpeed: data.maxSpeed,
@@ -259,28 +252,6 @@ const NewProcessor: React.FC = () => {
               <li key={item.id}>
                 <div className="flex justify-between space-x-1">
                   <Form.Item
-                    label="Ram"
-                    name={`lstProductTypeAndPrice.${index}.ram`}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.ram`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storagesocket`}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.storagesocket`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                </div>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
                     label="Giá"
                     name={`lstProductTypeAndPrice.${index}.price`}
                     rules={[{ required: true }]}
@@ -326,16 +297,6 @@ const NewProcessor: React.FC = () => {
                   >
                     <Input
                       name={`lstProductTypeAndPrice.${index}.quantity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Màu"
-                    name={`lstProductTypeAndPrice.${index}.color`}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.color`}
                       key={item.id} // important to include key with field's id
                       register={register}
                     />

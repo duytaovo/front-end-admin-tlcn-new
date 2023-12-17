@@ -1,24 +1,12 @@
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { SelectChangeEvent } from "@mui/material/Select";
 import React, { useEffect, useState } from "react";
-import { getSmartPhones } from "src/store/product/smartPhoneSlice";
 import ProductPhone from "./Table/Product/ProductSmartWatch";
 import path from "src/constants/path";
 import { Pagination } from "antd";
 import { getSmartWatch } from "src/store/product/smartwatchSlice";
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 150,
-    },
-  },
-};
 const TableSmartWatch: React.FC = () => {
   const dispatch = useAppDispatch();
   const { smartWatch } = useAppSelector((state) => state.smartWatch);
@@ -31,15 +19,6 @@ const TableSmartWatch: React.FC = () => {
   }, [currentPage]);
   const handlePageChange = (page: number) => {
     setCurrentPage(page - 1);
-  };
-  const [product, setProduct] = React.useState("");
-
-  const handleChangeProduct = (event: SelectChangeEvent) => {
-    setProduct(event.target.value as string);
-  };
-
-  const onClick = (value: string) => {
-    navigate(value);
   };
 
   return (

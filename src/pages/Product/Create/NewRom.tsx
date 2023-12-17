@@ -34,8 +34,6 @@ const normFile = (e: any) => {
 
 interface FormData {
   brand: string;
-  category: string;
-  characteristic: string;
   name: string;
   description: string;
   design: string | undefined;
@@ -44,9 +42,6 @@ interface FormData {
   launchTime: string | undefined;
   accessories: string | undefined;
   productStatus: string | undefined;
-  ram: string;
-  storageCapacity: string;
-  color: string;
   price: string;
   salePrice: string | undefined;
   monitor: string;
@@ -135,7 +130,7 @@ const NewRom: React.FC = () => {
         brandId: Number(data.brand),
         categoryId: 13,
         productId: null,
-        characteristicId: Number(data.characteristic),
+        characteristicId: 12,
         productCode: generateRandomString(10),
         name: data.name,
         description: data?.description,
@@ -147,9 +142,6 @@ const NewRom: React.FC = () => {
         productStatus: 100,
         lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
           typeId: null,
-          ram: item?.ram,
-          storageCapacity: item?.storageCapacity,
-          color: item?.color,
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
           quantity: Number(item?.quantity),
@@ -252,41 +244,11 @@ const NewRom: React.FC = () => {
             errorMessage={errors.launchTime?.message}
           />
         </Form.Item>
-        <Form.Item label="Phụ kiện" name="accessories">
-          <Input
-            name="accessories"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.accessories?.message}
-          />
-        </Form.Item>
+
         <Form.Item label="Loại sản phẩm" name="lstProductTypeAndPrice">
           <ul>
             {fields.map((item, index) => (
               <li key={item.id}>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Ram"
-                    name={`lstProductTypeAndPrice.${index}.ram`}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.ram`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                </div>
                 <div className="flex justify-between space-x-1">
                   <Form.Item
                     label="Giá"
@@ -332,16 +294,6 @@ const NewRom: React.FC = () => {
                   >
                     <Input
                       name={`lstProductTypeAndPrice.${index}.quantity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Màu"
-                    name={`lstProductTypeAndPrice.${index}.color`}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.color`}
                       key={item.id} // important to include key with field's id
                       register={register}
                     />

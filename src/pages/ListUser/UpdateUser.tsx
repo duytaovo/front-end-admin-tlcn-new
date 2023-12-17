@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import Input from "src/components/Input";
 import SelectCustom from "src/components/Select";
 import path from "src/constants/path";
-import { useAppDispatch } from "src/hooks/useRedux";
+import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { getDetailUser, getUsers, updateUser } from "src/store/user/userSlice";
 import { ErrorResponse } from "src/types/utils.type";
 import { schemaAddUser } from "src/utils/rules";
@@ -38,21 +38,29 @@ const FormDisabledDemo: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [file, setFile] = useState<File>();
+  const { userWithId } = useAppSelector((state) => state.user);
 
   const previewImage = useMemo(() => {
     return file ? URL.createObjectURL(file) : "";
   }, [file]);
   const [addressOption, setAddresOption] = useState<any>();
+  const [part1Address, setPart1Address] = useState<any>();
+  const [part2Address, setPart2Address] = useState<any>();
+  const [part3Address, setPart3Address] = useState<any>();
   const addressSelect =
     addressOption?.ward.name +
     " " +
     addressOption?.district.name +
     " " +
     addressOption?.city.name;
-  // Tạo một mảng chứa các URL tạm thời cho ảnh
+  const addressIdSelect =
+    addressOption?.ward.id +
+    "-" +
+    addressOption?.district.id +
+    "-" +
+    addressOption?.city.id;
 
   const { id } = useParams();
-  const [userDetail, setUserDetail] = useState<any>();
   const {
     handleSubmit,
     formState: { errors },
@@ -66,21 +74,41 @@ const FormDisabledDemo: React.FC = () => {
   });
   const avatar = watch("imageUrl");
   useEffect(() => {
-    dispatch(getDetailUser(id))
-      .then(unwrapResult)
-      .then((res) => {
-        setUserDetail(res.data.data);
-      });
+    dispatch(getDetailUser(id));
   }, []);
   useEffect(() => {
-    setValue("address", userDetail?.address);
-    setValue("email", userDetail?.email);
-    setValue("imageUrl", userDetail?.imageUrl);
-    setValue("fullName", userDetail?.fullName);
-    setValue("phoneNumber", userDetail?.phoneNumber);
-    setValue("gender", userDetail?.gender);
-  }, [userDetail]);
+    setValue("address", part1Address);
+    setValue("email", userWithId?.email);
+    setValue("imageUrl", userWithId?.imageUrl);
+    setValue("fullName", userWithId?.fullName);
+    setValue("phoneNumber", userWithId?.phoneNumber);
+    setValue("gender", userWithId?.gender);
+  }, [userWithId]);
+  useEffect(() => {
+    const inputString = userWithId.address;
 
+    if (inputString) {
+      // Phần 1: từ đầu đến trước dấu ,
+      const part1 = inputString.split(",")[0]?.trim();
+      setPart1Address(part1);
+
+      // Phần 2: từ dấu , đến dấu +
+      const part2 = inputString
+        .split(",")
+        .slice(1)
+        .join(",")
+        .split("+")[0]
+        .trim();
+      setPart2Address(part2);
+
+      // Phần 3: phần còn lại, bỏ vào mảng có 3 phần tử mỗi phần tử đã được ngăn cách bởi dấu -
+      const remainingPart = inputString
+        .split("+")[1]
+        ?.split("-")
+        .map((item: string) => Number(item.trim()));
+      setPart3Address(remainingPart);
+    }
+  }, [userWithId]);
   const onSubmit = handleSubmit(async (data) => {
     let images;
 
@@ -98,7 +126,7 @@ const FormDisabledDemo: React.FC = () => {
     try {
       const body = JSON.stringify({
         email: data.email || null,
-        address: data.address,
+        address: data.address + ", " + addressSelect + " + " + addressIdSelect,
         password: 123456,
         phoneNumber: data.phoneNumber || null,
         fullName: data.fullName || null,
@@ -130,12 +158,12 @@ const FormDisabledDemo: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("address", userDetail?.address);
-    setValue("email", userDetail?.email);
-    setValue("imageUrl", userDetail?.imageUrl);
-    setValue("fullName", userDetail?.fullName);
-    setValue("phoneNumber", userDetail?.phoneNumber);
-    setValue("gender", userDetail?.gender);
+    setValue("address", userWithId?.address);
+    setValue("email", userWithId?.email);
+    setValue("imageUrl", userWithId?.imageUrl);
+    setValue("fullName", userWithId?.fullName);
+    setValue("phoneNumber", userWithId?.phoneNumber);
+    setValue("gender", userWithId?.gender);
   };
   const handleChangeFile = (file?: File) => {
     setFile(file);
@@ -148,7 +176,7 @@ const FormDisabledDemo: React.FC = () => {
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 14 }}
         layout="horizontal"
-        style={{ maxWidth: 600, padding: 4 }}
+        style={{ maxWidth: 800, padding: 4 }}
         autoComplete="off"
         noValidate
         onSubmitCapture={onSubmit}
@@ -177,29 +205,6 @@ const FormDisabledDemo: React.FC = () => {
             errorMessage={errors.email?.message}
           />
         </Form.Item>
-        {/* <Form.Item
-          name="password"
-          label="Password"
-          rules={[{ required: true }]}
-        >
-          <Input
-            defaultValue={"*******"}
-            name="password"
-            register={register}
-            type="password"
-            className=""
-            errorMessage={errors.password?.message}
-          />
-        </Form.Item> */}
-        {/* <Form.Item name="name" label="Tên" rules={[{ required: true }]}>
-          <Input
-            name="name"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.name?.message}
-          />
-        </Form.Item> */}
         <Form.Item
           name="fullname"
           label="Họ và Tên"
@@ -221,11 +226,11 @@ const FormDisabledDemo: React.FC = () => {
             className=""
             errorMessage={errors.address?.message}
           />
-          {/* <LocationForm
+          <LocationForm
             onChange={(e: any) => {
               setAddresOption(e);
             }}
-          /> */}
+          />
         </Form.Item>
         <Form.Item
           name="phoneNumber"

@@ -11,15 +11,15 @@ const romApi = {
   getDetailRom(params: any) {
     return http.get<SuccessResponse<any[]>>(`/manage/product/rom/${params}`);
   },
-  updateRom({ _id, body }: any) {
-    return http.post<SuccessResponse<any>>(
-      `/manage/product/rom/update/${_id}`,
-      body
+  updateRom({ id, body }: any) {
+    return http.put<SuccessResponse<any>>(
+      `/manage/product/rom/update/${id}`,
+      body,
     );
   },
   deleteRom(idRom: string[]) {
-    return http.post<SuccessResponse<any>>(
-      `/manage/product/rom/delete/${idRom}`
+    return http.put<SuccessResponse<any>>(
+      `/manage/product/rom/delete/${idRom}`,
     );
   },
   getRomWithPageNumber(pageNumber: number) {
@@ -27,9 +27,10 @@ const romApi = {
   },
   getRomWithPageNumberSize(pageNumber: number, pageSize: number) {
     return http.get<SuccessResponse<any>>(
-      `/manage/product/rom/${pageNumber}/${pageSize}`
+      `/manage/product/rom/${pageNumber}/${pageSize}`,
     );
   },
 };
 
 export default romApi;
+

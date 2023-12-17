@@ -38,9 +38,6 @@ const normFile = (e: any) => {
 };
 
 interface FormData {
-  brand: string;
-  category: string;
-  characteristic: string;
   name: string;
   description: string;
   design: string | undefined;
@@ -49,9 +46,6 @@ interface FormData {
   launchTime: string | undefined;
   accessories: string | undefined;
   productStatus: number | undefined;
-  ram: string;
-  storageCapacity: string;
-  color: string;
   price: string;
   salePrice: string | undefined;
 }
@@ -91,7 +85,9 @@ const UpdateAdapter: React.FC = () => {
   const { nameId } = useParams();
   const id = getIdFromNameId(nameId as string);
   // const { brand } = useAppSelector((state) => state.brand);
-  const { backupCharger } = useAppSelector((state) => state.backupCharger);
+  const { backupChargerDetail } = useAppSelector(
+    (state) => state.backupCharger,
+  );
   const { character } = useAppSelector((state) => state.character);
   const { depot } = useAppSelector((state) => state.depot);
   const { brand } = useAppSelector((state) => state.brand);
@@ -123,8 +119,8 @@ const UpdateAdapter: React.FC = () => {
   }
 
   useEffect(() => {
-    setImages(backupCharger.productInfo.lstProductImageUrl);
-    const productInfo = backupCharger?.productInfo;
+    setImages(backupChargerDetail.productInfo?.lstProductImageUrl);
+    const productInfo = backupChargerDetail?.productInfo;
 
     if (
       productInfo?.lstProductTypeAndPrice &&
@@ -156,43 +152,33 @@ const UpdateAdapter: React.FC = () => {
         },
       );
     }
-    setValue("ram", backupCharger?.productInfo?.lstProductTypeAndPrice[0]?.ram);
-    setValue("accessories", backupCharger?.productInfo?.accessories);
-    setValue("chargingPerformance", backupCharger?.chargingPerformance);
-    setValue("batteryCapacity", backupCharger?.batteryCapacity);
-    setValue("batteryChargingTime", backupCharger?.batteryChargingTime);
-    setValue("mass", backupCharger?.productInfo?.mass.toString());
-    setValue(
-      "color",
-      backupCharger?.productInfo.lstProductTypeAndPrice[0].color.toString(),
-    );
-    setValue("input", backupCharger?.input);
-    setValue("output", backupCharger?.output);
-    setValue("description", backupCharger?.productInfo?.description);
-    setValue("brand", backupCharger?.productInfo?.brandId.toString());
-    setValue(
-      "characteristic",
-      backupCharger?.productInfo?.characteristicId.toString(),
-    );
-    setValue("name", backupCharger?.productInfo?.name);
-    setValue("batteryCore", backupCharger?.batteryCore);
+    setValue("chargingPerformance", backupChargerDetail?.chargingPerformance);
+    setValue("batteryCapacity", backupChargerDetail?.batteryCapacity);
+    setValue("batteryChargingTime", backupChargerDetail?.batteryChargingTime);
+    setValue("input", backupChargerDetail?.input);
+    setValue("output", backupChargerDetail?.output);
+    setValue("description", backupChargerDetail?.productInfo?.description);
+    setValue("brand", backupChargerDetail?.productInfo?.brandId.toString());
+
+    setValue("name", backupChargerDetail?.productInfo?.name);
+    setValue("batteryCore", backupChargerDetail?.batteryCore);
     setValue(
       "salePrice",
-      backupCharger?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
+      backupChargerDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
-    setValue("technology", backupCharger?.technology);
+    setValue("technology", backupChargerDetail?.technology);
     setValue(
       "price",
-      backupCharger?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
+      backupChargerDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
-    setValue("design", backupCharger?.productInfo?.design);
-    setValue("dimension", backupCharger?.productInfo?.dimension);
-    setValue("category", backupCharger?.productInfo?.categoryId.toString());
+    setValue("design", backupChargerDetail?.productInfo?.design);
+    setValue("dimension", backupChargerDetail?.productInfo?.dimension);
     setValue("launchTime", "2023");
-  }, [backupCharger]);
+  }, [backupChargerDetail]);
   const onSubmit = handleSubmit(async (data) => {
     let images = [];
-
+    showModal();
+    setIsSubmitting(true);
     if (file) {
       const form = new FormData();
       for (let i = 0; i < file.length; i++) {
@@ -209,9 +195,9 @@ const UpdateAdapter: React.FC = () => {
       productInfo: {
         brandId: Number(data.brand),
         categoryId: 1,
-        productId: Number(backupCharger.productInfo.productId),
-        characteristicId: Number(data.characteristic),
-        productCode: backupCharger.productInfo.productCode,
+        productId: Number(backupChargerDetail.productInfo.productId),
+        characteristicId: 12,
+        productCode: backupChargerDetail.productInfo.productCode,
         name: data.name,
         description: data?.description,
         design: data?.design,
@@ -223,7 +209,8 @@ const UpdateAdapter: React.FC = () => {
         lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map(
           (item, index) => ({
             typeId: Number(
-              backupCharger?.productInfo?.lstProductTypeAndPrice[index].typeId,
+              backupChargerDetail?.productInfo?.lstProductTypeAndPrice[index]
+                .typeId,
             ),
             ram: item?.ram,
             storageCapacity: item?.storageCapacity,
@@ -247,11 +234,10 @@ const UpdateAdapter: React.FC = () => {
     });
 
     try {
-      setIsSubmitting(true);
       const res = await dispatch(updateBackupCharger({ id, body }));
       unwrapResult(res);
       const d = res?.payload?.data;
-      if (d?.code !== 200) return toast.error(d?.message);
+      // if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Chỉnh sửa thành công ");
       await dispatch(getBackupCharger(""));
       await navigate(path.backupCharger);
@@ -272,8 +258,8 @@ const UpdateAdapter: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setImages(backupCharger.productInfo.lstProductImageUrl);
-    const productInfo = backupCharger?.productInfo;
+    setImages(backupChargerDetail.productInfo?.lstProductImageUrl);
+    const productInfo = backupChargerDetail?.productInfo;
 
     if (
       productInfo?.lstProductTypeAndPrice &&
@@ -305,38 +291,27 @@ const UpdateAdapter: React.FC = () => {
         },
       );
     }
-    setValue("ram", backupCharger?.productInfo?.lstProductTypeAndPrice[0]?.ram);
-    setValue("accessories", backupCharger?.productInfo?.accessories);
-    setValue("chargingPerformance", backupCharger?.chargingPerformance);
-    setValue("batteryCapacity", backupCharger?.batteryCapacity);
-    setValue("batteryChargingTime", backupCharger?.batteryChargingTime);
-    setValue("mass", backupCharger?.productInfo?.mass.toString());
-    setValue(
-      "color",
-      backupCharger?.productInfo.lstProductTypeAndPrice[0].color.toString(),
-    );
-    setValue("input", backupCharger?.input);
-    setValue("output", backupCharger?.output);
-    setValue("description", backupCharger?.productInfo?.description);
-    setValue("brand", backupCharger?.productInfo?.brandId.toString());
-    setValue(
-      "characteristic",
-      backupCharger?.productInfo?.characteristicId.toString(),
-    );
-    setValue("name", backupCharger?.productInfo?.name);
-    setValue("batteryCore", backupCharger?.batteryCore);
+    setValue("chargingPerformance", backupChargerDetail?.chargingPerformance);
+    setValue("batteryCapacity", backupChargerDetail?.batteryCapacity);
+    setValue("batteryChargingTime", backupChargerDetail?.batteryChargingTime);
+
+    setValue("input", backupChargerDetail?.input);
+    setValue("output", backupChargerDetail?.output);
+    setValue("description", backupChargerDetail?.productInfo?.description);
+    setValue("brand", backupChargerDetail?.productInfo?.brandId.toString());
+    setValue("name", backupChargerDetail?.productInfo?.name);
+    setValue("batteryCore", backupChargerDetail?.batteryCore);
     setValue(
       "salePrice",
-      backupCharger?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
+      backupChargerDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
-    setValue("technology", backupCharger?.technology);
+    setValue("technology", backupChargerDetail?.technology);
     setValue(
       "price",
-      backupCharger?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
+      backupChargerDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
-    setValue("design", backupCharger?.productInfo?.design);
-    setValue("dimension", backupCharger?.productInfo?.dimension);
-    setValue("category", backupCharger?.productInfo?.categoryId.toString());
+    setValue("design", backupChargerDetail?.productInfo?.design);
+    setValue("dimension", backupChargerDetail?.productInfo?.dimension);
     setValue("launchTime", "2023");
   };
 
@@ -387,35 +362,14 @@ const UpdateAdapter: React.FC = () => {
           rules={[{ required: true }]}
         >
           <SelectCustom
-            className={"flex-1 text-black  "}
+            className={"flex-1 text-black"}
             id="brand"
-            // label="Hãng xe"
-            placeholder="Chọn hãng sx"
-            defaultValue={""}
+            placeholder="Vui lòng chọn"
+            defaultValue={backupChargerDetail?.productInfo?.brandId}
             options={brand?.data?.data}
             register={register}
-            isBrand={true}
           >
             {errors.brand?.message}
-          </SelectCustom>
-        </Form.Item>
-
-        <Form.Item
-          label="Đặc điểm sản phẩm"
-          name="characteristic"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="characteristic"
-            // label="Hãng xe"
-            placeholder="Chọn đặc điểm "
-            defaultValue={""}
-            options={character?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.characteristic?.message}
           </SelectCustom>
         </Form.Item>
         <Form.Item
@@ -458,30 +412,6 @@ const UpdateAdapter: React.FC = () => {
           />
         </Form.Item>
         <Form.Item
-          label="Kích thước"
-          name="dimension"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="dimension"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.dimension?.message}
-            placeholder="Dài 159.9 mm - Ngang 76.7 mm - Dày 8.25 mm "
-          />
-        </Form.Item>
-        <Form.Item label="Khối lượng" name="mass" rules={[{ required: true }]}>
-          <Input
-            name="mass"
-            register={register}
-            type="number"
-            className=""
-            errorMessage={errors.mass?.message}
-            placeholder=" 221 "
-          />
-        </Form.Item>
-        <Form.Item
           label="Năm ra mắt"
           name="launchTime"
           rules={[{ required: true }]}
@@ -495,135 +425,88 @@ const UpdateAdapter: React.FC = () => {
             placeholder="2023"
           />
         </Form.Item>
-        <Form.Item
-          label="Phụ kiện"
-          name="accessories"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="accessories"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.accessories?.message}
-            placeholder="Tai nghe, sạc"
-          />
-        </Form.Item>
+
         <Form.Item
           label="Loại sản phẩm"
           name="lstProductTypeAndPrice"
           rules={[{ required: true }]}
         >
           <ul>
-            {fields.map((item, index) => (
-              <li key={item.id}>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Ram"
-                    name={`lstProductTypeAndPrice.${index}.ram`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.ram`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="8Gb"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1TB"
-                    />
-                  </Form.Item>
-                </div>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Giá"
-                    name={`lstProductTypeAndPrice.${index}.price`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.price`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="45000000"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Giá khuyến mãi"
-                    name={`lstProductTypeAndPrice.${index}.salePrice`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.salePrice`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="44000000"
-                    />
-                  </Form.Item>
-                </div>
-                <Form.Item
-                  label="Kho hàng"
-                  name={`lstProductTypeAndPrice.${index}.depot`}
-                  rules={[{ required: true }]}
-                >
-                  <SelectCustom
-                    className={"flex-1 text-black"}
-                    id={`lstProductTypeAndPrice.${index}.depot`}
-                    // label="Hãng xe"
-                    placeholder="Chọn kho hàng"
-                    options={depot?.data?.data}
-                    register={register}
-                  >
-                    {errors.depotId?.message}
-                  </SelectCustom>
-                </Form.Item>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Số lượng sản phẩm"
-                    name={`lstProductTypeAndPrice.${index}.quantity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.quantity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1000"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Màu"
-                    name={`lstProductTypeAndPrice.${index}.color`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.color`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="Titan tự nhiên"
-                    />
-                  </Form.Item>
-                </div>
-                <Form.Item>
-                  <Button
-                    type="default"
-                    onClick={() => remove(index)}
-                    block
-                    icon={<PlusOutlined />}
-                  >
-                    Xóa trường này
-                  </Button>
-                </Form.Item>
-                {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
-              </li>
-            ))}
+            {backupChargerDetail?.productInfo?.lstProductTypeAndPrice?.map(
+              (item: any, index: number) => {
+                return (
+                  <li key={index}>
+                    <div className="flex justify-between space-x-1">
+                      <Form.Item
+                        label="Giá"
+                        name={`lstProductTypeAndPrice.${index}.price`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.price`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="45000000"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label="Giá khuyến mãi"
+                        name={`lstProductTypeAndPrice.${index}.salePrice`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.salePrice`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="44000000"
+                        />
+                      </Form.Item>
+                    </div>
+                    <Form.Item
+                      label="Kho hàng"
+                      name={`lstProductTypeAndPrice.${index}.depot`}
+                      rules={[{ required: true }]}
+                    >
+                      <SelectCustom
+                        className={"flex-1 text-black"}
+                        id={`lstProductTypeAndPrice.${index}.depot`}
+                        placeholder="Vui lòng chọn"
+                        defaultValue={item.depotId}
+                        options={depot?.data?.data}
+                        register={register}
+                      >
+                        {errors.depotId?.message}
+                      </SelectCustom>
+                    </Form.Item>
+                    <div>
+                      <Form.Item
+                        label="Số lượng sản phẩm"
+                        name={`lstProductTypeAndPrice.${index}.quantity`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.quantity`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="1000"
+                        />
+                      </Form.Item>
+                    </div>
+                    <Form.Item>
+                      <Button
+                        type="default"
+                        onClick={() => remove(index)}
+                        block
+                        icon={<PlusOutlined />}
+                      >
+                        Xóa trường này
+                      </Button>
+                    </Form.Item>
+                    {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
+                  </li>
+                );
+              },
+            )}
             <Form.Item>
               <Button
                 type="dashed"
@@ -730,7 +613,7 @@ const UpdateAdapter: React.FC = () => {
         >
           <div className="flex flex-col items-start ">
             <div className="my-5 w-24 space-y-5 justify-between items-center">
-              {imageUrls.map((imageUrl, index) => {
+              {imageUrls?.map((imageUrl, index) => {
                 return (
                   <div key={index}>
                     <img

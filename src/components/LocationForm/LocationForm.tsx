@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import useLocationForm from "./useLocationForm";
 import Select from "react-select";
 
@@ -6,8 +7,8 @@ interface Props {
 }
 
 const LocationForm = ({ onChange }: Props) => {
-  const { state, onCitySelect, onDistrictSelect, onWardSelect } =
-    useLocationForm(false);
+  const { state, onCitySelect, onDistrictSelect, onWardSelect, onSubmit } =
+    useLocationForm(true);
   const {
     cityOptions,
     districtOptions,
@@ -16,6 +17,24 @@ const LocationForm = ({ onChange }: Props) => {
     selectedDistrict,
     selectedWard,
   } = state;
+  useEffect(() => {
+    // Gọi hàm onChange với giá trị mặc định khi component được render
+    onChange &&
+      onChange({
+        ward: {
+          name: selectedWard?.label,
+          id: selectedWard?.value,
+        },
+        district: {
+          name: selectedDistrict?.label,
+          id: selectedDistrict?.value,
+        },
+        city: {
+          name: selectedCity?.label,
+          id: selectedCity?.value,
+        },
+      });
+  }, [selectedWard, selectedDistrict, selectedCity]); // Thêm dependency rỗng để useEffect chỉ chạy một lần sau khi mount
   return (
     <div className="form-container my-8">
       <div className="select-container flex space-x-4">
@@ -70,3 +89,4 @@ const LocationForm = ({ onChange }: Props) => {
 };
 
 export default LocationForm;
+

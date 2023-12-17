@@ -118,11 +118,11 @@ const UpdatePhone: React.FC = () => {
 
   for (const image of imageArray) {
     const imageUrl = URL.createObjectURL(image);
-    imageUrls.push(imageUrl);
+    // imageUrls.push(imageUrl);
   }
 
   useEffect(() => {
-    setImages(smartPhoneDetail.productInfo.lstProductImageUrl);
+    setImages(smartPhoneDetail?.productInfo?.lstProductImageUrl);
 
     const productInfo = smartPhoneDetail?.productInfo;
 
@@ -208,7 +208,6 @@ const UpdatePhone: React.FC = () => {
         images.push(d[i]?.fileUrl);
       }
     }
-    data?.lstProductTypeAndPrice?.map((item, index) => console.log(item));
     const body = JSON.stringify({
       productInfo: {
         brandId: Number(data.brand),
@@ -297,6 +296,8 @@ const UpdatePhone: React.FC = () => {
     }
   });
   const onClickHuy = () => {
+    setImages(smartPhoneDetail?.productInfo?.lstProductImageUrl);
+
     const productInfo = smartPhoneDetail?.productInfo;
 
     if (
@@ -779,7 +780,7 @@ const UpdatePhone: React.FC = () => {
         >
           <div className="flex flex-col items-start ">
             <div className="my-5 w-24 space-y-5 justify-between items-center">
-              {imageUrls.map((imageUrl, index) => {
+              {imageUrls?.map((imageUrl, index) => {
                 return (
                   <div key={index}>
                     <img

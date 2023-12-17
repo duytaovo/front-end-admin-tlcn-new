@@ -99,7 +99,6 @@ const UpdateTablet: React.FC = () => {
       name: "lstProductTypeAndPrice", // unique name for your Field Array
     },
   );
-
   useEffect(() => {
     dispatch(getCategorys({ pageSize: 100 }));
     dispatch(getCharacters({ pageSize: 100 }));
@@ -117,9 +116,11 @@ const UpdateTablet: React.FC = () => {
 
   for (const image of imageArray) {
     const imageUrl = URL.createObjectURL(image);
-    imageUrls.push(imageUrl);
+    // imageUrls.push(imageUrl);
   }
   useEffect(() => {
+    setImages(tabletDetail.productInfo.lstProductImageUrl);
+
     const productInfo = tabletDetail?.productInfo;
 
     if (
@@ -275,6 +276,7 @@ const UpdateTablet: React.FC = () => {
   });
   const onClickHuy = () => {
     const productInfo = tabletDetail?.productInfo;
+    setImages(tabletDetail.productInfo.lstProductImageUrl);
 
     if (
       productInfo?.lstProductTypeAndPrice &&
@@ -406,21 +408,14 @@ const UpdateTablet: React.FC = () => {
           name="operatingSystem"
           rules={[{ required: true }]}
         >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="operatingSystem"
-            // label="Hãng xe"
-            placeholder="Vui lòng chọn"
-            defaultValue={tabletDetail?.operatingSystem}
-            options={[
-              { id: "iPadOS", name: "iPadOS" },
-              { id: "Android", name: "Android" },
-            ]}
+          <Input
+            name="operatingSystem"
             register={register}
-            isBrand={true}
-          >
-            {errors.operatingSystem?.message}
-          </SelectCustom>
+            type="text"
+            className=""
+            errorMessage={errors.operatingSystem?.message}
+            placeholder="iOS"
+          />
         </Form.Item>
         <Form.Item
           label="Đặc điểm sản phẩm"
@@ -590,8 +585,8 @@ const UpdateTablet: React.FC = () => {
                     <SelectCustom
                       className={"flex-1 text-black"}
                       id={`lstProductTypeAndPrice.${index}.depot`}
-                      // label="Hãng xe"
                       placeholder="Vui lòng chọn"
+                      defaultValue={item.depotId}
                       options={depot?.data?.data}
                       register={register}
                     >

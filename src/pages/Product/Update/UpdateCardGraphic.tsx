@@ -12,7 +12,6 @@ import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
 import { schemaProductRam } from "src/utils/rules";
 import {
-  generateRandomString,
   getIdFromNameId,
   isAxiosUnprocessableEntityError,
 } from "src/utils/utils";
@@ -28,6 +27,7 @@ import {
   getDetailCardGraphic,
   updateCardGraphic,
 } from "src/store/cardGrap/cardGraphicSlice";
+import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -38,8 +38,6 @@ const normFile = (e: any) => {
 
 interface FormData {
   brand: string;
-  category: string;
-  characteristic: string;
   name: string;
   description: string;
   design: string | undefined;
@@ -48,9 +46,6 @@ interface FormData {
   launchTime: string | undefined;
   accessories: string | undefined;
   productStatus: string | undefined;
-  ram: string;
-  storageCapacity: string;
-  color: string;
   price: string;
   salePrice: string | undefined;
   monitor: string;
@@ -113,21 +108,14 @@ const UpdateCard: React.FC = () => {
   }
   useEffect(() => {
     const productInfo = cardGraphicDetail?.productInfo;
+    setImages(cardGraphicDetail?.productInfo?.lstProductImageUrl);
 
     if (
       productInfo?.lstProductTypeAndPrice &&
       Array.isArray(productInfo.lstProductTypeAndPrice)
     ) {
       // Define the fields you want to set dynamically
-      const fields = [
-        "ram",
-        "storageCapacity",
-        "color",
-        "price",
-        "salePrice",
-        "quantity",
-        "depot",
-      ];
+      const fields = ["price", "salePrice", "quantity", "depot"];
 
       // Loop through the array and set values dynamically
       productInfo.lstProductTypeAndPrice.forEach(
@@ -144,19 +132,10 @@ const UpdateCard: React.FC = () => {
         },
       );
     }
-    setValue("accessories", cardGraphicDetail?.productInfo?.accessories);
-    setValue("mass", cardGraphicDetail?.productInfo?.mass.toString());
-    setValue(
-      "color",
-      cardGraphicDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
-    );
     setValue("monitor", cardGraphicDetail?.monitor);
     setValue("description", cardGraphicDetail?.productInfo?.description);
     setValue("brand", cardGraphicDetail?.productInfo?.brandId.toString());
-    setValue(
-      "characteristic",
-      cardGraphicDetail?.productInfo?.characteristicId.toString(),
-    );
+
     setValue("name", cardGraphicDetail?.productInfo?.name);
     setValue(
       "salePrice",
@@ -166,12 +145,10 @@ const UpdateCard: React.FC = () => {
       "price",
       cardGraphicDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
-    setValue("operatingSystem", cardGraphicDetail?.operatingSystem);
-    setValue("design", cardGraphicDetail?.productInfo?.design);
-    setValue("dimension", cardGraphicDetail?.productInfo?.dimension);
-    setValue("category", cardGraphicDetail?.productInfo?.categoryId.toString());
+    setValue("outputPort", cardGraphicDetail?.outputPort);
+    setValue("powerCapacity", cardGraphicDetail?.powerCapacity);
     setValue("launchTime", "2023");
-    setValue("imageUrl", cardGraphicDetail?.productInfo.lstProductImageUrl);
+    setValue("imageUrl", cardGraphicDetail?.productInfo?.lstProductImageUrl);
     setValue("graphicsEngine", cardGraphicDetail?.graphicsEngine);
     setValue("standardBus", cardGraphicDetail?.standardBus);
     setValue("memory", cardGraphicDetail?.memory);
@@ -188,48 +165,55 @@ const UpdateCard: React.FC = () => {
     },
   );
   const onSubmit = handleSubmit(async (data) => {
+    let images = [];
+    showModal();
+    setIsSubmitting(true);
+    if (file) {
+      const form = new FormData();
+      for (let i = 0; i < file.length; i++) {
+        form.append("files", file[i]);
+      }
+      const res = await dispatch(uploadManyImagesProductSmartPhone(form));
+      unwrapResult(res);
+      const d = res?.payload?.data?.data;
+      for (let i = 0; i < d.length; i++) {
+        images.push(d[i]?.fileUrl);
+      }
+    }
     const body = JSON.stringify({
       productInfo: {
-        brandId: Number(data.brand) || 1,
-        categoryId: Number(data.category) || 1,
-        productId: null,
-        characteristicId: Number(data.characteristic) || 1,
-        productCode: generateRandomString(10),
+        brandId: Number(data.brand) || 20,
+        categoryId: 15,
+        productId: cardGraphicDetail.productInfo.productId,
+        characteristicId: 12,
+        productCode: cardGraphicDetail.productInfo.productCode,
         name: data.name,
         description: data?.description,
         design: data?.design,
         dimension: data?.dimension,
         mass: Number(data?.mass),
-        launchTime: 2023,
+        launchTime: Number(data.launchTime),
         accessories: data?.accessories,
         productStatus: 100,
-        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map(
-          (item, index) => ({
-            typeId: Number(
-              cardGraphicDetail?.productInfo?.lstProductTypeAndPrice[index]
-                ?.typeId,
-            ),
-            ram: item?.ram,
-            storageCapacity: item?.storageCapacity,
-            color: item?.color,
-            price: Number(item?.price),
-            salePrice: Number(item?.salePrice),
-            quantity: Number(item?.quantity),
-            depotId: Number(item?.depot),
-          }),
-        ),
+        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
+          typeId: null,
+          price: Number(item?.price),
+          salePrice: Number(item?.salePrice),
+          quantity: Number(item?.quantity),
+          depotId: Number(item?.depot),
+        })),
 
-        lstProductImageUrl: [],
+        lstProductImageUrl: images || [],
       },
-      ramFor: true,
-      model: data.model,
-      ramType: data.ramType,
-      capacity: data.capacity,
-      bus: Number(data.bus),
-      latency: data.latency,
-      voltage: data.voltage,
-      led: data.led,
-      ramTechnology: data.ramTechnology,
+      cardFor: true,
+      graphicsEngine: data.graphicsEngine,
+      standardBus: data.standardBus,
+      memory: data.memory,
+      memorySpeed: data.memorySpeed,
+      engineClock: data.engineClock,
+      outputPort: data.outputPort,
+      powerCapacity: data.powerCapacity,
+      maximumResolution: data.maximumResolution,
     });
 
     try {
@@ -237,7 +221,7 @@ const UpdateCard: React.FC = () => {
       const res = await dispatch(updateCardGraphic({ id, body }));
       unwrapResult(res);
       const d = res?.payload?.data;
-      if (d?.code !== 200) return toast.error(d?.message);
+      // if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Cập nhật sản phẩm thành công ");
       await dispatch(getCardGraphic(""));
       await navigate(path.cardGrap);
@@ -294,17 +278,9 @@ const UpdateCard: React.FC = () => {
     }
     setValue("accessories", cardGraphicDetail?.productInfo?.accessories);
     setValue("mass", cardGraphicDetail?.productInfo?.mass.toString());
-    setValue(
-      "color",
-      cardGraphicDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
-    );
     setValue("monitor", cardGraphicDetail?.monitor);
     setValue("description", cardGraphicDetail?.productInfo?.description);
     setValue("brand", cardGraphicDetail?.productInfo?.brandId.toString());
-    setValue(
-      "characteristic",
-      cardGraphicDetail?.productInfo?.characteristicId.toString(),
-    );
     setValue("name", cardGraphicDetail?.productInfo?.name);
     setValue(
       "salePrice",
@@ -314,10 +290,8 @@ const UpdateCard: React.FC = () => {
       "price",
       cardGraphicDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
-    setValue("operatingSystem", cardGraphicDetail?.operatingSystem);
     setValue("design", cardGraphicDetail?.productInfo?.design);
     setValue("dimension", cardGraphicDetail?.productInfo?.dimension);
-    setValue("category", cardGraphicDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
     setValue("imageUrl", cardGraphicDetail?.productInfo.lstProductImageUrl);
     setValue("graphicsEngine", cardGraphicDetail?.graphicsEngine);
@@ -359,7 +333,7 @@ const UpdateCard: React.FC = () => {
 
   return (
     <div className="bg-white shadow ">
-      <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm thành công</h2>
+      <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm </h2>
       <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
@@ -377,35 +351,15 @@ const UpdateCard: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="brand"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
-            defaultValue={""}
+            defaultValue={cardGraphicDetail?.productInfo?.brandId}
             options={brand?.data?.data}
             register={register}
-            isBrand={true}
           >
             {errors.brand?.message}
           </SelectCustom>
         </Form.Item>
 
-        <Form.Item
-          label="Đặc điểm sản phẩm"
-          name="characteristic"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="characteristic"
-            // label="Hãng xe"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={character?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.characteristic?.message}
-          </SelectCustom>
-        </Form.Item>
         <Form.Item
           label="Tên sản phẩm"
           name="name"
@@ -421,40 +375,6 @@ const UpdateCard: React.FC = () => {
           />
         </Form.Item>
 
-        <Form.Item label="Thiết kế" name="design" rules={[{ required: true }]}>
-          <Input
-            name="design"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.design?.message}
-            placeholder="Nguyên khối"
-          />
-        </Form.Item>
-        <Form.Item
-          label="Kích thước"
-          name="dimension"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="dimension"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.dimension?.message}
-            placeholder="Dài 159.9 mm - Ngang 76.7 mm - Dày 8.25 mm "
-          />
-        </Form.Item>
-        <Form.Item label="Khối lượng" name="mass" rules={[{ required: true }]}>
-          <Input
-            name="mass"
-            register={register}
-            type="number"
-            className=""
-            errorMessage={errors.mass?.message}
-            placeholder=" 221 "
-          />
-        </Form.Item>
         <Form.Item
           label="Năm ra mắt"
           name="launchTime"
@@ -469,135 +389,88 @@ const UpdateCard: React.FC = () => {
             placeholder="2023"
           />
         </Form.Item>
-        <Form.Item
-          label="Phụ kiện"
-          name="accessories"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="accessories"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.accessories?.message}
-            placeholder="Tai nghe, sạc"
-          />
-        </Form.Item>
+
         <Form.Item
           label="Loại sản phẩm"
           name="lstProductTypeAndPrice"
           rules={[{ required: true }]}
         >
           <ul>
-            {fields.map((item, index) => (
-              <li key={item.id}>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Ram"
-                    name={`lstProductTypeAndPrice.${index}.ram`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.ram`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="8Gb"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1TB"
-                    />
-                  </Form.Item>
-                </div>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Giá"
-                    name={`lstProductTypeAndPrice.${index}.price`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.price`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="45000000"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Giá khuyến mãi"
-                    name={`lstProductTypeAndPrice.${index}.salePrice`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.salePrice`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="44000000"
-                    />
-                  </Form.Item>
-                </div>
-                <Form.Item
-                  label="Kho hàng"
-                  name={`lstProductTypeAndPrice.${index}.depot`}
-                  rules={[{ required: true }]}
-                >
-                  <SelectCustom
-                    className={"flex-1 text-black"}
-                    id={`lstProductTypeAndPrice.${index}.depot`}
-                    // label="Hãng xe"
-                    placeholder="Vui lòng chọn"
-                    options={depot?.data?.data}
-                    register={register}
-                  >
-                    {errors.depotId?.message}
-                  </SelectCustom>
-                </Form.Item>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Số lượng sản phẩm"
-                    name={`lstProductTypeAndPrice.${index}.quantity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.quantity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1000"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Màu"
-                    name={`lstProductTypeAndPrice.${index}.color`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.color`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="Titan tự nhiên"
-                    />
-                  </Form.Item>
-                </div>
-                <Form.Item>
-                  <Button
-                    type="default"
-                    onClick={() => remove(index)}
-                    block
-                    icon={<PlusOutlined />}
-                  >
-                    Xóa trường này
-                  </Button>
-                </Form.Item>
-                {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
-              </li>
-            ))}
+            {cardGraphicDetail?.productInfo?.lstProductTypeAndPrice?.map(
+              (item: any, index: number) => {
+                return (
+                  <li key={index}>
+                    <div className="flex justify-between space-x-1">
+                      <Form.Item
+                        label="Giá"
+                        name={`lstProductTypeAndPrice.${index}.price`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.price`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="45000000"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label="Giá khuyến mãi"
+                        name={`lstProductTypeAndPrice.${index}.salePrice`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.salePrice`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="44000000"
+                        />
+                      </Form.Item>
+                    </div>
+                    <Form.Item
+                      label="Kho hàng"
+                      name={`lstProductTypeAndPrice.${index}.depot`}
+                      rules={[{ required: true }]}
+                    >
+                      <SelectCustom
+                        className={"flex-1 text-black"}
+                        id={`lstProductTypeAndPrice.${index}.depot`}
+                        placeholder="Vui lòng chọn"
+                        defaultValue={item.depotId}
+                        options={depot?.data?.data}
+                        register={register}
+                      >
+                        {errors.depotId?.message}
+                      </SelectCustom>
+                    </Form.Item>
+                    <div>
+                      <Form.Item
+                        label="Số lượng sản phẩm"
+                        name={`lstProductTypeAndPrice.${index}.quantity`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.quantity`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="1000"
+                        />
+                      </Form.Item>
+                    </div>
+                    <Form.Item>
+                      <Button
+                        type="default"
+                        onClick={() => remove(index)}
+                        block
+                        icon={<PlusOutlined />}
+                      >
+                        Xóa trường này
+                      </Button>
+                    </Form.Item>
+                    {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
+                  </li>
+                );
+              },
+            )}
             <Form.Item>
               <Button
                 type="dashed"
@@ -619,92 +492,113 @@ const UpdateCard: React.FC = () => {
           </ul>
         </Form.Item>
 
-        <Form.Item label="Loại ram" name="ramType" rules={[{ required: true }]}>
-          <Input
-            name="ramType"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.ramType?.message}
-            placeholder=""
-          />
-        </Form.Item>
-        <Form.Item label="Kiểu" name="model" rules={[{ required: true }]}>
-          <Input
-            name="model"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.model?.message}
-            placeholder=""
-          />
-        </Form.Item>
         <Form.Item
-          label="Dung tích"
-          name="capacity"
+          label="Đồ họa động cơ"
+          name="graphicsEngine"
           rules={[{ required: true }]}
         >
           <Input
-            name="capacity"
+            name="graphicsEngine"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.capacity?.message}
-            placeholder=""
-          />
-        </Form.Item>
-        <Form.Item label="Bus" name="bus" rules={[{ required: true }]}>
-          <Input
-            name="bus"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.bus?.message}
-            placeholder=""
-          />
-        </Form.Item>
-        <Form.Item label="Độ trễ" name="latency" rules={[{ required: true }]}>
-          <Input
-            name="latency"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.latency?.message}
-            placeholder=""
-          />
-        </Form.Item>
-        <Form.Item label="Vol" name="voltage" rules={[{ required: true }]}>
-          <Input
-            name="voltage"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.voltage?.message}
-            placeholder=""
-          />
-        </Form.Item>
-        <Form.Item label="Led" name="led" rules={[{ required: true }]}>
-          <Input
-            name="led"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.led?.message}
+            errorMessage={errors.graphicsEngine?.message}
             placeholder=""
           />
         </Form.Item>
 
         <Form.Item
-          label="Công nghệ"
-          name="ramTechnology"
+          label="Tiêu chuẩn bus"
+          name="standardBus"
           rules={[{ required: true }]}
         >
           <Input
-            name="ramTechnology"
+            name="standardBus"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.ramTechnology?.message}
+            errorMessage={errors.standardBus?.message}
+            placeholder=""
+          />
+        </Form.Item>
+        <Form.Item label="Bộ nhớ" name="memory" rules={[{ required: true }]}>
+          <Input
+            name="memory"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.memory?.message}
+            placeholder=""
+          />
+        </Form.Item>
+        <Form.Item
+          label="Tốc độ bộ nhớ"
+          name="memorySpeed"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="memorySpeed"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.memorySpeed?.message}
+            placeholder=""
+          />
+        </Form.Item>
+        <Form.Item
+          label="Độ trễ"
+          name="engineClock"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="engineClock"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.engineClock?.message}
+            placeholder=""
+          />
+        </Form.Item>
+        <Form.Item
+          label="Cổng ra"
+          name="outputPort"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="outputPort"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.outputPort?.message}
+            placeholder=""
+          />
+        </Form.Item>
+        <Form.Item
+          label="Công suất điện"
+          name="powerCapacity"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="powerCapacity"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.powerCapacity?.message}
+            placeholder=""
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Độ phân giải tối đa"
+          name="maximumResolution"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="maximumResolution"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.maximumResolution?.message}
             placeholder=""
           />
         </Form.Item>
@@ -717,7 +611,7 @@ const UpdateCard: React.FC = () => {
         >
           <div className="flex flex-col items-start ">
             <div className="my-5 w-24 space-y-5 justify-between items-center">
-              {imageUrls.map((imageUrl, index) => {
+              {imageUrls?.map((imageUrl, index) => {
                 return (
                   <div key={index}>
                     <img

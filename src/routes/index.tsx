@@ -22,11 +22,16 @@ import ListComputerPower from "src/pages/Product/List/ComputerPower/ListComputer
 import ListMainboard from "src/pages/Product/List/Mainboard/ListMainboard";
 import ListMicrophone from "src/pages/Product/List/Microphone/ListMicrophone";
 import ListMonitor from "src/pages/Product/List/Monitor/ListMonitor";
+import UpdateAdapter from "src/pages/Product/Update/UpdateAdapter";
 import UpdateBackupCharger from "src/pages/Product/Update/UpdateBackupCharger";
+import UpdateCardGraphic from "src/pages/Product/Update/UpdateCardGraphic";
 import UpdateComputerPower from "src/pages/Product/Update/UpdateComputerPower";
 import UpdateMainboard from "src/pages/Product/Update/UpdateMainboard";
 import UpdateMicrophone from "src/pages/Product/Update/UpdateMicrophone";
 import UpdateMonitor from "src/pages/Product/Update/UpdateMonitor";
+import UpdateProcessor from "src/pages/Product/Update/UpdateProcessor";
+import UpdateRam from "src/pages/Product/Update/UpdateRam";
+import UpdateRom from "src/pages/Product/Update/UpdateRom";
 
 const MouseDetail = lazy(() => import("src/pages/Product/Detail/Mouse_Detail"));
 const KeyboardDetail = lazy(
@@ -225,6 +230,10 @@ export const routeMain = [
     Component: RamDetail,
   },
   {
+    path: path.ramUpdate,
+    Component: UpdateRam,
+  },
+  {
     path: path.ramNew,
     Component: NewRam,
   },
@@ -239,6 +248,18 @@ export const routeMain = [
   {
     path: path.romNew,
     Component: NewRom,
+  },
+  {
+    path: path.romUpdate,
+    Component: UpdateRom,
+  },
+  {
+    path: path.cardUpdate,
+    Component: UpdateCardGraphic,
+  },
+  {
+    path: path.processorUpdate,
+    Component: UpdateProcessor,
   },
   {
     path: path.processor,
@@ -463,7 +484,7 @@ export const routeMain = [
   },
   {
     path: path.adapterUpdate,
-    Component: UpdateMonitor,
+    Component: UpdateAdapter,
   },
   {
     path: "*",

@@ -22,12 +22,7 @@ export default function TabletDetail() {
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5]);
   const [activeImage, setActiveImage] = useState("");
   const imageRef = useRef<HTMLImageElement>(null);
-  const [price, setPrice] = useState(
-    tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.price,
-  );
-  const [salePrice, setSalePrice] = useState(
-    tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice,
-  );
+
   const currentImages = useMemo(
     () =>
       tabletDetail?.productInfo?.lstProductImageUrl
@@ -45,18 +40,12 @@ export default function TabletDetail() {
     ) {
       setActiveImage(tabletDetail?.productInfo?.lstProductImageUrl[0]);
     }
-  }, [tabletDetail]);
+  }, [tabletDetail, activeImage]);
 
   useEffect(() => {
     dispatch(getDetailTablet(id));
   }, [id]);
 
-  useEffect(() => {
-    setPrice(tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.price);
-    setSalePrice(
-      tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice,
-    );
-  }, [tabletDetail]);
   const next = () => {
     if (
       currentIndexImages[1] <
@@ -74,25 +63,6 @@ export default function TabletDetail() {
 
   const chooseActive = (img: string) => {
     setActiveImage(img);
-  };
-
-  const onClickChangeColor = (ram: string, rom: string, color: string) => {
-    if (
-      ram === tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram &&
-      rom ===
-        tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.storageCapacity &&
-      color === tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.color
-    ) {
-      setPrice(tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.price);
-      setSalePrice(
-        tabletDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice,
-      );
-    } else {
-      setPrice(tabletDetail?.productInfo?.lstProductTypeAndPrice[1]?.price);
-      setSalePrice(
-        tabletDetail?.productInfo?.lstProductTypeAndPrice[1]?.salePrice,
-      );
-    }
   };
 
   const handleZoom = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {

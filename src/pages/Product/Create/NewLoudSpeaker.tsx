@@ -10,7 +10,7 @@ import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
-import { schemaProductLoudSpeaker, schemaProductRam } from "src/utils/rules";
+import { schemaProductLoudSpeaker } from "src/utils/rules";
 import {
   generateRandomString,
   isAxiosUnprocessableEntityError,
@@ -37,7 +37,6 @@ const normFile = (e: any) => {
 
 interface FormData {
   brand: string;
-  category: string;
   characteristic: string;
   name: string;
   description: string;
@@ -47,9 +46,6 @@ interface FormData {
   launchTime: string | undefined;
   accessories: string | undefined;
   productStatus: string | undefined;
-  ram: string;
-  storageCapacity: string;
-  color: string;
   price: string;
   salePrice: string | undefined;
 }
@@ -136,7 +132,7 @@ const NewLoudSpeaker: React.FC = () => {
         brandId: Number(data.brand),
         categoryId: 25,
         productId: null,
-        characteristicId: Number(data.characteristic),
+        characteristicId: 12,
         productCode: generateRandomString(10),
         name: data.name,
         description: data?.description,
@@ -148,9 +144,6 @@ const NewLoudSpeaker: React.FC = () => {
         productStatus: 100,
         lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
           typeId: null,
-          ram: item?.ram,
-          storageCapacity: item?.storageCapacity,
-          color: item?.color,
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
           quantity: Number(item?.quantity),
@@ -265,30 +258,6 @@ const NewLoudSpeaker: React.FC = () => {
               <li key={item.id}>
                 <div className="flex justify-between space-x-1">
                   <Form.Item
-                    label="Ram"
-                    name={`lstProductTypeAndPrice.${index}.ram`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.ram`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                </div>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
                     label="Giá"
                     name={`lstProductTypeAndPrice.${index}.price`}
                     rules={[{ required: true }]}
@@ -334,17 +303,6 @@ const NewLoudSpeaker: React.FC = () => {
                   >
                     <Input
                       name={`lstProductTypeAndPrice.${index}.quantity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Màu"
-                    name={`lstProductTypeAndPrice.${index}.color`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.color`}
                       key={item.id} // important to include key with field's id
                       register={register}
                     />

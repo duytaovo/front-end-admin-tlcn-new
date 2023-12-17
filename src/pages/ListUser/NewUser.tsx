@@ -53,13 +53,18 @@ const FormDisabledDemo: React.FC = () => {
   const [file, setFile] = useState<File[]>();
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
   const [addressOption, setAddresOption] = useState<any>();
-  const [methodTransport, setMethodTransport] = useState<any>();
   const addressSelect =
     addressOption?.ward.name +
     " " +
     addressOption?.district.name +
     " " +
     addressOption?.city.name;
+  const addressIdSelect =
+    addressOption?.ward.id +
+    "-" +
+    addressOption?.district.id +
+    "-" +
+    addressOption?.city.id;
   // Tạo một mảng chứa các URL tạm thời cho ảnh
   const imageUrls: string[] = [];
 
@@ -102,7 +107,7 @@ const FormDisabledDemo: React.FC = () => {
     try {
       const body = JSON.stringify({
         email: data.email,
-        address: data.address + " " + addressSelect,
+        address: data.address + ", " + addressSelect + " + " + addressIdSelect,
         password: data.password,
         gender: data.gender,
         phoneNumber: data.phoneNumber,

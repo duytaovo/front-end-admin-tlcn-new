@@ -9,7 +9,7 @@ import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
-import { schemaProductSmartWatch } from "src/utils/rules";
+import { schemaProductKeyboard } from "src/utils/rules";
 import {
   getIdFromNameId,
   isAxiosUnprocessableEntityError,
@@ -24,14 +24,11 @@ import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
 import {
-  getSmartWatch,
-  updateSmartWatch,
-} from "src/store/product/smartwatchSlice";
-import {
   getDetailkeyboard,
   getKeyboard,
   updateKeyboard,
 } from "src/store/accessory/keyboard";
+import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -42,37 +39,40 @@ const normFile = (e: any) => {
 
 interface FormData {
   brand: string;
-  category: string;
-  characteristic: string;
   name: string;
   description: string;
-  design: string | undefined;
-  dimension: string | undefined;
-  mass: string | undefined;
   launchTime: string | undefined;
-  accessories: string | undefined;
   productStatus: number | undefined;
-  ram: string;
-  storageCapacity: string;
-  color: string;
   price: string;
   salePrice: string | undefined;
-  monitor: string;
 }
 
 const UpdateLoudSpeaker: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const {
     handleSubmit,
     formState: { errors },
     setError,
     register,
     setValue,
+    getValues,
     watch,
     control,
-    getValues,
   } = useForm({
-    resolver: yupResolver(schemaProductSmartWatch),
+    resolver: yupResolver(schemaProductKeyboard),
   });
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -112,7 +112,7 @@ const UpdateLoudSpeaker: React.FC = () => {
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setImages(keyboardDetail.productInfo.lstProductImageUrl);
+    setImages(keyboardDetail.productInfo?.lstProductImageUrl);
 
     const productInfo = keyboardDetail?.productInfo;
 
@@ -121,15 +121,7 @@ const UpdateLoudSpeaker: React.FC = () => {
       Array.isArray(productInfo.lstProductTypeAndPrice)
     ) {
       // Define the fields you want to set dynamically
-      const fields = [
-        "ram",
-        "storageCapacity",
-        "color",
-        "price",
-        "salePrice",
-        "quantity",
-        "depot",
-      ];
+      const fields = ["price", "salePrice", "quantity", "depot"];
 
       // Loop through the array and set values dynamically
       productInfo.lstProductTypeAndPrice.forEach(
@@ -146,56 +138,57 @@ const UpdateLoudSpeaker: React.FC = () => {
         },
       );
     }
-    setValue("accessories", keyboardDetail?.productInfo?.accessories);
-    setValue("battery", keyboardDetail?.battery);
-    setValue("charging", keyboardDetail?.charging);
-    setValue("chip", keyboardDetail?.chip);
-    setValue("mass", keyboardDetail?.productInfo?.mass.toString());
+    setValue("compatible", keyboardDetail?.compatible);
+    setValue("connector", keyboardDetail?.connector);
+    setValue("led", keyboardDetail?.led);
     setValue(
       "color",
       keyboardDetail?.productInfo?.lstProductTypeAndPrice[0]?.color.toString(),
     );
-    setValue("monitor", keyboardDetail?.monitor);
-    setValue("networkSupport", keyboardDetail?.networkSupport);
+    setValue("numberOfKeys", keyboardDetail?.numberOfKeys);
+    setValue("keycapsMaterial", keyboardDetail?.keycapsMaterial);
     setValue("description", keyboardDetail?.productInfo?.description);
     setValue("brand", keyboardDetail?.productInfo?.brandId.toString());
-    setValue(
-      "characteristic",
-      keyboardDetail?.productInfo?.characteristicId.toString(),
-    );
+
     setValue("name", keyboardDetail?.productInfo?.name);
-    setValue("sim", keyboardDetail?.sim);
+    setValue("specialKeys", keyboardDetail?.specialKeys);
     setValue(
       "salePrice",
       keyboardDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
-    setValue("rearCamera", keyboardDetail?.rearCamera);
+    setValue("softwareSupport", keyboardDetail?.softwareSupport);
     setValue(
       "price",
       keyboardDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
-    setValue("frontCamera", keyboardDetail?.frontCamera);
-    setValue("operatingSystem", keyboardDetail?.operatingSystem);
-    setValue("design", keyboardDetail?.productInfo?.design);
-    setValue("dimension", keyboardDetail?.productInfo?.dimension);
-    setValue("category", keyboardDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("imageUrl", keyboardDetail?.productInfo.lstProductImageUrl);
   }, [keyboardDetail]);
 
   const onSubmit = handleSubmit(async (data) => {
+    let images = [];
+    showModal();
+    setIsSubmitting(true);
+    if (file) {
+      const form = new FormData();
+      for (let i = 0; i < file.length; i++) {
+        form.append("files", file[i]);
+      }
+      const res = await dispatch(uploadManyImagesProductSmartPhone(form));
+      unwrapResult(res);
+      const d = res?.payload?.data?.data;
+      for (let i = 0; i < d.length; i++) {
+        images.push(d[i]?.fileUrl);
+      }
+    }
     const body = JSON.stringify({
       productInfo: {
-        brandId: Number(data.brand) || 1,
-        categoryId: Number(data.category),
+        brandId: Number(data.brand) || 20,
+        categoryId: 23,
         productId: keyboardDetail.productInfo.productId,
-        characteristicId: Number(data.characteristic) || 1,
+        characteristicId: 12,
         productCode: keyboardDetail.productInfo.productCode,
         name: data.name,
         description: data?.description,
-        design: data?.design,
-        dimension: data?.dimension,
-        mass: Number(data?.mass),
         launchTime: 2023,
         accessories: data?.accessories,
         productStatus: 100,
@@ -204,36 +197,32 @@ const UpdateLoudSpeaker: React.FC = () => {
             typeId: Number(
               keyboardDetail?.productInfo?.lstProductTypeAndPrice[index].typeId,
             ),
-            ram: item?.ram,
-            storageCapacity: item?.storageCapacity,
-            color: item?.color,
             price: Number(item?.price),
             salePrice: Number(item?.salePrice),
             quantity: Number(item?.quantity),
             depotId: Number(item?.depot),
           }),
         ),
-        lstProductImageUrl: data.imageUrl,
+        lstProductImageUrl: images || [],
       },
-      monitor: data.monitor,
-      operatingSystem: data.operatingSystem,
+      keyboardType: true,
+      compatible: data.compatible,
       connector: data.connector,
-      health: data.health,
-      cpu: data.cpu,
-      internalMemory: data.internalMemory,
-      battery: data.battery,
-      connectToOs: data.connectToOs,
+      led: data.led,
+      numberOfKeys: data.numberOfKeys,
+      keycapsMaterial: data.keycapsMaterial,
+      specialKeys: data.specialKeys,
+      softwareSupport: data.softwareSupport,
     });
 
     try {
-      setIsSubmitting(true);
       const res = await dispatch(updateKeyboard({ id, body }));
       unwrapResult(res);
       const d = res?.payload?.data;
-      if (d?.code !== 200) return toast.error(d?.message);
+      // if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Chỉnh sửa thành công ");
       await dispatch(getKeyboard(""));
-      await navigate(path.smartWatch);
+      await navigate(path.keyboard);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
@@ -251,7 +240,7 @@ const UpdateLoudSpeaker: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setImages(keyboardDetail.productInfo.lstProductImageUrl);
+    setImages(keyboardDetail.productInfo?.lstProductImageUrl);
 
     const productInfo = keyboardDetail?.productInfo;
 
@@ -285,41 +274,30 @@ const UpdateLoudSpeaker: React.FC = () => {
         },
       );
     }
-    setValue("accessories", keyboardDetail?.productInfo?.accessories);
-    setValue("battery", keyboardDetail?.battery);
-    setValue("charging", keyboardDetail?.charging);
-    setValue("chip", keyboardDetail?.chip);
-    setValue("mass", keyboardDetail?.productInfo?.mass.toString());
+    setValue("compatible", keyboardDetail?.compatible);
+    setValue("connector", keyboardDetail?.connector);
+    setValue("led", keyboardDetail?.led);
     setValue(
       "color",
-      keyboardDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
+      keyboardDetail?.productInfo?.lstProductTypeAndPrice[0]?.color.toString(),
     );
-    setValue("monitor", keyboardDetail?.monitor);
-    setValue("networkSupport", keyboardDetail?.networkSupport);
+    setValue("numberOfKeys", keyboardDetail?.numberOfKeys);
+    setValue("keycapsMaterial", keyboardDetail?.keycapsMaterial);
     setValue("description", keyboardDetail?.productInfo?.description);
     setValue("brand", keyboardDetail?.productInfo?.brandId.toString());
-    setValue(
-      "characteristic",
-      keyboardDetail?.productInfo?.characteristicId.toString(),
-    );
+
     setValue("name", keyboardDetail?.productInfo?.name);
-    setValue("sim", keyboardDetail?.sim);
+    setValue("specialKeys", keyboardDetail?.specialKeys);
     setValue(
       "salePrice",
       keyboardDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
-    setValue("rearCamera", keyboardDetail?.rearCamera);
+    setValue("softwareSupport", keyboardDetail?.softwareSupport);
     setValue(
       "price",
       keyboardDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
-    setValue("frontCamera", keyboardDetail?.frontCamera);
-    setValue("operatingSystem", keyboardDetail?.operatingSystem);
-    setValue("design", keyboardDetail?.productInfo?.design);
-    setValue("dimension", keyboardDetail?.productInfo?.dimension);
-    setValue("category", keyboardDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("imageUrl", keyboardDetail?.productInfo.lstProductImageUrl);
   };
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
@@ -361,77 +339,6 @@ const UpdateLoudSpeaker: React.FC = () => {
         onSubmitCapture={onSubmit}
       >
         <Form.Item
-          label="Danh mục sản phẩm"
-          name=""
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black "}
-            id="category"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={category?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.category?.message}
-          </SelectCustom>
-        </Form.Item>
-        <Form.Item
-          label="Hãng sản xuất"
-          name="brand"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black  "}
-            id="brand"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={brand?.data?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.brand?.message}
-          </SelectCustom>
-        </Form.Item>
-        <Form.Item
-          label="Hệ điều hành"
-          name="operatingSystem"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="operatingSystem"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={[
-              { id: "iOS", name: "iOS" },
-              { id: "Android", name: "android" },
-            ]}
-            register={register}
-            isBrand={true}
-          >
-            {errors.operatingSystem?.message}
-          </SelectCustom>
-        </Form.Item>
-        <Form.Item
-          label="Đặc điểm sản phẩm"
-          name="characteristic"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="characteristic"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={character?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.characteristic?.message}
-          </SelectCustom>
-        </Form.Item>
-        <Form.Item
           label="Tên sản phẩm"
           name="name"
           rules={[{ required: true }]}
@@ -446,40 +353,6 @@ const UpdateLoudSpeaker: React.FC = () => {
           />
         </Form.Item>
 
-        <Form.Item label="Thiết kế" name="design" rules={[{ required: true }]}>
-          <Input
-            name="design"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.design?.message}
-            placeholder="Nguyên khối"
-          />
-        </Form.Item>
-        <Form.Item
-          label="Kích thước"
-          name="dimension"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="dimension"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.dimension?.message}
-            placeholder="Dài 159.9 mm - Ngang 76.7 mm - Dày 8.25 mm "
-          />
-        </Form.Item>
-        <Form.Item label="Khối lượng" name="mass" rules={[{ required: true }]}>
-          <Input
-            name="mass"
-            register={register}
-            type="number"
-            className=""
-            errorMessage={errors.mass?.message}
-            placeholder=" 221 "
-          />
-        </Form.Item>
         <Form.Item
           label="Năm ra mắt"
           name="launchTime"
@@ -494,134 +367,100 @@ const UpdateLoudSpeaker: React.FC = () => {
             placeholder="2023"
           />
         </Form.Item>
-        <Form.Item
-          label="Phụ kiện"
-          name="accessories"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="accessories"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.accessories?.message}
-            placeholder="Tai nghe, sạc"
-          />
-        </Form.Item>
+
         <Form.Item
           label="Loại sản phẩm"
           name="lstProductTypeAndPrice"
           rules={[{ required: true }]}
         >
           <ul>
-            {fields.map((item, index) => (
-              <li key={item.id}>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Ram"
-                    name={`lstProductTypeAndPrice.${index}.ram`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.ram`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="8Gb"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1TB"
-                    />
-                  </Form.Item>
-                </div>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Giá"
-                    name={`lstProductTypeAndPrice.${index}.price`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.price`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="45000000"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Giá khuyến mãi"
-                    name={`lstProductTypeAndPrice.${index}.salePrice`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.salePrice`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="44000000"
-                    />
-                  </Form.Item>
-                </div>
-                <Form.Item
-                  label="Kho hàng"
-                  name={`lstProductTypeAndPrice.${index}.depot`}
-                  rules={[{ required: true }]}
-                >
-                  <SelectCustom
-                    className={"flex-1 text-black"}
-                    id={`lstProductTypeAndPrice.${index}.depot`}
-                    placeholder="Vui lòng chọn"
-                    options={depot?.data?.data}
-                    register={register}
-                  >
-                    {errors.depotId?.message}
-                  </SelectCustom>
-                </Form.Item>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Số lượng sản phẩm"
-                    name={`lstProductTypeAndPrice.${index}.quantity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.quantity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1000"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Màu"
-                    name={`lstProductTypeAndPrice.${index}.color`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.color`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="Titan tự nhiên"
-                    />
-                  </Form.Item>
-                </div>
-                <Form.Item>
-                  <Button
-                    type="default"
-                    onClick={() => remove(index)}
-                    block
-                    icon={<PlusOutlined />}
-                  >
-                    Xóa trường này
-                  </Button>
-                </Form.Item>
-                {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
-              </li>
-            ))}
+            {keyboardDetail?.productInfo?.lstProductTypeAndPrice?.map(
+              (item: any, index: number) => {
+                return (
+                  <li key={index}>
+                    <div className="flex justify-between space-x-1">
+                      <Form.Item
+                        label="Giá"
+                        name={`lstProductTypeAndPrice.${index}.price`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.price`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="45000000"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label="Giá khuyến mãi"
+                        name={`lstProductTypeAndPrice.${index}.salePrice`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.salePrice`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="44000000"
+                        />
+                      </Form.Item>
+                    </div>
+                    <Form.Item
+                      label="Kho hàng"
+                      name={`lstProductTypeAndPrice.${index}.depot`}
+                      rules={[{ required: true }]}
+                    >
+                      <SelectCustom
+                        className={"flex-1 text-black"}
+                        id={`lstProductTypeAndPrice.${index}.depot`}
+                        placeholder="Vui lòng chọn"
+                        defaultValue={item.depotId}
+                        options={depot?.data?.data}
+                        register={register}
+                      >
+                        {errors.depotId?.message}
+                      </SelectCustom>
+                    </Form.Item>
+                    <div>
+                      <Form.Item
+                        label="Số lượng sản phẩm"
+                        name={`lstProductTypeAndPrice.${index}.quantity`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.quantity`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="1000"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label="Màu"
+                        name={`lstProductTypeAndPrice.${index}.color`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.color`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="Titan tự nhiên"
+                        />
+                      </Form.Item>
+                    </div>
+                    <Form.Item>
+                      <Button
+                        type="default"
+                        onClick={() => remove(index)}
+                        block
+                        icon={<PlusOutlined />}
+                      >
+                        Xóa trường này
+                      </Button>
+                    </Form.Item>
+                    {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
+                  </li>
+                );
+              },
+            )}
             <Form.Item>
               <Button
                 type="dashed"
@@ -643,33 +482,21 @@ const UpdateLoudSpeaker: React.FC = () => {
           </ul>
         </Form.Item>
 
-        <Form.Item label="Màn hình" name="monitor" rules={[{ required: true }]}>
-          <Input
-            name="monitor"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.monitor?.message}
-            placeholder="6.7 - Tần số quét 120 Hz"
-          />
-        </Form.Item>
-
         <Form.Item
-          label="Camera trước"
-          name="health"
+          label="Tương thích"
+          name="compatible"
           rules={[{ required: true }]}
         >
           <Input
-            name="health"
+            name="compatible"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.health?.message}
-            placeholder="12 MP"
+            errorMessage={errors.compatible?.message}
           />
         </Form.Item>
         <Form.Item
-          label="Cổng kết nối"
+          label="Kết nối"
           name="connector"
           rules={[{ required: true }]}
         >
@@ -679,55 +506,68 @@ const UpdateLoudSpeaker: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.connector?.message}
-            placeholder="Chính 48 MP & Phụ 12 MP, 12 MP"
           />
         </Form.Item>
-        <Form.Item label="Cpu" name="cpu" rules={[{ required: true }]}>
+        <Form.Item label="Led" name="led" rules={[{ required: true }]}>
           <Input
-            name="cpu"
+            name="led"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.cpu?.message}
-            placeholder=""
-          />
-        </Form.Item>
-        <Form.Item
-          label="Bộ nhớ trong"
-          name="internalMemory"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="internalMemory"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.internalMemory?.message}
-            placeholder="1 Nano internalMemory & 1 einternalMemory"
-          />
-        </Form.Item>
-        <Form.Item label="Pin" name="battery" rules={[{ required: true }]}>
-          <Input
-            name="battery"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.battery?.message}
-            placeholder="4422 mAh"
+            errorMessage={errors.led?.message}
           />
         </Form.Item>
         <Form.Item
-          label="Kết nối hệ điều hành"
-          name="connectToOs"
+          label="Số khóa"
+          name="numberOfKeys"
           rules={[{ required: true }]}
         >
           <Input
-            name="connectToOs"
+            name="numberOfKeys"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.connectToOs?.message}
-            placeholder=""
+            errorMessage={errors.numberOfKeys?.message}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Chất liệu khóa"
+          name="keycapsMaterial"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="keycapsMaterial"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.keycapsMaterial?.message}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Khóa đặc biệt"
+          name="specialKeys"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="specialKeys"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.specialKeys?.message}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Hỗ trợ phần mềm"
+          name="softwareSupport"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="softwareSupport"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.softwareSupport?.message}
           />
         </Form.Item>
 
@@ -740,7 +580,7 @@ const UpdateLoudSpeaker: React.FC = () => {
         >
           <div className="flex flex-col items-start ">
             <div className="my-5 w-24 space-y-5 justify-between items-center">
-              {imageUrls.map((imageUrl, index) => {
+              {imageUrls?.map((imageUrl, index) => {
                 return (
                   <img
                     key={index}

@@ -1,7 +1,7 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Form } from "antd";
+import { Button, Form, Modal } from "antd";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -25,7 +25,6 @@ import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
 import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
 import {
-  addMouse,
   getDetailMouse,
   getMouse,
   updateMouse,
@@ -39,26 +38,31 @@ const normFile = (e: any) => {
 };
 
 interface FormData {
-  brand: string;
-  category: string;
-  characteristic: string;
   name: string;
   description: string;
-  design: string | undefined;
-  dimension: string | undefined;
   mass: string | undefined;
   launchTime: string | undefined;
   accessories: string | undefined;
   productStatus: string | undefined;
-  ram: string;
-  storageCapacity: string;
-  color: string;
   price: string;
   salePrice: string | undefined;
 }
 
-const NewMouse: React.FC = () => {
+const UpdateMouse: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const {
     handleSubmit,
     formState: { errors },
@@ -100,7 +104,7 @@ const NewMouse: React.FC = () => {
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setImages(mouseDetail.productInfo.lstProductImageUrl);
+    setImages(mouseDetail.productInfo?.lstProductImageUrl);
 
     const productInfo = mouseDetail?.productInfo;
 
@@ -109,15 +113,7 @@ const NewMouse: React.FC = () => {
       Array.isArray(productInfo.lstProductTypeAndPrice)
     ) {
       // Define the fields you want to set dynamically
-      const fields = [
-        "ram",
-        "storageCapacity",
-        "color",
-        "price",
-        "salePrice",
-        "quantity",
-        "depot",
-      ];
+      const fields = ["price", "salePrice", "quantity", "depot"];
 
       // Loop through the array and set values dynamically
       productInfo.lstProductTypeAndPrice.forEach(
@@ -134,23 +130,12 @@ const NewMouse: React.FC = () => {
         },
       );
     }
-    setValue("accessories", mouseDetail?.productInfo?.accessories);
     setValue("compatible", mouseDetail?.compatible);
     setValue("resolution", mouseDetail?.resolution);
     setValue("connector", mouseDetail?.connector);
-    setValue("mass", mouseDetail?.productInfo?.mass.toString());
-    setValue(
-      "color",
-      mouseDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
-    );
     setValue("led", mouseDetail?.led);
     setValue("softwareSupport", mouseDetail?.softwareSupport);
     setValue("description", mouseDetail?.productInfo?.description);
-    setValue("brand", mouseDetail?.productInfo?.brandId.toString());
-    setValue(
-      "characteristic",
-      mouseDetail?.productInfo?.characteristicId.toString(),
-    );
     setValue("name", mouseDetail?.productInfo?.name);
     setValue("batteryType", mouseDetail?.batteryType);
     setValue(
@@ -163,11 +148,8 @@ const NewMouse: React.FC = () => {
       mouseDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
     setValue("chargingPort", mouseDetail?.chargingPort);
-    setValue("design", mouseDetail?.productInfo?.design);
-    setValue("dimension", mouseDetail?.productInfo?.dimension);
-    setValue("category", mouseDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("files", mouseDetail?.productInfo.lstProductImageUrl);
+    setValue("files", mouseDetail?.productInfo?.lstProductImageUrl);
   }, [mouseDetail]);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
@@ -177,7 +159,8 @@ const NewMouse: React.FC = () => {
   );
   const onSubmit = handleSubmit(async (data) => {
     let images = [];
-
+    showModal();
+    setIsSubmitting(true);
     if (file) {
       const form = new FormData();
       for (let i = 0; i < file.length; i++) {
@@ -189,21 +172,16 @@ const NewMouse: React.FC = () => {
       for (let i = 0; i < d.length; i++) {
         images.push(d[i]?.fileUrl);
       }
-    } else {
-      toast.warning("Cần chọn ảnh");
-      return;
     }
     const body = JSON.stringify({
       productInfo: {
-        brandId: Number(data.brand) || 1,
+        brandId: 20,
         categoryId: 12,
-        productId: null,
-        characteristicId: Number(data.characteristic) || 1,
-        productCode: generateRandomString(10),
+        productId: Number(mouseDetail.productInfo.productId),
+        characteristicId: 12,
+        productCode: mouseDetail.productInfo.productCode,
         name: data.name,
         description: data?.description,
-        design: data?.design,
-        dimension: data?.dimension,
         mass: Number(data?.mass),
         launchTime: Number(data?.launchTime),
         accessories: data?.accessories,
@@ -233,12 +211,11 @@ const NewMouse: React.FC = () => {
     });
 
     try {
-      setIsSubmitting(true);
       const res = await dispatch(updateMouse({ id, body }));
       unwrapResult(res);
       const d = res?.payload?.data;
-      if (d?.code !== 200) return toast.error(d?.message);
-      await toast.success("Thêm sản phẩm thành công ");
+      // if (d?.code !== 200) return toast.error(d?.message);
+      await toast.success("Cập nhật sản phẩm thành công ");
       await dispatch(getMouse(""));
       await navigate(path.mouse);
     } catch (error: any) {
@@ -258,17 +235,52 @@ const NewMouse: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("ram", "");
-    setValue("accessories", "");
-    setValue("color", "");
-    setValue("description", "");
-    setValue("brand", "");
-    setValue("name", "");
-    setValue("salePrice", "");
-    setValue("price", "");
-    setValue("design", "");
-    setValue("dimension", "");
-    setValue("led", "");
+    setImages(mouseDetail.productInfo?.lstProductImageUrl);
+
+    const productInfo = mouseDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = ["price", "salePrice", "quantity", "depot"];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
+    setValue("compatible", mouseDetail?.compatible);
+    setValue("resolution", mouseDetail?.resolution);
+    setValue("connector", mouseDetail?.connector);
+    setValue("led", mouseDetail?.led);
+    setValue("softwareSupport", mouseDetail?.softwareSupport);
+    setValue("description", mouseDetail?.productInfo?.description);
+    setValue("name", mouseDetail?.productInfo?.name);
+    setValue("batteryType", mouseDetail?.batteryType);
+    setValue(
+      "salePrice",
+      mouseDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
+    );
+    setValue("time", mouseDetail?.time);
+    setValue(
+      "price",
+      mouseDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
+    );
+    setValue("chargingPort", mouseDetail?.chargingPort);
+    setValue("launchTime", "2023");
+    setValue("files", mouseDetail?.productInfo?.lstProductImageUrl);
   };
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
@@ -299,7 +311,9 @@ const NewMouse: React.FC = () => {
   };
   return (
     <div className="bg-white shadow ">
-      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm chuột máy tính</h2>
+      <h2 className="font-bold m-4 text-2xl">
+        Cập nhật sản phẩm chuột máy tính
+      </h2>
       <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
@@ -309,23 +323,6 @@ const NewMouse: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
-        <Form.Item
-          label="Hãng sản xuất"
-          name="brand"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="brand"
-            defaultValue={""}
-            options={brand?.data?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.brand?.message}
-          </SelectCustom>
-        </Form.Item>
-
         <Form.Item
           label="Tên sản phẩm"
           name="name"
@@ -359,106 +356,81 @@ const NewMouse: React.FC = () => {
           rules={[{ required: true }]}
         >
           <ul>
-            {fields.map((item, index) => (
-              <li key={item.id}>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Ram"
-                    name={`lstProductTypeAndPrice.${index}.ram`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.ram`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                </div>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Giá"
-                    name={`lstProductTypeAndPrice.${index}.price`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.price`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Giá khuyến mãi"
-                    name={`lstProductTypeAndPrice.${index}.salePrice`}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.salePrice`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                </div>
-                <Form.Item
-                  label="Kho hàng"
-                  name={`lstProductTypeAndPrice.${index}.depot`}
-                  rules={[{ required: true }]}
-                >
-                  <SelectCustom
-                    className={"flex-1 text-black"}
-                    id={`lstProductTypeAndPrice.${index}.depot`}
-                    // label="Hãng xe"
-
-                    options={depot?.data?.data}
-                    register={register}
-                  ></SelectCustom>
-                </Form.Item>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Số lượng sản phẩm"
-                    name={`lstProductTypeAndPrice.${index}.quantity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.quantity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Màu"
-                    name={`lstProductTypeAndPrice.${index}.color`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.color`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                </div>
-                <Form.Item>
-                  <Button
-                    type="default"
-                    onClick={() => remove(index)}
-                    block
-                    icon={<PlusOutlined />}
-                  >
-                    Xóa trường này
-                  </Button>
-                </Form.Item>
-                {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
-              </li>
-            ))}
+            {mouseDetail?.productInfo?.lstProductTypeAndPrice?.map(
+              (item: any, index: number) => {
+                return (
+                  <li key={index}>
+                    <div className="flex justify-between space-x-1">
+                      <Form.Item
+                        label="Giá"
+                        name={`lstProductTypeAndPrice.${index}.price`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.price`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="45000000"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label="Giá khuyến mãi"
+                        name={`lstProductTypeAndPrice.${index}.salePrice`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.salePrice`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="44000000"
+                        />
+                      </Form.Item>
+                    </div>
+                    <Form.Item
+                      label="Kho hàng"
+                      name={`lstProductTypeAndPrice.${index}.depot`}
+                      rules={[{ required: true }]}
+                    >
+                      <SelectCustom
+                        className={"flex-1 text-black"}
+                        id={`lstProductTypeAndPrice.${index}.depot`}
+                        placeholder="Vui lòng chọn"
+                        defaultValue={item.depotId}
+                        options={depot?.data?.data}
+                        register={register}
+                      >
+                        {errors.depotId?.message}
+                      </SelectCustom>
+                    </Form.Item>
+                    <div>
+                      <Form.Item
+                        label="Số lượng sản phẩm"
+                        name={`lstProductTypeAndPrice.${index}.quantity`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.quantity`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="1000"
+                        />
+                      </Form.Item>
+                    </div>
+                    <Form.Item>
+                      <Button
+                        type="default"
+                        onClick={() => remove(index)}
+                        block
+                        icon={<PlusOutlined />}
+                      >
+                        Xóa trường này
+                      </Button>
+                    </Form.Item>
+                    {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
+                  </li>
+                );
+              },
+            )}
             <Form.Item>
               <Button
                 type="dashed"
@@ -586,7 +558,7 @@ const NewMouse: React.FC = () => {
         >
           <div className="flex flex-col items-start ">
             <div className="my-5 w-24 space-y-5 justify-between items-center">
-              {imageUrls.map((imageUrl, index) => {
+              {imageUrls?.map((imageUrl, index) => {
                 return (
                   <div key={index}>
                     <img
@@ -657,9 +629,18 @@ const NewMouse: React.FC = () => {
           </Form.Item>
         </div>
       </Form>
+      <Modal
+        title="Cập nhật sản phẩm"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        centered
+      >
+        <p>Đang xử lý, vui lòng đợi...</p>
+      </Modal>
     </div>
   );
 };
 
-export default () => <NewMouse />;
+export default () => <UpdateMouse />;
 

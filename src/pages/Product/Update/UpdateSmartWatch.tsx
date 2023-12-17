@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Form, Space, Upload } from "antd";
+import { Button, Form, Modal, Space, Upload } from "antd";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
 import { schemaProductSmartWatch } from "src/utils/rules";
 import {
+  generateRandomString,
   getIdFromNameId,
   isAxiosUnprocessableEntityError,
 } from "src/utils/utils";
@@ -42,7 +43,6 @@ const normFile = (e: any) => {
 
 interface FormData {
   brand: string;
-  category: string;
   characteristic: string;
   name: string;
   description: string;
@@ -51,7 +51,7 @@ interface FormData {
   mass: string | undefined;
   launchTime: string | undefined;
   accessories: string | undefined;
-  productStatus: number | undefined;
+  productStatus: string | undefined;
   ram: string;
   storageCapacity: string;
   color: string;
@@ -165,7 +165,7 @@ const UpdateSmartWatch: React.FC = () => {
     setValue("mass", smartWatchDetail?.productInfo?.mass.toString());
     setValue(
       "color",
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.color.toString(),
+      smartWatchDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
     );
     setValue("monitor", smartWatchDetail?.monitor);
     setValue("networkSupport", smartWatchDetail?.networkSupport);
@@ -176,28 +176,31 @@ const UpdateSmartWatch: React.FC = () => {
       smartWatchDetail?.productInfo?.characteristicId.toString(),
     );
     setValue("name", smartWatchDetail?.productInfo?.name);
-    setValue("sim", smartWatchDetail?.sim);
+    setValue("internalMemory", smartWatchDetail?.internalMemory);
     setValue(
       "salePrice",
       smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
-    setValue("rearCamera", smartWatchDetail?.rearCamera);
+    setValue("health", smartWatchDetail?.health);
     setValue(
       "price",
       smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
-    setValue("frontCamera", smartWatchDetail?.frontCamera);
-    setValue("operatingSystem", smartWatchDetail?.operatingSystem);
+    setValue("connectToOs", smartWatchDetail?.connectToOs);
+    setValue("monitor", smartWatchDetail?.monitor);
+    setValue("battery", smartWatchDetail?.battery);
+    setValue("connector", smartWatchDetail?.connector);
+    setValue("cpu", smartWatchDetail?.cpu);
+    setValue("internalMemory", smartWatchDetail?.internalMemory);
     setValue("design", smartWatchDetail?.productInfo?.design);
     setValue("dimension", smartWatchDetail?.productInfo?.dimension);
-    setValue("category", smartWatchDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
     setValue("imageUrl", smartWatchDetail?.productInfo.lstProductImageUrl);
   }, [smartWatchDetail]);
 
   const onSubmit = handleSubmit(async (data) => {
     let images = [];
-    // showModal();
+    showModal();
     setIsSubmitting(true);
     if (file) {
       const form = new FormData();
@@ -214,10 +217,12 @@ const UpdateSmartWatch: React.FC = () => {
     const body = JSON.stringify({
       productInfo: {
         brandId: Number(data.brand),
-        categoryId: Number(data.category),
-        productId: smartWatchDetail.productInfo.productId,
+        categoryId: 28,
+        productId: Number(smartWatchDetail.productInfo.productId),
+
         characteristicId: Number(data.characteristic),
         productCode: smartWatchDetail.productInfo.productCode,
+
         name: data.name,
         description: data?.description,
         design: data?.design,
@@ -226,31 +231,25 @@ const UpdateSmartWatch: React.FC = () => {
         launchTime: Number(data?.launchTime),
         accessories: data?.accessories,
         productStatus: 100,
-        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map(
-          (item, index) => ({
-            typeId: Number(
-              smartWatchDetail?.productInfo?.lstProductTypeAndPrice[index]
-                .typeId,
-            ),
-            ram: item?.ram,
-            storageCapacity: item?.storageCapacity,
-            color: item?.color,
-            price: Number(item?.price),
-            salePrice: Number(item?.salePrice),
-            quantity: Number(item?.quantity),
-            depotId: Number(item?.depot),
-          }),
-        ),
+        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
+          typeId: null,
+          color: item?.color,
+          price: Number(item?.price),
+          salePrice: Number(item?.salePrice),
+          quantity: Number(item?.quantity),
+          depotId: Number(item?.depot),
+        })),
+
         lstProductImageUrl: images || [],
       },
       monitor: data.monitor,
-      operatingSystem: data.operatingSystem,
       connector: data.connector,
       health: data.health,
       cpu: data.cpu,
       internalMemory: data.internalMemory,
       battery: data.battery,
       connectToOs: data.connectToOs,
+      operatingSystem: "watch",
     });
 
     try {
@@ -331,21 +330,23 @@ const UpdateSmartWatch: React.FC = () => {
       smartWatchDetail?.productInfo?.characteristicId.toString(),
     );
     setValue("name", smartWatchDetail?.productInfo?.name);
-    setValue("sim", smartWatchDetail?.sim);
+    setValue("internalMemory", smartWatchDetail?.internalMemory);
     setValue(
       "salePrice",
       smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
     );
-    setValue("rearCamera", smartWatchDetail?.rearCamera);
+    setValue("health", smartWatchDetail?.health);
     setValue(
       "price",
       smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
-    setValue("frontCamera", smartWatchDetail?.frontCamera);
-    setValue("operatingSystem", smartWatchDetail?.operatingSystem);
+    setValue("connectToOs", smartWatchDetail?.connectToOs);
+    setValue("monitor", smartWatchDetail?.monitor);
+    setValue("battery", smartWatchDetail?.battery);
+    setValue("connector", smartWatchDetail?.connector);
+    setValue("internalMemory", smartWatchDetail?.internalMemory);
     setValue("design", smartWatchDetail?.productInfo?.design);
     setValue("dimension", smartWatchDetail?.productInfo?.dimension);
-    setValue("category", smartWatchDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
     setValue("imageUrl", smartWatchDetail?.productInfo.lstProductImageUrl);
   };
@@ -390,23 +391,6 @@ const UpdateSmartWatch: React.FC = () => {
         onSubmitCapture={onSubmit}
       >
         <Form.Item
-          label="Danh mục sản phẩm"
-          name=""
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black "}
-            id="category"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={category?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.category?.message}
-          </SelectCustom>
-        </Form.Item>
-        <Form.Item
           label="Hãng sản xuất"
           name="brand"
           rules={[{ required: true }]}
@@ -415,34 +399,14 @@ const UpdateSmartWatch: React.FC = () => {
             className={"flex-1 text-black  "}
             id="brand"
             placeholder="Vui lòng chọn"
-            defaultValue={""}
+            defaultValue={smartWatchDetail?.productInfo?.brandId}
             options={brand?.data?.data}
             register={register}
-            isBrand={true}
           >
             {errors.brand?.message}
           </SelectCustom>
         </Form.Item>
-        <Form.Item
-          label="Hệ điều hành"
-          name="operatingSystem"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="operatingSystem"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={[
-              { id: "iOS", name: "iOS" },
-              { id: "Android", name: "android" },
-            ]}
-            register={register}
-            isBrand={true}
-          >
-            {errors.operatingSystem?.message}
-          </SelectCustom>
-        </Form.Item>
+
         <Form.Item
           label="Đặc điểm sản phẩm"
           name="characteristic"
@@ -452,9 +416,9 @@ const UpdateSmartWatch: React.FC = () => {
             className={"flex-1 text-black"}
             id="characteristic"
             placeholder="Vui lòng chọn"
-            defaultValue={""}
             options={character?.data}
             register={register}
+            defaultValue={smartWatchDetail?.productInfo?.characteristicId}
             isBrand={true}
           >
             {errors.characteristic?.message}
@@ -543,114 +507,93 @@ const UpdateSmartWatch: React.FC = () => {
           rules={[{ required: true }]}
         >
           <ul>
-            {fields.map((item, index) => (
-              <li key={item.id}>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Ram"
-                    name={`lstProductTypeAndPrice.${index}.ram`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.ram`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="8Gb"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1TB"
-                    />
-                  </Form.Item>
-                </div>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Giá"
-                    name={`lstProductTypeAndPrice.${index}.price`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.price`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="45000000"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Giá khuyến mãi"
-                    name={`lstProductTypeAndPrice.${index}.salePrice`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.salePrice`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="44000000"
-                    />
-                  </Form.Item>
-                </div>
-                <Form.Item
-                  label="Kho hàng"
-                  name={`lstProductTypeAndPrice.${index}.depot`}
-                  rules={[{ required: true }]}
-                >
-                  <SelectCustom
-                    className={"flex-1 text-black"}
-                    id={`lstProductTypeAndPrice.${index}.depot`}
-                    placeholder="Vui lòng chọn"
-                    options={depot?.data?.data}
-                    register={register}
-                  >
-                    {errors.depotId?.message}
-                  </SelectCustom>
-                </Form.Item>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Số lượng sản phẩm"
-                    name={`lstProductTypeAndPrice.${index}.quantity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.quantity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1000"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Màu"
-                    name={`lstProductTypeAndPrice.${index}.color`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.color`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="Titan tự nhiên"
-                    />
-                  </Form.Item>
-                </div>
-                <Form.Item>
-                  <Button
-                    type="default"
-                    onClick={() => remove(index)}
-                    block
-                    icon={<PlusOutlined />}
-                  >
-                    Xóa trường này
-                  </Button>
-                </Form.Item>
-                {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
-              </li>
-            ))}
+            {smartWatchDetail?.productInfo?.lstProductTypeAndPrice?.map(
+              (item: any, index: number) => {
+                return (
+                  <li key={index}>
+                    <div className="flex justify-between space-x-1">
+                      <Form.Item
+                        label="Giá"
+                        name={`lstProductTypeAndPrice.${index}.price`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.price`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="45000000"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label="Giá khuyến mãi"
+                        name={`lstProductTypeAndPrice.${index}.salePrice`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.salePrice`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="44000000"
+                        />
+                      </Form.Item>
+                    </div>
+                    <Form.Item
+                      label="Kho hàng"
+                      name={`lstProductTypeAndPrice.${index}.depot`}
+                      rules={[{ required: true }]}
+                    >
+                      <SelectCustom
+                        className={"flex-1 text-black"}
+                        id={`lstProductTypeAndPrice.${index}.depot`}
+                        placeholder="Vui lòng chọn"
+                        defaultValue={item.depotId}
+                        options={depot?.data?.data}
+                        register={register}
+                      >
+                        {errors.depotId?.message}
+                      </SelectCustom>
+                    </Form.Item>
+                    <div>
+                      <Form.Item
+                        label="Số lượng sản phẩm"
+                        name={`lstProductTypeAndPrice.${index}.quantity`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.quantity`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="1000"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label="Màu"
+                        name={`lstProductTypeAndPrice.${index}.color`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.color`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="Titan tự nhiên"
+                        />
+                      </Form.Item>
+                    </div>
+                    <Form.Item>
+                      <Button
+                        type="default"
+                        onClick={() => remove(index)}
+                        block
+                        icon={<PlusOutlined />}
+                      >
+                        Xóa trường này
+                      </Button>
+                    </Form.Item>
+                    {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
+                  </li>
+                );
+              },
+            )}
             <Form.Item>
               <Button
                 type="dashed"
@@ -839,6 +782,15 @@ const UpdateSmartWatch: React.FC = () => {
           </Form.Item>
         </div>
       </Form>
+      <Modal
+        title="Cập nhật sản phẩm"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        centered
+      >
+        <p>Đang xử lý, vui lòng đợi...</p>
+      </Modal>
     </div>
   );
 };

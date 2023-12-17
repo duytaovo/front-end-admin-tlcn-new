@@ -44,7 +44,7 @@ const processorSlice = createSlice({
       state.processor = payload.data;
     });
     builder.addCase(getDetailProcessor.fulfilled, (state, { payload }) => {
-      state.processorDetail = payload.data;
+      state.processorDetail = payload.data?.data;
     });
   },
 });

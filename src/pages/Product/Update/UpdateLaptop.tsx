@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
 import { schemaLaptop } from "src/utils/rules";
 import {
+  generateRandomString,
   getIdFromNameId,
   isAxiosUnprocessableEntityError,
 } from "src/utils/utils";
@@ -43,7 +44,6 @@ const normFile = (e: any) => {
 
 interface FormData {
   brand: string;
-  category: string;
   characteristic: string;
   name: string;
   description: string;
@@ -131,6 +131,8 @@ const UpdateLaptop: React.FC = () => {
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
+    setImages(laptopDetail.productInfo.lstProductImageUrl);
+
     const productInfo = laptopDetail?.productInfo;
 
     if (
@@ -166,11 +168,11 @@ const UpdateLaptop: React.FC = () => {
     setValue("operatingSystem", laptopDetail?.operatingSystem);
     setValue("design", laptopDetail?.productInfo?.design);
     setValue("dimension", laptopDetail?.productInfo?.dimension);
-    setValue("category", laptopDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
     setValue("gateway", laptopDetail?.gateway);
     setValue("ram", String(laptopDetail?.ramId));
     setValue("imageUrl", laptopDetail?.productInfo?.lstProductImageUrl);
+    setValue("files", laptopDetail?.productInfo.lstProductImageUrl);
   }, [laptopDetail]);
 
   const onSubmit = handleSubmit(async (data) => {
@@ -188,7 +190,7 @@ const UpdateLaptop: React.FC = () => {
         images.push(d[i]?.fileUrl);
       }
     }
-    const body: any = JSON.stringify({
+    const body = JSON.stringify({
       gateway: data.gateway,
       special: data.special,
       maximumRam: Number(data.maximumRam),
@@ -197,12 +199,14 @@ const UpdateLaptop: React.FC = () => {
       ramId: Number(data.ramId),
       romId: Number(data.romId),
       graphicsCardId: Number(data.graphicsCard),
+      monitor: data.monitor,
+
       productInfo: {
         brandId: Number(data.brand),
         categoryId: 2,
-        productId: Number(laptopDetail?.productInfo?.productId),
+        productId: null,
         characteristicId: Number(data.characteristic),
-        productCode: laptopDetail?.productInfo?.productCode,
+        productCode: generateRandomString(10),
         name: data.name,
         description: data.description,
         design: data.design,
@@ -211,30 +215,19 @@ const UpdateLaptop: React.FC = () => {
         launchTime: Number(data.launchTime),
         accessories: data.accessories,
         productStatus: 100,
-        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map(
-          (item, index) => ({
-            typeId:
-              laptopDetail?.productInfo?.lstProductTypeAndPrice[index].typeId,
-            ram: item?.ram,
-            storageCapacity: item?.storageCapacity,
-            color: item?.color,
-            price: Number(item?.price),
-            salePrice: Number(item?.salePrice),
-            depotId: Number(item?.depot),
-            quantity: Number(item?.quantity),
-          }),
-        ),
+        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
+          typeId: null,
+          ram: item?.ram,
+          storageCapacity: item?.storageCapacity,
+          color: item?.color,
+          price: Number(item?.price),
+          salePrice: Number(item?.salePrice),
+          quantity: Number(item?.quantity),
+          depotId: Number(item?.depot),
+        })),
         lstProductImageUrl: images || [],
       },
-      monitor: data.monitor,
       operatingSystem: data.operatingSystem,
-      rearCamera: data.rearCamera,
-      frontCamera: data.frontCamera,
-      chip: data.chip,
-      sim: data.sim,
-      battery: data.battery,
-      charging: data.charging,
-      networkSupport: data.networkSupport,
     });
 
     try {
@@ -321,7 +314,6 @@ const UpdateLaptop: React.FC = () => {
     setValue("operatingSystem", laptopDetail?.operatingSystem);
     setValue("design", laptopDetail?.productInfo?.design);
     setValue("dimension", laptopDetail?.productInfo?.dimension);
-    setValue("category", laptopDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
     setValue("imageUrl", laptopDetail?.productInfo?.lstProductImageUrl);
   };
@@ -553,8 +545,8 @@ const UpdateLaptop: React.FC = () => {
                     <SelectCustom
                       className={"flex-1 text-black"}
                       id={`lstProductTypeAndPrice.${index}.depot`}
-                      // label="Hãng xe"
                       placeholder="Vui lòng chọn"
+                      defaultValue={item.depotId}
                       options={depot?.data?.data}
                       register={register}
                     >

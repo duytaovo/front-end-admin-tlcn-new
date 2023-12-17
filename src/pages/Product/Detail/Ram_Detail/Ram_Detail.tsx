@@ -4,7 +4,6 @@ import { formatNumberToSocialStyle, getIdFromNameId } from "src/utils/utils";
 import { Helmet } from "react-helmet-async";
 import { convert } from "html-to-text";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
-import { getDetailPhone } from "src/store/product/smartPhoneSlice";
 import { Button, Modal, Rate } from "antd";
 import DOMPurify from "dompurify";
 import RatingFeedback from "../../../../components/Rating";
@@ -17,7 +16,6 @@ export default function RamDetail() {
   const dispatch = useAppDispatch();
   const { ramDetail } = useAppSelector((state) => state.ram);
   const id = getIdFromNameId(nameId as string);
-  console.log(id);
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5]);
   const [activeImage, setActiveImage] = useState("");
   const imageRef = useRef<HTMLImageElement>(null);

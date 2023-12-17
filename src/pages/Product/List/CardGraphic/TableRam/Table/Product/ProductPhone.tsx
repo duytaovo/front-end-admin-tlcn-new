@@ -71,8 +71,8 @@ export default function ProductRam({ product }: Props) {
       id: 3,
       title: "Xóa",
       callback: () => {
-        const handleDelete = async () => {
-          if (confirm("Bạn có muốn disable sản phẩm không?")) {
+        if (confirm("Bạn có muốn disable sản phẩm không?")) {
+          const handleDelete = async () => {
             const res = await dispatch(
               deleteCardGraphic(product.id.toString()),
             );
@@ -81,10 +81,10 @@ export default function ProductRam({ product }: Props) {
             // if (d?.code !== 200) return toast.error(d?.message);
             await toast.success("Xóa sản phẩm thành công ");
             await dispatch(getCardGraphic(""));
-          }
+          };
           handleDelete();
           hidden();
-        };
+        }
       },
       variant: "contained",
     },

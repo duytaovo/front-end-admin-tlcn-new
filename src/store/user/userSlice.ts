@@ -63,6 +63,7 @@ interface IUser {
   accessToken: string;
   token: string;
   user: any;
+  userWithId: any;
 }
 
 const initialState: IUser = {
@@ -70,6 +71,7 @@ const initialState: IUser = {
   accessToken: "123",
   token: "",
   user: [],
+  userWithId: {},
 };
 const userSlice = createSlice({
   name: "auth",
@@ -83,6 +85,9 @@ const userSlice = createSlice({
 
     builder.addCase(getUsers.fulfilled, (state, { payload }) => {
       state.user = payload.data;
+    });
+    builder.addCase(getDetailUser.fulfilled, (state, { payload }) => {
+      state.userWithId = payload.data?.data;
     });
   },
 });

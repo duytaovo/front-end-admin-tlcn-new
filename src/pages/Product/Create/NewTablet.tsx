@@ -35,7 +35,6 @@ const normFile = (e: any) => {
 
 interface FormData {
   brand: string;
-  category: string;
   characteristic: string;
   name: string;
   description: string;
@@ -238,20 +237,14 @@ const NewTablet: React.FC = () => {
           name="operatingSystem"
           rules={[{ required: true }]}
         >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="operatingSystem"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={[
-              { id: "iPadOS", name: "iPadOS" },
-              { id: "Android", name: "Android" },
-            ]}
+          <Input
+            placeholder="Máy tính bảng iPad Pro M2 11 inch WiFi 128GB"
+            name="operatingSystem"
             register={register}
-            isBrand={true}
-          >
-            {errors.operatingSystem?.message}
-          </SelectCustom>
+            type="text"
+            className=""
+            errorMessage={errors.operatingSystem?.message}
+          />
         </Form.Item>
         <Form.Item
           label="Đặc điểm sản phẩm"

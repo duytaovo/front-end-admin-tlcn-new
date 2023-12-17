@@ -2,6 +2,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { PATHS } from "./paths";
 import config from "src/constants/configApi";
+import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { getDetailUser, getUsers } from "src/store/user/userSlice";
 
 const FETCH_TYPES = {
   CITIES: "FETCH_CITIES",
@@ -22,7 +25,6 @@ async function fetchLocationProvinceOptions(fetchType: string) {
       return [];
     }
   }
-
   const locations = (
     await axios.get(url, {
       params: params,
@@ -71,7 +73,6 @@ async function fetchLocationDistrictOptions(
       return [];
     }
   }
-
   const locations = (
     await axios.get(url, {
       params: params,
@@ -138,20 +139,32 @@ async function fetchLocationWardOptions(
   );
 }
 
-export async function fetchInitialData() {
-  const { cityId, districtId, wardId } = (await axios.get(PATHS.LOCATION)).data;
+export async function fetchInitialData(address: any) {
+  if (!address || address.length < 3) {
+    return {
+      cityOptions: [],
+      districtOptions: [],
+      wardOptions: [],
+      selectedCity: null,
+      selectedDistrict: null,
+      selectedWard: null,
+    };
+  }
+
   const [cities, districts, wards] = await Promise.all([
     fetchLocationProvinceOptions(FETCH_TYPES.CITIES),
-    fetchLocationDistrictOptions(FETCH_TYPES.DISTRICTS, cityId),
-    fetchLocationWardOptions(FETCH_TYPES.WARDS, districtId),
+    fetchLocationDistrictOptions(FETCH_TYPES.DISTRICTS, address[2]),
+    fetchLocationWardOptions(FETCH_TYPES.WARDS, address[1]),
   ]);
+
+  const ward = address[0].toString();
   return {
     cityOptions: cities,
     districtOptions: districts,
     wardOptions: wards,
-    selectedCity: cities.find((c: any) => c.value === cityId),
-    selectedDistrict: districts.find((d: any) => d.value === districtId),
-    selectedWard: wards.find((w: any) => w.value === wardId),
+    selectedCity: cities.find((c: any) => c.value === address[2]),
+    selectedDistrict: districts.find((d: any) => d.value === address[1]),
+    selectedWard: wards.find((w: any) => w.value === ward),
   };
 }
 
@@ -165,19 +178,68 @@ function useLocationForm(shouldFetchInitialLocation: boolean) {
     selectedWard: null,
   });
 
+  const { userWithId } = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
   const { selectedCity, selectedDistrict }: any = state;
+  const [part1Address, setPart1Address] = useState<any>();
+  const [part2Address, setPart2Address] = useState<any>();
+  const [part3Address, setPart3Address] = useState<any>();
+  // console.log(part3Address);
+  // useEffect(() => {
+  //   const _getData = async () => {
+  //     const res = await dispatch(getUsers(""));
+  //     await unwrapResult(res);
+  //     await dispatch(getDetailUser(res?.payload?.data.data.id));
+  //   };
+  //   _getData();
+  // }, []);
 
+  useEffect(() => {
+    const inputString = userWithId.address;
+
+    if (inputString) {
+      // Phần 1: từ đầu đến trước dấu ,
+      const part1 = inputString.split(",")[0]?.trim();
+      setPart1Address(part1);
+      // Phần 2: từ dấu , đến dấu +
+      const part2 = inputString
+        .split(",")
+        .slice(1)
+        .join(",")
+        .split("+")[0]
+        .trim();
+      setPart2Address(part2);
+
+      // Phần 3: phần còn lại, bỏ vào mảng có 3 phần tử mỗi phần tử đã được ngăn cách bởi dấu -
+      const remainingPart = inputString
+        ?.split("+")[1]
+        ?.split("-")
+        .map((item: string) => Number(item.trim()));
+      setPart3Address(remainingPart);
+    }
+  }, [userWithId]);
+
+  const id1 = part3Address && part3Address[0];
+  const id2 = part3Address && part3Address[1];
+  const id3 = part3Address && part3Address[2];
   useEffect(() => {
     (async function () {
       if (shouldFetchInitialLocation) {
-        const initialData = await fetchInitialData();
-        setState(initialData);
+        const initialData = await fetchInitialData(part3Address);
+        if (initialData?.cityOptions.length > 0) {
+          setState(initialData);
+        } else {
+          const options = await fetchLocationProvinceOptions(
+            FETCH_TYPES.CITIES,
+          );
+          setState({ ...state, cityOptions: options });
+        }
       } else {
         const options = await fetchLocationProvinceOptions(FETCH_TYPES.CITIES);
         setState({ ...state, cityOptions: options });
       }
     })();
-  }, []);
+  }, [id1, id2, id3]);
 
   useEffect(() => {
     (async function () {

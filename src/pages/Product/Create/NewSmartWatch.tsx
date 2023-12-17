@@ -38,7 +38,6 @@ const normFile = (e: any) => {
 
 interface FormData {
   brand: string;
-  category: string;
   characteristic: string;
   name: string;
   description: string;
@@ -138,7 +137,7 @@ const NewSmartWatch: React.FC = () => {
     const body = JSON.stringify({
       productInfo: {
         brandId: Number(data.brand),
-        categoryId: 28 || 1,
+        categoryId: 28,
         productId: null,
         characteristicId: Number(data.characteristic),
         productCode: generateRandomString(10),
@@ -152,8 +151,6 @@ const NewSmartWatch: React.FC = () => {
         productStatus: 100,
         lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
           typeId: null,
-          ram: item?.ram,
-          storageCapacity: item?.storageCapacity,
           color: item?.color,
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
@@ -164,13 +161,13 @@ const NewSmartWatch: React.FC = () => {
         lstProductImageUrl: images || [],
       },
       monitor: data.monitor,
-      operatingSystem: data.operatingSystem,
       connector: data.connector,
       health: data.health,
       cpu: data.cpu,
       internalMemory: data.internalMemory,
       battery: data.battery,
       connectToOs: data.connectToOs,
+      operatingSystem: "watch",
     });
 
     try {
@@ -218,23 +215,6 @@ const NewSmartWatch: React.FC = () => {
         onSubmitCapture={onSubmit}
       >
         <Form.Item
-          label="Danh mục sản phẩm"
-          name=""
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black "}
-            id="category"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={category?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.category?.message}
-          </SelectCustom>
-        </Form.Item>
-        <Form.Item
           label="Hãng sản xuất"
           name="brand"
           rules={[{ required: true }]}
@@ -248,25 +228,6 @@ const NewSmartWatch: React.FC = () => {
             register={register}
           >
             {errors.brand?.message}
-          </SelectCustom>
-        </Form.Item>
-        <Form.Item
-          label="Hệ điều hành"
-          name="operatingSystem"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="operatingSystem"
-            placeholder="Vui lòng chọn"
-            defaultValue={""}
-            options={[
-              { id: "Apple", name: "Apple" },
-              { id: "Android", name: "Android" },
-            ]}
-            register={register}
-          >
-            {errors.operatingSystem?.message}
           </SelectCustom>
         </Form.Item>
         <Form.Item
@@ -370,32 +331,6 @@ const NewSmartWatch: React.FC = () => {
           <ul>
             {fields.map((item, index) => (
               <li key={item.id}>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Ram"
-                    name={`lstProductTypeAndPrice.${index}.ram`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.ram`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="8Gb"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1TB"
-                    />
-                  </Form.Item>
-                </div>
                 <div className="flex justify-between space-x-1">
                   <Form.Item
                     label="Giá"
@@ -553,6 +488,16 @@ const NewSmartWatch: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.battery?.message}
+            placeholder=""
+          />
+        </Form.Item>
+        <Form.Item label="Sức khoẻ" name="health" rules={[{ required: true }]}>
+          <Input
+            name="health"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.health?.message}
             placeholder=""
           />
         </Form.Item>

@@ -44,7 +44,7 @@ const keyboardlice = createSlice({
       state.keyboard = payload.data;
     });
     builder.addCase(getDetailkeyboard.fulfilled, (state, { payload }) => {
-      state.keyboardDetail = payload.data;
+      state.keyboardDetail = payload.data?.data;
     });
   },
 });

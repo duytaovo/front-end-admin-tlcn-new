@@ -5,33 +5,26 @@ import { payloadCreator } from "src/utils/utils";
 
 export const getLaptop = createAsyncThunk(
   "laptop/getLaptop",
-  payloadCreator(laptopApi.getLaptops)
+  payloadCreator(laptopApi.getLaptops),
 );
 
 export const getDetailLaptop = createAsyncThunk(
   "laptop/getDetailLaptop",
-  payloadCreator(laptopApi.getDetailLaptop)
+  payloadCreator(laptopApi.getDetailLaptop),
 );
 export const addLaptop = createAsyncThunk(
   "laptop/addLaptop",
-  payloadCreator(laptopApi.addLaptop)
+  payloadCreator(laptopApi.addLaptop),
 );
-// export const uploadImageProduct = createAsyncThunk(
-//   "smartPhone/uploadImageProduct",
-//   payloadCreator(laptopApi.)
-// );
-// export const uploadImagesProduct = createAsyncThunk(
-//   "smartPhone/uploadImagesProduct",
-//   payloadCreator(laptopApi.uploadImagesProduct)
-// );
+
 export const updateLaptop = createAsyncThunk(
   "laptop/updateLaptop",
-  payloadCreator(laptopApi.updateLaptop)
+  payloadCreator(laptopApi.updateLaptop),
 );
 
 export const deleteLaptop = createAsyncThunk(
   "laptop/deleteLaptop",
-  payloadCreator(laptopApi.deleteLaptop)
+  payloadCreator(laptopApi.deleteLaptop),
 );
 
 interface IProudct {
@@ -107,3 +100,4 @@ const Laptoplice = createSlice({
 
 const laptopReducer = Laptoplice.reducer;
 export default laptopReducer;
+

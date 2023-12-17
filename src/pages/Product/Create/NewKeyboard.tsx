@@ -10,7 +10,7 @@ import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
-import { schemaProductKeyboard, schemaProductRam } from "src/utils/rules";
+import { schemaProductKeyboard } from "src/utils/rules";
 import {
   generateRandomString,
   isAxiosUnprocessableEntityError,
@@ -133,7 +133,7 @@ const NewKeyboard: React.FC = () => {
         brandId: Number(data.brand),
         categoryId: 23,
         productId: null,
-        characteristicId: Number(data.characteristic),
+        characteristicId: 12,
         productCode: generateRandomString(10),
         name: data.name,
         description: data?.description,

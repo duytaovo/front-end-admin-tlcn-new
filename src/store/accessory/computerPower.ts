@@ -44,7 +44,7 @@ const computerPowerlice = createSlice({
       state.computerPower = payload.data;
     });
     builder.addCase(getDetailComputerPower.fulfilled, (state, { payload }) => {
-      state.computerPowerDetail = payload.data;
+      state.computerPowerDetail = payload.data?.data;
     });
   },
 });

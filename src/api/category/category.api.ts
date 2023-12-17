@@ -14,16 +14,17 @@ const categoryApi = {
     });
   },
   updateCategory({ _id, body }: any) {
-    return http.post<SuccessResponse<any>>(
+    return http.put<SuccessResponse<any>>(
       `/manage/category/update/${_id}`,
-      body
+      body,
     );
   },
   deleteCategory(idcategory: string[]) {
-    return http.post<SuccessResponse<any>>(
-      `/manage/category/delete/${idcategory}`
+    return http.put<SuccessResponse<any>>(
+      `/manage/category/delete/${idcategory}`,
     );
   },
 };
 
 export default categoryApi;
+

@@ -10,7 +10,7 @@ import Input from "src/components/Input";
 import path from "src/constants/path";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
-import { schemaMicrophone, schemaProductSmartPhone } from "src/utils/rules";
+import { schemaMicrophone } from "src/utils/rules";
 import {
   generateRandomString,
   isAxiosUnprocessableEntityError,
@@ -34,8 +34,6 @@ const normFile = (e: any) => {
 
 interface FormData {
   brand: string;
-  category: string;
-  characteristic: string;
   name: string;
   description: string;
   design: string | undefined;
@@ -44,9 +42,6 @@ interface FormData {
   launchTime: string | undefined;
   accessories: string | undefined;
   productStatus: string | undefined;
-  ram: string;
-  storageCapacity: string;
-  color: string;
   price: string;
   salePrice: string | undefined;
 }
@@ -137,7 +132,7 @@ const NewMicrophone: React.FC = () => {
           brandId: Number(data.brand),
           categoryId: 26,
           productId: null,
-          characteristicId: Number(data.characteristic),
+          characteristicId: 12,
           productCode: generateRandomString(10),
           name: data.name,
           description: data?.description,
@@ -149,9 +144,6 @@ const NewMicrophone: React.FC = () => {
           productStatus: 100,
           lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
             typeId: null,
-            ram: item?.ram,
-            storageCapacity: item?.storageCapacity,
-            color: item?.color,
             price: Number(item?.price),
             salePrice: Number(item?.salePrice),
             quantity: Number(item?.quantity),
@@ -232,24 +224,6 @@ const NewMicrophone: React.FC = () => {
           </SelectCustom>
         </Form.Item>
 
-        <Form.Item
-          label="Đặc điểm sản phẩm"
-          name="characteristic"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="characteristic"
-            // label="Hãng xe"
-            placeholder="Chọn đặc điểm "
-            defaultValue={""}
-            options={character?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.characteristic?.message}
-          </SelectCustom>
-        </Form.Item>
         <Form.Item
           label="Tên sản phẩm"
           name="name"
@@ -337,32 +311,6 @@ const NewMicrophone: React.FC = () => {
               <li key={item.id}>
                 <div className="flex justify-between space-x-1">
                   <Form.Item
-                    label="Ram"
-                    name={`lstProductTypeAndPrice.${index}.ram`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.ram`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="8Gb"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1TB"
-                    />
-                  </Form.Item>
-                </div>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
                     label="Giá"
                     name={`lstProductTypeAndPrice.${index}.price`}
                     rules={[{ required: true }]}
@@ -416,18 +364,6 @@ const NewMicrophone: React.FC = () => {
                       placeholder="1000"
                     />
                   </Form.Item>
-                  <Form.Item
-                    label="Màu"
-                    name={`lstProductTypeAndPrice.${index}.color`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.color`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="Titan tự nhiên"
-                    />
-                  </Form.Item>
                 </div>
                 <Form.Item>
                   <Button
@@ -439,7 +375,6 @@ const NewMicrophone: React.FC = () => {
                     Xóa trường này
                   </Button>
                 </Form.Item>
-                {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
               </li>
             ))}
             <Form.Item>
@@ -462,7 +397,19 @@ const NewMicrophone: React.FC = () => {
             </Form.Item>
           </ul>
         </Form.Item>
-
+        <Form.Item
+          label="Tương thích"
+          name="compatible"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="compatible"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.compatible?.message}
+          />
+        </Form.Item>
         <Form.Item
           label="Tính năng"
           name="feature"
@@ -474,7 +421,6 @@ const NewMicrophone: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.feature?.message}
-            placeholder="12 MP"
           />
         </Form.Item>
         <Form.Item label="Giắc cắm" name="jack" rules={[{ required: true }]}>
@@ -484,7 +430,6 @@ const NewMicrophone: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.jack?.message}
-            placeholder="Chính 48 MP & Phụ 12 MP, 12 MP"
           />
         </Form.Item>
 
@@ -499,7 +444,6 @@ const NewMicrophone: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.control?.message}
-            placeholder="1 Nano SIM & 1 eSIM"
           />
         </Form.Item>
 

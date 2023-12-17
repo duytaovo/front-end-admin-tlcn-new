@@ -44,7 +44,7 @@ const Mouselice = createSlice({
       state.mouse = payload.data;
     });
     builder.addCase(getDetailMouse.fulfilled, (state, { payload }) => {
-      state.mouseDetail = payload.data;
+      state.mouseDetail = payload.data?.data;
     });
   },
 });

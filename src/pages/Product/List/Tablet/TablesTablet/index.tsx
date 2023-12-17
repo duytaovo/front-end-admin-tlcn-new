@@ -1,24 +1,12 @@
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { SelectChangeEvent } from "@mui/material/Select";
 import React, { useEffect, useState } from "react";
-import { getSmartPhones } from "src/store/product/smartPhoneSlice";
 import ProductPhone from "./Table/Product/ProductTablet";
 import path from "src/constants/path";
 import { Pagination } from "antd";
 import { getTablet } from "src/store/product/tabletSlice";
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 150,
-    },
-  },
-};
 const TableTablet: React.FC = () => {
   const dispatch = useAppDispatch();
   const { tablet } = useAppSelector((state) => state.tablet);
@@ -33,14 +21,6 @@ const TableTablet: React.FC = () => {
     setCurrentPage(page - 1);
   };
   const [product, setProduct] = React.useState("");
-
-  const handleChangeProduct = (event: SelectChangeEvent) => {
-    setProduct(event.target.value as string);
-  };
-
-  const onClick = (value: string) => {
-    navigate(value);
-  };
 
   return (
     <div className="mx-6">

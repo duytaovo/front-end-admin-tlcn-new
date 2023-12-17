@@ -226,10 +226,10 @@ const NewPhone: React.FC = () => {
     <div className="bg-white shadow ">
       <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm điện thoại</h2>
       <Form
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 18 }}
+        labelCol={{ span: 6 }}
+        wrapperCol={{ span: 16 }}
         layout="horizontal"
-        style={{ maxWidth: 600, padding: 6 }}
+        style={{ maxWidth: 700, padding: 8 }}
         autoComplete="off"
         noValidate
         onSubmitCapture={onSubmit}
@@ -242,12 +242,10 @@ const NewPhone: React.FC = () => {
           <SelectCustom
             className={" text-black  "}
             id="brand"
-            // label="Hãng xe"
             placeholder="Chọn hãng sx"
             defaultValue={""}
             options={brand?.data?.data}
             register={register}
-            isBrand={true}
           >
             {errors.brand?.message}
           </SelectCustom>
@@ -274,12 +272,10 @@ const NewPhone: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="characteristic"
-            // label="Hãng xe"
             placeholder="Chọn đặc điểm "
             defaultValue={""}
             options={character?.data}
             register={register}
-            isBrand={true}
           >
             {errors.characteristic?.message}
           </SelectCustom>
@@ -323,7 +319,11 @@ const NewPhone: React.FC = () => {
             placeholder="Dài 159.9 mm - Ngang 76.7 mm - Dày 8.25 mm "
           />
         </Form.Item>
-        <Form.Item label="Khối lượng" name="mass" rules={[{ required: true }]}>
+        <Form.Item
+          label="Khối lượng (Nhập số)"
+          name="mass"
+          rules={[{ required: true }]}
+        >
           <Input
             name="mass"
             register={register}
@@ -334,7 +334,7 @@ const NewPhone: React.FC = () => {
           />
         </Form.Item>
         <Form.Item
-          label="Năm ra mắt"
+          label="Năm ra mắt (Nhập số)"
           name="launchTime"
           rules={[{ required: true }]}
         >
@@ -397,11 +397,12 @@ const NewPhone: React.FC = () => {
                 </div>
                 <div className="flex justify-between space-x-1">
                   <Form.Item
-                    label="Giá"
+                    label="Giá (Nhập số)"
                     name={`lstProductTypeAndPrice.${index}.price`}
                     rules={[{ required: true }]}
                   >
                     <Input
+                      type="number"
                       name={`lstProductTypeAndPrice.${index}.price`}
                       key={item.id} // important to include key with field's id
                       register={register}
@@ -409,11 +410,12 @@ const NewPhone: React.FC = () => {
                     />
                   </Form.Item>
                   <Form.Item
-                    label="Giá khuyến mãi"
+                    label="Giá khuyến mãi (Nhập số)"
                     name={`lstProductTypeAndPrice.${index}.salePrice`}
                     rules={[{ required: true }]}
                   >
                     <Input
+                      type="number"
                       name={`lstProductTypeAndPrice.${index}.salePrice`}
                       key={item.id} // important to include key with field's id
                       register={register}
@@ -439,11 +441,12 @@ const NewPhone: React.FC = () => {
                 </Form.Item>
                 <div className="flex justify-between space-x-1">
                   <Form.Item
-                    label="Số lượng sản phẩm"
+                    label="Số lượng sản phẩm (Nhập số)"
                     name={`lstProductTypeAndPrice.${index}.quantity`}
                     rules={[{ required: true }]}
                   >
                     <Input
+                      type="number"
                       name={`lstProductTypeAndPrice.${index}.quantity`}
                       key={item.id} // important to include key with field's id
                       register={register}
@@ -473,7 +476,6 @@ const NewPhone: React.FC = () => {
                     Xóa trường này
                   </Button>
                 </Form.Item>
-                {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
               </li>
             ))}
             <Form.Item>

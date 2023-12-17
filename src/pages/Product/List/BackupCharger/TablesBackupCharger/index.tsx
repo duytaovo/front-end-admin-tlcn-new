@@ -260,7 +260,7 @@ const TableBackupCharger: React.FC = () => {
           Thêm mới
         </Link>
       </div>
-      <FilterPhone handle={handle} brand={brand} characteristic={character} />
+      {/* <FilterPhone handle={handle} brand={brand} characteristic={character} /> */}
 
       <div className="mt-6 grid grid-cols-5 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 h-[80%] mb-10">
         {backupCharger?.data?.data?.map((_smartPhone: any) => (

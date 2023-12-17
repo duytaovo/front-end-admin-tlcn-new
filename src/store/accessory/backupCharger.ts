@@ -44,7 +44,7 @@ const backupChargerlice = createSlice({
       state.backupCharger = payload.data;
     });
     builder.addCase(getDetailBackupCharger.fulfilled, (state, { payload }) => {
-      state.backupChargerDetail = payload.data;
+      state.backupChargerDetail = payload.data?.data;
     });
   },
 });

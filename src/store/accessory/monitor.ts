@@ -44,7 +44,7 @@ const monitorlice = createSlice({
       state.monitor = payload.data;
     });
     builder.addCase(getDetailMonitor.fulfilled, (state, { payload }) => {
-      state.monitorDetail = payload.data;
+      state.monitorDetail = payload.data?.data;
     });
   },
 });

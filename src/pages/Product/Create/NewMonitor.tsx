@@ -34,8 +34,6 @@ const normFile = (e: any) => {
 
 interface FormData {
   brand: string;
-  category: string;
-  characteristic: string;
   name: string;
   description: string;
   design: string | undefined;
@@ -44,9 +42,6 @@ interface FormData {
   launchTime: string | undefined;
   accessories: string | undefined;
   productStatus: string | undefined;
-  ram: string;
-  storageCapacity: string;
-  color: string;
   price: string;
   salePrice: string | undefined;
 }
@@ -136,7 +131,7 @@ const NewMonitor: React.FC = () => {
           brandId: Number(data.brand),
           categoryId: 27,
           productId: null,
-          characteristicId: Number(data.characteristic),
+          characteristicId: 12,
           productCode: generateRandomString(10),
           name: data.name,
           description: data?.description,
@@ -148,9 +143,6 @@ const NewMonitor: React.FC = () => {
           productStatus: 100,
           lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
             typeId: null,
-            ram: item?.ram,
-            storageCapacity: item?.storageCapacity,
-            color: item?.color,
             price: Number(item?.price),
             salePrice: Number(item?.salePrice),
             quantity: Number(item?.quantity),
@@ -160,7 +152,7 @@ const NewMonitor: React.FC = () => {
           lstProductImageUrl: images || [],
         },
         segmentation: data.segmentation,
-        displaySize: data.displaySize,
+        displaySize: data.displaySize || "32 inch",
         aspectRatio: data.aspectRatio,
         resolution: data.resolution,
         panels: data.panels,
@@ -168,7 +160,7 @@ const NewMonitor: React.FC = () => {
         responseTime: data.responseTime,
         contract: data.contract,
         brightness: data.brightness,
-        connectors: "string",
+        connectors: data.connectors,
       });
       const res = await dispatch(addMonitor(body));
       unwrapResult(res);
@@ -225,7 +217,6 @@ const NewMonitor: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black  "}
             id="brand"
-            placeholder="Chọn hãng sx"
             defaultValue={""}
             options={brand?.data?.data}
             register={register}
@@ -235,28 +226,11 @@ const NewMonitor: React.FC = () => {
         </Form.Item>
 
         <Form.Item
-          label="Đặc điểm sản phẩm"
-          name="characteristic"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="characteristic"
-            placeholder="Chọn đặc điểm "
-            defaultValue={""}
-            options={character?.data}
-            register={register}
-          >
-            {errors.characteristic?.message}
-          </SelectCustom>
-        </Form.Item>
-        <Form.Item
           label="Tên sản phẩm"
           name="name"
           rules={[{ required: true }]}
         >
           <Input
-            placeholder="Điện thoại iPhone 15 Pro Max 1TB"
             name="name"
             register={register}
             type="text"
@@ -272,7 +246,6 @@ const NewMonitor: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.design?.message}
-            placeholder="Nguyên khối"
           />
         </Form.Item>
         <Form.Item
@@ -286,33 +259,9 @@ const NewMonitor: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.displaySize?.message}
-            placeholder=""
           />
         </Form.Item>
-        <Form.Item
-          label="Kích thước"
-          name="dimension"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="dimension"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.dimension?.message}
-            placeholder="Dài 159.9 mm - Ngang 76.7 mm - Dày 8.25 mm "
-          />
-        </Form.Item>
-        <Form.Item label="Khối lượng" name="mass" rules={[{ required: true }]}>
-          <Input
-            name="mass"
-            register={register}
-            type="number"
-            className=""
-            errorMessage={errors.mass?.message}
-            placeholder=" 221 "
-          />
-        </Form.Item>
+
         <Form.Item
           label="Năm ra mắt"
           name="launchTime"
@@ -324,23 +273,9 @@ const NewMonitor: React.FC = () => {
             type="number"
             className=""
             errorMessage={errors.launchTime?.message}
-            placeholder="2023"
           />
         </Form.Item>
-        <Form.Item
-          label="Phụ kiện"
-          name="accessories"
-          rules={[{ required: true }]}
-        >
-          <Input
-            name="accessories"
-            register={register}
-            type="text"
-            className=""
-            errorMessage={errors.accessories?.message}
-            placeholder="Tai nghe, sạc"
-          />
-        </Form.Item>
+
         <Form.Item
           label="Loại sản phẩm"
           name="lstProductTypeAndPrice"
@@ -351,32 +286,6 @@ const NewMonitor: React.FC = () => {
               <li key={item.id}>
                 <div className="flex justify-between space-x-1">
                   <Form.Item
-                    label="Ram"
-                    name={`lstProductTypeAndPrice.${index}.ram`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.ram`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="8Gb"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1TB"
-                    />
-                  </Form.Item>
-                </div>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
                     label="Giá"
                     name={`lstProductTypeAndPrice.${index}.price`}
                     rules={[{ required: true }]}
@@ -385,7 +294,6 @@ const NewMonitor: React.FC = () => {
                       name={`lstProductTypeAndPrice.${index}.price`}
                       key={item.id} // important to include key with field's id
                       register={register}
-                      placeholder="45000000"
                     />
                   </Form.Item>
                   <Form.Item
@@ -397,7 +305,6 @@ const NewMonitor: React.FC = () => {
                       name={`lstProductTypeAndPrice.${index}.salePrice`}
                       key={item.id} // important to include key with field's id
                       register={register}
-                      placeholder="44000000"
                     />
                   </Form.Item>
                 </div>
@@ -410,7 +317,6 @@ const NewMonitor: React.FC = () => {
                     className={"flex-1 text-black"}
                     id={`lstProductTypeAndPrice.${index}.depot`}
                     // label="Hãng xe"
-                    placeholder="Chọn kho hàng"
                     options={depot?.data?.data}
                     register={register}
                   >
@@ -427,19 +333,6 @@ const NewMonitor: React.FC = () => {
                       name={`lstProductTypeAndPrice.${index}.quantity`}
                       key={item.id} // important to include key with field's id
                       register={register}
-                      placeholder="1000"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Màu"
-                    name={`lstProductTypeAndPrice.${index}.color`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.color`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="Titan tự nhiên"
                     />
                   </Form.Item>
                 </div>
@@ -488,7 +381,6 @@ const NewMonitor: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.segmentation?.message}
-            placeholder="6.7 - Tần số quét 120 Hz"
           />
         </Form.Item>
 
@@ -503,7 +395,6 @@ const NewMonitor: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.resolution?.message}
-            placeholder="12 MP"
           />
         </Form.Item>
         <Form.Item
@@ -517,7 +408,6 @@ const NewMonitor: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.aspectRatio?.message}
-            placeholder="Chính 48 MP & Phụ 12 MP, 12 MP"
           />
         </Form.Item>
         <Form.Item label="Tấm" name="panels" rules={[{ required: true }]}>
@@ -527,7 +417,6 @@ const NewMonitor: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.panels?.message}
-            placeholder=""
           />
         </Form.Item>
         <Form.Item
@@ -554,11 +443,10 @@ const NewMonitor: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.responseTime?.message}
-            placeholder="4422 mAh"
           />
         </Form.Item>
         <Form.Item
-          label="Hợp đồng"
+          label="Tương phản"
           name="contract"
           rules={[{ required: true }]}
         >
@@ -568,7 +456,6 @@ const NewMonitor: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.contract?.message}
-            placeholder="20 W"
           />
         </Form.Item>
         <Form.Item
@@ -582,7 +469,19 @@ const NewMonitor: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.brightness?.message}
-            placeholder="5G"
+          />
+        </Form.Item>
+        <Form.Item
+          label="Đầu nối"
+          name="connectors"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="connectors"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.connectors?.message}
           />
         </Form.Item>
 

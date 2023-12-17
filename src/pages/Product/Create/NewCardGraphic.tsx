@@ -37,8 +37,6 @@ const normFile = (e: any) => {
 
 interface FormData {
   brand: string;
-  category: string;
-  characteristic: string;
   name: string;
   description: string;
   design: string | undefined;
@@ -47,9 +45,6 @@ interface FormData {
   launchTime: string | undefined;
   accessories: string | undefined;
   productStatus: string | undefined;
-  ram: string;
-  storageCapacity: string;
-  color: string;
   price: string;
   salePrice: string | undefined;
 }
@@ -136,7 +131,7 @@ const NewCardGraphic: React.FC = () => {
         brandId: Number(data.brand) || 1,
         categoryId: 15,
         productId: null,
-        characteristicId: Number(data.characteristic),
+        characteristicId: 12,
         productCode: generateRandomString(10),
         name: data.name,
         description: data?.description,
@@ -148,13 +143,10 @@ const NewCardGraphic: React.FC = () => {
         productStatus: 100,
         lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
           typeId: null,
-          ram: item?.ram,
-          storageCapacity: item?.storageCapacity,
-          color: item?.color,
           price: Number(item?.price),
           salePrice: Number(item?.salePrice),
           quantity: Number(item?.quantity),
-          depotId: Number(item?.depotId),
+          depotId: Number(item?.depot),
         })),
 
         lstProductImageUrl: images || [],
@@ -162,7 +154,7 @@ const NewCardGraphic: React.FC = () => {
       cardFor: true,
       graphicsEngine: data.graphicsEngine,
       standardBus: data.standardBus,
-      memory: data.capacity,
+      memory: data.memory,
       memorySpeed: data.memorySpeed,
       engineClock: data.engineClock,
       outputPort: data.outputPort,
@@ -261,35 +253,21 @@ const NewCardGraphic: React.FC = () => {
             placeholder=""
           />
         </Form.Item>
+        <Form.Item label="Khối lượng" name="mass" rules={[{ required: true }]}>
+          <Input
+            name="mass"
+            register={register}
+            type="number"
+            className=""
+            errorMessage={errors.mass?.message}
+            placeholder=""
+          />
+        </Form.Item>
 
         <Form.Item label="Loại sản phẩm" name="lstProductTypeAndPrice">
           <ul>
             {fields.map((item, index) => (
               <li key={item.id}>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Ram"
-                    name={`lstProductTypeAndPrice.${index}.ram`}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.ram`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="8Gb"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1TB"
-                    />
-                  </Form.Item>
-                </div>
                 <div className="flex justify-between space-x-1">
                   <Form.Item
                     label="Giá"
@@ -342,17 +320,6 @@ const NewCardGraphic: React.FC = () => {
                       key={item.id} // important to include key with field's id
                       register={register}
                       placeholder="1000"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Màu"
-                    name={`lstProductTypeAndPrice.${index}.color`}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.color`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="Titan tự nhiên"
                     />
                   </Form.Item>
                 </div>

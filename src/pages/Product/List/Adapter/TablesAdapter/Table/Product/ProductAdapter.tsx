@@ -16,7 +16,7 @@ import {
 import { unwrapResult } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import { ListSmartPhone } from "src/types/allProductsType.interface";
-import { deleteAdapter } from "src/store/accessory/adapter";
+import { deleteAdapter, getAdapter } from "src/store/accessory/adapter";
 
 interface Props {
   product: ListSmartPhone;
@@ -81,7 +81,7 @@ export default function ProductAdapter({ product }: Props) {
             await toast.success("Xóa sản phẩm thành công ");
 
             dispatch(
-              getSmartPhones({
+              getAdapter({
                 // body: body,
                 // params: { pageNumber: 1, pageSize: 10 },
               }),

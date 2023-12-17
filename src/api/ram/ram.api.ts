@@ -11,9 +11,9 @@ const ramApi = {
   getDetailRam(params: any) {
     return http.get<SuccessResponse<any[]>>(`/manage/product/ram/${params}`);
   },
-  updateRam({ _id, body }: any) {
+  updateRam({ id, body }: any) {
     return http.put<SuccessResponse<any>>(
-      `/manage/product/ram/update/${_id}`,
+      `/manage/product/ram/update/${id}`,
       body,
     );
   },

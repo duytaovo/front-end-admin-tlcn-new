@@ -8,7 +8,6 @@ import { Rate } from "antd";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { Button } from "@mui/material";
 import { useAppDispatch } from "src/hooks/useRedux";
-import { getSmartPhones } from "src/store/product/smartPhoneSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import { deleteLaptop, getLaptop } from "src/store/product/laptopSlice ";
@@ -77,18 +76,18 @@ export default function ProductLaptop({ product }: Props) {
       id: 3,
       title: "Xóa",
       callback: () => {
-        const handleDelete = async () => {
-          if (confirm("Bạn có muốn disable sản phẩm không?")) {
+        if (confirm("Bạn có muốn disable sản phẩm không?")) {
+          const handleDelete = async () => {
             const res = await dispatch(deleteLaptop(product.id.toString()));
             unwrapResult(res);
-            const d = res?.payload;
-            if (d?.code !== 200) return toast.error(d?.message);
+            // const d = res?.payload;
+            // if (d?.code !== 200) return toast.error(d?.message);
             await toast.success("Xóa sản phẩm thành công ");
             await dispatch(getLaptop(""));
-          }
+          };
           handleDelete();
           hidden();
-        };
+        }
       },
       variant: "contained",
     },

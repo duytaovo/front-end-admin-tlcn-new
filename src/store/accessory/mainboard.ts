@@ -44,7 +44,7 @@ const mainboardlice = createSlice({
       state.mainboard = payload.data;
     });
     builder.addCase(getDetailMainboard.fulfilled, (state, { payload }) => {
-      state.mainboardDetail = payload.data;
+      state.mainboardDetail = payload.data?.data;
     });
   },
 });

@@ -37,8 +37,6 @@ const normFile = (e: any) => {
 
 interface FormData {
   brand: string;
-  category: string;
-  characteristic: string;
   name: string;
   description: string;
   design: string | undefined;
@@ -47,9 +45,6 @@ interface FormData {
   launchTime: string | undefined;
   accessories: string | undefined;
   productStatus: string | undefined;
-  ram: string;
-  storageCapacity: string;
-  color: string;
   price: string;
   salePrice: string | undefined;
 }
@@ -139,7 +134,7 @@ const NewBackup: React.FC = () => {
           brandId: Number(data.brand) || 1,
           categoryId: 21,
           productId: null,
-          characteristicId: Number(data.characteristic),
+          characteristicId: 12,
           productCode: generateRandomString(10),
           name: data.name,
           description: data?.description,
@@ -151,13 +146,10 @@ const NewBackup: React.FC = () => {
           productStatus: 100,
           lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
             typeId: null,
-            ram: item?.ram,
-            storageCapacity: item?.storageCapacity,
-            color: item?.color,
             price: Number(item?.price),
             salePrice: Number(item?.salePrice),
             quantity: Number(item?.quantity),
-            depotId: Number(item?.depotId),
+            depotId: Number(item?.depot),
           })),
 
           lstProductImageUrl: images || [],
@@ -232,24 +224,6 @@ const NewBackup: React.FC = () => {
           </SelectCustom>
         </Form.Item>
 
-        <Form.Item
-          label="Đặc điểm sản phẩm"
-          name="characteristic"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="characteristic"
-            // label="Hãng xe"
-            placeholder="Chọn đặc điểm "
-            defaultValue={""}
-            options={character?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.characteristic?.message}
-          </SelectCustom>
-        </Form.Item>
         <Form.Item
           label="Dung lượng pin"
           name="batteryCapacity"
@@ -351,32 +325,6 @@ const NewBackup: React.FC = () => {
               <li key={item.id}>
                 <div className="flex justify-between space-x-1">
                   <Form.Item
-                    label="Ram"
-                    name={`lstProductTypeAndPrice.${index}.ram`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.ram`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="8Gb"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1TB"
-                    />
-                  </Form.Item>
-                </div>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
                     label="Giá"
                     name={`lstProductTypeAndPrice.${index}.price`}
                     rules={[{ required: true }]}
@@ -427,18 +375,6 @@ const NewBackup: React.FC = () => {
                       key={item.id} // important to include key with field's id
                       register={register}
                       placeholder="1000"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Màu"
-                    name={`lstProductTypeAndPrice.${index}.color`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.color`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="Titan tự nhiên"
                     />
                   </Form.Item>
                 </div>
@@ -501,7 +437,7 @@ const NewBackup: React.FC = () => {
           />
         </Form.Item>
         <Form.Item
-          label="Camera sau"
+          label="Thời gian pin"
           name="batteryChargingTime"
           rules={[{ required: true }]}
         >
@@ -614,7 +550,7 @@ const NewBackup: React.FC = () => {
             <Button
               className="w-[100px]"
               onClick={() => {
-                navigate(path.smartPhone);
+                navigate(path.backupCharger);
               }}
             >
               Hủy

@@ -44,7 +44,7 @@ const loudSpeakerlice = createSlice({
       state.loudSpeaker = payload.data;
     });
     builder.addCase(getDetailloudSpeaker.fulfilled, (state, { payload }) => {
-      state.loudSpeakerDetail = payload.data;
+      state.loudSpeakerDetail = payload.data?.data;
     });
   },
 });

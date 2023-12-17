@@ -11,15 +11,15 @@ const tabletApi = {
   getDetailTablet(params: any) {
     return http.get<SuccessResponse<any[]>>(`/manage/product/tablet/${params}`);
   },
-  updateTablet({ _id, body }: any) {
+  updateTablet({ id, body }: any) {
     return http.put<SuccessResponse<any>>(
-      `/manage/product/tablet/update/${_id}`,
-      body
+      `/manage/product/tablet/update/${id}`,
+      body,
     );
   },
   deleteTablet(idTablet: string[]) {
     return http.put<SuccessResponse<any>>(
-      `/manage/product/tablet/delete/${idTablet}`
+      `/manage/product/tablet/delete/${idTablet}`,
     );
   },
   uploadImageTablet(body: FormData) {
@@ -30,7 +30,7 @@ const tabletApi = {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      }
+      },
     );
   },
   uploadImagesTablet(body: FormData) {
@@ -41,9 +41,10 @@ const tabletApi = {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      }
+      },
     );
   },
 };
 
 export default tabletApi;
+

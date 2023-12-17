@@ -21,15 +21,6 @@ const TableRam: React.FC = () => {
   const handlePageChange = (page: number) => {
     setCurrentPage(page - 1);
   };
-  const [product, setProduct] = React.useState("");
-
-  const handleChangeProduct = (event: SelectChangeEvent) => {
-    setProduct(event.target.value as string);
-  };
-
-  const onClick = (value: string) => {
-    navigate(value);
-  };
 
   return (
     <div className="mx-6">

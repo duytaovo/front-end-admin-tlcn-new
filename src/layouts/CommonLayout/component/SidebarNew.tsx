@@ -4,7 +4,6 @@ import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 import LocalPoliceOutlinedIcon from "@mui/icons-material/LocalPoliceOutlined";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import StoreIcon from "@mui/icons-material/Store";
@@ -45,6 +44,7 @@ const items: MenuItem[] = [
     getItem("Phụ kiện", "/accessory", null, [
       getItem("Ram", "/ram"),
       getItem("Rom", "/rom"),
+      getItem("Bàn phím", "/keyboard"),
       getItem("Processor", "/processor"),
       getItem("Card đồ họa", "/cardGraphic"),
       getItem("Chuột máy tính", "/mouse"),

@@ -44,7 +44,7 @@ const adapterlice = createSlice({
       state.adapter = payload.data;
     });
     builder.addCase(getDetailAdapter.fulfilled, (state, { payload }) => {
-      state.adapterDetail = payload.data;
+      state.adapterDetail = payload.data?.data;
     });
   },
 });

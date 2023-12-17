@@ -23,10 +23,8 @@ import InputFile from "src/components/InputFile";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
-import { addRam, getRams } from "src/store/ram/ramSlice";
 import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
 import {
-  addloudSpeaker,
   getDetailloudSpeaker,
   getloudSpeaker,
   updateloudSpeaker,
@@ -41,8 +39,6 @@ const normFile = (e: any) => {
 
 interface FormData {
   brand: string;
-  category: string;
-  characteristic: string;
   name: string;
   description: string;
   design: string | undefined;
@@ -51,9 +47,6 @@ interface FormData {
   launchTime: string | undefined;
   accessories: string | undefined;
   productStatus: string | undefined;
-  ram: string;
-  storageCapacity: string;
-  color: string;
   price: string;
   salePrice: string | undefined;
 }
@@ -113,7 +106,7 @@ const UpdateLoudSpeaker: React.FC = () => {
     imageUrls.push(imageUrl);
   }
   useEffect(() => {
-    setImages(loudSpeakerDetail.productInfo.lstProductImageUrl);
+    setImages(loudSpeakerDetail.productInfo?.lstProductImageUrl);
 
     const productInfo = loudSpeakerDetail?.productInfo;
 
@@ -147,15 +140,10 @@ const UpdateLoudSpeaker: React.FC = () => {
         },
       );
     }
-    setValue("accessories", loudSpeakerDetail?.productInfo?.accessories);
     setValue("totalCapacity", loudSpeakerDetail?.totalCapacity);
     setValue("time", loudSpeakerDetail?.time);
     setValue("connection", loudSpeakerDetail?.connection);
-    setValue("mass", loudSpeakerDetail?.productInfo?.mass.toString());
-    setValue(
-      "color",
-      loudSpeakerDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
-    );
+
     setValue("utilities", loudSpeakerDetail?.utilities);
     setValue("control", loudSpeakerDetail?.control);
     setValue("description", loudSpeakerDetail?.productInfo?.description);
@@ -173,11 +161,8 @@ const UpdateLoudSpeaker: React.FC = () => {
       "price",
       loudSpeakerDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
     );
-    setValue("design", loudSpeakerDetail?.productInfo?.design);
-    setValue("dimension", loudSpeakerDetail?.productInfo?.dimension);
-    setValue("category", loudSpeakerDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
-    setValue("files", loudSpeakerDetail?.productInfo.lstProductImageUrl);
+    setValue("files", loudSpeakerDetail?.productInfo?.lstProductImageUrl);
   }, [loudSpeakerDetail]);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
@@ -187,6 +172,8 @@ const UpdateLoudSpeaker: React.FC = () => {
   );
   const onSubmit = handleSubmit(async (data) => {
     let images = [];
+    showModal();
+    setIsSubmitting(true);
 
     if (file) {
       const form = new FormData();
@@ -199,17 +186,14 @@ const UpdateLoudSpeaker: React.FC = () => {
       for (let i = 0; i < d.length; i++) {
         images.push(d[i]?.fileUrl);
       }
-    } else {
-      toast.warning("Cần chọn ảnh");
-      return;
     }
     const body = JSON.stringify({
       productInfo: {
         brandId: Number(data.brand),
         categoryId: 12,
-        productId: null,
+        productId: Number(loudSpeakerDetail.productInfo.productId),
         characteristicId: Number(data.characteristic),
-        productCode: generateRandomString(10),
+        productCode: loudSpeakerDetail.productInfo.productCode,
         name: data.name,
         description: data?.description,
         design: data?.design,
@@ -241,7 +225,7 @@ const UpdateLoudSpeaker: React.FC = () => {
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(updateloudSpeaker(body));
+      const res = await dispatch(updateloudSpeaker({ id, body }));
       unwrapResult(res);
       const d = res?.payload?.data;
       if (d?.code !== 200) return toast.error(d?.message);
@@ -304,10 +288,7 @@ const UpdateLoudSpeaker: React.FC = () => {
     setValue("time", loudSpeakerDetail?.time);
     setValue("connection", loudSpeakerDetail?.connection);
     setValue("mass", loudSpeakerDetail?.productInfo?.mass.toString());
-    setValue(
-      "color",
-      loudSpeakerDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
-    );
+
     setValue("utilities", loudSpeakerDetail?.utilities);
     setValue("control", loudSpeakerDetail?.control);
     setValue("description", loudSpeakerDetail?.productInfo?.description);
@@ -327,7 +308,6 @@ const UpdateLoudSpeaker: React.FC = () => {
     );
     setValue("design", loudSpeakerDetail?.productInfo?.design);
     setValue("dimension", loudSpeakerDetail?.productInfo?.dimension);
-    setValue("category", loudSpeakerDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
     setValue("files", loudSpeakerDetail?.productInfo.lstProductImageUrl);
   };
@@ -374,23 +354,6 @@ const UpdateLoudSpeaker: React.FC = () => {
         onSubmitCapture={onSubmit}
       >
         <Form.Item
-          label="Hãng sản xuất"
-          name="brand"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="brand"
-            defaultValue={""}
-            options={brand?.data?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.brand?.message}
-          </SelectCustom>
-        </Form.Item>
-
-        <Form.Item
           label="Tên sản phẩm"
           name="name"
           rules={[{ required: true }]}
@@ -423,108 +386,81 @@ const UpdateLoudSpeaker: React.FC = () => {
           rules={[{ required: true }]}
         >
           <ul>
-            {fields.map((item, index) => (
-              <li key={item.id}>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Ram"
-                    name={`lstProductTypeAndPrice.${index}.ram`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.ram`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                </div>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Giá"
-                    name={`lstProductTypeAndPrice.${index}.price`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.price`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Giá khuyến mãi"
-                    name={`lstProductTypeAndPrice.${index}.salePrice`}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.salePrice`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                </div>
-                <Form.Item
-                  label="Kho hàng"
-                  name={`lstProductTypeAndPrice.${index}.depot`}
-                  rules={[{ required: true }]}
-                >
-                  <SelectCustom
-                    className={"flex-1 text-black"}
-                    id={`lstProductTypeAndPrice.${index}.depot`}
-                    // label="Hãng xe"
-
-                    options={depot?.data?.data}
-                    register={register}
-                  >
-                    {/* {errors.depotId?.message} */}
-                  </SelectCustom>
-                </Form.Item>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Số lượng sản phẩm"
-                    name={`lstProductTypeAndPrice.${index}.quantity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.quantity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Màu"
-                    name={`lstProductTypeAndPrice.${index}.color`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.color`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                    />
-                  </Form.Item>
-                </div>
-                <Form.Item>
-                  <Button
-                    type="default"
-                    onClick={() => remove(index)}
-                    block
-                    icon={<PlusOutlined />}
-                  >
-                    Xóa trường này
-                  </Button>
-                </Form.Item>
-                {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
-              </li>
-            ))}
+            {loudSpeakerDetail?.productInfo?.lstProductTypeAndPrice?.map(
+              (item: any, index: number) => {
+                return (
+                  <li key={index}>
+                    <div className="flex justify-between space-x-1">
+                      <Form.Item
+                        label="Giá"
+                        name={`lstProductTypeAndPrice.${index}.price`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.price`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="45000000"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label="Giá khuyến mãi"
+                        name={`lstProductTypeAndPrice.${index}.salePrice`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.salePrice`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="44000000"
+                        />
+                      </Form.Item>
+                    </div>
+                    <Form.Item
+                      label="Kho hàng"
+                      name={`lstProductTypeAndPrice.${index}.depot`}
+                      rules={[{ required: true }]}
+                    >
+                      <SelectCustom
+                        className={"flex-1 text-black"}
+                        id={`lstProductTypeAndPrice.${index}.depot`}
+                        placeholder="Vui lòng chọn"
+                        defaultValue={item.depotId}
+                        options={depot?.data?.data}
+                        register={register}
+                      >
+                        {errors.depotId?.message}
+                      </SelectCustom>
+                    </Form.Item>
+                    <div>
+                      <Form.Item
+                        label="Số lượng sản phẩm"
+                        name={`lstProductTypeAndPrice.${index}.quantity`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.quantity`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="1000"
+                        />
+                      </Form.Item>
+                    </div>
+                    <Form.Item>
+                      <Button
+                        type="default"
+                        onClick={() => remove(index)}
+                        block
+                        icon={<PlusOutlined />}
+                      >
+                        Xóa trường này
+                      </Button>
+                    </Form.Item>
+                    {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
+                  </li>
+                );
+              },
+            )}
             <Form.Item>
               <Button
                 type="dashed"
@@ -616,7 +552,7 @@ const UpdateLoudSpeaker: React.FC = () => {
         >
           <div className="flex flex-col items-start ">
             <div className="my-5 w-24 space-y-5 justify-between items-center">
-              {imageUrls.map((imageUrl, index) => {
+              {imageUrls?.map((imageUrl, index) => {
                 return (
                   <div key={index}>
                     <img

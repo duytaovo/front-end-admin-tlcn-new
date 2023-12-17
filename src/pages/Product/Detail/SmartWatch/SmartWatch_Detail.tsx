@@ -18,12 +18,7 @@ export default function SmartWatchDetail() {
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5]);
   const [activeImage, setActiveImage] = useState("");
   const imageRef = useRef<HTMLImageElement>(null);
-  const [price, setPrice] = useState(
-    smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.price,
-  );
-  const [salePrice, setSalePrice] = useState(
-    smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice,
-  );
+
   const currentImages = useMemo(
     () =>
       smartWatchDetail?.productInfo?.lstProductImageUrl
@@ -41,17 +36,12 @@ export default function SmartWatchDetail() {
     ) {
       setActiveImage(smartWatchDetail?.productInfo?.lstProductImageUrl[0]);
     }
-  }, [smartWatchDetail]);
+  }, [smartWatchDetail, activeImage]);
 
   useEffect(() => {
     dispatch(getDetailSmartWatch(id));
   }, []);
-  useEffect(() => {
-    setPrice(smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.price);
-    setSalePrice(
-      smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice,
-    );
-  }, [smartWatchDetail]);
+
   const next = () => {
     if (
       currentIndexImages[1] <
@@ -69,26 +59,6 @@ export default function SmartWatchDetail() {
 
   const chooseActive = (img: string) => {
     setActiveImage(img);
-  };
-
-  const onClickChangeColor = (ram: string, rom: string, color: string) => {
-    if (
-      ram === smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.ram &&
-      rom ===
-        smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]
-          ?.storageCapacity &&
-      color === smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.color
-    ) {
-      setPrice(smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.price);
-      setSalePrice(
-        smartWatchDetail?.productInfo?.lstProductTypeAndPrice[0]?.salePrice,
-      );
-    } else {
-      setPrice(smartWatchDetail?.productInfo?.lstProductTypeAndPrice[1]?.price);
-      setSalePrice(
-        smartWatchDetail?.productInfo?.lstProductTypeAndPrice[1]?.salePrice,
-      );
-    }
   };
 
   const handleZoom = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {

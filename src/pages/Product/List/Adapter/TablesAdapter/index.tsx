@@ -16,9 +16,6 @@ const TableAdapter: React.FC = () => {
   const { adapter } = useAppSelector((state) => state.adapter);
   const navigate = useNavigate();
   const pageSize = 10; // Số phần tử trên mỗi trang
-  const [choose, setChoose] = useState<any>();
-  const [chooseCharac, setChooseCharac] = useState<any>();
-  const [chooseBox, setChooseBox] = useState<any>();
   const [isOpen, setisOpen] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại

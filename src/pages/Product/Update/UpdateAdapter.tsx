@@ -39,8 +39,6 @@ const normFile = (e: any) => {
 
 interface FormData {
   brand: string;
-  category: string;
-  characteristic: string;
   name: string;
   description: string;
   design: string | undefined;
@@ -49,9 +47,6 @@ interface FormData {
   launchTime: string | undefined;
   accessories: string | undefined;
   productStatus: string | undefined;
-  ram: string;
-  storageCapacity: string;
-  color: string;
   price: string;
   salePrice: string | undefined;
 }
@@ -109,11 +104,11 @@ const UpdateAdapter: React.FC = () => {
 
   for (const image of imageArray) {
     const imageUrl = URL.createObjectURL(image);
-    imageUrls.push(imageUrl);
+    // imageUrls.push(imageUrl);
   }
 
   useEffect(() => {
-    setImages(adapterDetail.productInfo.lstProductImageUrl);
+    setImages(adapterDetail?.productInfo?.lstProductImageUrl);
 
     const productInfo = adapterDetail?.productInfo;
 
@@ -152,18 +147,12 @@ const UpdateAdapter: React.FC = () => {
     setValue("model", adapterDetail?.model);
     setValue("input", adapterDetail?.input);
     setValue("mass", adapterDetail?.productInfo?.mass.toString());
-    setValue(
-      "color",
-      adapterDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
-    );
+
     setValue("output", adapterDetail?.output);
     setValue("maximumCapacity", adapterDetail?.maximumCapacity);
     setValue("description", adapterDetail?.productInfo?.description);
     setValue("brand", adapterDetail?.productInfo?.brandId.toString());
-    setValue(
-      "characteristic",
-      adapterDetail?.productInfo?.characteristicId.toString(),
-    );
+
     setValue("name", adapterDetail?.productInfo?.name);
     setValue("technology", adapterDetail?.technology);
     setValue(
@@ -173,7 +162,6 @@ const UpdateAdapter: React.FC = () => {
 
     setValue("design", adapterDetail?.productInfo?.design);
     setValue("dimension", adapterDetail?.productInfo?.dimension);
-    setValue("category", adapterDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
   }, [adapterDetail]);
 
@@ -198,18 +186,15 @@ const UpdateAdapter: React.FC = () => {
       for (let i = 0; i < d.length; i++) {
         images.push(d[i]?.fileUrl);
       }
-    } else {
-      toast.warning("Cần chọn ảnh");
-      return;
     }
     try {
       const body = JSON.stringify({
         productInfo: {
           brandId: Number(data.brand) || 1,
           categoryId: 20,
-          productId: null,
-          characteristicId: Number(data.characteristic) || 1,
-          productCode: generateRandomString(10),
+          productId: Number(adapterDetail.productInfo.productId),
+          characteristicId: 12,
+          productCode: adapterDetail.productInfo.productCode,
           name: data.name,
           description: data?.description,
           design: data?.design,
@@ -224,9 +209,6 @@ const UpdateAdapter: React.FC = () => {
                 adapterDetail?.productInfo?.lstProductTypeAndPrice[index]
                   ?.typeId,
               ),
-              ram: item?.ram,
-              storageCapacity: item?.storageCapacity,
-              color: item?.color,
               price: Number(item?.price),
               salePrice: Number(item?.salePrice),
               quantity: Number(item?.quantity),
@@ -243,7 +225,7 @@ const UpdateAdapter: React.FC = () => {
         maximumCapacity: data.maximumCapacity,
         technology: data.technology,
       });
-      const res = await dispatch(updateAdapter(body));
+      const res = await dispatch(updateAdapter({ id, body }));
       unwrapResult(res);
       const d = res?.payload?.data;
       if (d?.code !== 200) return toast.error(d?.message);
@@ -310,18 +292,11 @@ const UpdateAdapter: React.FC = () => {
     setValue("model", adapterDetail?.model);
     setValue("input", adapterDetail?.input);
     setValue("mass", adapterDetail?.productInfo?.mass.toString());
-    setValue(
-      "color",
-      adapterDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
-    );
+
     setValue("output", adapterDetail?.output);
     setValue("maximumCapacity", adapterDetail?.maximumCapacity);
     setValue("description", adapterDetail?.productInfo?.description);
     setValue("brand", adapterDetail?.productInfo?.brandId.toString());
-    setValue(
-      "characteristic",
-      adapterDetail?.productInfo?.characteristicId.toString(),
-    );
     setValue("name", adapterDetail?.productInfo?.name);
     setValue("technology", adapterDetail?.technology);
     setValue(
@@ -331,7 +306,6 @@ const UpdateAdapter: React.FC = () => {
 
     setValue("design", adapterDetail?.productInfo?.design);
     setValue("dimension", adapterDetail?.productInfo?.dimension);
-    setValue("category", adapterDetail?.productInfo?.categoryId.toString());
     setValue("launchTime", "2023");
   };
   const handleEditImage = (index: number) => {
@@ -376,14 +350,12 @@ const UpdateAdapter: React.FC = () => {
           rules={[{ required: true }]}
         >
           <SelectCustom
-            className={"flex-1 text-black  "}
+            className={"flex-1 text-black"}
             id="brand"
-            // label="Hãng xe"
-            placeholder="Chọn hãng sx"
-            defaultValue={""}
+            placeholder="Vui lòng chọn"
+            defaultValue={adapterDetail?.productInfo?.brandId}
             options={brand?.data?.data}
             register={register}
-            isBrand={true}
           >
             {errors.brand?.message}
           </SelectCustom>
@@ -403,30 +375,11 @@ const UpdateAdapter: React.FC = () => {
           />
         </Form.Item>
         <Form.Item
-          label="Đặc điểm sản phẩm"
-          name="characteristic"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="characteristic"
-            // label="Hãng xe"
-            placeholder="Chọn đặc điểm "
-            defaultValue={""}
-            options={character?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.characteristic?.message}
-          </SelectCustom>
-        </Form.Item>
-        <Form.Item
           label="Tên sản phẩm"
           name="name"
           rules={[{ required: true }]}
         >
           <Input
-            placeholder="Điện thoại iPhone 15 Pro Max 1TB"
             name="name"
             register={register}
             type="text"
@@ -503,115 +456,81 @@ const UpdateAdapter: React.FC = () => {
           rules={[{ required: true }]}
         >
           <ul>
-            {fields.map((item, index) => (
-              <li key={item.id}>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Ram"
-                    name={`lstProductTypeAndPrice.${index}.ram`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.ram`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="8Gb"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1TB"
-                    />
-                  </Form.Item>
-                </div>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Giá"
-                    name={`lstProductTypeAndPrice.${index}.price`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.price`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="45000000"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Giá khuyến mãi"
-                    name={`lstProductTypeAndPrice.${index}.salePrice`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.salePrice`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="44000000"
-                    />
-                  </Form.Item>
-                </div>
-                <Form.Item
-                  label="Kho hàng"
-                  name={`lstProductTypeAndPrice.${index}.depot`}
-                  rules={[{ required: true }]}
-                >
-                  <SelectCustom
-                    className={"flex-1 text-black"}
-                    id={`lstProductTypeAndPrice.${index}.depot`}
-                    // label="Hãng xe"
-                    placeholder="Chọn kho hàng"
-                    options={depot?.data?.data}
-                    register={register}
-                  >
-                    {errors.depotId?.message}
-                  </SelectCustom>
-                </Form.Item>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Số lượng sản phẩm"
-                    name={`lstProductTypeAndPrice.${index}.quantity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.quantity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1000"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Màu"
-                    name={`lstProductTypeAndPrice.${index}.color`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.color`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="Titan tự nhiên"
-                    />
-                  </Form.Item>
-                </div>
-                <Form.Item>
-                  <Button
-                    type="default"
-                    onClick={() => remove(index)}
-                    block
-                    icon={<PlusOutlined />}
-                  >
-                    Xóa trường này
-                  </Button>
-                </Form.Item>
-                {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
-              </li>
-            ))}
+            {adapterDetail?.productInfo?.lstProductTypeAndPrice?.map(
+              (item: any, index: number) => {
+                return (
+                  <li key={index}>
+                    <div className="flex justify-between space-x-1">
+                      <Form.Item
+                        label="Giá"
+                        name={`lstProductTypeAndPrice.${index}.price`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.price`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="45000000"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label="Giá khuyến mãi"
+                        name={`lstProductTypeAndPrice.${index}.salePrice`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.salePrice`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="44000000"
+                        />
+                      </Form.Item>
+                    </div>
+                    <Form.Item
+                      label="Kho hàng"
+                      name={`lstProductTypeAndPrice.${index}.depot`}
+                      rules={[{ required: true }]}
+                    >
+                      <SelectCustom
+                        className={"flex-1 text-black"}
+                        id={`lstProductTypeAndPrice.${index}.depot`}
+                        placeholder="Vui lòng chọn"
+                        defaultValue={item.depotId}
+                        options={depot?.data?.data}
+                        register={register}
+                      >
+                        {errors.depotId?.message}
+                      </SelectCustom>
+                    </Form.Item>
+                    <div>
+                      <Form.Item
+                        label="Số lượng sản phẩm"
+                        name={`lstProductTypeAndPrice.${index}.quantity`}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          name={`lstProductTypeAndPrice.${index}.quantity`}
+                          key={index} // important to include key with field's id
+                          register={register}
+                          placeholder="1000"
+                        />
+                      </Form.Item>
+                    </div>
+                    <Form.Item>
+                      <Button
+                        type="default"
+                        onClick={() => remove(index)}
+                        block
+                        icon={<PlusOutlined />}
+                      >
+                        Xóa trường này
+                      </Button>
+                    </Form.Item>
+                    {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
+                  </li>
+                );
+              },
+            )}
             <Form.Item>
               <Button
                 type="dashed"
@@ -644,7 +563,6 @@ const UpdateAdapter: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.adapterType?.message}
-            placeholder="6.7 - Tần số quét 120 Hz"
           />
         </Form.Item>
 
@@ -655,7 +573,6 @@ const UpdateAdapter: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.output?.message}
-            placeholder="12 MP"
           />
         </Form.Item>
         <Form.Item label="Đầu vào" name="input" rules={[{ required: true }]}>
@@ -665,7 +582,6 @@ const UpdateAdapter: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.input?.message}
-            placeholder=""
           />
         </Form.Item>
         <Form.Item
@@ -679,7 +595,6 @@ const UpdateAdapter: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.maximumCapacity?.message}
-            placeholder="Apple A17 Pro 6 nhân"
           />
         </Form.Item>
         <Form.Item
@@ -693,40 +608,30 @@ const UpdateAdapter: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.technology?.message}
-            placeholder=""
           />
         </Form.Item>
 
         <Form.Item
-          name="file"
+          name="files"
+          rules={[{ required: true }]}
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
         >
           <div className="flex flex-col items-start ">
             <div className="my-5 w-24 space-y-5 justify-between items-center">
-              {imageUrls.map((imageUrl, index) => {
+              {imageUrls?.map((imageUrl, index) => {
                 return (
-                  <div key={index}>
-                    <img
-                      src={imageUrl}
-                      alt={`Image ${index + 1}`}
-                      width="100"
-                      height="100"
-                      className="h-full rounded-md w-full  object-cover"
-                    />
-
-                    <button
-                      type="button"
-                      onClick={() => handleEditImage(index)}
-                    >
-                      Edit
-                    </button>
-                  </div>
+                  <img
+                    key={index}
+                    src={imageUrl}
+                    className="h-full rounded-md w-full  object-cover"
+                    alt="avatar"
+                  />
                 );
               })}
             </div>
-            <InputFile label="" onChange={handleChangeFile} id="images" />
+            <InputFile label="" onChange={handleChangeFile} id="files" />
             <div className="mt-3  flex flex-col items-center text-red-500">
               <div>Dụng lượng file tối đa 2 MB</div>
               <div>Định dạng:.JPEG, .PNG</div>

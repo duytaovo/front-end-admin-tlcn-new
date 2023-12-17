@@ -44,7 +44,7 @@ const cardGraphicSlice = createSlice({
       state.cardGraphic = payload.data;
     });
     builder.addCase(getDetailCardGraphic.fulfilled, (state, { payload }) => {
-      state.cardGraphicDetail = payload.data;
+      state.cardGraphicDetail = payload.data?.data;
     });
   },
 });

@@ -12,30 +12,31 @@ const processorApi = {
   },
   getDetailProcessor(params: any) {
     return http.get<SuccessResponse<any[]>>(
-      `/manage/product/processor/${params}`
+      `/manage/product/processor/${params}`,
     );
   },
-  updateProcessor({ _id, body }: any) {
-    return http.post<SuccessResponse<any>>(
-      `/manage/product/processor/update/${_id}`,
-      body
+  updateProcessor({ id, body }: any) {
+    return http.put<SuccessResponse<any>>(
+      `/manage/product/processor/update/${id}`,
+      body,
     );
   },
   deleteProcessor(idProcessor: string[]) {
-    return http.post<SuccessResponse<any>>(
-      `/manage/product/processor/delete/${idProcessor}`
+    return http.put<SuccessResponse<any>>(
+      `/manage/product/processor/delete/${idProcessor}`,
     );
   },
   getProcessorWithPageNumber(pageNumber: number) {
     return http.get<SuccessResponse<any>>(
-      `/manage/product/processor/${pageNumber}`
+      `/manage/product/processor/${pageNumber}`,
     );
   },
   getProcessorWithPageNumberSize(pageNumber: number, pageSize: number) {
     return http.get<SuccessResponse<any>>(
-      `/manage/product/processor/${pageNumber}/${pageSize}`
+      `/manage/product/processor/${pageNumber}/${pageSize}`,
     );
   },
 };
 
 export default processorApi;
+

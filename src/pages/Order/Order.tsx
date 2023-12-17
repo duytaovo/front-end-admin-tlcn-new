@@ -118,8 +118,19 @@ const Order = ({ title }: { title?: string }) => {
 
       if (res) {
         toast.success("Xác nhận thành công");
+        const body = {
+          orderStatus: Trangthaidonhang ? Trangthaidonhang : [],
+          buyDateFrom: value[0]?.format("YYYY-MM-DD") || null,
+          buyDateTo: value[1]?.format("YYYY-MM-DD") || null,
+          paymentStatus: Phuongthucthanhtoan ? Phuongthucthanhtoan : [],
+        };
+        dispatch(
+          getPurchases({
+            body: body,
+            params: { pageNumber: currentPage, pageSize: 10 },
+          }),
+        );
       }
-      dispatch(getPurchases(""));
     }
   };
 
@@ -129,8 +140,19 @@ const Order = ({ title }: { title?: string }) => {
 
       if (res) {
         toast.success("Giao hàng thành công");
+        const body = {
+          orderStatus: Trangthaidonhang ? Trangthaidonhang : [],
+          buyDateFrom: value[0]?.format("YYYY-MM-DD") || null,
+          buyDateTo: value[1]?.format("YYYY-MM-DD") || null,
+          paymentStatus: Phuongthucthanhtoan ? Phuongthucthanhtoan : [],
+        };
+        dispatch(
+          getPurchases({
+            body: body,
+            params: { pageNumber: currentPage, pageSize: 10 },
+          }),
+        );
       }
-      dispatch(getPurchases(""));
     }
   };
 
@@ -140,8 +162,19 @@ const Order = ({ title }: { title?: string }) => {
 
       if (res) {
         toast.success("Chuyển giao thành công");
+        const body = {
+          orderStatus: Trangthaidonhang ? Trangthaidonhang : [],
+          buyDateFrom: value[0]?.format("YYYY-MM-DD") || null,
+          buyDateTo: value[1]?.format("YYYY-MM-DD") || null,
+          paymentStatus: Phuongthucthanhtoan ? Phuongthucthanhtoan : [],
+        };
+        dispatch(
+          getPurchases({
+            body: body,
+            params: { pageNumber: currentPage, pageSize: 10 },
+          }),
+        );
       }
-      dispatch(getPurchases(""));
     }
   };
 
@@ -150,8 +183,19 @@ const Order = ({ title }: { title?: string }) => {
       const res = await dispatch(updatePurchasesCancel(id));
       if (res) {
         toast.success("Hủy đơn thành công");
+        const body = {
+          orderStatus: Trangthaidonhang ? Trangthaidonhang : [],
+          buyDateFrom: value[0]?.format("YYYY-MM-DD") || null,
+          buyDateTo: value[1]?.format("YYYY-MM-DD") || null,
+          paymentStatus: Phuongthucthanhtoan ? Phuongthucthanhtoan : [],
+        };
+        dispatch(
+          getPurchases({
+            body: body,
+            params: { pageNumber: currentPage, pageSize: 10 },
+          }),
+        );
       }
-      dispatch(getPurchases(""));
     }
   };
   useEffect(() => {
@@ -196,7 +240,7 @@ const Order = ({ title }: { title?: string }) => {
         params: { pageNumber: currentPage, pageSize: 10 },
       }),
     );
-  }, [currentPage, value, Trangthaidonhang, Phuongthucthanhtoan]);
+  }, [currentPage, value, Trangthaidonhang, Phuongthucthanhtoan, dispatch]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page - 1);

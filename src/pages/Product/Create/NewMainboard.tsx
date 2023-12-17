@@ -34,8 +34,6 @@ const normFile = (e: any) => {
 
 interface FormData {
   brand: string;
-  category: string;
-  characteristic: string;
   name: string;
   description: string;
   design: string | undefined;
@@ -44,9 +42,6 @@ interface FormData {
   launchTime: string | undefined;
   accessories: string | undefined;
   productStatus: string | undefined;
-  ram: string;
-  storageCapacity: string;
-  color: string;
   price: string;
   salePrice: string | undefined;
 }
@@ -79,8 +74,6 @@ const NewComputerPower: React.FC = () => {
   });
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { category } = useAppSelector((state) => state.category);
-  const { character } = useAppSelector((state) => state.character);
   const { depot } = useAppSelector((state) => state.depot);
   const { brand } = useAppSelector((state) => state.brand);
   useEffect(() => {
@@ -135,7 +128,7 @@ const NewComputerPower: React.FC = () => {
           brandId: Number(data.brand),
           categoryId: 17,
           productId: null,
-          characteristicId: Number(data.characteristic),
+          characteristicId: 12,
           productCode: generateRandomString(10),
           name: data.name,
           description: data?.description,
@@ -147,9 +140,6 @@ const NewComputerPower: React.FC = () => {
           productStatus: 100,
           lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
             typeId: null,
-            ram: item?.ram,
-            storageCapacity: item?.storageCapacity,
-            color: item?.color,
             price: Number(item?.price),
             salePrice: Number(item?.salePrice),
             quantity: Number(item?.quantity),
@@ -161,6 +151,7 @@ const NewComputerPower: React.FC = () => {
         mainboardFor: true,
         model: data.model,
         socket: data.socket,
+        expansionSlot: data.expansionSlot,
         chipset: data.chipset,
         memory: data.memory,
         graphicsCard: data.graphicsCard,
@@ -179,7 +170,7 @@ const NewComputerPower: React.FC = () => {
           // params: { pageNumber: 1, pageSize: 10 },
         }),
       );
-      await navigate(path.smartPhone);
+      await navigate(path.mainBoard);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
@@ -234,32 +225,12 @@ const NewComputerPower: React.FC = () => {
             {errors.brand?.message}
           </SelectCustom>
         </Form.Item>
-
-        <Form.Item
-          label="Đặc điểm sản phẩm"
-          name="characteristic"
-          rules={[{ required: true }]}
-        >
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="characteristic"
-            // label="Hãng xe"
-            placeholder="Chọn đặc điểm "
-            defaultValue={""}
-            options={character?.data}
-            register={register}
-            isBrand={true}
-          >
-            {errors.characteristic?.message}
-          </SelectCustom>
-        </Form.Item>
         <Form.Item
           label="Tên sản phẩm"
           name="name"
           rules={[{ required: true }]}
         >
           <Input
-            placeholder="Điện thoại iPhone 15 Pro Max 1TB"
             name="name"
             register={register}
             type="text"
@@ -340,32 +311,6 @@ const NewComputerPower: React.FC = () => {
               <li key={item.id}>
                 <div className="flex justify-between space-x-1">
                   <Form.Item
-                    label="Ram"
-                    name={`lstProductTypeAndPrice.${index}.ram`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.ram`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="8Gb"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1TB"
-                    />
-                  </Form.Item>
-                </div>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
                     label="Giá"
                     name={`lstProductTypeAndPrice.${index}.price`}
                     rules={[{ required: true }]}
@@ -419,18 +364,6 @@ const NewComputerPower: React.FC = () => {
                       placeholder="1000"
                     />
                   </Form.Item>
-                  <Form.Item
-                    label="Màu"
-                    name={`lstProductTypeAndPrice.${index}.color`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.color`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="Titan tự nhiên"
-                    />
-                  </Form.Item>
                 </div>
                 <Form.Item>
                   <Button
@@ -477,7 +410,6 @@ const NewComputerPower: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.chipset?.message}
-            placeholder="12 MP"
           />
         </Form.Item>
         <Form.Item label="Socket" name="socket" rules={[{ required: true }]}>
@@ -487,7 +419,19 @@ const NewComputerPower: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.socket?.message}
-            placeholder="Chính 48 MP & Phụ 12 MP, 12 MP"
+          />
+        </Form.Item>
+        <Form.Item
+          label="Khe cắm mở rộng"
+          name="expansionSlot"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="expansionSlot"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.expansionSlot?.message}
           />
         </Form.Item>
         <Form.Item label="Memory" name="memory" rules={[{ required: true }]}>
@@ -511,7 +455,6 @@ const NewComputerPower: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.graphicsCard?.message}
-            placeholder="1 Nano SIM & 1 eSIM"
           />
         </Form.Item>
         <Form.Item label="Âm thanh" name="sound" rules={[{ required: true }]}>
@@ -521,7 +464,15 @@ const NewComputerPower: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.sound?.message}
-            placeholder="4422 mAh"
+          />
+        </Form.Item>
+        <Form.Item label="Kiểu" name="model" rules={[{ required: true }]}>
+          <Input
+            name="model"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.model?.message}
           />
         </Form.Item>
         <Form.Item label="Lan" name="lan" rules={[{ required: true }]}>
@@ -545,7 +496,6 @@ const NewComputerPower: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.wifiBluetooth?.message}
-            placeholder="5G"
           />
         </Form.Item>
 
@@ -611,7 +561,7 @@ const NewComputerPower: React.FC = () => {
             <Button
               className="w-[100px]"
               onClick={() => {
-                navigate(path.smartPhone);
+                navigate(path.mainBoard);
               }}
             >
               Hủy

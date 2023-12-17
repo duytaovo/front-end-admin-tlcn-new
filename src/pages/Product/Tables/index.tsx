@@ -65,7 +65,6 @@ const TableProduct: React.FC = () => {
     setCurrentPage(page - 1);
   };
   const exportToExcel = async (products: any) => {
-    console.log(products);
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Products");
 

@@ -11,7 +11,6 @@ import Tag from "../../../../components/Tag/Tag";
 import { getDetailAdapter } from "src/store/accessory/adapter";
 
 export default function AdapterDetail() {
-  // const { t } = useTranslation(["product"]);
   const { nameId } = useParams();
   const dispatch = useAppDispatch();
   const { adapterDetail } = useAppSelector((state) => state.adapter);

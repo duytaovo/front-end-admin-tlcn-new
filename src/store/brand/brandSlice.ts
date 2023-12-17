@@ -44,7 +44,7 @@ const brandSlice = createSlice({
       state.brand = payload.data;
     });
     builder.addCase(getDetailbrand.fulfilled, (state, { payload }) => {
-      state.brandDetail = payload.data;
+      state.brandDetail = payload.data?.data;
     });
   },
 });

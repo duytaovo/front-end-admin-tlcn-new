@@ -30,7 +30,7 @@ const depotSlice = createSlice({
       state.depot = payload.data;
     });
     builder.addCase(getDetailDepot.fulfilled, (state, { payload }) => {
-      state.depotDetail = payload.data;
+      state.depotDetail = payload.data?.data;
     });
   },
 });
