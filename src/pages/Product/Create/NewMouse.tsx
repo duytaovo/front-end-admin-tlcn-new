@@ -34,10 +34,8 @@ const normFile = (e: any) => {
 
 interface FormData {
   brand: string;
-  characteristic: string;
   name: string;
   description: string;
-  design: string | undefined;
   dimension: string | undefined;
   mass: string | undefined;
   launchTime: string | undefined;
@@ -126,14 +124,13 @@ const NewMouse: React.FC = () => {
     }
     const body = JSON.stringify({
       productInfo: {
-        brandId: Number(data.brand),
         categoryId: 24,
+        brandId: 20,
         productId: null,
         characteristicId: 12,
         productCode: generateRandomString(10),
         name: data.name,
         description: data?.description,
-        design: data?.design,
         dimension: data?.dimension,
         mass: Number(data?.mass),
         launchTime: Number(data?.launchTime),

@@ -396,6 +396,7 @@ export const schemaProductMouse = yup.object({
   name: yup.string(),
   description: yup.string(),
   launchTime: yup.string(),
+  brand: yup.string(),
   accessories: yup.string(),
   productStatus: yup.number(),
   price: yup.string(),

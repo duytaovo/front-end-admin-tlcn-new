@@ -52,8 +52,6 @@ interface FormData {
   ram: string;
   storageCapacity: string;
   color: string;
-  price: string;
-  salePrice: string | undefined;
   monitor: string;
 }
 
@@ -173,15 +171,7 @@ const UpdateTablet: React.FC = () => {
     );
     setValue("name", tabletDetail?.productInfo?.name);
     setValue("sim", tabletDetail?.sim);
-    setValue(
-      "salePrice",
-      tabletDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
-    );
-    setValue("rearCamera", tabletDetail?.rearCamera);
-    setValue(
-      "price",
-      tabletDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
-    );
+
     setValue("frontCamera", tabletDetail?.frontCamera);
     setValue("operatingSystem", tabletDetail?.operatingSystem);
     setValue("design", tabletDetail?.productInfo?.design);
@@ -328,15 +318,6 @@ const UpdateTablet: React.FC = () => {
     );
     setValue("name", tabletDetail?.productInfo?.name);
     setValue("sim", tabletDetail?.sim);
-    setValue(
-      "salePrice",
-      tabletDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
-    );
-    setValue("rearCamera", tabletDetail?.rearCamera);
-    setValue(
-      "price",
-      tabletDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
-    );
     setValue("frontCamera", tabletDetail?.frontCamera);
     setValue("operatingSystem", tabletDetail?.operatingSystem);
     setValue("design", tabletDetail?.productInfo?.design);
