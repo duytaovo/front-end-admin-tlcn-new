@@ -34,19 +34,15 @@ const normFile = (e: any) => {
 
 interface FormData {
   brand: string;
-  category: string;
-  characteristic: string;
+  // characteristic: string;
   name: string;
   description: string;
-  design: string | undefined;
   dimension: string | undefined;
   mass: string | undefined;
   launchTime: string | undefined;
   accessories: string | undefined;
   productStatus: string | undefined;
-  ram: string;
-  storageCapacity: string;
-  color: string;
+
   price: string;
   salePrice: string | undefined;
 }
@@ -137,9 +133,6 @@ const NewKeyboard: React.FC = () => {
         productCode: generateRandomString(10),
         name: data.name,
         description: data?.description,
-        design: data?.design,
-        dimension: data?.dimension,
-        mass: Number(data?.mass),
         launchTime: Number(data.launchTime),
         accessories: data?.accessories,
         productStatus: 100,

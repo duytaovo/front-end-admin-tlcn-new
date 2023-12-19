@@ -2,7 +2,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { Button, Form, Modal } from "antd";
 import { useEffect, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Input from "src/components/Input";
@@ -29,6 +29,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
+import InputNumber from "src/components/InputNumber";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -39,7 +40,6 @@ const normFile = (e: any) => {
 
 interface FormData {
   brand: string;
-  category: string;
   characteristic: string;
   name: string;
   description: string;
@@ -48,12 +48,11 @@ interface FormData {
   mass: string | undefined;
   launchTime: string | undefined;
   accessories: string | undefined;
-  productStatus: number | undefined;
+  productStatus: string | undefined;
   ram: string;
   storageCapacity: string;
   color: string;
-  price: string;
-  salePrice: string | undefined;
+
   monitor: string;
 }
 
@@ -76,14 +75,28 @@ const UpdatePhone: React.FC = () => {
     handleSubmit,
     formState: { errors },
     setError,
+    reset,
     register,
     setValue,
-    getValues,
-    watch,
     control,
+    trigger,
+    watch,
+    getValues,
   } = useForm({
+    defaultValues: {
+      "lstProductTypeAndPrice.0.price": "",
+      "lstProductTypeAndPrice.1.price": "",
+      "lstProductTypeAndPrice.2.price": "",
+      "lstProductTypeAndPrice.3.price": "",
+      "lstProductTypeAndPrice.0.salePrice": "",
+      "lstProductTypeAndPrice.1.salePrice": "",
+      "lstProductTypeAndPrice.2.salePrice": "",
+      "lstProductTypeAndPrice.3.salePrice": "",
+    },
     resolver: yupResolver(schemaProductSmartPhone),
   });
+  const lstProductTypeAndPriceErrors = errors.lstProductTypeAndPrice ?? [];
+
   const [imageUrls, setImages] = useState<string[]>([]);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -175,15 +188,8 @@ const UpdatePhone: React.FC = () => {
     );
     setValue("name", smartPhoneDetail?.productInfo?.name);
     setValue("sim", smartPhoneDetail?.sim);
-    setValue(
-      "salePrice",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
-    );
     setValue("rearCamera", smartPhoneDetail?.rearCamera);
-    setValue(
-      "price",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
-    );
+
     setValue("frontCamera", smartPhoneDetail?.frontCamera);
     setValue("operatingSystem", smartPhoneDetail?.operatingSystem);
     setValue("design", smartPhoneDetail?.productInfo?.design);
@@ -233,7 +239,9 @@ const UpdatePhone: React.FC = () => {
             storageCapacity: item?.storageCapacity,
             color: item?.color,
             price: Number(item?.price),
-            salePrice: Number(item?.salePrice),
+            salePrice:
+              (Number(item?.salePrice) > 0 && Number(item?.salePrice)) ||
+              Number(item?.price),
             quantity: Number(item?.quantity),
             depotId: Number(item?.depot),
           }),
@@ -284,7 +292,7 @@ const UpdatePhone: React.FC = () => {
         if (formError) {
           Object.keys(formError).forEach((key) => {
             setError(key as keyof FormData, {
-              // message: formError[key as keyof FormData],
+              message: formError[key as keyof FormData],
               type: "Server",
             });
           });
@@ -349,16 +357,8 @@ const UpdatePhone: React.FC = () => {
     );
     setValue("name", smartPhoneDetail?.productInfo?.name);
     setValue("sim", smartPhoneDetail?.sim);
-    setValue(
-      "salePrice",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
-    );
-    setValue("rearCamera", smartPhoneDetail?.rearCamera);
-    setValue(
-      "price",
-      smartPhoneDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
-    );
     setValue("frontCamera", smartPhoneDetail?.frontCamera);
+    setValue("rearCamera", smartPhoneDetail?.rearCamera);
     setValue("operatingSystem", smartPhoneDetail?.operatingSystem);
     setValue("design", smartPhoneDetail?.productInfo?.design);
     setValue("dimension", smartPhoneDetail?.productInfo?.dimension);
@@ -572,29 +572,68 @@ const UpdatePhone: React.FC = () => {
                     </div>
                     <div className="flex justify-between space-x-1">
                       <Form.Item
-                        label="Giá"
+                        label="Giá (Nhập số)"
                         name={`lstProductTypeAndPrice.${index}.price`}
                         rules={[{ required: true }]}
                       >
-                        <Input
+                        <Controller
+                          control={control}
                           name={`lstProductTypeAndPrice.${index}.price`}
-                          key={index} // important to include key with field's id
-                          register={register}
-                          placeholder="45000000"
+                          render={({ field }) => {
+                            return (
+                              <InputNumber
+                                type="text"
+                                className="grow"
+                                placeholder="4000000"
+                                classNameInput="p-3 w-full text-black outline-none border border-gray-300 focus:border-gray-500 rounded focus:shadow-sm"
+                                classNameError="hidden"
+                                {...field}
+                                onChange={(event) => {
+                                  field.onChange(event);
+                                  trigger(
+                                    `lstProductTypeAndPrice.${index}.salePrice`,
+                                  );
+                                }}
+                              />
+                            );
+                          }}
                         />
                       </Form.Item>
                       <Form.Item
-                        label="Giá khuyến mãi"
+                        label="Giá khuyến mãi (Nhập số)"
                         name={`lstProductTypeAndPrice.${index}.salePrice`}
                         rules={[{ required: true }]}
                       >
-                        <Input
+                        <Controller
+                          control={control}
                           name={`lstProductTypeAndPrice.${index}.salePrice`}
-                          key={index} // important to include key with field's id
-                          register={register}
-                          placeholder="44000000"
+                          render={({ field }) => {
+                            return (
+                              <InputNumber
+                                type="text"
+                                className="grow"
+                                placeholder="3800000"
+                                classNameInput="p-3 w-full text-black outline-none border border-gray-300 focus:border-gray-500 rounded focus:shadow-sm"
+                                classNameError="hidden"
+                                {...field}
+                                onChange={(event) => {
+                                  field.onChange(event);
+                                  trigger(
+                                    `lstProductTypeAndPrice.${index}.price`,
+                                  );
+                                }}
+                              />
+                            );
+                          }}
                         />
                       </Form.Item>
+                    </div>
+                    <div className="left-0 min-h-[1.25rem] text-center text-base text-red-600">
+                      {(
+                        lstProductTypeAndPriceErrors[index] as {
+                          price?: { message?: string };
+                        }
+                      )?.price?.message ?? ""}
                     </div>
                     <Form.Item
                       label="Kho hàng"

@@ -5,6 +5,33 @@ type Rules = {
   [key in "email" | "password" | "confirm_password"]?: RegisterOptions;
 };
 
+function testPriceMinMax(this: yup.TestContext<yup.AnyObject>) {
+  const parent = this.parent?.lstProductTypeAndPrice;
+
+  if (parent[0]?.salePrice !== "" && parent[0]?.price !== "") {
+    return Number(parent[0]?.price) >= Number(parent[0]?.salePrice);
+  }
+  if (parent[1]?.salePrice !== "" && parent[1]?.price !== "") {
+    return Number(parent[1]?.price) >= Number(parent[1]?.salePrice);
+  }
+  if (parent[2]?.salePrice !== "" && parent[2]?.price !== "") {
+    return Number(parent[2]?.price) >= Number(parent[2]?.salePrice);
+  }
+  if (parent[3]?.salePrice !== "" && parent[3]?.price !== "") {
+    return Number(parent[3]?.price) >= Number(parent[3]?.salePrice);
+  }
+
+  return (
+    parent[0]?.salePrice !== "" || parent[0]?.price !== ""
+    // price1 !== "" ||
+    // price2 !== "" ||
+    // price3 ||
+    // salePrice1 !== "" ||
+    // salePrice2 !== "" ||
+    // salePrice3 !== ""
+  );
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getRules = (getValues?: UseFormGetValues<any>): Rules => ({
   email: {
@@ -132,8 +159,6 @@ export const schemaProductSmartPhone = yup.object({
   ram: yup.string(),
   storageCapacity: yup.string(),
   color: yup.string(),
-  price: yup.string(),
-  salePrice: yup.string(),
   monitor: yup.string(),
   operatingSystem: yup.string(),
   frontCamera: yup.string(),
@@ -162,16 +187,56 @@ export const schemaProductSmartPhone = yup.object({
   "lstProductTypeAndPrice.2.color": yup.string(),
   "lstProductTypeAndPrice.3.color": yup.string(),
   "lstProductTypeAndPrice.4.color": yup.string(),
-  "lstProductTypeAndPrice.0.price": yup.string(),
-  "lstProductTypeAndPrice.1.price": yup.string(),
-  "lstProductTypeAndPrice.2.price": yup.string(),
-  "lstProductTypeAndPrice.3.price": yup.string(),
-  "lstProductTypeAndPrice.4.price": yup.string(),
-  "lstProductTypeAndPrice.0.salePrice": yup.string(),
-  "lstProductTypeAndPrice.1.salePrice": yup.string(),
-  "lstProductTypeAndPrice.2.salePrice": yup.string(),
-  "lstProductTypeAndPrice.3.salePrice": yup.string(),
-  "lstProductTypeAndPrice.4.salePrice": yup.string(),
+  "lstProductTypeAndPrice.0.price": yup.string().test({
+    name: "price-not-allowed",
+    message: "Giá khuyến mãi phải nhỏ hơn giá gốc",
+    test: testPriceMinMax,
+  }),
+  "lstProductTypeAndPrice.1.price": yup.string().test({
+    name: "price-not-allowed",
+    message: "Giá khuyến mãi phải nhỏ hơn giá gốc",
+    test: testPriceMinMax,
+  }),
+  "lstProductTypeAndPrice.2.price": yup.string().test({
+    name: "price-not-allowed",
+    message: "Giá khuyến mãi phải nhỏ hơn giá gốc",
+    test: testPriceMinMax,
+  }),
+  "lstProductTypeAndPrice.3.price": yup.string().test({
+    name: "price-not-allowed",
+    message: "Giá khuyến mãi phải nhỏ hơn giá gốc",
+    test: testPriceMinMax,
+  }),
+  "lstProductTypeAndPrice.4.price": yup.string().test({
+    name: "price-not-allowed",
+    message: "Giá khuyến mãi phải nhỏ hơn giá gốc",
+    test: testPriceMinMax,
+  }),
+  "lstProductTypeAndPrice.0.salePrice": yup.string().test({
+    name: "price-not-allowed",
+    message: "Giá khuyến mãi phải nhỏ hơn giá gốc",
+    test: testPriceMinMax,
+  }),
+  "lstProductTypeAndPrice.1.salePrice": yup.string().test({
+    name: "price-not-allowed",
+    message: "Giá khuyến mãi phải nhỏ hơn giá gốc",
+    test: testPriceMinMax,
+  }),
+  "lstProductTypeAndPrice.2.salePrice": yup.string().test({
+    name: "price-not-allowed",
+    message: "Giá khuyến mãi phải nhỏ hơn giá gốc",
+    test: testPriceMinMax,
+  }),
+  "lstProductTypeAndPrice.3.salePrice": yup.string().test({
+    name: "price-not-allowed",
+    message: "Giá khuyến mãi phải nhỏ hơn giá gốc",
+    test: testPriceMinMax,
+  }),
+  "lstProductTypeAndPrice.4.salePrice": yup.string().test({
+    name: "price-not-allowed",
+    message: "Giá khuyến mãi phải nhỏ hơn giá gốc",
+    test: testPriceMinMax,
+  }),
   "lstProductTypeAndPrice.0.quantity": yup.string(),
   "lstProductTypeAndPrice.1.quantity": yup.string(),
   "lstProductTypeAndPrice.2.quantity": yup.string(),
@@ -330,7 +395,6 @@ export const schemaProductRam = yup.object({
 export const schemaProductMouse = yup.object({
   name: yup.string(),
   description: yup.string(),
-  mass: yup.string(),
   launchTime: yup.string(),
   accessories: yup.string(),
   productStatus: yup.number(),
@@ -338,7 +402,8 @@ export const schemaProductMouse = yup.object({
   salePrice: yup.string(),
   mouseType: yup.boolean(),
   depotId: yup.string(),
-
+  mass: yup.string(),
+  dimension: yup.string(),
   compatible: yup.string(),
   resolution: yup.string(),
   connector: yup.string(),
@@ -427,6 +492,8 @@ export const schemaProductKeyboard = yup.object({
   storageCapacity: yup.string(),
   color: yup.string(),
   price: yup.string(),
+  mass: yup.string(),
+  dimension: yup.string(),
   salePrice: yup.string(),
   keyboardType: yup.boolean(),
   compatible: yup.string(),
@@ -539,6 +606,8 @@ export const schemaSmartWatch = yup.object({
   face: yup.string(),
   pin: yup.string(),
   healcare: yup.string(),
+  dimension: yup.string(),
+  mass: yup.string(),
   name: yup.string().required("Tên sp là bắt buộc"),
   model: yup.string().required("Hãng sx là bắt buộc"),
   price: yup.string().required("Giá sản phẩm là bắt buộc"),

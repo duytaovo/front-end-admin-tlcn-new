@@ -3,7 +3,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { Button, Form, Modal } from "antd";
 import { useEffect, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Input from "src/components/Input";
@@ -27,6 +27,7 @@ import InputFile from "src/components/InputFile";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getdepots } from "src/store/depot/depotSlice";
+import InputNumber from "src/components/InputNumber";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -50,8 +51,6 @@ interface FormData {
   ram: string;
   storageCapacity: string;
   color: string;
-  price: string;
-  salePrice: string | undefined;
   monitor: string;
 }
 
@@ -79,10 +78,22 @@ const NewPhone: React.FC = () => {
     register,
     setValue,
     control,
+    trigger,
     watch,
   } = useForm({
+    defaultValues: {
+      "lstProductTypeAndPrice.0.price": "",
+      "lstProductTypeAndPrice.1.price": "",
+      "lstProductTypeAndPrice.2.price": "",
+      "lstProductTypeAndPrice.3.price": "",
+      "lstProductTypeAndPrice.0.salePrice": "",
+      "lstProductTypeAndPrice.1.salePrice": "",
+      "lstProductTypeAndPrice.2.salePrice": "",
+      "lstProductTypeAndPrice.3.salePrice": "",
+    },
     resolver: yupResolver(schemaProductSmartPhone),
   });
+  const lstProductTypeAndPriceErrors = errors.lstProductTypeAndPrice ?? [];
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { character } = useAppSelector((state) => state.character);
@@ -168,7 +179,9 @@ const NewPhone: React.FC = () => {
             storageCapacity: item?.storageCapacity,
             color: item?.color,
             price: Number(item?.price),
-            salePrice: Number(item?.salePrice),
+            salePrice:
+              (Number(item?.salePrice) > 0 && Number(item?.salePrice)) ||
+              Number(item?.price),
             quantity: Number(item?.quantity),
             depotId: Number(item?.depot),
           })),
@@ -324,13 +337,25 @@ const NewPhone: React.FC = () => {
           name="mass"
           rules={[{ required: true }]}
         >
-          <Input
+          <Controller
+            control={control}
             name="mass"
-            register={register}
-            type="number"
-            className=""
-            errorMessage={errors.mass?.message}
-            placeholder=" 221 "
+            render={({ field }) => {
+              return (
+                <InputNumber
+                  type="text"
+                  className="grow"
+                  placeholder="380"
+                  errorMessage={errors.mass?.message}
+                  classNameInput="p-3 w-full text-black outline-none border border-gray-300 focus:border-gray-500 rounded focus:shadow-sm"
+                  classNameError="hidden"
+                  {...field}
+                  onChange={(event) => {
+                    field.onChange(event);
+                  }}
+                />
+              );
+            }}
           />
         </Form.Item>
         <Form.Item
@@ -338,13 +363,25 @@ const NewPhone: React.FC = () => {
           name="launchTime"
           rules={[{ required: true }]}
         >
-          <Input
+          <Controller
+            control={control}
             name="launchTime"
-            register={register}
-            type="number"
-            className=""
-            errorMessage={errors.launchTime?.message}
-            placeholder="2023"
+            render={({ field }) => {
+              return (
+                <InputNumber
+                  type="text"
+                  className="grow"
+                  placeholder="2023"
+                  classNameInput="p-3 w-full text-black outline-none border border-gray-300 focus:border-gray-500 rounded focus:shadow-sm"
+                  classNameError="hidden"
+                  errorMessage={errors.launchTime?.message}
+                  {...field}
+                  onChange={(event) => {
+                    field.onChange(event);
+                  }}
+                />
+              );
+            }}
           />
         </Form.Item>
         <Form.Item
@@ -401,12 +438,27 @@ const NewPhone: React.FC = () => {
                     name={`lstProductTypeAndPrice.${index}.price`}
                     rules={[{ required: true }]}
                   >
-                    <Input
-                      type="number"
+                    <Controller
+                      control={control}
                       name={`lstProductTypeAndPrice.${index}.price`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="45000000"
+                      render={({ field }) => {
+                        return (
+                          <InputNumber
+                            type="text"
+                            className="grow"
+                            placeholder="4000000"
+                            classNameInput="p-3 w-full text-black outline-none border border-gray-300 focus:border-gray-500 rounded focus:shadow-sm"
+                            classNameError="hidden"
+                            {...field}
+                            onChange={(event) => {
+                              field.onChange(event);
+                              trigger(
+                                `lstProductTypeAndPrice.${index}.salePrice`,
+                              );
+                            }}
+                          />
+                        );
+                      }}
                     />
                   </Form.Item>
                   <Form.Item
@@ -414,14 +466,34 @@ const NewPhone: React.FC = () => {
                     name={`lstProductTypeAndPrice.${index}.salePrice`}
                     rules={[{ required: true }]}
                   >
-                    <Input
-                      type="number"
+                    <Controller
+                      control={control}
                       name={`lstProductTypeAndPrice.${index}.salePrice`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="44000000"
+                      render={({ field }) => {
+                        return (
+                          <InputNumber
+                            type="text"
+                            className="grow"
+                            placeholder="3800000"
+                            classNameInput="p-3 w-full text-black outline-none border border-gray-300 focus:border-gray-500 rounded focus:shadow-sm"
+                            classNameError="hidden"
+                            {...field}
+                            onChange={(event) => {
+                              field.onChange(event);
+                              trigger(`lstProductTypeAndPrice.${index}.price`);
+                            }}
+                          />
+                        );
+                      }}
                     />
                   </Form.Item>
+                </div>
+                <div className="left-0 min-h-[1.25rem] text-center text-base text-red-600">
+                  {(
+                    lstProductTypeAndPriceErrors[index] as {
+                      price?: { message?: string };
+                    }
+                  )?.price?.message ?? ""}
                 </div>
                 <Form.Item
                   label="Kho hàng"
