@@ -47,8 +47,6 @@ interface FormData {
   ram: string;
   storageCapacity: string;
   color: string;
-  price: string;
-  salePrice: string | undefined;
   monitor: string;
 }
 
