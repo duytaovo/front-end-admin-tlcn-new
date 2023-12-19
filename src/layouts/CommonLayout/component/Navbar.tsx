@@ -59,12 +59,7 @@ export default function NavbarCustom() {
   const [isLoading, setIsLoading] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const dispatch = useAppDispatch();
-  const logout = () => {
-    if (confirm("Bạn có muốn thoát không?")) {
-      clearLS();
-      window.location.reload();
-    }
-  };
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.pageYOffset;
@@ -230,21 +225,21 @@ export default function NavbarCustom() {
               className="w-[30px] h-[30px] rounded-[50%]"
             /> */}
             <div className="">
-              <CustomDropDown
+              {/* <CustomDropDown
                 {...customDropdownStyle}
                 menuStyle={menuStyle}
                 items={items}
-              >
-                <div className=" hover:text-mainColor flex items-center space-x-5">
-                  {/* <PersonOutlineIcon /> */}
-                  <img
-                    src="https://images.pexels.com/photos/941693/pexels-photo-941693.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
-                    alt=""
-                    className="w-[30px] h-[30px] rounded-[50%]"
-                  />
-                  <span>Admin</span>
-                </div>
-              </CustomDropDown>
+              > */}
+              <div className=" hover:text-mainColor flex items-center space-x-5">
+                {/* <PersonOutlineIcon /> */}
+                <img
+                  src="https://images.pexels.com/photos/941693/pexels-photo-941693.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
+                  alt=""
+                  className="w-[30px] h-[30px] rounded-[50%]"
+                />
+                <span>Admin</span>
+              </div>
+              {/* </CustomDropDown> */}
             </div>
           </div>
         </div>

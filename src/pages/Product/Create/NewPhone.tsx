@@ -51,12 +51,82 @@ interface FormData {
   ram: string;
   storageCapacity: string;
   color: string;
+  quantity: string;
+  depotId: string;
   monitor: string;
+  operatingSystem: string;
+  rearCamera: string;
+  frontCamera: string;
+  chip: string;
+  sim: string;
+  battery: string;
+  charging: string;
+  networkSupport: string;
 }
 
+const smartPhoneDetail = {
+  id: 29,
+  monitor: "6.1 - Tần số quét 120 Hz",
+  operatingSystem: "iOS",
+  rearCamera: "Chính 48 MP & Phụ 12 MP, 12 MP",
+  frontCamera: "12 MP",
+  chip: "Apple A17 Pro 6 nhân",
+  sim: "1 Nano Sim",
+  battery: "4442mah",
+  charging: "20 W",
+  networkSupport: "5G",
+  productInfo: {
+    brandId: 1,
+    categoryId: 1,
+    productId: 47,
+    characteristicId: 7,
+    productCode: "lpFVXdwqmt",
+    name: "Điện thoại iPhone 15 Pro 128GBb",
+    description:
+      '<h3><a href="https://cdn.tgdd.vn/Products/Images/42/299033/iphone-15-pro-131023-034959.jpg" rel="noopener noreferrer" target="_blank" style="color: rgb(47, 128, 237);"><strong><img src="https://cdn.tgdd.vn/Products/Images/42/299033/iphone-15-pro-131023-034959.jpg" alt="iPhone 15 Pro Tổng quan"></strong></a></h3><p><a href="https://cdn.tgdd.vn/Products/Images/42/299033/iphone-15-pro-131023-035001.jpg" rel="noopener noreferrer" target="_blank" style="color: rgb(47, 128, 237);"><img src="https://cdn.tgdd.vn/Products/Images/42/299033/iphone-15-pro-131023-035001.jpg" alt="iPhone 15 Pro Thông số kỹ thuật và tính năng"></a></p><p><br></p><p><a href="https://cdn.tgdd.vn/Products/Images/42/299033/iphone-15-pro-131023-035003.jpg" rel="noopener noreferrer" target="_blank" style="color: rgb(47, 128, 237);"><img src="https://cdn.tgdd.vn/Products/Images/42/299033/iphone-15-pro-131023-035003.jpg" alt="iPhone 15 Pro So sánh"></a></p><p><a href="https://cdn.tgdd.vn/Products/Images/42/299033/iphone-15-pro-131023-035005.jpg" rel="noopener noreferrer" target="_blank" style="color: rgb(47, 128, 237);"><img src="https://cdn.tgdd.vn/Products/Images/42/299033/iphone-15-pro-131023-035005.jpg" alt="iPhone 15 Pro Chuyển đổi"></a></p><p><br></p><p><a href="https://cdn.tgdd.vn/Products/Images/42/299033/iphone-15-pro-131023-035007.jpg" rel="noopener noreferrer" target="_blank" style="color: rgb(21, 94, 193);"><img src="https://cdn.tgdd.vn/Products/Images/42/299033/iphone-15-pro-131023-035007.jpg" alt="iPhone 15 Pro Phụ kiện"></a></p><p><br></p><p><br></p>',
+    design: "Nguyên khối",
+    dimension: "Dài 146.6 mm - Ngang 70.6 mm - Dày 8.25 mm ",
+    mass: 221.0,
+    launchTime: 2023,
+    accessories: "Tai nghe sạc",
+    productStatus: 100,
+    lstProductTypeAndPrice: [
+      {
+        typeId: 12,
+        ram: "8GB",
+        storageCapacity: "1TB",
+        color: "Titan tự nhiên",
+        price: 45000001.0,
+        salePrice: 44000000.0,
+        quantity: 62,
+        depotId: 1,
+      },
+      {
+        typeId: 26,
+        ram: "8GB",
+        storageCapacity: "512GB",
+        color: "Đen",
+        price: 39000000.0,
+        salePrice: 38000000.0,
+        quantity: 102,
+        depotId: 1,
+      },
+    ],
+    lstProductImageUrl: [
+      "https://techstore2023.s3.ap-southeast-1.amazonaws.com/170253658751890bc2ff3-ed52-4112-ac86-26287ac42f28-iphone-15-pro-blue-1.jpg",
+      "https://techstore2023.s3.ap-southeast-1.amazonaws.com/1702536591296ee69d153-eb21-4795-82cc-b9105909960f-iphone-15-pro-blue-2.jpg",
+      "https://techstore2023.s3.ap-southeast-1.amazonaws.com/1702536591987e7baae4f-cdc6-4dca-891b-6695cad47ad2-iphone-15-pro-blue-3.jpg",
+      "https://techstore2023.s3.ap-southeast-1.amazonaws.com/17025365962242ba6780d-7e46-4761-8aca-f6485183bca3-iphone-15-pro-blue-4.jpg",
+    ],
+    star: 4.9,
+    totalReview: 100,
+    slug: "smartphone",
+  },
+};
 const NewPhone: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isValueMau, setIsValueMau] = useState(false);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -110,7 +180,7 @@ const NewPhone: React.FC = () => {
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
 
   // Tạo một mảng chứa các URL tạm thời cho ảnh
-  const imageUrls: string[] = [];
+  const [imageUrls, setImages] = useState<string[]>([]);
 
   for (const image of imageArray) {
     const imageUrl = URL.createObjectURL(image);
@@ -118,6 +188,8 @@ const NewPhone: React.FC = () => {
   }
   useEffect(() => {
     reset();
+    setIsValueMau(false);
+    setImages([]);
   }, []);
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
@@ -148,7 +220,7 @@ const NewPhone: React.FC = () => {
       const bodySmartphone = {
         slug: "smartphone",
         brandId: null,
-        characteristicId: null,
+        characteristic: null,
         priceFrom: null,
         priceTo: null,
         specialFeatures: [],
@@ -229,12 +301,81 @@ const NewPhone: React.FC = () => {
     }
   });
   const onClickHuy = () => {
+    setValue("files", []);
     reset();
+    setIsValueMau(false);
+    setImages([]);
   };
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
   };
 
+  const generateSampleData = () => {
+    setIsValueMau(true);
+
+    setImages(smartPhoneDetail?.productInfo?.lstProductImageUrl);
+
+    const productInfo = smartPhoneDetail?.productInfo;
+
+    if (
+      productInfo?.lstProductTypeAndPrice &&
+      Array.isArray(productInfo.lstProductTypeAndPrice)
+    ) {
+      // Define the fields you want to set dynamically
+      const fields = [
+        "ram",
+        "storageCapacity",
+        "color",
+        "price",
+        "salePrice",
+        "quantity",
+        "depot",
+      ];
+
+      // Loop through the array and set values dynamically
+      productInfo.lstProductTypeAndPrice.forEach(
+        (product: any, index: number) => {
+          fields.forEach((field) => {
+            const fieldName: any = `lstProductTypeAndPrice.${index}.${field}`;
+            const fieldValue = product[field];
+
+            // Check if the field value is defined before setting it
+            if (fieldValue !== undefined) {
+              setValue(fieldName, fieldValue);
+            }
+          });
+        },
+      );
+    }
+    setValue("accessories", smartPhoneDetail?.productInfo?.accessories);
+    setValue("battery", smartPhoneDetail?.battery);
+    setValue("charging", smartPhoneDetail?.charging);
+    setValue("chip", smartPhoneDetail?.chip);
+    setValue("mass", smartPhoneDetail?.productInfo?.mass.toString());
+    setValue(
+      "color",
+      smartPhoneDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
+    );
+    setValue("monitor", smartPhoneDetail?.monitor);
+    setValue("networkSupport", smartPhoneDetail?.networkSupport);
+    setValue("description", smartPhoneDetail?.productInfo?.description);
+    setValue("brand", smartPhoneDetail?.productInfo?.brandId.toString());
+    setValue(
+      "characteristic",
+      smartPhoneDetail?.productInfo?.characteristicId.toString(),
+    );
+    setValue("name", smartPhoneDetail?.productInfo?.name);
+    setValue("sim", smartPhoneDetail?.sim);
+    setValue("rearCamera", smartPhoneDetail?.rearCamera);
+
+    setValue("frontCamera", smartPhoneDetail?.frontCamera);
+    setValue("operatingSystem", smartPhoneDetail?.operatingSystem);
+    setValue("design", smartPhoneDetail?.productInfo?.design);
+    setValue("dimension", smartPhoneDetail?.productInfo?.dimension);
+    setValue("category", smartPhoneDetail?.productInfo?.categoryId.toString());
+    setValue("launchTime", "2023");
+    setValue("files", smartPhoneDetail?.productInfo.lstProductImageUrl);
+  };
   return (
     <div className="bg-white shadow ">
       <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm điện thoại</h2>
@@ -247,6 +388,16 @@ const NewPhone: React.FC = () => {
         noValidate
         onSubmitCapture={onSubmit}
       >
+        <Form.Item label="" className="ml-[70px] mb-2">
+          <Button
+            className="w-[150px] bg-blue-300"
+            onClick={generateSampleData}
+            type="dashed"
+            color="red"
+          >
+            Tạo Dữ liệu mẫu
+          </Button>
+        </Form.Item>
         <Form.Item
           label="Hãng sản xuất"
           name="brand"
@@ -256,7 +407,7 @@ const NewPhone: React.FC = () => {
             className={" text-black  "}
             id="brand"
             placeholder="Chọn hãng sx"
-            defaultValue={""}
+            defaultValue={isValueMau ? 1 : ""}
             options={brand?.data?.data}
             register={register}
           >
@@ -286,8 +437,8 @@ const NewPhone: React.FC = () => {
             className={"flex-1 text-black"}
             id="characteristic"
             placeholder="Chọn đặc điểm "
-            defaultValue={""}
             options={character?.data}
+            defaultValue={isValueMau ? 1 : ""}
             register={register}
           >
             {errors.characteristic?.message}
@@ -403,172 +554,349 @@ const NewPhone: React.FC = () => {
           name="lstProductTypeAndPrice"
           rules={[{ required: true }]}
         >
-          <ul>
-            {fields.map((item, index) => (
-              <li key={item.id}>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Ram"
-                    name={`lstProductTypeAndPrice.${index}.ram`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.ram`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="8Gb"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Bộ nhớ trong"
-                    name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1TB"
-                    />
-                  </Form.Item>
-                </div>
-                <div className="flex justify-between space-x-1">
-                  <Form.Item
-                    label="Giá (Nhập số)"
-                    name={`lstProductTypeAndPrice.${index}.price`}
-                    rules={[{ required: true }]}
-                  >
-                    <Controller
-                      control={control}
-                      name={`lstProductTypeAndPrice.${index}.price`}
-                      render={({ field }) => {
-                        return (
-                          <InputNumber
-                            type="text"
-                            className="grow"
-                            placeholder="4000000"
-                            classNameInput="p-3 w-full text-black outline-none border border-gray-300 focus:border-gray-500 rounded focus:shadow-sm"
-                            classNameError="hidden"
-                            {...field}
-                            onChange={(event) => {
-                              field.onChange(event);
-                              trigger(
-                                `lstProductTypeAndPrice.${index}.salePrice`,
+          {isValueMau ? (
+            <ul>
+              {smartPhoneDetail?.productInfo?.lstProductTypeAndPrice?.map(
+                (item, index) => {
+                  return (
+                    <li key={index}>
+                      <div className="flex justify-between space-x-1">
+                        <Form.Item
+                          label="Ram"
+                          name={`lstProductTypeAndPrice.${index}.ram`}
+                          rules={[{ required: true }]}
+                        >
+                          <Input
+                            name={`lstProductTypeAndPrice.${index}.ram`}
+                            key={index} // important to include key with field's id
+                            register={register}
+                            placeholder="8Gb"
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          label="Bộ nhớ trong"
+                          name={`lstProductTypeAndPrice.${index}.storageCapacity`}
+                          rules={[{ required: true }]}
+                        >
+                          <Input
+                            name={`lstProductTypeAndPrice.${index}.storageCapacity`}
+                            key={index} // important to include key with field's id
+                            register={register}
+                            placeholder="1TB"
+                          />
+                        </Form.Item>
+                      </div>
+                      <div className="flex justify-between space-x-1">
+                        <Form.Item
+                          label="Giá (Nhập số)"
+                          name={`lstProductTypeAndPrice.${index}.price`}
+                          rules={[{ required: true }]}
+                        >
+                          <Controller
+                            control={control}
+                            name={`lstProductTypeAndPrice.${index}.price`}
+                            render={({ field }) => {
+                              return (
+                                <InputNumber
+                                  type="text"
+                                  className="grow"
+                                  placeholder="4000000"
+                                  classNameInput="p-3 w-full text-black outline-none border border-gray-300 focus:border-gray-500 rounded focus:shadow-sm"
+                                  classNameError="hidden"
+                                  {...field}
+                                  onChange={(event) => {
+                                    field.onChange(event);
+                                    trigger(
+                                      `lstProductTypeAndPrice.${index}.salePrice`,
+                                    );
+                                  }}
+                                />
                               );
                             }}
                           />
-                        );
-                      }}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Giá khuyến mãi (Nhập số)"
-                    name={`lstProductTypeAndPrice.${index}.salePrice`}
-                    rules={[{ required: true }]}
-                  >
-                    <Controller
-                      control={control}
-                      name={`lstProductTypeAndPrice.${index}.salePrice`}
-                      render={({ field }) => {
-                        return (
-                          <InputNumber
-                            type="text"
-                            className="grow"
-                            placeholder="3800000"
-                            classNameInput="p-3 w-full text-black outline-none border border-gray-300 focus:border-gray-500 rounded focus:shadow-sm"
-                            classNameError="hidden"
-                            {...field}
-                            onChange={(event) => {
-                              field.onChange(event);
-                              trigger(`lstProductTypeAndPrice.${index}.price`);
+                        </Form.Item>
+                        <Form.Item
+                          label="Giá khuyến mãi (Nhập số)"
+                          name={`lstProductTypeAndPrice.${index}.salePrice`}
+                          rules={[{ required: true }]}
+                        >
+                          <Controller
+                            control={control}
+                            name={`lstProductTypeAndPrice.${index}.salePrice`}
+                            render={({ field }) => {
+                              return (
+                                <InputNumber
+                                  type="text"
+                                  className="grow"
+                                  placeholder="3800000"
+                                  classNameInput="p-3 w-full text-black outline-none border border-gray-300 focus:border-gray-500 rounded focus:shadow-sm"
+                                  classNameError="hidden"
+                                  {...field}
+                                  onChange={(event) => {
+                                    field.onChange(event);
+                                    trigger(
+                                      `lstProductTypeAndPrice.${index}.price`,
+                                    );
+                                  }}
+                                />
+                              );
                             }}
                           />
-                        );
-                      }}
-                    />
-                  </Form.Item>
-                </div>
-                <div className="left-0 min-h-[1.25rem] text-center text-base text-red-600">
-                  {(
-                    lstProductTypeAndPriceErrors[index] as {
-                      price?: { message?: string };
-                    }
-                  )?.price?.message ?? ""}
-                </div>
-                <Form.Item
-                  label="Kho hàng"
-                  name={`lstProductTypeAndPrice.${index}.depot`}
-                  rules={[{ required: true }]}
+                        </Form.Item>
+                      </div>
+                      <div className="left-0 min-h-[1.25rem] text-center text-base text-red-600">
+                        {(
+                          lstProductTypeAndPriceErrors[index] as {
+                            price?: { message?: string };
+                          }
+                        )?.price?.message ?? ""}
+                      </div>
+                      <Form.Item
+                        label="Kho hàng"
+                        name={`lstProductTypeAndPrice.${index}.depot`}
+                        rules={[{ required: true }]}
+                      >
+                        <SelectCustom
+                          className={"flex-1 text-black"}
+                          id={`lstProductTypeAndPrice.${index}.depot`}
+                          placeholder="Vui lòng chọn"
+                          defaultValue={item.depotId}
+                          options={depot?.data?.data}
+                          register={register}
+                        >
+                          {errors.depotId?.message}
+                        </SelectCustom>
+                      </Form.Item>
+                      <div>
+                        <Form.Item
+                          label="Số lượng sản phẩm"
+                          name={`lstProductTypeAndPrice.${index}.quantity`}
+                          rules={[{ required: true }]}
+                        >
+                          <Input
+                            name={`lstProductTypeAndPrice.${index}.quantity`}
+                            key={index} // important to include key with field's id
+                            register={register}
+                            placeholder="1000"
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          label="Màu"
+                          name={`lstProductTypeAndPrice.${index}.color`}
+                          rules={[{ required: true }]}
+                        >
+                          <Input
+                            name={`lstProductTypeAndPrice.${index}.color`}
+                            key={index} // important to include key with field's id
+                            register={register}
+                            placeholder="Titan tự nhiên"
+                          />
+                        </Form.Item>
+                      </div>
+                      <Form.Item>
+                        <Button
+                          type="default"
+                          onClick={() => remove(index)}
+                          block
+                          icon={<PlusOutlined />}
+                        >
+                          Xóa trường này
+                        </Button>
+                      </Form.Item>
+                      {/* <MinusCircleOutlined onClick={() => remove(index)} /> */}
+                    </li>
+                  );
+                },
+              )}
+              <Form.Item>
+                <Button
+                  type="dashed"
+                  onClick={() =>
+                    append({
+                      storageCapacity: "",
+                      ram: "",
+                      color: "",
+                      price: "",
+                      salePrice: "",
+                    })
+                  }
+                  block
+                  icon={<PlusOutlined />}
                 >
-                  <SelectCustom
-                    className={"flex-1 text-black"}
-                    id={`lstProductTypeAndPrice.${index}.depot`}
-                    // label="Hãng xe"
-                    placeholder="Chọn kho hàng"
-                    options={depot?.data?.data}
-                    register={register}
-                  >
-                    {errors.depotId?.message}
-                  </SelectCustom>
-                </Form.Item>
-                <div className="flex justify-between space-x-1">
+                  Thêm trường này
+                </Button>
+              </Form.Item>
+            </ul>
+          ) : (
+            <ul>
+              {fields.map((item, index) => (
+                <li key={item.id}>
+                  <div className="flex justify-between space-x-1">
+                    <Form.Item
+                      label="Ram"
+                      name={`lstProductTypeAndPrice.${index}.ram`}
+                      rules={[{ required: true }]}
+                    >
+                      <Input
+                        name={`lstProductTypeAndPrice.${index}.ram`}
+                        key={item.id} // important to include key with field's id
+                        register={register}
+                        placeholder="8Gb"
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Bộ nhớ trong"
+                      name={`lstProductTypeAndPrice.${index}.storageCapacity`}
+                      rules={[{ required: true }]}
+                    >
+                      <Input
+                        name={`lstProductTypeAndPrice.${index}.storageCapacity`}
+                        key={item.id} // important to include key with field's id
+                        register={register}
+                        placeholder="1TB"
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className="flex justify-between space-x-1">
+                    <Form.Item
+                      label="Giá (Nhập số)"
+                      name={`lstProductTypeAndPrice.${index}.price`}
+                      rules={[{ required: true }]}
+                    >
+                      <Controller
+                        control={control}
+                        name={`lstProductTypeAndPrice.${index}.price`}
+                        render={({ field }) => {
+                          return (
+                            <InputNumber
+                              type="text"
+                              className="grow"
+                              placeholder="4000000"
+                              classNameInput="p-3 w-full text-black outline-none border border-gray-300 focus:border-gray-500 rounded focus:shadow-sm"
+                              classNameError="hidden"
+                              {...field}
+                              onChange={(event) => {
+                                field.onChange(event);
+                                trigger(
+                                  `lstProductTypeAndPrice.${index}.salePrice`,
+                                );
+                              }}
+                            />
+                          );
+                        }}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Giá khuyến mãi (Nhập số)"
+                      name={`lstProductTypeAndPrice.${index}.salePrice`}
+                      rules={[{ required: true }]}
+                    >
+                      <Controller
+                        control={control}
+                        name={`lstProductTypeAndPrice.${index}.salePrice`}
+                        render={({ field }) => {
+                          return (
+                            <InputNumber
+                              type="text"
+                              className="grow"
+                              placeholder="3800000"
+                              classNameInput="p-3 w-full text-black outline-none border border-gray-300 focus:border-gray-500 rounded focus:shadow-sm"
+                              classNameError="hidden"
+                              {...field}
+                              onChange={(event) => {
+                                field.onChange(event);
+                                trigger(
+                                  `lstProductTypeAndPrice.${index}.price`,
+                                );
+                              }}
+                            />
+                          );
+                        }}
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className="left-0 min-h-[1.25rem] text-center text-base text-red-600">
+                    {(
+                      lstProductTypeAndPriceErrors[index] as {
+                        price?: { message?: string };
+                      }
+                    )?.price?.message ?? ""}
+                  </div>
                   <Form.Item
-                    label="Số lượng sản phẩm (Nhập số)"
-                    name={`lstProductTypeAndPrice.${index}.quantity`}
+                    label="Kho hàng"
+                    name={`lstProductTypeAndPrice.${index}.depot`}
                     rules={[{ required: true }]}
                   >
-                    <Input
-                      type="number"
+                    <SelectCustom
+                      className={"flex-1 text-black"}
+                      id={`lstProductTypeAndPrice.${index}.depot`}
+                      // label="Hãng xe"
+                      placeholder="Chọn kho hàng"
+                      options={depot?.data?.data}
+                      register={register}
+                    >
+                      {errors.depotId?.message}
+                    </SelectCustom>
+                  </Form.Item>
+                  <div className="flex justify-between space-x-1">
+                    <Form.Item
+                      label="Số lượng sản phẩm (Nhập số)"
                       name={`lstProductTypeAndPrice.${index}.quantity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1000"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Màu"
-                    name={`lstProductTypeAndPrice.${index}.color`}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
+                      rules={[{ required: true }]}
+                    >
+                      <Input
+                        type="number"
+                        name={`lstProductTypeAndPrice.${index}.quantity`}
+                        key={item.id} // important to include key with field's id
+                        register={register}
+                        placeholder="1000"
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Màu"
                       name={`lstProductTypeAndPrice.${index}.color`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="Titan tự nhiên"
-                    />
+                      rules={[{ required: true }]}
+                    >
+                      <Input
+                        name={`lstProductTypeAndPrice.${index}.color`}
+                        key={item.id} // important to include key with field's id
+                        register={register}
+                        placeholder="Titan tự nhiên"
+                      />
+                    </Form.Item>
+                  </div>
+                  <Form.Item>
+                    <Button
+                      type="default"
+                      onClick={() => remove(index)}
+                      block
+                      icon={<PlusOutlined />}
+                    >
+                      Xóa trường này
+                    </Button>
                   </Form.Item>
-                </div>
-                <Form.Item>
-                  <Button
-                    type="default"
-                    onClick={() => remove(index)}
-                    block
-                    icon={<PlusOutlined />}
-                  >
-                    Xóa trường này
-                  </Button>
-                </Form.Item>
-              </li>
-            ))}
-            <Form.Item>
-              <Button
-                type="dashed"
-                onClick={() =>
-                  append({
-                    storageCapacity: "",
-                    ram: "",
-                    color: "",
-                    price: "",
-                    salePrice: "",
-                  })
-                }
-                block
-                icon={<PlusOutlined />}
-              >
-                Thêm trường này
-              </Button>
-            </Form.Item>
-          </ul>
+                </li>
+              ))}
+              <Form.Item>
+                <Button
+                  type="dashed"
+                  onClick={() =>
+                    append({
+                      storageCapacity: "",
+                      ram: "",
+                      color: "",
+                      price: "",
+                      salePrice: "",
+                    })
+                  }
+                  block
+                  icon={<PlusOutlined />}
+                >
+                  Thêm trường này
+                </Button>
+              </Form.Item>
+            </ul>
+          )}
         </Form.Item>
 
         <Form.Item label="Màn hình" name="monitor" rules={[{ required: true }]}>
@@ -717,6 +1045,7 @@ const NewPhone: React.FC = () => {
               {isSubmitting ? "Loading..." : "Lưu"}
             </Button>
           </Form.Item>
+
           <Form.Item label="" className="ml-[70px] mb-2">
             <Button
               className="w-[100px] bg-blue-300"
