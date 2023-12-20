@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import mainBoardApi from "src/api/accessory/mainBoard/mainBoard-api";
+import laptopApi from "src/api/product/laptop/laptop-api";
 import { payloadCreator } from "src/utils/utils";
 
 export const getMainboard = createAsyncThunk(
@@ -25,7 +26,10 @@ export const deleteMainboard = createAsyncThunk(
   "mainboard/deleteMainboard",
   payloadCreator(mainBoardApi.deleteMainboard),
 );
-
+export const getProductsFilterAccess = createAsyncThunk(
+  "filter/getProductsFilterAccess",
+  payloadCreator(laptopApi.getProductsFilterAccess),
+);
 interface IProudct {
   mainboard: any;
   mainboardDetail: any;
@@ -45,6 +49,9 @@ const mainboardlice = createSlice({
     });
     builder.addCase(getDetailMainboard.fulfilled, (state, { payload }) => {
       state.mainboardDetail = payload.data?.data;
+    });
+    builder.addCase(getProductsFilterAccess.fulfilled, (state, { payload }) => {
+      state.mainboard = payload.data;
     });
   },
 });

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import processorApi from "src/api/processor/processor.api";
+import laptopApi from "src/api/product/laptop/laptop-api";
 import { payloadCreator } from "src/utils/utils";
 
 export const getProcessor = createAsyncThunk(
@@ -25,7 +26,10 @@ export const deleteProcessor = createAsyncThunk(
   "processor/deleteProcessor",
   payloadCreator(processorApi.deleteProcessor),
 );
-
+export const getProductsFilterAccess = createAsyncThunk(
+  "filter/getProductsFilterAccess",
+  payloadCreator(laptopApi.getProductsFilterAccess),
+);
 interface IProudct {
   processor: any;
   processorDetail: any;
@@ -45,6 +49,9 @@ const processorSlice = createSlice({
     });
     builder.addCase(getDetailProcessor.fulfilled, (state, { payload }) => {
       state.processorDetail = payload.data?.data;
+    });
+    builder.addCase(getProductsFilterAccess.fulfilled, (state, { payload }) => {
+      state.processor = payload.data;
     });
   },
 });

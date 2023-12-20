@@ -5,8 +5,8 @@ const characterApi = {
   addCharacter(data: any) {
     return http.post("/managecreate", data);
   },
-  getCharacters() {
-    return http.get<SuccessResponse<any>>("/manage/characteristic");
+  getCharacters(params: any) {
+    return http.get<SuccessResponse<any>>("/manage/characteristic", { params });
   },
   getDetailCharacter(params: any) {
     return http.get<SuccessResponse<any[]>>(`/manage${params}`);

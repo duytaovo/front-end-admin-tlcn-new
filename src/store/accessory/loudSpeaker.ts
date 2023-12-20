@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import loudSpeakerApi from "src/api/accessory/loudSpeaker/loudSpeaker-api";
+import laptopApi from "src/api/product/laptop/laptop-api";
 import { payloadCreator } from "src/utils/utils";
 
 export const getloudSpeaker = createAsyncThunk(
@@ -25,7 +26,10 @@ export const deleteloudSpeaker = createAsyncThunk(
   "loudSpeaker/deleteloudSpeaker",
   payloadCreator(loudSpeakerApi.deleteloudSpeaker),
 );
-
+export const getProductsFilterAccess = createAsyncThunk(
+  "filter/getProductsFilterAccess",
+  payloadCreator(laptopApi.getProductsFilterAccess),
+);
 interface IProudct {
   loudSpeaker: any;
   loudSpeakerDetail: any;
@@ -45,6 +49,9 @@ const loudSpeakerlice = createSlice({
     });
     builder.addCase(getDetailloudSpeaker.fulfilled, (state, { payload }) => {
       state.loudSpeakerDetail = payload.data?.data;
+    });
+    builder.addCase(getProductsFilterAccess.fulfilled, (state, { payload }) => {
+      state.loudSpeaker = payload.data;
     });
   },
 });

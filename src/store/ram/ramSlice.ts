@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import cardGraphicApi from "src/api/cardGrap/cardGrap.api";
+import laptopApi from "src/api/product/laptop/laptop-api";
 import ramApi from "src/api/ram/ram.api";
 import { payloadCreator } from "src/utils/utils";
 
@@ -26,7 +26,10 @@ export const deleteRam = createAsyncThunk(
   "ram/deleteRam",
   payloadCreator(ramApi.deleteRam),
 );
-
+export const getProductsFilterAccess = createAsyncThunk(
+  "filter/getProductsFilterAccess",
+  payloadCreator(laptopApi.getProductsFilterAccess),
+);
 interface IProudct {
   ram: any;
   ramDetail: any;
@@ -46,6 +49,9 @@ const ramSlice = createSlice({
     });
     builder.addCase(getDetailRam.fulfilled, (state, { payload }) => {
       state.ramDetail = payload.data.data;
+    });
+    builder.addCase(getProductsFilterAccess.fulfilled, (state, { payload }) => {
+      state.ram = payload.data;
     });
   },
 });

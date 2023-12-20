@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import keyboardApi from "src/api/accessory/keyboard/keyboard-api";
+import laptopApi from "src/api/product/laptop/laptop-api";
 import { payloadCreator } from "src/utils/utils";
 
 export const getKeyboard = createAsyncThunk(
@@ -25,7 +26,10 @@ export const deleteKeyboard = createAsyncThunk(
   "keyboard/deleteKeyboard",
   payloadCreator(keyboardApi.deleteKeyboard),
 );
-
+export const getProductsFilterAccess = createAsyncThunk(
+  "filter/getProductsFilterAccess",
+  payloadCreator(laptopApi.getProductsFilterAccess),
+);
 interface IProudct {
   keyboard: any;
   keyboardDetail: any;
@@ -45,6 +49,9 @@ const keyboardlice = createSlice({
     });
     builder.addCase(getDetailkeyboard.fulfilled, (state, { payload }) => {
       state.keyboardDetail = payload.data?.data;
+    });
+    builder.addCase(getProductsFilterAccess.fulfilled, (state, { payload }) => {
+      state.keyboard = payload.data;
     });
   },
 });

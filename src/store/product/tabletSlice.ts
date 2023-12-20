@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import laptopApi from "src/api/product/laptop/laptop-api";
 import tabletApi from "src/api/product/tablet/tablet-api";
 import { payloadCreator } from "src/utils/utils";
 
@@ -26,7 +27,10 @@ export const deleteTablet = createAsyncThunk(
   "tablet/deleteTablet",
   payloadCreator(tabletApi.deleteTablet),
 );
-
+export const getProductsFilterAccess = createAsyncThunk(
+  "filter/getProductsFilterAccess",
+  payloadCreator(laptopApi.getProductsFilterAccess),
+);
 interface IProduct {
   tablet: any;
   tabletDetail: any;
@@ -89,6 +93,9 @@ const TabletSlice = createSlice({
     });
     builder.addCase(getDetailTablet.fulfilled, (state, { payload }) => {
       state.tabletDetail = payload.data.data;
+    });
+    builder.addCase(getProductsFilterAccess.fulfilled, (state, { payload }) => {
+      state.tablet = payload.data;
     });
   },
 });

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import adapterApi from "src/api/accessory/adapter/adapter-api";
+import laptopApi from "src/api/product/laptop/laptop-api";
 import { payloadCreator } from "src/utils/utils";
 
 export const getAdapter = createAsyncThunk(
@@ -25,7 +26,10 @@ export const deleteAdapter = createAsyncThunk(
   "adapter/deleteAdapter",
   payloadCreator(adapterApi.deleteAdapter),
 );
-
+export const getProductsFilterAccess = createAsyncThunk(
+  "filter/getProductsFilterAccess",
+  payloadCreator(laptopApi.getProductsFilterAccess),
+);
 interface IProudct {
   adapter: any;
   adapterDetail: any;
@@ -45,6 +49,9 @@ const adapterlice = createSlice({
     });
     builder.addCase(getDetailAdapter.fulfilled, (state, { payload }) => {
       state.adapterDetail = payload.data?.data;
+    });
+    builder.addCase(getProductsFilterAccess.fulfilled, (state, { payload }) => {
+      state.adapter = payload.data;
     });
   },
 });

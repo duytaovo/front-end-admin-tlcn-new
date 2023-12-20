@@ -26,7 +26,10 @@ export const deleteLaptop = createAsyncThunk(
   "laptop/deleteLaptop",
   payloadCreator(laptopApi.deleteLaptop),
 );
-
+export const getProductsFilterAccess = createAsyncThunk(
+  "filter/getProductsFilterAccess",
+  payloadCreator(laptopApi.getProductsFilterAccess),
+);
 interface IProudct {
   laptop: any;
   laptopDetail: LaptopDetail;
@@ -94,6 +97,9 @@ const Laptoplice = createSlice({
     });
     builder.addCase(getDetailLaptop.fulfilled, (state, { payload }) => {
       state.laptopDetail = payload.data.data;
+    });
+    builder.addCase(getProductsFilterAccess.fulfilled, (state, { payload }) => {
+      state.laptop = payload.data;
     });
   },
 });

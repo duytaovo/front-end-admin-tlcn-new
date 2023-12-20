@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import backupChargerApi from "src/api/accessory/backupCharger/backupCharger-api";
+import laptopApi from "src/api/product/laptop/laptop-api";
 import { payloadCreator } from "src/utils/utils";
 
 export const getBackupCharger = createAsyncThunk(
@@ -25,7 +26,10 @@ export const deleteBackupCharger = createAsyncThunk(
   "backupCharger/deleteBackupCharger",
   payloadCreator(backupChargerApi.deleteBackupCharger),
 );
-
+export const getProductsFilterAccess = createAsyncThunk(
+  "filter/getProductsFilterAccess",
+  payloadCreator(laptopApi.getProductsFilterAccess),
+);
 interface IProudct {
   backupCharger: any;
   backupChargerDetail: any;
@@ -45,6 +49,9 @@ const backupChargerlice = createSlice({
     });
     builder.addCase(getDetailBackupCharger.fulfilled, (state, { payload }) => {
       state.backupChargerDetail = payload.data?.data;
+    });
+    builder.addCase(getProductsFilterAccess.fulfilled, (state, { payload }) => {
+      state.backupCharger = payload.data;
     });
   },
 });

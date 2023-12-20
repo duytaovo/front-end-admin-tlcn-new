@@ -13,5 +13,8 @@ export const filterApi = {
   getSeatch(params: string) {
     return http.get<SuccessResponse<any[]>>(`/search`, { params });
   },
+  getProductsFilterAccess({ body, params }: any) {
+    return http.post(`/search/filter`, body, { params: params });
+  },
 };
 

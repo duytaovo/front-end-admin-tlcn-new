@@ -4,23 +4,25 @@ import React, { useEffect, useState } from "react";
 import ProductPhone from "./Table/Product/ProductAdapter";
 import path from "src/constants/path";
 import { Pagination } from "antd";
-import { getFilter, getSort } from "src/store/product/filterSlice";
+import { getSort } from "src/store/product/filterSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import * as ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import "jspdf-autotable";
-import { getAdapter } from "src/store/accessory/adapter";
+import {
+  getAdapter,
+  getProductsFilterAccess,
+} from "src/store/accessory/adapter";
+import { handleFilterStore } from "src/store/product/smartPhoneSlice";
+import FilterPhuKien from "src/components/FilterPhuKien";
 
 const TableAdapter: React.FC = () => {
   const { adapter } = useAppSelector((state) => state.adapter);
   const navigate = useNavigate();
   const pageSize = 10; // Số phần tử trên mỗi trang
-  const [isOpen, setisOpen] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
-  const filter = useAppSelector((state) => state.smartPhone.filter.data); // Lấy tất cả
-  const [dataFilterLocal, setDataFilterLocal] = useState<any>();
 
   const exportToExcel = async (products: any) => {
     const workbook = new ExcelJS.Workbook();
@@ -83,6 +85,45 @@ const TableAdapter: React.FC = () => {
 
       return result;
     };
+  });
+  // Gọi hàm tách mảng
+
+  useEffect(() => {
+    dispatch(
+      getAdapter({
+        params: { pageNumber: currentPage, pageSize: 10 },
+      }),
+    );
+  }, []);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page - 1);
+  };
+  const filter = useAppSelector((state) => state.smartPhone.filter.data); // Lấy tất cả
+  const { brand } = useAppSelector<any>((state) => state.brand);
+  const { characteristic } = useAppSelector<any>((state) => state.character);
+  const [dataFilterLocal, setDataFilterLocal] = useState<any>();
+  const [chooseBox, setChooseBox] = useState<any>();
+  useEffect(() => {
+    dispatch(handleFilterStore([]));
+  }, []);
+  // Hàm tách mảng
+  useEffect(() => {
+    const separateArrays = (data: any) => {
+      const result: any = {};
+
+      data.forEach((item: any) => {
+        const key = Object.keys(item)[0]; // Lấy tên thuộc tính (ví dụ: 'Hãng', 'Giá', ...)
+
+        if (!result[key]) {
+          result[key] = [];
+        }
+
+        result[key].push(item[key]);
+      });
+
+      return result;
+    };
     // Gọi hàm tách mảng
     const separatedArrays = separateArrays(filter);
     setDataFilterLocal(separatedArrays);
@@ -92,36 +133,115 @@ const TableAdapter: React.FC = () => {
   if (dataFilterLocal) {
     var {
       Hãng,
-      "Loại điện thoại": LoaiDienThoai,
       "Nhu cầu": NhuCau,
-      RAM,
-      ROM,
-      "Pin&Sạc": PinSạc,
       "Tính năng đặc biệt": TinhNangDacBiet,
       Giá: Gia,
-      "Màn hình": ManHinh,
     } = dataFilterLocal;
   }
 
+  const getMinMaxPrices = () => {
+    if (Gia === undefined || Gia.length === 0) {
+      return null;
+    }
+    const numericRanges = Gia.map((priceString: any) => {
+      const matches = priceString.match(/(\d+) - (\d+)/);
+      let startPrice;
+      let endPrice;
+      if (
+        priceString.search("Dưới") != -1 &&
+        priceString.search("Trên") != -1
+      ) {
+        startPrice = 0;
+        endPrice = 100;
+
+        if (!isNaN(startPrice) && !isNaN(endPrice)) {
+          return { startPrice, endPrice };
+        }
+      } else if (priceString.search("Dưới") != -1) {
+        startPrice = 0;
+        endPrice = 2;
+
+        if (matches && matches.length === 3) {
+          // startPrice = parseInt(matches[1], 10);
+          endPrice = parseInt(matches[2], 10);
+        }
+
+        if (!isNaN(startPrice) && !isNaN(endPrice)) {
+          return { startPrice, endPrice };
+        }
+      } else if (priceString.search("Trên") != -1) {
+        startPrice = 20;
+        endPrice = 100;
+        if (matches && matches.length === 3) {
+          startPrice = parseInt(matches[1], 10);
+        }
+        if (priceString.search("Dưới") != -1) {
+          startPrice = 0;
+        }
+        if (!isNaN(startPrice) && !isNaN(endPrice)) {
+          return { startPrice, endPrice };
+        }
+      } else if (matches && matches.length === 3) {
+        startPrice = parseInt(matches[1], 10);
+        endPrice = parseInt(matches[2], 10);
+
+        if (!isNaN(startPrice) && !isNaN(endPrice)) {
+          return { startPrice, endPrice };
+        }
+      }
+
+      return null;
+    });
+
+    const validRanges = numericRanges.filter(
+      (range: any) => range !== null,
+    ) as {
+      startPrice: number;
+      endPrice: number;
+    }[];
+
+    if (validRanges.length === 0) {
+      return null;
+    }
+
+    const minPrice = Math.min(...validRanges.map((range) => range.startPrice));
+    const maxPrice = Math.max(...validRanges.map((range) => range.endPrice));
+
+    return { minPrice: minPrice * 1000000, maxPrice: maxPrice * 1000000 };
+  };
+
+  const minMaxPrices = getMinMaxPrices();
+
   useEffect(() => {
+    const body = {
+      slug: "adapter",
+      brandId: Hãng ? Hãng : [],
+      characteristicId: NhuCau ? NhuCau : [],
+      priceFrom: minMaxPrices?.minPrice
+        ? minMaxPrices?.minPrice
+        : minMaxPrices?.minPrice == 0
+        ? 0
+        : null,
+      priceTo: minMaxPrices?.maxPrice ? minMaxPrices?.maxPrice : null,
+      specialFeatures: TinhNangDacBiet ? TinhNangDacBiet : [],
+      name: null,
+    };
     dispatch(
-      getAdapter({
-        // body: body,
-        // params: { pageNumber: currentPage, pageSize: 10, sort: chooseBox },
+      getProductsFilterAccess({
+        body: body,
+        params: { pageNumber: currentPage, pageSize: 10, sort: chooseBox },
       }),
     );
-  }, []);
-
-  useEffect(() => {
-    dispatch(getSort(""));
-    dispatch(getBrands({ slug: "smartphone" }));
-    dispatch(getCharacters({ categorySlug: "smartphone" }));
-  }, []);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page - 1);
-  };
-  const [product, setProduct] = React.useState("");
+  }, [
+    Hãng,
+    currentPage,
+    NhuCau,
+    minMaxPrices?.maxPrice,
+    minMaxPrices?.minPrice,
+    TinhNangDacBiet,
+    chooseBox,
+  ]);
+  const [isOpen, setisOpen] = useState<boolean>(false);
   const handle = (boolean: boolean) => {
     setisOpen(boolean);
   };
@@ -159,15 +279,11 @@ const TableAdapter: React.FC = () => {
           Thêm mới
         </Link>
       </div>
-      {/* <FilterPhone handle={handle} brand={brand} characteristic={character} /> */}
-      {/* <QuickLinkPhone
-        handleSetChoose={handleSetChoose}
-        choose={choose}
-        handleSetChooseCharac={handleSetChooseCharac}
-        chooseCharac={chooseCharac}
+      <FilterPhuKien
+        handle={handle}
         brand={brand}
-        characteristic={character}
-      /> */}
+        characteristic={characteristic}
+      />
       <div className="mt-6 grid grid-cols-5 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 h-[80%] mb-10">
         {adapter?.data?.data?.map((_smartPhone: any) => (
           <div className="col-span-1" key={_smartPhone.id}>

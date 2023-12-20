@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import cardGraphicApi from "src/api/cardGrap/cardGrap.api";
+import laptopApi from "src/api/product/laptop/laptop-api";
 import { payloadCreator } from "src/utils/utils";
 
 export const getCardGraphic = createAsyncThunk(
@@ -25,7 +26,10 @@ export const deleteCardGraphic = createAsyncThunk(
   "cardGraphic/deleteCardGraphic",
   payloadCreator(cardGraphicApi.deleteCardGraphic),
 );
-
+export const getProductsFilterAccess = createAsyncThunk(
+  "filter/getProductsFilterAccess",
+  payloadCreator(laptopApi.getProductsFilterAccess),
+);
 interface IProudct {
   cardGraphic: any;
   cardGraphicDetail: any;
@@ -45,6 +49,9 @@ const cardGraphicSlice = createSlice({
     });
     builder.addCase(getDetailCardGraphic.fulfilled, (state, { payload }) => {
       state.cardGraphicDetail = payload.data?.data;
+    });
+    builder.addCase(getProductsFilterAccess.fulfilled, (state, { payload }) => {
+      state.cardGraphic = payload.data;
     });
   },
 });

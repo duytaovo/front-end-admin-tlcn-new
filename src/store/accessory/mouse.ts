@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import mouseApi from "src/api/accessory/mouse/mouse-api";
+import laptopApi from "src/api/product/laptop/laptop-api";
 import { payloadCreator } from "src/utils/utils";
 
 export const getMouse = createAsyncThunk(
@@ -25,7 +26,10 @@ export const deleteMouse = createAsyncThunk(
   "mouse/deleteMouse",
   payloadCreator(mouseApi.deleteMouse),
 );
-
+export const getProductsFilterAccess = createAsyncThunk(
+  "filter/getProductsFilterAccess",
+  payloadCreator(laptopApi.getProductsFilterAccess),
+);
 interface IProudct {
   mouse: any;
   mouseDetail: any;
@@ -45,6 +49,9 @@ const Mouselice = createSlice({
     });
     builder.addCase(getDetailMouse.fulfilled, (state, { payload }) => {
       state.mouseDetail = payload.data?.data;
+    });
+    builder.addCase(getProductsFilterAccess.fulfilled, (state, { payload }) => {
+      state.mouse = payload.data;
     });
   },
 });

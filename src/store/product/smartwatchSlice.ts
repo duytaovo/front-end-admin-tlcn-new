@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import laptopApi from "src/api/product/laptop/laptop-api";
 import smartWatchApi from "src/api/product/smartWatch/smart-watch-api";
 import { payloadCreator } from "src/utils/utils";
 
@@ -6,7 +7,10 @@ export const getSmartWatch = createAsyncThunk(
   "smartWatch/getSmartWatch",
   payloadCreator(smartWatchApi.getSmartWatchs),
 );
-
+export const getProductsFilterAccess = createAsyncThunk(
+  "filter/getProductsFilterAccess",
+  payloadCreator(laptopApi.getProductsFilterAccess),
+);
 export const getDetailSmartWatch = createAsyncThunk(
   "smartWatch/getDetailSmartWatch",
   payloadCreator(smartWatchApi.getDetailSmartWatch),
@@ -87,6 +91,9 @@ const smartWatchSlice = createSlice({
     });
     builder.addCase(getDetailSmartWatch.fulfilled, (state, { payload }) => {
       state.smartWatchDetail = payload.data.data;
+    });
+    builder.addCase(getProductsFilterAccess.fulfilled, (state, { payload }) => {
+      state.smartWatch = payload.data;
     });
   },
 });

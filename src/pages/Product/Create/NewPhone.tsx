@@ -170,9 +170,9 @@ const NewPhone: React.FC = () => {
   const { depot } = useAppSelector((state) => state.depot);
   const { brand } = useAppSelector((state) => state.brand);
   useEffect(() => {
+    dispatch(getBrands({ slug: "smartphone", pageSize: 100 }));
+    dispatch(getCharacters({ categorySlug: "smartphone", pageSize: 100 }));
     dispatch(getCategorys({ pageSize: 100 }));
-    dispatch(getCharacters({ pageSize: 100 }));
-    dispatch(getBrands({ pageSize: 100 }));
     dispatch(getdepots({ pageSize: 100 }));
   }, []);
 

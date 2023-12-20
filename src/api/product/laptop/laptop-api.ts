@@ -15,12 +15,12 @@ const laptopApi = {
   updateLaptop({ id, body }: any) {
     return http.put<SuccessResponse<any>>(
       `/manage/product/laptop/update/${id}`,
-      body
+      body,
     );
   },
   deleteLaptop(idlaptop: string[]) {
     return http.put<SuccessResponse<any>>(
-      `/manage/product/laptop/delete/${idlaptop}`
+      `/manage/product/laptop/delete/${idlaptop}`,
     );
   },
   uploadImageLaptop(body: FormData) {
@@ -31,8 +31,11 @@ const laptopApi = {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      }
+      },
     );
+  },
+  getProductsFilterAccess({ body, params }: any) {
+    return http.post(`/search/filter`, body, { params: params });
   },
   uploadImagesLaptop(body: FormData) {
     return http.post<SuccessResponse<string>>(
@@ -42,9 +45,10 @@ const laptopApi = {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      }
+      },
     );
   },
 };
 
 export default laptopApi;
+

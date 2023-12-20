@@ -5,19 +5,11 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import path from "src/constants/path";
 import React, { useEffect, useState } from "react";
-import { Pagination, Space } from "antd";
+import { Space } from "antd";
 import { deleteBrand, getBrands } from "src/store/brand/brandSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import DataTable from "src/components/Table";
-
-interface DataType {
-  key: React.Key;
-  name: string;
-  action?: any;
-  address: string;
-  category?: string;
-}
 
 const TableBrand: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -25,7 +17,18 @@ const TableBrand: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
   const pageSize = 10; // Số phần tử trên mỗi trang
   useEffect(() => {
-    dispatch(getBrands({ pageNumber: currentPage, pageSize: 10 }));
+    dispatch(
+      getBrands({ pageNumber: currentPage, pageSize: 10, slug: "smartphone" }),
+    );
+    dispatch(
+      getBrands({ pageNumber: currentPage, pageSize: 10, slug: "laptop" }),
+    );
+    dispatch(
+      getBrands({ pageNumber: currentPage, pageSize: 10, slug: "tablet" }),
+    );
+    dispatch(
+      getBrands({ pageNumber: currentPage, pageSize: 10, slug: "smartwatch" }),
+    );
   }, [currentPage]);
   const columns = [
     // { field: "id", headerName: "ID", width: 70 },
