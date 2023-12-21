@@ -8,6 +8,9 @@ const categoryApi = {
   getCategorys(params: any) {
     return http.get<SuccessResponse<any>>("/manage/category", { params });
   },
+  getCategorysSlug(params: any) {
+    return http.get<SuccessResponse<any>>("/manage/category/slug", { params });
+  },
   getDetailCategory(params: any) {
     return http.get<SuccessResponse<any[]>>(`/manage/category/${params}`, {
       params,

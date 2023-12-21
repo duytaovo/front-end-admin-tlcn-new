@@ -602,6 +602,7 @@ export const schemaBrand = yup.object({
   name: yup.string().required("Tên nhãn hiệu là bắt buộc"),
   address: yup.string(),
   imageUrl: yup.string(),
+  slug: yup.string(),
 });
 
 export const schemaCategory = yup.object({

@@ -1,13 +1,13 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Form } from "antd";
+import { Button, Form, Select } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Input from "src/components/Input";
 import path from "src/constants/path";
-import { useAppDispatch } from "src/hooks/useRedux";
+import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
 import { schemaBrand } from "src/utils/rules";
 import { getAvatarUrl, isAxiosUnprocessableEntityError } from "src/utils/utils";
@@ -19,6 +19,7 @@ import {
 } from "src/store/brand/brandSlice";
 import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
 import InputFile from "../ListUser/InputFile";
+import { getCategorysSlug } from "src/store/category/categorySlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -47,12 +48,31 @@ const UpdateBrand: React.FC = () => {
   } = useForm({
     resolver: yupResolver(schemaBrand),
   });
+  const [valueSlug, setValueSlug] = useState<
+    { value: string; label: string; disabled?: boolean }[]
+  >([]);
+  const [valueSelect, setValueSelect] = useState("");
+  const { categorySlug } = useAppSelector((state) => state.category);
 
+  // Tạo một mảng chứa các URL tạm thời cho ảnh
+  useEffect(() => {
+    dispatch(getCategorysSlug({ pageSize: 100 }));
+  }, []);
+  useEffect(() => {
+    const transformedArray = categorySlug?.data?.map((item: string) => {
+      // You can customize the label as needed
+      const label =
+        item.charAt(0).toUpperCase() + item.slice(1).replace(/-/g, " ");
+
+      return { value: item, label: label, disabled: false }; // You can set disabled based on your conditions
+    });
+
+    setValueSlug(transformedArray);
+  }, [categorySlug]);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
   const [file, setFile] = useState<File>();
-  const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
   const previewImage = useMemo(() => {
     return file ? URL.createObjectURL(file) : "";
   }, [file]);
@@ -64,8 +84,10 @@ const UpdateBrand: React.FC = () => {
         setBrandDetail(res.data.data);
       });
   }, []);
+
   useEffect(() => {
     setValue("address", brandDetail?.address);
+    setValue("slug", brandDetail?.slug);
     setValue("name", brandDetail?.name);
   }, [brandDetail]);
   const onSubmit = handleSubmit(async (data) => {
@@ -84,6 +106,7 @@ const UpdateBrand: React.FC = () => {
       name: data.name,
       address: data.address,
       imageUrl: images,
+      slug: valueSelect || "",
     });
 
     try {
@@ -118,6 +141,9 @@ const UpdateBrand: React.FC = () => {
   const handleChangeFile = (file?: File) => {
     setFile(file);
   };
+  const handleChange = (value: string) => {
+    setValueSelect(value);
+  };
   return (
     <div className="bg-white shadow ">
       <h2 className="font-bold m-4 text-2xl">Cập nhật thương hiệu</h2>
@@ -142,6 +168,14 @@ const UpdateBrand: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.name?.message}
+          />
+        </Form.Item>
+        <Form.Item label="Slug" name="slug" rules={[{ required: true }]}>
+          <Select
+            defaultValue={brandDetail?.slug}
+            style={{ width: 120 }}
+            onChange={handleChange}
+            options={valueSlug}
           />
         </Form.Item>
         <Form.Item label="Địa chỉ" name="address" rules={[{ required: true }]}>

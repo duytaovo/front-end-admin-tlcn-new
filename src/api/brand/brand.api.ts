@@ -8,7 +8,6 @@ const brandApi = {
   getBrands(params: any) {
     return http.get<SuccessResponse<any>>("/manage/brand", { params });
   },
-
   getDetailBrand(params: any) {
     return http.get<SuccessResponse<any[]>>(`/manage/brand/${params}`);
   },

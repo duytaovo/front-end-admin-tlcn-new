@@ -7,6 +7,11 @@ export const getCategorys = createAsyncThunk(
   payloadCreator(categoryApi.getCategorys),
 );
 
+export const getCategorysSlug = createAsyncThunk(
+  "category/getCategorysSlug",
+  payloadCreator(categoryApi.getCategorysSlug),
+);
+
 export const getDetailCategory = createAsyncThunk(
   "category/getDetailCategory",
   payloadCreator(categoryApi.getDetailCategory),
@@ -28,11 +33,13 @@ export const deleteCategory = createAsyncThunk(
 
 interface IProudct {
   category: any;
+  categorySlug: any;
   categoryDetail: any;
 }
 
 const initialState: IProudct = {
   category: [],
+  categorySlug: [],
   categoryDetail: {},
 };
 const categorySlice = createSlice({
@@ -45,6 +52,9 @@ const categorySlice = createSlice({
     });
     builder.addCase(getCategorys.fulfilled, (state, { payload }) => {
       state.category = payload.data;
+    });
+    builder.addCase(getCategorysSlug.fulfilled, (state, { payload }) => {
+      state.categorySlug = payload.data;
     });
     builder.addCase(getDetailCategory.fulfilled, (state, { payload }) => {
       state.categoryDetail = payload.data?.data;

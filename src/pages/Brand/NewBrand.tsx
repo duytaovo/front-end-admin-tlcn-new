@@ -1,19 +1,21 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Form } from "antd";
+import { Button, Form, Select } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Input from "src/components/Input";
 import path from "src/constants/path";
-import { useAppDispatch } from "src/hooks/useRedux";
+import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
 import { schemaBrand } from "src/utils/rules";
 import { getAvatarUrl, isAxiosUnprocessableEntityError } from "src/utils/utils";
 import { addBrand, getBrands } from "src/store/brand/brandSlice";
 import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
 import InputFile from "../ListUser/InputFile";
+import SelectCustom from "src/components/Select";
+import { getCategorysSlug } from "src/store/category/categorySlice";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -40,16 +42,32 @@ const NewBrand: React.FC = () => {
   } = useForm({
     resolver: yupResolver(schemaBrand),
   });
-
+  const [valueSlug, setValueSlug] = useState<
+    { value: string; label: string; disabled?: boolean }[]
+  >([]);
+  const [valueSelect, setValueSelect] = useState("");
+  const { categorySlug } = useAppSelector((state) => state.category);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [file, setFile] = useState<File>();
-  const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
   const previewImage = useMemo(() => {
     return file ? URL.createObjectURL(file) : "";
   }, [file]);
   // Tạo một mảng chứa các URL tạm thời cho ảnh
+  useEffect(() => {
+    dispatch(getCategorysSlug({ pageSize: 100 }));
+  }, []);
+  useEffect(() => {
+    const transformedArray = categorySlug?.data?.map((item: string) => {
+      // You can customize the label as needed
+      const label =
+        item.charAt(0).toUpperCase() + item.slice(1).replace(/-/g, " ");
 
+      return { value: item, label: label, disabled: false }; // You can set disabled based on your conditions
+    });
+
+    setValueSlug(transformedArray);
+  }, [categorySlug]);
   useEffect(() => {
     reset();
   }, []);
@@ -70,6 +88,7 @@ const NewBrand: React.FC = () => {
       name: data.name,
       address: data.address,
       imageUrl: images,
+      slug: valueSelect || "",
     });
 
     try {
@@ -103,6 +122,9 @@ const NewBrand: React.FC = () => {
   const avatar = watch("imageUrl");
   const handleChangeFile = (file?: File) => {
     setFile(file);
+  };
+  const handleChange = (value: string) => {
+    setValueSelect(value);
   };
   return (
     <div className="bg-white shadow ">
@@ -138,6 +160,14 @@ const NewBrand: React.FC = () => {
             type="text"
             className=""
             errorMessage={errors.address?.message}
+          />
+        </Form.Item>
+        <Form.Item label="Slug" name="slug" rules={[{ required: true }]}>
+          <Select
+            defaultValue="Chọn slug"
+            style={{ width: 120 }}
+            onChange={handleChange}
+            options={valueSlug}
           />
         </Form.Item>
         <Form.Item
