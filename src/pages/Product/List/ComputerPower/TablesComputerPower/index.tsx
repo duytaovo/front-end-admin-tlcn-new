@@ -196,7 +196,7 @@ const TableComputerPower: React.FC = () => {
 
   useEffect(() => {
     const body = {
-      slug: "computer-power",
+      slug: "computer_power",
       brandId: Hãng ? Hãng : [],
       characteristicId: NhuCau ? NhuCau : [],
       priceFrom: minMaxPrices?.minPrice
@@ -208,12 +208,12 @@ const TableComputerPower: React.FC = () => {
       specialFeatures: TinhNangDacBiet ? TinhNangDacBiet : [],
       name: null,
     };
-    // dispatch(
-    //   getProductsFilterAccess({
-    //     body: body,
-    //     params: { pageNumber: currentPage, pageSize: 10, sort: chooseBox },
-    //   }),
-    // );
+    dispatch(
+      getProductsFilterAccess({
+        body: body,
+        params: { pageNumber: currentPage, pageSize: 10, sort: chooseBox },
+      }),
+    );
   }, [
     Hãng,
     currentPage,
@@ -251,7 +251,7 @@ const TableComputerPower: React.FC = () => {
           Thêm mới
         </Link>
       </div>
-      {/* <FilterPhuKien handle={handle} brand={brand} characteristic={character} /> */}
+      <FilterPhuKien handle={handle} brand={brand} characteristic={character} />
       <div className="mt-6 grid grid-cols-5 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 h-[80%] mb-10">
         {computerPower?.data?.data?.map((_smartPhone: any) => (
           <div className="col-span-1" key={_smartPhone.id}>

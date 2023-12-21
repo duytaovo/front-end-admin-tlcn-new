@@ -146,7 +146,7 @@ const TableCard: React.FC = () => {
 
   useEffect(() => {
     const body = {
-      slug: "graphics-card",
+      slug: "graphics_card",
       brandId: Hãng ? Hãng : [],
       characteristicId: NhuCau ? NhuCau : [],
       priceFrom: minMaxPrices?.minPrice
@@ -158,12 +158,12 @@ const TableCard: React.FC = () => {
       specialFeatures: TinhNangDacBiet ? TinhNangDacBiet : [],
       name: null,
     };
-    // dispatch(
-    //   getProductsFilterAccess({
-    //     body: body,
-    //     params: { pageNumber: currentPage, pageSize: 10, sort: chooseBox },
-    //   }),
-    // );
+    dispatch(
+      getProductsFilterAccess({
+        body: body,
+        params: { pageNumber: currentPage, pageSize: 10, sort: chooseBox },
+      }),
+    );
   }, [
     Hãng,
     currentPage,

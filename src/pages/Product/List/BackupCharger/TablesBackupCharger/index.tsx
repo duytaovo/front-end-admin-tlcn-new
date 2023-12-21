@@ -150,7 +150,7 @@ const TableBackupCharger: React.FC = () => {
 
   useEffect(() => {
     const body = {
-      slug: "backup-charger",
+      slug: "backup_charger",
       brandId: Hãng ? Hãng : [],
       characteristicId: NhuCau ? NhuCau : [],
       priceFrom: minMaxPrices?.minPrice
@@ -162,12 +162,12 @@ const TableBackupCharger: React.FC = () => {
       specialFeatures: TinhNangDacBiet ? TinhNangDacBiet : [],
       name: null,
     };
-    // dispatch(
-    //   getProductsFilterAccess({
-    //     body: body,
-    //     params: { pageNumber: currentPage, pageSize: 10, sort: chooseBox },
-    //   }),
-    // );
+    dispatch(
+      getProductsFilterAccess({
+        body: body,
+        params: { pageNumber: currentPage, pageSize: 10, sort: chooseBox },
+      }),
+    );
   }, [
     Hãng,
     currentPage,
