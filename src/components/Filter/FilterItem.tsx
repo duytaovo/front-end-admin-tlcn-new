@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import ButtonFilter from "src/components/ButtonFilter/ButtonFilter";
 import ButtonItem from "src/components/ButtonFilter/ButtonItem";
 import path from "src/constants/path";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { handleFilterStore } from "src/store/product/smartPhoneSlice";
 
 interface Props {
@@ -22,7 +22,8 @@ const FilterItem = ({ data, handle, scroll }: Props) => {
   const button: any = useRef<HTMLDivElement>(null);
   const itemHiden: any = useRef<HTMLDivElement>(null);
   const before: any = useRef<HTMLDivElement>(null);
-
+  const location = useLocation();
+  const { order } = useAppSelector((state) => state.orders);
   //redux + logic
   const filter = useAppSelector((state) => state.smartPhone.filter.data); // Lấy tất cả
   const { smartPhone } = useAppSelector((state) => state.smartPhone); // Lấy tất cả
@@ -137,12 +138,12 @@ const FilterItem = ({ data, handle, scroll }: Props) => {
     itemHiden.current.style.display = "block";
   };
 
-  const handleFilter = () => {
+  const handleFilterLocal = () => {
     // filter.splice(0, filter.length);
     handle(true);
     item.current.style.display = "none";
     setIsOpen(false);
-    navigate("/smartPhone");
+    // navigate("/smartPhone");
   };
 
   const Apper = (boolean: boolean) => {
@@ -192,6 +193,7 @@ const FilterItem = ({ data, handle, scroll }: Props) => {
       // number[0].style.display = "inline";
     }
   }, [checkTurnOn1]);
+  console.log(smartPhone);
   return (
     <div className={styles.bound} ref={bound}>
       {/* Nút chính */}
@@ -243,18 +245,47 @@ const FilterItem = ({ data, handle, scroll }: Props) => {
         </div>
         {data.title == "Giá" ? <SliderPrice Apper={Apper} /> : ""}
 
-        <div className={styles.itemHiden} ref={itemHiden}>
-          <Link
-            to={path.smartPhone}
-            className={styles.close}
-            onClick={handleCancel}
-          >
-            Bỏ chọn
-          </Link>
-          <div className={styles.open} onClick={handleFilter}>
-            Xem {smartPhone?.data?.totalElements} kết quả
+        {/* Kết quả */}
+        {location.pathname === "/smartPhone" ? (
+          <div className={styles.itemHiden} ref={itemHiden}>
+            <Link
+              to={path.smartPhone}
+              className={styles.close}
+              onClick={handleCancel}
+            >
+              Bỏ chọn
+            </Link>
+            <div className={styles.open} onClick={handleFilterLocal}>
+              Xem {smartPhone?.data?.totalElements} kết quả
+            </div>
           </div>
-        </div>
+        ) : location.pathname === "/tablet" ? (
+          <div className={styles.itemHiden} ref={itemHiden}>
+            <Link
+              to={path.tablet}
+              className={styles.close}
+              onClick={handleCancel}
+            >
+              Bỏ chọn
+            </Link>
+            {/* <div className={styles.open} onClick={handleFilterLocal}>
+              Xem {productBySlug.data.totalElements} kết quả
+            </div> */}
+          </div>
+        ) : (
+          <div className={styles.itemHiden} ref={itemHiden}>
+            <Link
+              to={location.pathname}
+              className={styles.close}
+              onClick={handleCancel}
+            >
+              Bỏ chọn
+            </Link>
+            <div className={styles.open} onClick={handleFilterLocal}>
+              Xem {order?.data?.totalElements} kết quả
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

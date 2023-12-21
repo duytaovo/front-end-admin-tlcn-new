@@ -186,11 +186,11 @@ const TableTablet: React.FC = () => {
         </Link>
       </div>
       <div className="text-black">
-        <FilterPhuKien
+        {/* <FilterPhuKien
           handle={handle}
           brand={brand}
           characteristic={characteristic}
-        />
+        /> */}
       </div>
       <div className="mt-6 grid grid-cols-6 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {tablet?.data?.data?.map((_smartPhone: any) => (

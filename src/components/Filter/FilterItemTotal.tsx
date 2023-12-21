@@ -1,6 +1,6 @@
 import styles from "./filteritemtotal.module.scss";
 import { useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import ButtonFilterTotal from "src/components/ButtonFilter/ButtonFilterTotal";
 import ButtonItem from "src/components/ButtonFilter/ButtonItem";
 import path from "src/constants/path";
@@ -25,6 +25,8 @@ const FilterItemTotal = ({ data, handle, scroll }: Props) => {
   let filter = useAppSelector((state) => state.smartPhone.filter.data); // Lấy tất cả
   const { smartPhone } = useAppSelector<any>((state) => state.smartPhone); // Lấy tất cả
   const dispatch = useAppDispatch();
+  const location = useLocation();
+  const { order } = useAppSelector((state) => state.orders);
 
   // Xử lý đóng mở nút
   const handleOpen = () => {
@@ -114,7 +116,7 @@ const FilterItemTotal = ({ data, handle, scroll }: Props) => {
     handle(true);
     item.current.style.display = "none";
     setisOpen(false);
-    navigate("/smartPhone");
+    // navigate("/smartPhone");
   };
   const handleCancel = () => {
     filter.splice(0, filter.length);
@@ -132,6 +134,7 @@ const FilterItemTotal = ({ data, handle, scroll }: Props) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleAppear]);
+  console.log(location.pathname);
   return (
     <div className={styles.bound} ref={bound}>
       {/* Nút chính */}
@@ -189,18 +192,46 @@ const FilterItemTotal = ({ data, handle, scroll }: Props) => {
         </div>
 
         {/* Kết quả */}
-        <div className={styles.itemHiden} ref={itemHiden}>
-          <Link
-            to={path.smartPhone}
-            className={styles.close}
-            onClick={handleCancel}
-          >
-            Bỏ chọn
-          </Link>
-          <div className={styles.open} onClick={handleFilterLocal}>
-            Xem {smartPhone?.data?.totalElements} kết quả
+        {location.pathname === "/smartPhone" ? (
+          <div className={styles.itemHiden} ref={itemHiden}>
+            <Link
+              to={path.smartPhone}
+              className={styles.close}
+              onClick={handleCancel}
+            >
+              Bỏ chọn
+            </Link>
+            <div className={styles.open} onClick={handleFilterLocal}>
+              Xem {smartPhone?.data?.totalElements} kết quả
+            </div>
           </div>
-        </div>
+        ) : location.pathname === "/tablet" ? (
+          <div className={styles.itemHiden} ref={itemHiden}>
+            <Link
+              to={path.tablet}
+              className={styles.close}
+              onClick={handleCancel}
+            >
+              Bỏ chọn
+            </Link>
+            {/* <div className={styles.open} onClick={handleFilterLocal}>
+              Xem {productBySlug.data.totalElements} kết quả
+            </div> */}
+          </div>
+        ) : (
+          <div className={styles.itemHiden} ref={itemHiden}>
+            <Link
+              to={location.pathname}
+              className={styles.close}
+              onClick={handleCancel}
+            >
+              Bỏ chọn
+            </Link>
+            <div className={styles.open} onClick={handleFilterLocal}>
+              Xem {order?.data?.totalElements} kết quả
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

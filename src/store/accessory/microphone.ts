@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import microPhoneApi from "src/api/accessory/microPhone/microPhone-api";
+import laptopApi from "src/api/product/laptop/laptop-api";
 import { payloadCreator } from "src/utils/utils";
 
 export const getMicrophone = createAsyncThunk(
@@ -25,7 +26,10 @@ export const deleteMicrophone = createAsyncThunk(
   "microphone/deleteMicrophone",
   payloadCreator(microPhoneApi.deleteMicrophone),
 );
-
+export const getProductsFilterAccess = createAsyncThunk(
+  "filter/getProductsFilterAccess",
+  payloadCreator(laptopApi.getProductsFilterAccess),
+);
 interface IProudct {
   microphone: any;
   microphoneDetail: any;
@@ -45,6 +49,9 @@ const microphonelice = createSlice({
     });
     builder.addCase(getDetailMicrophone.fulfilled, (state, { payload }) => {
       state.microphoneDetail = payload.data?.data;
+    });
+    builder.addCase(getProductsFilterAccess.fulfilled, (state, { payload }) => {
+      state.microphone = payload.data;
     });
   },
 });

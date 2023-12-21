@@ -262,7 +262,7 @@ const TableAdapter: React.FC = () => {
           Thêm mới
         </Link>
       </div>
-      <FilterPhuKien handle={handle} brand={brand} characteristic={character} />
+      {/* <FilterPhuKien handle={handle} brand={brand} characteristic={character} /> */}
       <div className="mt-6 grid grid-cols-5 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 h-[80%] mb-10">
         {adapter?.data?.data?.map((_smartPhone: any) => (
           <div className="col-span-1" key={_smartPhone.id}>

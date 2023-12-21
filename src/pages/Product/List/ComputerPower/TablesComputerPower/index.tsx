@@ -232,7 +232,7 @@ const TableComputerPower: React.FC = () => {
         <div>
           Quản lý sản phẩm
           <div></div>
-          <div>
+          {/* <div>
             <Button
               onClick={() => exportToExcel(computerPower?.data?.data)}
               type="primary"
@@ -242,7 +242,7 @@ const TableComputerPower: React.FC = () => {
             >
               Xuất file excel
             </Button>
-          </div>
+          </div> */}
         </div>
         <Link
           to={path.computerPowerNew}
@@ -251,7 +251,7 @@ const TableComputerPower: React.FC = () => {
           Thêm mới
         </Link>
       </div>
-      <FilterPhuKien handle={handle} brand={brand} characteristic={character} />
+      {/* <FilterPhuKien handle={handle} brand={brand} characteristic={character} /> */}
       <div className="mt-6 grid grid-cols-5 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 h-[80%] mb-10">
         {computerPower?.data?.data?.map((_smartPhone: any) => (
           <div className="col-span-1" key={_smartPhone.id}>

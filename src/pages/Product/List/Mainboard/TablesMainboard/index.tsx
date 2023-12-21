@@ -233,7 +233,7 @@ const TableMainboard: React.FC = () => {
         <div>
           Quản lý sản phẩm
           <div></div>
-          <div>
+          {/* <div>
             <Button
               onClick={() => exportToExcel(mainboard?.data?.data)}
               type="primary"
@@ -243,7 +243,7 @@ const TableMainboard: React.FC = () => {
             >
               Xuất file excel
             </Button>
-          </div>
+          </div> */}
         </div>
         <Link
           to={path.mainBoardNew}
@@ -252,11 +252,11 @@ const TableMainboard: React.FC = () => {
           Thêm mới
         </Link>
       </div>
-      <FilterPhuKien
+      {/* <FilterPhuKien
         handle={handle}
         brand={brand}
         characteristic={characteristic}
-      />
+      /> */}
       <div className="mt-6 grid grid-cols-5 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 h-[80%] mb-10">
         {mainboard?.data?.data?.map((_smartPhone: any) => (
           <div className="col-span-1" key={_smartPhone.id}>
