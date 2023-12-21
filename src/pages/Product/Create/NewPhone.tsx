@@ -313,7 +313,7 @@ const NewPhone: React.FC = () => {
   const generateSampleData = () => {
     setIsValueMau(true);
 
-    setImages(smartPhoneDetail?.productInfo?.lstProductImageUrl);
+    // setImages(smartPhoneDetail?.productInfo?.lstProductImageUrl);
 
     const productInfo = smartPhoneDetail?.productInfo;
 

@@ -840,7 +840,21 @@ const UpdatePhone: React.FC = () => {
                 );
               })}
             </div>
-            <InputFile label="" onChange={handleChangeFile} id="images" />
+            <InputFile
+              label="Upload ảnh"
+              onChange={handleChangeFile}
+              id="images"
+            />
+            <button
+              className="text-red-500 border-red-300 border w-20 p-3 mt-3"
+              type="button"
+              onClick={() => {
+                setFile([]);
+                setImages([]);
+              }}
+            >
+              Xoá
+            </button>
             <div className="mt-3  flex flex-col items-center text-red-500">
               <div>Dụng lượng file tối đa 2 MB</div>
               <div>Định dạng:.JPEG, .PNG</div>

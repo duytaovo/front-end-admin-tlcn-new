@@ -1,6 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
-import { SelectChangeEvent } from "@mui/material/Select";
 import React, { useEffect, useState } from "react";
 import ProductPhone from "./Table/Product/ProductLoudSpeaker";
 import path from "src/constants/path";
@@ -11,6 +10,9 @@ import {
 } from "src/store/accessory/loudSpeaker";
 import { handleFilterStore } from "src/store/product/smartPhoneSlice";
 import FilterPhuKien from "src/components/FilterPhuKien";
+import { getSort } from "src/store/product/filterSlice";
+import { getBrands } from "src/store/brand/brandSlice";
+import { getCharacters } from "src/store/characteristic/characteristicSlice";
 
 const TableLoudSpeaker: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -18,7 +20,11 @@ const TableLoudSpeaker: React.FC = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
   const pageSize = 12; // Số phần tử trên mỗi trang
-
+  useEffect(() => {
+    dispatch(getSort(""));
+    dispatch(getBrands({ pageSize: 100 }));
+    dispatch(getCharacters(""));
+  }, []);
   useEffect(() => {
     dispatch(getloudSpeaker({ pageNumber: currentPage, pageSize: 12 }));
   }, [currentPage]);

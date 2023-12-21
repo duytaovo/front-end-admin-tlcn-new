@@ -28,6 +28,11 @@ const TableMainboard: React.FC = () => {
   useEffect(() => {
     dispatch(getMainboard({ pageNumber: currentPage, pageSize: pageSize }));
   }, [currentPage]);
+  useEffect(() => {
+    dispatch(getSort(""));
+    dispatch(getBrands({ pageSize: 100 }));
+    dispatch(getCharacters(""));
+  }, []);
   const exportToExcel = async (products: any) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Products");
