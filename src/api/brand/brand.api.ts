@@ -13,7 +13,7 @@ const brandApi = {
     return http.get<SuccessResponse<any[]>>(`/manage/brand/${params}`);
   },
   updateBrand({ _id, body }: any) {
-    return http.post<SuccessResponse<any>>(`/manage/brand/update/${_id}`, body);
+    return http.put<SuccessResponse<any>>(`/manage/brand/update/${_id}`, body);
   },
   deleteBrand(idBrand: string[]) {
     return http.put<SuccessResponse<any>>(`/manage/brand/delete/${idBrand}`);
