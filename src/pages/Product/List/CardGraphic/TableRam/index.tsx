@@ -3,19 +3,28 @@ import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import React, { useEffect, useState } from "react";
 import path from "src/constants/path";
 import ProductRam from "./Table/Product/ProductPhone";
-import { getCardGraphic } from "src/store/cardGrap/cardGraphicSlice";
+import {
+  getCardGraphic,
+  getProductsFilterAccess,
+} from "src/store/cardGrap/cardGraphicSlice";
 import { Pagination } from "antd";
 import { handleFilterStore } from "src/store/product/smartPhoneSlice";
-import { getProductsFilterAccess } from "src/store/ram/ramSlice";
 import FilterPhuKien from "src/components/FilterPhuKien";
+import { getSort } from "src/store/product/filterSlice";
+import { getBrands } from "src/store/brand/brandSlice";
+import { getCharacters } from "src/store/characteristic/characteristicSlice";
 
-const TableRam: React.FC = () => {
+const TableCard: React.FC = () => {
   const dispatch = useAppDispatch();
   const { cardGraphic } = useAppSelector((state) => state.cardGraphic);
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
   const pageSize = 10; // Số phần tử trên mỗi trang
-
+  useEffect(() => {
+    dispatch(getSort(""));
+    dispatch(getBrands(""));
+    dispatch(getCharacters(""));
+  }, []);
   useEffect(() => {
     dispatch(getCardGraphic({ pageNumber: currentPage }));
   }, [currentPage]);
@@ -24,7 +33,7 @@ const TableRam: React.FC = () => {
   };
   const filter = useAppSelector((state) => state.smartPhone.filter.data); // Lấy tất cả
   const { brand } = useAppSelector<any>((state) => state.brand);
-  const { characteristic } = useAppSelector<any>((state) => state.character);
+  const { character } = useAppSelector((state) => state.character);
   const [dataFilterLocal, setDataFilterLocal] = useState<any>();
   const [chooseBox, setChooseBox] = useState<any>();
   useEffect(() => {
@@ -149,12 +158,12 @@ const TableRam: React.FC = () => {
       specialFeatures: TinhNangDacBiet ? TinhNangDacBiet : [],
       name: null,
     };
-    dispatch(
-      getProductsFilterAccess({
-        body: body,
-        params: { pageNumber: currentPage, pageSize: 10, sort: chooseBox },
-      }),
-    );
+    // dispatch(
+    //   getProductsFilterAccess({
+    //     body: body,
+    //     params: { pageNumber: currentPage, pageSize: 10, sort: chooseBox },
+    //   }),
+    // );
   }, [
     Hãng,
     currentPage,
@@ -182,11 +191,7 @@ const TableRam: React.FC = () => {
           Thêm mới
         </Link>
       </div>
-      <FilterPhuKien
-        handle={handle}
-        brand={brand}
-        characteristic={characteristic}
-      />
+      <FilterPhuKien handle={handle} brand={brand} characteristic={character} />
       <div className="mt-6 grid grid-cols-6 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {cardGraphic?.data?.data?.map((_smartPhone: any) => (
           <div className="col-span-1" key={_smartPhone.id}>
@@ -206,5 +211,5 @@ const TableRam: React.FC = () => {
   );
 };
 
-export default TableRam;
+export default TableCard;
 

@@ -191,7 +191,9 @@ const UpdateComputerPower: React.FC = () => {
           brandId: Number(data.brand),
           categoryId: 19,
           productId: Number(computerPowerDetail.productInfo.productId),
-          characteristicId: 12,
+          characteristicId: Number(
+            computerPowerDetail.productInfo.characteristicId,
+          ),
           productCode: computerPowerDetail.productInfo.productCode,
           name: data.name,
           description: data?.description,

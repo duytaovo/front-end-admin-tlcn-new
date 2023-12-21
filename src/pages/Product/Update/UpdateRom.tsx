@@ -176,7 +176,7 @@ const UpdateRom: React.FC = () => {
         brandId: 20,
         categoryId: 13,
         productId: Number(romDetail.productInfo.productId),
-        characteristicId: 12,
+        characteristicId: Number(romDetail.productInfo.characteristicId),
         productCode: romDetail.productInfo.productCode,
 
         name: data.name,

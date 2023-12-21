@@ -200,7 +200,7 @@ const UpdateMonitor: React.FC = () => {
         brandId: 20,
         categoryId: 27,
         productId: Number(monitorDetail.productInfo.productId),
-        characteristicId: 12,
+        characteristicId: Number(monitorDetail.productInfo.characteristicId),
         productCode: monitorDetail.productInfo.productCode,
         name: data.name,
         description: data?.description,

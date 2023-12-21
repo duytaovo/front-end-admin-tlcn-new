@@ -131,7 +131,7 @@ const NewMonitor: React.FC = () => {
           brandId: Number(data.brand),
           categoryId: 27,
           productId: null,
-          characteristicId: 12,
+          characteristicId: Number(data.characteristic) || 1,
           productCode: generateRandomString(10),
           name: data.name,
           description: data?.description,
@@ -224,7 +224,21 @@ const NewMonitor: React.FC = () => {
             {errors.brand?.message}
           </SelectCustom>
         </Form.Item>
-
+        <Form.Item
+          label="Đặc điểm sản phẩm"
+          name="characteristic"
+          rules={[{ required: true }]}
+        >
+          <SelectCustom
+            className={"flex-1 text-black"}
+            id="characteristic"
+            placeholder="Chọn đặc điểm "
+            options={character?.data}
+            register={register}
+          >
+            {errors.characteristic?.message}
+          </SelectCustom>
+        </Form.Item>
         <Form.Item
           label="Tên sản phẩm"
           name="name"

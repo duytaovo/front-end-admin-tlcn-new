@@ -25,7 +25,9 @@ const TableMainboard: React.FC = () => {
 
   const dispatch = useAppDispatch();
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
-
+  useEffect(() => {
+    dispatch(getMainboard({ pageNumber: currentPage, pageSize: pageSize }));
+  }, [currentPage]);
   const exportToExcel = async (products: any) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Products");

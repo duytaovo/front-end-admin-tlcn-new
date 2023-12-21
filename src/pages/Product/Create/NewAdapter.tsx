@@ -35,6 +35,7 @@ const normFile = (e: any) => {
 interface FormData {
   brand: string;
   name: string;
+  characteristic: string;
   description: string;
   design: string | undefined;
   dimension: string | undefined;
@@ -127,10 +128,10 @@ const NewAdapter: React.FC = () => {
     try {
       const body = JSON.stringify({
         productInfo: {
-          brandId: Number(data.brand) || 1,
+          brandId: Number(data.brand),
           categoryId: 20,
           productId: null,
-          characteristicId: 12,
+          characteristicId: Number(data.characteristic) || 1,
           productCode: generateRandomString(10),
           name: data.name,
           description: data?.description,
@@ -214,6 +215,21 @@ const NewAdapter: React.FC = () => {
             register={register}
           >
             {errors.brand?.message}
+          </SelectCustom>
+        </Form.Item>
+        <Form.Item
+          label="Đặc điểm sản phẩm"
+          name="characteristic"
+          rules={[{ required: true }]}
+        >
+          <SelectCustom
+            className={"flex-1 text-black"}
+            id="characteristic"
+            placeholder="Chọn đặc điểm "
+            options={character?.data}
+            register={register}
+          >
+            {errors.characteristic?.message}
           </SelectCustom>
         </Form.Item>
         <Form.Item

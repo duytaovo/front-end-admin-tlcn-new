@@ -7,6 +7,9 @@ import { getProductsFilterAccess, getRoms } from "src/store/rom/romSlice";
 import { Pagination } from "antd";
 import { handleFilterStore } from "src/store/product/smartPhoneSlice";
 import FilterPhuKien from "src/components/FilterPhuKien";
+import { getSort } from "src/store/product/filterSlice";
+import { getBrands } from "src/store/brand/brandSlice";
+import { getCharacters } from "src/store/characteristic/characteristicSlice";
 
 const TableRom: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -14,7 +17,11 @@ const TableRom: React.FC = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
   const pageSize = 10; // Số phần tử trên mỗi trang
-
+  useEffect(() => {
+    dispatch(getSort(""));
+    dispatch(getBrands(""));
+    dispatch(getCharacters(""));
+  }, []);
   useEffect(() => {
     dispatch(getRoms({ pageNumber: currentPage }));
   }, [currentPage]);

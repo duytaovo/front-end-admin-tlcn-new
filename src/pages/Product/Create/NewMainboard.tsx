@@ -76,6 +76,8 @@ const NewComputerPower: React.FC = () => {
   const navigate = useNavigate();
   const { depot } = useAppSelector((state) => state.depot);
   const { brand } = useAppSelector((state) => state.brand);
+  const { character } = useAppSelector((state) => state.character);
+
   useEffect(() => {
     dispatch(getCategorys({ pageSize: 100 }));
     dispatch(getCharacters({ pageSize: 100 }));
@@ -128,7 +130,7 @@ const NewComputerPower: React.FC = () => {
           brandId: Number(data.brand),
           categoryId: 17,
           productId: null,
-          characteristicId: 12,
+          characteristicId: Number(data.characteristic) || 1,
           productCode: generateRandomString(10),
           name: data.name,
           description: data?.description,
@@ -223,6 +225,21 @@ const NewComputerPower: React.FC = () => {
             isBrand={true}
           >
             {errors.brand?.message}
+          </SelectCustom>
+        </Form.Item>
+        <Form.Item
+          label="Đặc điểm sản phẩm"
+          name="characteristic"
+          rules={[{ required: true }]}
+        >
+          <SelectCustom
+            className={"flex-1 text-black"}
+            id="characteristic"
+            placeholder="Chọn đặc điểm "
+            options={character?.data}
+            register={register}
+          >
+            {errors.characteristic?.message}
           </SelectCustom>
         </Form.Item>
         <Form.Item

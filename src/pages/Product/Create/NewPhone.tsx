@@ -232,10 +232,10 @@ const NewPhone: React.FC = () => {
       };
       const body = JSON.stringify({
         productInfo: {
-          brandId: Number(data.brand),
+          brandId: Number(data.brand) || 1,
           categoryId: 1,
           productId: null,
-          characteristicId: Number(data.characteristic),
+          characteristicId: Number(data.characteristic) || 1,
           productCode: generateRandomString(10),
           name: data.name,
           description: data?.description,

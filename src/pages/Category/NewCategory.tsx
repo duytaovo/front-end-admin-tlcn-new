@@ -1,26 +1,20 @@
-import { PlusOutlined } from "@ant-design/icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { Button, Form, Upload } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Input from "src/components/Input";
 import path from "src/constants/path";
-import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
+import { useAppDispatch } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
-import { schemaBrand, schemaProductSmartPhone } from "src/utils/rules";
-import { isAxiosUnprocessableEntityError } from "src/utils/utils";
-
-import Textarea from "src/components/Textarea";
-import { getCategorys } from "src/store/category/categorySlice";
-import { addBrand, getBrands } from "src/store/brand/brandSlice";
-import {
-  addSmartPhone,
-  getSmartPhones,
-} from "src/store/product/smartPhoneSlice";
-import InputFile from "src/components/InputFile";
+import { schemaCategory } from "src/utils/rules";
+import { getAvatarUrl, isAxiosUnprocessableEntityError } from "src/utils/utils";
+import { getBrands } from "src/store/brand/brandSlice";
+import { addCategory, getCategorys } from "src/store/category/categorySlice";
+import { uploadManyImagesProductSmartPhone } from "src/store/product/smartPhoneSlice";
+import InputFile from "../ListUser/InputFile";
 
 const normFile = (e: any) => {
   if (Array.isArray(e)) {
@@ -31,7 +25,7 @@ const normFile = (e: any) => {
 
 interface FormData {
   name: string;
-  address: string;
+  slug: string;
 }
 
 const NewBrand: React.FC = () => {
@@ -43,49 +37,51 @@ const NewBrand: React.FC = () => {
     register,
     setValue,
     watch,
+    reset,
   } = useForm({
-    resolver: yupResolver(schemaBrand),
+    resolver: yupResolver(schemaCategory),
   });
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [file, setFile] = useState<File[]>();
+  const [file, setFile] = useState<File>();
   const imageArray = file || []; // Mảng chứa các đối tượng ảnh (File hoặc Blob)
 
   // Tạo một mảng chứa các URL tạm thời cho ảnh
   const imageUrls: string[] = [];
 
-  for (const image of imageArray) {
-    const imageUrl = URL.createObjectURL(image);
-    imageUrls.push(imageUrl);
-  }
+  const previewImage = useMemo(() => {
+    return file ? URL.createObjectURL(file) : "";
+  }, [file]);
   useEffect(() => {
-    setValue("name", "");
-    setValue("address", "");
+    reset();
   }, []);
 
   const onSubmit = handleSubmit(async (data) => {
+    let images;
+
+    if (file) {
+      const form = new FormData();
+      form.append("files", file);
+      const res = await dispatch(uploadManyImagesProductSmartPhone(form));
+      unwrapResult(res);
+      const d = res?.payload?.data?.data;
+      images = d[0].fileUrl;
+    }
     const body = JSON.stringify({
       name: data.name,
-      address: data.address,
-      imageUrl: data.imageUrl,
+      slug: data.slug,
+      parentCategoryId: 0,
     });
-    // if (file) {
-    //   const form = new FormData();
-    //   form.append("file", file[0]);
-    //   form.append("image", file[0]);
-    // } else {
-    //   toast.warning("Cần chọn ảnh");
-    // }
 
     try {
       setIsSubmitting(true);
-      const res = await dispatch(addBrand(body));
+      const res = await dispatch(addCategory(body));
       unwrapResult(res);
       const d = res?.payload?.data;
-      if (d?.code !== 200) return toast.error(d?.message);
+      // if (d?.code !== 200) return toast.error(d?.message);
       await toast.success("Thêm danh mục thành công ");
-      await dispatch(getBrands(""));
-      await navigate(path.brand);
+      await dispatch(getCategorys(""));
+      await navigate(path.categories);
     } catch (error: any) {
       if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
         const formError = error.response?.data.data;
@@ -103,16 +99,14 @@ const NewBrand: React.FC = () => {
     }
   });
   const onClickHuy = () => {
-    setValue("name", "");
-    setValue("address", "");
+    reset();
   };
-  const avatar = watch("imageUrl");
-  const handleChangeFile = (file?: File[]) => {
+  const handleChangeFile = (file?: File) => {
     setFile(file);
   };
   return (
     <div className="bg-white shadow ">
-      <h2 className="font-bold m-4 text-2xl">Thêm sản phẩm </h2>
+      <h2 className="font-bold m-4 text-2xl">Thêm danh mục </h2>
       <Form
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 14 }}
@@ -123,7 +117,7 @@ const NewBrand: React.FC = () => {
         onSubmitCapture={onSubmit}
       >
         <Form.Item
-          label="Tên nhãn hiệu"
+          label="Tên danh mục"
           name="name"
           rules={[{ required: true }]}
         >
@@ -136,37 +130,31 @@ const NewBrand: React.FC = () => {
             errorMessage={errors.name?.message}
           />
         </Form.Item>
-        <Form.Item label="Địa chỉ" name="address" rules={[{ required: true }]}>
+        <Form.Item label="Slug" name="slug" rules={[{ required: true }]}>
           <Input
             placeholder="..."
-            name="address"
+            name="slug"
             register={register}
             type="text"
             className=""
-            errorMessage={errors.address?.message}
+            errorMessage={errors.slug?.message}
           />
         </Form.Item>
         <Form.Item
-          name="file"
-          // rules={[{ required: true }]}
+          name="files"
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
         >
           <div className="flex flex-col items-start ">
             <div className="my-5 w-24 space-y-5 justify-between items-center">
-              {imageUrls.map((imageUrl, index) => {
-                return (
-                  <img
-                    key={index}
-                    src={imageUrl}
-                    className="h-full rounded-md w-full  object-cover"
-                    alt="avatar"
-                  />
-                );
-              })}
+              <img
+                src={previewImage}
+                alt=""
+                className="h-full w-full rounded-full object-cover"
+              />
             </div>
-            <InputFile label="" onChange={handleChangeFile} id="images" />
+            <InputFile onChange={handleChangeFile} />
             <div className="mt-3  flex flex-col items-center text-red-500">
               <div>Dụng lượng file tối đa 2 MB</div>
               <div>Định dạng:.JPEG, .PNG</div>
@@ -189,7 +177,7 @@ const NewBrand: React.FC = () => {
             <Button
               className="w-[100px]"
               onClick={() => {
-                navigate(path.users);
+                navigate(path.categories);
               }}
             >
               Hủy

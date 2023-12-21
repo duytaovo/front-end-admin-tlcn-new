@@ -188,7 +188,10 @@ const UpdateMainBoard: React.FC = () => {
           brandId: Number(data.brand) || 20,
           categoryId: 17,
           productId: Number(mainboardDetail.productInfo.productId),
-          characteristicId: 12,
+
+          characteristicId: Number(
+            mainboardDetail.productInfo.characteristicId,
+          ),
           productCode: mainboardDetail.productInfo.productCode,
           name: data.name,
           description: data?.description,

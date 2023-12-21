@@ -211,6 +211,13 @@ const TableProduct: React.FC = () => {
       ],
       parentCategory: null,
     },
+    {
+      id: 28,
+      name: "Smartwatch",
+      slug: "smartwatch",
+      children: [],
+      parentCategory: null,
+    },
   ];
 
   let originData: DataType[] = [];

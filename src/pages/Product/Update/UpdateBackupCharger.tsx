@@ -196,7 +196,9 @@ const UpdateAdapter: React.FC = () => {
         brandId: Number(data.brand),
         categoryId: 1,
         productId: Number(backupChargerDetail.productInfo.productId),
-        characteristicId: 12,
+        characteristicId: Number(
+          backupChargerDetail.productInfo.characteristicId,
+        ),
         productCode: backupChargerDetail.productInfo.productCode,
         name: data.name,
         description: data?.description,

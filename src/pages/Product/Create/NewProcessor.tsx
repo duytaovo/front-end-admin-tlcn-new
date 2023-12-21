@@ -78,6 +78,8 @@ const NewProcessor: React.FC = () => {
   const navigate = useNavigate();
   const { depot } = useAppSelector((state) => state.depot);
   const { brand } = useAppSelector((state) => state.brand);
+  const { character } = useAppSelector((state) => state.character);
+
   useEffect(() => {
     dispatch(getCategorys({ pageSize: 100 }));
     dispatch(getCharacters({ pageSize: 100 }));
@@ -129,7 +131,7 @@ const NewProcessor: React.FC = () => {
         brandId: Number(data.brand),
         categoryId: 14,
         productId: null,
-        characteristicId: 12,
+        characteristicId: Number(data.characteristic) || 1,
         productCode: generateRandomString(10),
         name: data.name,
         description: data?.description,
@@ -153,9 +155,9 @@ const NewProcessor: React.FC = () => {
       generation: data.generation,
       generationName: data.generationName,
       socket: data.socket,
-      cpuSpeed: data.cpuSpeed,
-      multiplier: Number(data.multiplier),
-      numberOfStreams: Number(data.numberOfStreams),
+      cpuSpeed: data.cpuSpeed || "Không có",
+      multiplier: Number(data.multiplier) || 4,
+      numberOfStreams: Number(data.numberOfStreams) || 4,
       maxSpeed: data.maxSpeed,
       caching: data.caching,
       memoryCapacity: data.memoryCapacity,
@@ -221,7 +223,21 @@ const NewProcessor: React.FC = () => {
             {errors.brand?.message}
           </SelectCustom>
         </Form.Item>
-
+        <Form.Item
+          label="Đặc điểm sản phẩm"
+          name="characteristic"
+          rules={[{ required: true }]}
+        >
+          <SelectCustom
+            className={"flex-1 text-black"}
+            id="characteristic"
+            placeholder="Chọn đặc điểm "
+            options={character?.data}
+            register={register}
+          >
+            {errors.characteristic?.message}
+          </SelectCustom>
+        </Form.Item>
         <Form.Item
           label="Tên sản phẩm"
           name="name"

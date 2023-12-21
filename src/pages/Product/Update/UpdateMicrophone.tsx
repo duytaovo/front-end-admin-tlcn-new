@@ -172,7 +172,7 @@ const UpdateMicrophone: React.FC = () => {
         brandId: Number(data.brand) || 20,
         categoryId: 26,
         productId: Number(microphoneDetail.productInfo.productId),
-        characteristicId: 12,
+        characteristicId: Number(microphoneDetail.productInfo.characteristicId),
         productCode: microphoneDetail.productInfo.productCode,
         name: data.name,
         description: data?.description,

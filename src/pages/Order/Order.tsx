@@ -111,93 +111,6 @@ const Order = ({ title }: { title?: string }) => {
 
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
   const pageSize = 10; // Số phần tử trên mỗi trang
-
-  const handleAccept = async (id: number) => {
-    if (confirm("Bạn có muốn Xác nhận đơn hàng không?")) {
-      const res = await dispatch(updatePurchasesConfirm(id));
-
-      if (res) {
-        toast.success("Xác nhận thành công");
-        const body = {
-          orderStatus: Trangthaidonhang ? Trangthaidonhang : [],
-          buyDateFrom: value[0]?.format("YYYY-MM-DD") || null,
-          buyDateTo: value[1]?.format("YYYY-MM-DD") || null,
-          paymentStatus: Phuongthucthanhtoan ? Phuongthucthanhtoan : [],
-        };
-        dispatch(
-          getPurchases({
-            body: body,
-            params: { pageNumber: currentPage, pageSize: 10 },
-          }),
-        );
-      }
-    }
-  };
-
-  const handleAcceptSuccess = async (id: number) => {
-    if (confirm("Bạn có muốn Xác nhận đơn hàng thành công không?")) {
-      const res = await dispatch(updatePurchasesSuccess(id));
-
-      if (res) {
-        toast.success("Giao hàng thành công");
-        const body = {
-          orderStatus: Trangthaidonhang ? Trangthaidonhang : [],
-          buyDateFrom: value[0]?.format("YYYY-MM-DD") || null,
-          buyDateTo: value[1]?.format("YYYY-MM-DD") || null,
-          paymentStatus: Phuongthucthanhtoan ? Phuongthucthanhtoan : [],
-        };
-        dispatch(
-          getPurchases({
-            body: body,
-            params: { pageNumber: currentPage, pageSize: 10 },
-          }),
-        );
-      }
-    }
-  };
-
-  const handleAcceptDelivery = async (id: number) => {
-    if (confirm("Bạn có muốn giao cho đơn vị vận chuyển không?")) {
-      const res = await dispatch(updatePurchasesDelivery(id));
-
-      if (res) {
-        toast.success("Chuyển giao thành công");
-        const body = {
-          orderStatus: Trangthaidonhang ? Trangthaidonhang : [],
-          buyDateFrom: value[0]?.format("YYYY-MM-DD") || null,
-          buyDateTo: value[1]?.format("YYYY-MM-DD") || null,
-          paymentStatus: Phuongthucthanhtoan ? Phuongthucthanhtoan : [],
-        };
-        dispatch(
-          getPurchases({
-            body: body,
-            params: { pageNumber: currentPage, pageSize: 10 },
-          }),
-        );
-      }
-    }
-  };
-
-  const handleCancel = async (id: number) => {
-    if (confirm("Bạn có muốn Hủy đơn hàng không?")) {
-      const res = await dispatch(updatePurchasesCancel(id));
-      if (res) {
-        toast.success("Hủy đơn thành công");
-        const body = {
-          orderStatus: Trangthaidonhang ? Trangthaidonhang : [],
-          buyDateFrom: value[0]?.format("YYYY-MM-DD") || null,
-          buyDateTo: value[1]?.format("YYYY-MM-DD") || null,
-          paymentStatus: Phuongthucthanhtoan ? Phuongthucthanhtoan : [],
-        };
-        dispatch(
-          getPurchases({
-            body: body,
-            params: { pageNumber: currentPage, pageSize: 10 },
-          }),
-        );
-      }
-    }
-  };
   useEffect(() => {
     const separateArrays = (data: any) => {
       const result: any = {};
@@ -226,13 +139,18 @@ const Order = ({ title }: { title?: string }) => {
       "Phương thức thanh toán": Phuongthucthanhtoan,
     } = dataFilterLocal;
   }
-
+  const PhuongthucthanhtoanNumber: number[] = Phuongthucthanhtoan?.map(
+    (str: string) => parseInt(str, 10),
+  );
+  const TrangthaidonhangNumber: number[] = Trangthaidonhang?.map(
+    (str: string) => parseInt(str, 10),
+  );
   useEffect(() => {
     const body = {
-      orderStatus: Trangthaidonhang ? Trangthaidonhang : [],
+      orderStatus: TrangthaidonhangNumber ? TrangthaidonhangNumber : [],
       buyDateFrom: value[0]?.format("YYYY-MM-DD") || null,
       buyDateTo: value[1]?.format("YYYY-MM-DD") || null,
-      paymentStatus: Phuongthucthanhtoan ? Phuongthucthanhtoan : [],
+      paymentStatus: PhuongthucthanhtoanNumber ? PhuongthucthanhtoanNumber : [],
     };
     dispatch(
       getPurchases({
@@ -241,6 +159,92 @@ const Order = ({ title }: { title?: string }) => {
       }),
     );
   }, [currentPage, value, Trangthaidonhang, Phuongthucthanhtoan, dispatch]);
+  const handleAccept = async (id: number) => {
+    if (confirm("Bạn có muốn Xác nhận đơn hàng không?")) {
+      const res: any = await dispatch(updatePurchasesConfirm(id));
+
+      if (res) {
+        toast.success("Xác nhận thành công");
+        const body = {
+          orderStatus: Trangthaidonhang ? Trangthaidonhang : [],
+          buyDateFrom: value[0]?.format("YYYY-MM-DD") || null,
+          buyDateTo: value[1]?.format("YYYY-MM-DD") || null,
+          paymentStatus: Phuongthucthanhtoan ? Phuongthucthanhtoan : [],
+        };
+        dispatch(
+          getPurchases({
+            body: body,
+            params: { pageNumber: currentPage, pageSize: 10 },
+          }),
+        );
+      }
+    }
+  };
+
+  const handleAcceptSuccess = async (id: number) => {
+    if (confirm("Bạn có muốn Xác nhận đơn hàng thành công không?")) {
+      const res: any = await dispatch(updatePurchasesSuccess(id));
+
+      if (res) {
+        toast.success("Giao hàng thành công");
+        const body = {
+          orderStatus: Trangthaidonhang ? Trangthaidonhang : [],
+          buyDateFrom: value[0]?.format("YYYY-MM-DD") || null,
+          buyDateTo: value[1]?.format("YYYY-MM-DD") || null,
+          paymentStatus: Phuongthucthanhtoan ? Phuongthucthanhtoan : [],
+        };
+        dispatch(
+          getPurchases({
+            body: body,
+            params: { pageNumber: currentPage, pageSize: 10 },
+          }),
+        );
+      }
+    }
+  };
+
+  const handleAcceptDelivery = async (id: number) => {
+    if (confirm("Bạn có muốn giao cho đơn vị vận chuyển không?")) {
+      const res: any = await dispatch(updatePurchasesDelivery(id));
+
+      if (res) {
+        toast.success("Chuyển giao thành công");
+        const body = {
+          orderStatus: Trangthaidonhang ? Trangthaidonhang : [],
+          buyDateFrom: value[0]?.format("YYYY-MM-DD") || null,
+          buyDateTo: value[1]?.format("YYYY-MM-DD") || null,
+          paymentStatus: Phuongthucthanhtoan ? Phuongthucthanhtoan : [],
+        };
+        dispatch(
+          getPurchases({
+            body: body,
+            params: { pageNumber: currentPage, pageSize: 10 },
+          }),
+        );
+      }
+    }
+  };
+
+  const handleCancel = async (id: number) => {
+    if (confirm("Bạn có muốn Hủy đơn hàng không?")) {
+      const res: any = await dispatch(updatePurchasesCancel(id));
+      if (res) {
+        toast.success("Hủy đơn thành công");
+        const body = {
+          orderStatus: Trangthaidonhang ? Trangthaidonhang : [],
+          buyDateFrom: value[0]?.format("YYYY-MM-DD") || null,
+          buyDateTo: value[1]?.format("YYYY-MM-DD") || null,
+          paymentStatus: Phuongthucthanhtoan ? Phuongthucthanhtoan : [],
+        };
+        dispatch(
+          getPurchases({
+            body: body,
+            params: { pageNumber: currentPage, pageSize: 10 },
+          }),
+        );
+      }
+    }
+  };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page - 1);

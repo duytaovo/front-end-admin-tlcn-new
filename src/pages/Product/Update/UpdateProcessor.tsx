@@ -12,7 +12,6 @@ import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import { ErrorResponse } from "src/types/utils.type";
 import { schemaProductRam } from "src/utils/rules";
 import {
-  generateRandomString,
   getIdFromNameId,
   isAxiosUnprocessableEntityError,
 } from "src/utils/utils";
@@ -188,7 +187,7 @@ const UpdateProcessor: React.FC = () => {
         categoryId: 14,
         productCode: processorDetail.productInfo.productCode,
         productId: Number(processorDetail.productInfo.productId),
-        characteristicId: 12,
+        characteristicId: Number(processorDetail.productInfo.characteristicId),
         name: data.name,
         description: data?.description,
         design: data?.design,
@@ -212,8 +211,8 @@ const UpdateProcessor: React.FC = () => {
       generationName: data.generationName,
       socket: data.socket,
       cpuSpeed: data.cpuSpeed || "Không có",
-      multiplier: Number(data.multiplier),
-      numberOfStreams: Number(data.numberOfStreams),
+      multiplier: Number(data.multiplier) || 4,
+      numberOfStreams: Number(data.numberOfStreams) || 4,
       maxSpeed: data.maxSpeed,
       caching: data.caching,
       memoryCapacity: data.memoryCapacity,

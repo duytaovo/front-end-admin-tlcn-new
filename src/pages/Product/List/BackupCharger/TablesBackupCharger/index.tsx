@@ -4,9 +4,6 @@ import React, { useEffect, useState } from "react";
 import ProductPhone from "./Table/Product/ProductBackupCharger";
 import path from "src/constants/path";
 import { Button, Pagination } from "antd";
-import { getSort } from "src/store/product/filterSlice";
-import { getBrands } from "src/store/brand/brandSlice";
-import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import * as ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { DownloadOutlined } from "@ant-design/icons";
@@ -17,64 +14,27 @@ import {
 } from "src/store/accessory/backupCharger";
 import { handleFilterStore } from "src/store/product/smartPhoneSlice";
 import FilterPhuKien from "src/components/FilterPhuKien";
+import { getSort } from "src/store/product/filterSlice";
+import { getBrands } from "src/store/brand/brandSlice";
+import { getCharacters } from "src/store/characteristic/characteristicSlice";
 
 const TableBackupCharger: React.FC = () => {
+  const dispatch = useAppDispatch();
   const { backupCharger } = useAppSelector((state) => state.backupCharger);
   const navigate = useNavigate();
-  const pageSize = 10; // Số phần tử trên mỗi trang
-
-  const dispatch = useAppDispatch();
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
-
-  const exportToExcel = async (products: any) => {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Products");
-
-    // Add header row
-    worksheet.addRow([
-      "ID",
-      "Name",
-      "Ram",
-      "Rom",
-      "Color",
-      "Quantity",
-      "Price",
-      "SalePrice",
-      "Images",
-    ]);
-
-    products.forEach((product: any) => {
-      product.lstProductTypeAndPrice.forEach((typeAndPrice: any) => {
-        worksheet.addRow([
-          product.id,
-          product.name,
-          typeAndPrice.ram,
-          typeAndPrice.storageCapacity,
-          typeAndPrice.color,
-          typeAndPrice.quantity,
-          typeAndPrice.price,
-          typeAndPrice.salePrice,
-          // Combine image URLs into a single string separated by commas
-          product.lstImageUrl.join(","),
-        ]);
-      });
-    });
-    // Create a blob from the Excel workbook
-    const blob = await workbook.xlsx.writeBuffer();
-
-    // Save the blob as a file using file-saver
-    saveAs(
-      new Blob([blob], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      }),
-      "products.xlsx",
-    );
-  };
-
+  const pageSize = 10; // Số phần tử trên mỗi trang
+  useEffect(() => {
+    dispatch(getSort(""));
+    dispatch(getBrands(""));
+    dispatch(getCharacters(""));
+  }, []);
+  useEffect(() => {
+    dispatch(getBackupCharger({ pageNumber: currentPage }));
+  }, [currentPage]);
   const handlePageChange = (page: number) => {
     setCurrentPage(page - 1);
   };
-
   const filter = useAppSelector((state) => state.smartPhone.filter.data); // Lấy tất cả
   const { brand } = useAppSelector<any>((state) => state.brand);
   const { characteristic } = useAppSelector<any>((state) => state.character);
@@ -202,12 +162,12 @@ const TableBackupCharger: React.FC = () => {
       specialFeatures: TinhNangDacBiet ? TinhNangDacBiet : [],
       name: null,
     };
-    dispatch(
-      getProductsFilterAccess({
-        body: body,
-        params: { pageNumber: currentPage, pageSize: 10, sort: chooseBox },
-      }),
-    );
+    // dispatch(
+    //   getProductsFilterAccess({
+    //     body: body,
+    //     params: { pageNumber: currentPage, pageSize: 10, sort: chooseBox },
+    //   }),
+    // );
   }, [
     Hãng,
     currentPage,
@@ -218,6 +178,7 @@ const TableBackupCharger: React.FC = () => {
     chooseBox,
   ]);
   const [isOpen, setisOpen] = useState<boolean>(false);
+
   const handle = (boolean: boolean) => {
     setisOpen(boolean);
   };
@@ -227,7 +188,7 @@ const TableBackupCharger: React.FC = () => {
         <div>
           Quản lý sản phẩm
           <div></div>
-          <div>
+          {/* <div>
             <Button
               onClick={() => exportToExcel(backupCharger?.data?.data)}
               type="primary"
@@ -237,7 +198,7 @@ const TableBackupCharger: React.FC = () => {
             >
               Xuất file excel
             </Button>
-          </div>
+          </div> */}
         </div>
         <Link
           to={path.backupChargerNew}
@@ -246,11 +207,11 @@ const TableBackupCharger: React.FC = () => {
           Thêm mới
         </Link>
       </div>
-      <FilterPhuKien
+      {/* <FilterPhuKien
         handle={handle}
         brand={brand}
         characteristic={characteristic}
-      />
+      /> */}
       <div className="mt-6 grid grid-cols-5 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 h-[80%] mb-10">
         {backupCharger?.data?.data?.map((_smartPhone: any) => (
           <div className="col-span-1" key={_smartPhone.id}>

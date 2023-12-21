@@ -185,7 +185,9 @@ const UpdateCard: React.FC = () => {
         brandId: Number(data.brand) || 20,
         categoryId: 15,
         productId: cardGraphicDetail.productInfo.productId,
-        characteristicId: 12,
+        characteristicId: Number(
+          cardGraphicDetail.productInfo.characteristicId,
+        ),
         productCode: cardGraphicDetail.productInfo.productCode,
         name: data.name,
         description: data?.description,

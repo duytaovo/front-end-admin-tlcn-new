@@ -178,7 +178,7 @@ const UpdateMouse: React.FC = () => {
         brandId: 20,
         categoryId: 12,
         productId: Number(mouseDetail.productInfo.productId),
-        characteristicId: 12,
+        characteristicId: Number(mouseDetail.productInfo.characteristicId),
         productCode: mouseDetail.productInfo.productCode,
         name: data.name,
         description: data?.description,

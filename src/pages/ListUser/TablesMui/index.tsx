@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { IconButton, Tooltip } from "@mui/material";
-import { useSelector, useDispatch } from "react-redux";
-import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
-import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import DataTable from "src/components/Table";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "src/hooks/useRedux";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import path from "src/constants/path";
 import { Pagination, Space, Switch, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";

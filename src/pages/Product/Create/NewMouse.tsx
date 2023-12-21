@@ -74,6 +74,7 @@ const NewMouse: React.FC = () => {
   });
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { character } = useAppSelector((state) => state.character);
   const { depot } = useAppSelector((state) => state.depot);
   const { brand } = useAppSelector((state) => state.brand);
   useEffect(() => {
@@ -125,9 +126,9 @@ const NewMouse: React.FC = () => {
     const body = JSON.stringify({
       productInfo: {
         categoryId: 24,
-        brandId: 20,
+        brandId: Number(data.brand),
         productId: null,
-        characteristicId: 12,
+        characteristicId: Number(data.characteristic) || 1,
         productCode: generateRandomString(10),
         name: data.name,
         description: data?.description,
@@ -217,7 +218,21 @@ const NewMouse: React.FC = () => {
             {errors.brand?.message}
           </SelectCustom>
         </Form.Item>
-
+        <Form.Item
+          label="Đặc điểm sản phẩm"
+          name="characteristic"
+          rules={[{ required: true }]}
+        >
+          <SelectCustom
+            className={"flex-1 text-black"}
+            id="characteristic"
+            placeholder="Chọn đặc điểm "
+            options={character?.data}
+            register={register}
+          >
+            {errors.characteristic?.message}
+          </SelectCustom>
+        </Form.Item>
         <Form.Item
           label="Tên sản phẩm"
           name="name"

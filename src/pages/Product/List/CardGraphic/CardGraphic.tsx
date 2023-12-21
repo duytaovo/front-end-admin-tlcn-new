@@ -1,9 +1,10 @@
-import TableRam from "./TableRam";
+import TableCard from "./TableRam";
 
 export default function CardGraphic() {
   return (
     <div>
-      <TableRam />
+      <TableCard />
     </div>
   );
 }
+

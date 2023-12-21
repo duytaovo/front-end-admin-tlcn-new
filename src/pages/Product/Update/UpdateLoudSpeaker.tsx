@@ -192,7 +192,10 @@ const UpdateLoudSpeaker: React.FC = () => {
         brandId: Number(data.brand),
         categoryId: 12,
         productId: Number(loudSpeakerDetail.productInfo.productId),
-        characteristicId: Number(data.characteristic),
+        characteristicId: Number(
+          loudSpeakerDetail.productInfo.characteristicId,
+        ),
+
         productCode: loudSpeakerDetail.productInfo.productCode,
         name: data.name,
         description: data?.description,

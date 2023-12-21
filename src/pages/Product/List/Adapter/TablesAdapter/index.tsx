@@ -4,9 +4,6 @@ import React, { useEffect, useState } from "react";
 import ProductPhone from "./Table/Product/ProductAdapter";
 import path from "src/constants/path";
 import { Pagination } from "antd";
-import { getSort } from "src/store/product/filterSlice";
-import { getBrands } from "src/store/brand/brandSlice";
-import { getCharacters } from "src/store/characteristic/characteristicSlice";
 import * as ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import "jspdf-autotable";
@@ -16,6 +13,9 @@ import {
 } from "src/store/accessory/adapter";
 import { handleFilterStore } from "src/store/product/smartPhoneSlice";
 import FilterPhuKien from "src/components/FilterPhuKien";
+import { getSort } from "src/store/product/filterSlice";
+import { getBrands } from "src/store/brand/brandSlice";
+import { getCharacters } from "src/store/characteristic/characteristicSlice";
 
 const TableAdapter: React.FC = () => {
   const { adapter } = useAppSelector((state) => state.adapter);
@@ -23,7 +23,16 @@ const TableAdapter: React.FC = () => {
   const pageSize = 10; // Số phần tử trên mỗi trang
   const dispatch = useAppDispatch();
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
-
+  const filter = useAppSelector((state) => state.smartPhone.filter.data); // Lấy tất cả
+  const { brand } = useAppSelector<any>((state) => state.brand);
+  const { character } = useAppSelector<any>((state) => state.character);
+  const [dataFilterLocal, setDataFilterLocal] = useState<any>();
+  const [chooseBox, setChooseBox] = useState<any>();
+  useEffect(() => {
+    dispatch(getSort(""));
+    dispatch(getBrands(""));
+    dispatch(getCharacters(""));
+  }, []);
   const exportToExcel = async (products: any) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Products");
@@ -68,42 +77,16 @@ const TableAdapter: React.FC = () => {
       "products.xlsx",
     );
   };
-  // Hàm tách mảng
-  useEffect(() => {
-    const separateArrays = (data: any) => {
-      const result: any = {};
 
-      data.forEach((item: any) => {
-        const key = Object.keys(item)[0]; // Lấy tên thuộc tính (ví dụ: 'Hãng', 'Giá', ...)
-
-        if (!result[key]) {
-          result[key] = [];
-        }
-
-        result[key].push(item[key]);
-      });
-
-      return result;
-    };
-  });
   // Gọi hàm tách mảng
 
   useEffect(() => {
-    dispatch(
-      getAdapter({
-        params: { pageNumber: currentPage, pageSize: 10 },
-      }),
-    );
-  }, []);
-
+    dispatch(getAdapter({ pageNumber: currentPage }));
+  }, [currentPage]);
   const handlePageChange = (page: number) => {
     setCurrentPage(page - 1);
   };
-  const filter = useAppSelector((state) => state.smartPhone.filter.data); // Lấy tất cả
-  const { brand } = useAppSelector<any>((state) => state.brand);
-  const { characteristic } = useAppSelector<any>((state) => state.character);
-  const [dataFilterLocal, setDataFilterLocal] = useState<any>();
-  const [chooseBox, setChooseBox] = useState<any>();
+
   useEffect(() => {
     dispatch(handleFilterStore([]));
   }, []);
@@ -279,11 +262,7 @@ const TableAdapter: React.FC = () => {
           Thêm mới
         </Link>
       </div>
-      <FilterPhuKien
-        handle={handle}
-        brand={brand}
-        characteristic={characteristic}
-      />
+      <FilterPhuKien handle={handle} brand={brand} characteristic={character} />
       <div className="mt-6 grid grid-cols-5 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 h-[80%] mb-10">
         {adapter?.data?.data?.map((_smartPhone: any) => (
           <div className="col-span-1" key={_smartPhone.id}>

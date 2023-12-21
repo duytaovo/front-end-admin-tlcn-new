@@ -219,10 +219,8 @@ const UpdateSmartWatch: React.FC = () => {
         brandId: Number(data.brand),
         categoryId: 28,
         productId: Number(smartWatchDetail.productInfo.productId),
-
         characteristicId: Number(data.characteristic),
         productCode: smartWatchDetail.productInfo.productCode,
-
         name: data.name,
         description: data?.description,
         design: data?.design,

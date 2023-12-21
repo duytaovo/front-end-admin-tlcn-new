@@ -8,6 +8,9 @@ import { Pagination } from "antd";
 import { getMouse, getProductsFilterAccess } from "src/store/accessory/mouse";
 import { handleFilterStore } from "src/store/product/smartPhoneSlice";
 import FilterPhuKien from "src/components/FilterPhuKien";
+import { getSort } from "src/store/product/filterSlice";
+import { getBrands } from "src/store/brand/brandSlice";
+import { getCharacters } from "src/store/characteristic/characteristicSlice";
 
 const TableMouse: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -15,7 +18,11 @@ const TableMouse: React.FC = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
   const pageSize = 12; // Số phần tử trên mỗi trang
-
+  useEffect(() => {
+    dispatch(getSort(""));
+    dispatch(getBrands(""));
+    dispatch(getCharacters(""));
+  }, []);
   useEffect(() => {
     dispatch(getMouse({ pageNumber: currentPage, pageSize: pageSize }));
   }, [currentPage]);

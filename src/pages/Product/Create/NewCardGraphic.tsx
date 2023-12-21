@@ -80,6 +80,8 @@ const NewCardGraphic: React.FC = () => {
   const navigate = useNavigate();
   const { depot } = useAppSelector((state) => state.depot);
   const { brand } = useAppSelector((state) => state.brand);
+  const { character } = useAppSelector((state) => state.character);
+
   useEffect(() => {
     dispatch(getCategorys({ pageSize: 100 }));
     dispatch(getCharacters({ pageSize: 100 }));
@@ -131,11 +133,11 @@ const NewCardGraphic: React.FC = () => {
         brandId: Number(data.brand) || 1,
         categoryId: 15,
         productId: null,
-        characteristicId: 12,
+        characteristicId: Number(data.characteristic) || 1,
         productCode: generateRandomString(10),
         name: data.name,
         description: data?.description,
-        design: data?.design,
+        // design: data?.design,
         dimension: data?.dimension,
         mass: Number(data?.mass),
         launchTime: Number(data.launchTime),
@@ -224,7 +226,21 @@ const NewCardGraphic: React.FC = () => {
             {errors.brand?.message}
           </SelectCustom>
         </Form.Item>
-
+        <Form.Item
+          label="Đặc điểm sản phẩm"
+          name="characteristic"
+          rules={[{ required: true }]}
+        >
+          <SelectCustom
+            className={"flex-1 text-black"}
+            id="characteristic"
+            placeholder="Chọn đặc điểm "
+            options={character?.data}
+            register={register}
+          >
+            {errors.characteristic?.message}
+          </SelectCustom>
+        </Form.Item>
         <Form.Item
           label="Tên sản phẩm"
           name="name"
@@ -260,6 +276,34 @@ const NewCardGraphic: React.FC = () => {
             type="number"
             className=""
             errorMessage={errors.mass?.message}
+            placeholder=""
+          />
+        </Form.Item>
+        <Form.Item
+          label="Kích thước"
+          name="dimension"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="dimension"
+            register={register}
+            type="number"
+            className=""
+            errorMessage={errors.dimension?.message}
+            placeholder=""
+          />
+        </Form.Item>
+        <Form.Item
+          label="Phụ kiện"
+          name="accessories"
+          rules={[{ required: true }]}
+        >
+          <Input
+            name="accessories"
+            register={register}
+            type="number"
+            className=""
+            errorMessage={errors.accessories?.message}
             placeholder=""
           />
         </Form.Item>

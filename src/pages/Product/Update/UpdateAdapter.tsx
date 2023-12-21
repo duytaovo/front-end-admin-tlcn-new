@@ -193,7 +193,7 @@ const UpdateAdapter: React.FC = () => {
           brandId: Number(data.brand) || 1,
           categoryId: 20,
           productId: Number(adapterDetail.productInfo.productId),
-          characteristicId: 12,
+          characteristicId: Number(adapterDetail.productInfo.characteristicId),
           productCode: adapterDetail.productInfo.productCode,
           name: data.name,
           description: data?.description,

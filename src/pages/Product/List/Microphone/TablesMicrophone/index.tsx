@@ -26,6 +26,9 @@ const TableMicrophone: React.FC = () => {
   const { brand } = useAppSelector<any>((state) => state.brand);
   const { character } = useAppSelector<any>((state) => state.character);
   const [dataFilterLocal, setDataFilterLocal] = useState<any>();
+  useEffect(() => {
+    dispatch(getMicrophone({ pageNumber: currentPage, pageSize: pageSize }));
+  }, [currentPage]);
   const exportToExcel = async (products: any) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Products");
