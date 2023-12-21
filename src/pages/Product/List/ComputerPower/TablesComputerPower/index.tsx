@@ -32,7 +32,7 @@ const TableComputerPower: React.FC = () => {
 
   useEffect(() => {
     dispatch(getSort(""));
-    dispatch(getBrands(""));
+    dispatch(getBrands({ pageSize: 100 }));
     dispatch(getCharacters(""));
   }, []);
   useEffect(() => {

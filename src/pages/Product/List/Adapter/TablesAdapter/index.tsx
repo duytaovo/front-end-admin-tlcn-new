@@ -30,7 +30,7 @@ const TableAdapter: React.FC = () => {
   const [chooseBox, setChooseBox] = useState<any>();
   useEffect(() => {
     dispatch(getSort(""));
-    dispatch(getBrands(""));
+    dispatch(getBrands({ pageSize: 100 }));
     dispatch(getCharacters(""));
   }, []);
   const exportToExcel = async (products: any) => {

@@ -32,7 +32,7 @@ const TableMonitor: React.FC = () => {
   const [dataFilterLocal, setDataFilterLocal] = useState<any>();
   useEffect(() => {
     dispatch(getSort(""));
-    dispatch(getBrands(""));
+    dispatch(getBrands({ pageSize: 100 }));
     dispatch(getCharacters(""));
   }, []);
   useEffect(() => {

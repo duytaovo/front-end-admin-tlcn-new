@@ -23,7 +23,7 @@ const TableProcessor: React.FC = () => {
   const pageSize = 10; // Số phần tử trên mỗi trang
   useEffect(() => {
     dispatch(getSort(""));
-    dispatch(getBrands(""));
+    dispatch(getBrands({ pageSize: 100 }));
     dispatch(getCharacters(""));
   }, []);
   useEffect(() => {
