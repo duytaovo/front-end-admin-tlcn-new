@@ -175,6 +175,7 @@ const NewBrand: React.FC = () => {
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
+          rules={[{ required: true }]}
         >
           <div className="flex flex-col items-start ">
             <div className="my-5 w-24 space-y-5 justify-between items-center">

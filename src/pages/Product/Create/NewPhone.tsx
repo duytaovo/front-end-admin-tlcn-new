@@ -834,12 +834,32 @@ const NewPhone: React.FC = () => {
                     name={`lstProductTypeAndPrice.${index}.quantity`}
                     rules={[{ required: true }]}
                   >
-                    <Input
+                    {/* <Input
                       type="number"
                       name={`lstProductTypeAndPrice.${index}.quantity`}
                       key={item.id} // important to include key with field's id
                       register={register}
                       placeholder="1000"
+                    /> */}
+                    <Controller
+                      control={control}
+                      name={`lstProductTypeAndPrice.${index}.quantity`}
+                      render={({ field }) => {
+                        return (
+                          <InputNumber
+                            type="text"
+                            className="grow"
+                            placeholder="2023"
+                            classNameInput="p-3 w-full text-black outline-none border border-gray-300 focus:border-gray-500 rounded focus:shadow-sm"
+                            classNameError="hidden"
+                            errorMessage={errors.launchTime?.message}
+                            {...field}
+                            onChange={(event) => {
+                              field.onChange(event);
+                            }}
+                          />
+                        );
+                      }}
                     />
                   </Form.Item>
                   <Form.Item

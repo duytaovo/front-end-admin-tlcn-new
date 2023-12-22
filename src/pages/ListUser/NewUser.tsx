@@ -149,8 +149,8 @@ const FormDisabledDemo: React.FC = () => {
     <div className="bg-white shadow ">
       <h2 className="font-bold m-4 text-2xl">Thêm người dùng</h2>
       <Form
-        labelCol={{ span: 4 }}
-        wrapperCol={{ span: 14 }}
+        labelCol={{ span: 6 }}
+        wrapperCol={{ span: 16 }}
         layout="horizontal"
         style={{ maxWidth: 600, padding: 5 }}
         autoComplete="off"

@@ -89,7 +89,7 @@ const DataTable = ({
           loading={!rows.length}
           slots={{ toolbar: GridToolbar }}
           // slots={{ toolbar: CustomToolbar }}
-          checkboxSelection
+          // checkboxSelection
           slotProps={{ toolbar: { csvOptions, excelOptions } }}
           autoHeight
           density="comfortable"
