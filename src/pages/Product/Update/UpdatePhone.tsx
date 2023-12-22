@@ -195,7 +195,7 @@ const UpdatePhone: React.FC = () => {
     setValue("design", smartPhoneDetail?.productInfo?.design);
     setValue("dimension", smartPhoneDetail?.productInfo?.dimension);
     setValue("category", smartPhoneDetail?.productInfo?.categoryId.toString());
-    setValue("launchTime", "2023");
+    setValue("launchTime", 2023);
     setValue("files", smartPhoneDetail?.productInfo.lstProductImageUrl);
   }, [smartPhoneDetail]);
   const onSubmit = handleSubmit(async (data) => {
@@ -363,7 +363,7 @@ const UpdatePhone: React.FC = () => {
     setValue("design", smartPhoneDetail?.productInfo?.design);
     setValue("dimension", smartPhoneDetail?.productInfo?.dimension);
     setValue("category", smartPhoneDetail?.productInfo?.categoryId.toString());
-    setValue("launchTime", "2023");
+    setValue("launchTime", 2023);
     setValue("files", smartPhoneDetail?.productInfo.lstProductImageUrl);
   };
 

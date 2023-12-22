@@ -177,7 +177,7 @@ const UpdateTablet: React.FC = () => {
     setValue("design", tabletDetail?.productInfo?.design);
     setValue("dimension", tabletDetail?.productInfo?.dimension);
     setValue("category", tabletDetail?.productInfo?.categoryId.toString());
-    setValue("launchTime", "2023");
+    setValue("launchTime", 2023);
   }, [tabletDetail]);
 
   const onSubmit = handleSubmit(async (data) => {
