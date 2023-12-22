@@ -208,12 +208,12 @@ const TableMicrophone: React.FC = () => {
       specialFeatures: TinhNangDacBiet ? TinhNangDacBiet : [],
       name: null,
     };
-    dispatch(
-      getProductsFilterAccess({
-        body: body,
-        params: { pageNumber: currentPage, pageSize: 10, sort: chooseBox },
-      }),
-    );
+    // dispatch(
+    //   getProductsFilterAccess({
+    //     body: body,
+    //     params: { pageNumber: currentPage, pageSize: 10, sort: chooseBox },
+    //   }),
+    // );
   }, [
     Hãng,
     currentPage,

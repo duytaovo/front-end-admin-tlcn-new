@@ -86,6 +86,7 @@ const UserTable = () => {
             dispatch(getUsers({ pageNumber: currentPage }));
           }
         };
+        console.log(row);
         return (
           <Space>
             <Link to={`/user/detail/${row.id}`}>
@@ -102,21 +103,25 @@ const UserTable = () => {
               </Tooltip>
             </Link>
             {/* <Switch onChange={onChange} />; */}
-            <Tooltip title="Enable" className="">
-              <IconButton onClick={onChange} className="text-mainColor">
-                <EmojiEmotionsOutlinedIcon
-                  className="text-blue-500"
-                  sx={{
-                    color: "",
-                  }}
-                />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Disable" className="">
-              <IconButton onClick={handleDelete}>
-                <NoAccountsOutlinedIcon className="text-red-700" />
-              </IconButton>
-            </Tooltip>
+            {row?.status !== "ACTIVE" ? (
+              <Tooltip title="Enable" className="">
+                <IconButton onClick={onChange} className="text-mainColor">
+                  <EmojiEmotionsOutlinedIcon
+                    className="text-blue-500"
+                    sx={{
+                      color: "",
+                    }}
+                  />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip title="Disable" className="">
+                <IconButton onClick={handleDelete}>
+                  <NoAccountsOutlinedIcon className="text-red-700" />
+                </IconButton>
+              </Tooltip>
+            )}
+
             {/* </Link> */}
           </Space>
         );
