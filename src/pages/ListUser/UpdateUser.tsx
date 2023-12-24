@@ -81,10 +81,13 @@ const FormDisabledDemo: React.FC = () => {
   } = useForm({
     resolver: yupResolver(schemaAddUser),
   });
+  const selectValue = watch("gender");
   const avatar = watch("imageUrl");
+
   useEffect(() => {
     dispatch(getDetailUser(id));
   }, []);
+
   useEffect(() => {
     setValue("address", part1Address);
     setValue("email", userWithId?.email);
@@ -92,7 +95,11 @@ const FormDisabledDemo: React.FC = () => {
     setValue("fullName", userWithId?.fullName);
     setValue("phoneNumber", userWithId?.phoneNumber);
     setValue("gender", userWithId?.gender);
+  }, [userWithId, part1Address]);
+  useEffect(() => {
+    setValue("imageUrl", userWithId?.imageUrl);
   }, [userWithId]);
+
   useEffect(() => {
     const inputString = userWithId.address;
 
@@ -118,7 +125,9 @@ const FormDisabledDemo: React.FC = () => {
       setPart3Address(remainingPart);
     }
   }, [userWithId]);
+
   const onSubmit = handleSubmit(async (data) => {
+    console.log(data);
     let images;
     setIsSubmitting(true);
     showModal();
@@ -131,7 +140,6 @@ const FormDisabledDemo: React.FC = () => {
       images = d[0].fileUrl;
       setValue("imageUrl", d[0].fileUrl);
     }
-
     try {
       const body = JSON.stringify({
         email: data.email || null,
@@ -141,7 +149,7 @@ const FormDisabledDemo: React.FC = () => {
         fullName: data.fullName || null,
         gender: data.gender || null,
         imageUrl: images,
-        isEnable: true,
+        isEnable: userWithId?.isEnable,
       });
       const res = await dispatch(updateUser({ id: id, body: body }));
       unwrapResult(res);
@@ -178,6 +186,7 @@ const FormDisabledDemo: React.FC = () => {
   const handleChangeFile = (file?: File) => {
     setFile(file);
   };
+  console.log(userWithId?.gender);
 
   return (
     <div className="bg-white shadow ">
@@ -192,19 +201,38 @@ const FormDisabledDemo: React.FC = () => {
         onSubmitCapture={onSubmit}
       >
         <Form.Item label="Giới tính" name="gender" rules={[{ required: true }]}>
-          <SelectCustom
-            className={"flex-1 text-black"}
-            id="gender"
-            placeholder="Giới tính"
-            defaultValue={1}
-            options={[
-              { id: 1, name: "Nam" },
-              { id: 2, name: "Nữ" },
-            ]}
-            register={register}
-          >
-            {errors.gender?.message}
-          </SelectCustom>
+          {userWithId?.gender !== undefined ? (
+            <SelectCustom
+              className={"flex-1 text-black"}
+              id="gender"
+              placeholder="Giới tính"
+              value={selectValue}
+              defaultValue={userWithId?.gender || 1}
+              options={[
+                { id: 1, name: "Nam" },
+                { id: 2, name: "Nữ" },
+              ]}
+              register={register}
+            >
+              {errors.gender?.message}
+            </SelectCustom>
+          ) : (
+            // Render a loading state or placeholder when userWithId is not available
+            <SelectCustom
+              className={"flex-1 text-black"}
+              id="gender"
+              placeholder="Giới tính"
+              value={selectValue}
+              defaultValue={userWithId?.gender || 1}
+              options={[
+                { id: 1, name: "Nam" },
+                { id: 2, name: "Nữ" },
+              ]}
+              register={register}
+            >
+              {errors.gender?.message}
+            </SelectCustom>
+          )}
         </Form.Item>
         <Form.Item name="email" label="Email" rules={[{ required: true }]}>
           <Input

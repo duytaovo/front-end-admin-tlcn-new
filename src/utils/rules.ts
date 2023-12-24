@@ -120,7 +120,7 @@ export const userSchema = yup.object({
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const schemaAddUser = yup.object({
-  gender: yup.string(),
+  gender: yup.number(),
   phoneNumber: yup
     .string()
     .required("Số điện thoại là bắt buộc")
@@ -129,7 +129,7 @@ export const schemaAddUser = yup.object({
       /(84|0[3|5|7|8|9])+([0-9]{8})\b/g,
       "Số điện thoại không đúng định dạng",
     ),
-  fullName: yup.string().required("Họ Tên là bắt buộc"),
+  fullName: yup.string().required("Họ tên là bắt buộc"),
   email: yup
     .string()
     .required("Email là bắt buộc")
