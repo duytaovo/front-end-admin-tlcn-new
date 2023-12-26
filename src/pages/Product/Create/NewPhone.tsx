@@ -163,6 +163,13 @@ const NewPhone: React.FC = () => {
     },
     resolver: yupResolver(schemaProductSmartPhone),
   });
+  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
+    {
+      control, // control props comes from useForm (optional: if you are using FormContext)
+      name: "lstProductTypeAndPrice", // unique name for your Field Array
+    },
+  );
+  console.log(prepend);
   const lstProductTypeAndPriceErrors = errors.lstProductTypeAndPrice ?? [];
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -191,12 +198,26 @@ const NewPhone: React.FC = () => {
     setIsValueMau(false);
     setImages([]);
   }, []);
-  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
-    {
-      control, // control props comes from useForm (optional: if you are using FormContext)
-      name: "lstProductTypeAndPrice", // unique name for your Field Array
-    },
-  );
+
+  useEffect(() => {
+    // Kiểm tra nếu có ít nhất một trường trong danh sách
+    if (fields.length > 0) {
+      // Lấy dữ liệu của trường cuối cùng
+      const lastFieldData = fields[fields.length - 1];
+      // console.log(lastFieldData);
+      // Đặt giá trị cho các ô mới
+      // setValue(
+      //   `lstProductTypeAndPrice.${fields.length}.price`,
+      //   lastFieldData.price,
+      // );
+      // setValue(
+      //   `lstProductTypeAndPrice.${fields.length}.salePrice`,
+      //   lastFieldData.salePrice,
+      // );
+      // // Đặt giá trị cho các ô khác tùy theo cần thiết
+    }
+  }, [fields, setValue]);
+
   const onSubmit = handleSubmit(async (data) => {
     let images = [];
     if (file) {
@@ -834,13 +855,6 @@ const NewPhone: React.FC = () => {
                     name={`lstProductTypeAndPrice.${index}.quantity`}
                     rules={[{ required: true }]}
                   >
-                    {/* <Input
-                      type="number"
-                      name={`lstProductTypeAndPrice.${index}.quantity`}
-                      key={item.id} // important to include key with field's id
-                      register={register}
-                      placeholder="1000"
-                    /> */}
                     <Controller
                       control={control}
                       name={`lstProductTypeAndPrice.${index}.quantity`}
@@ -892,11 +906,13 @@ const NewPhone: React.FC = () => {
                 type="dashed"
                 onClick={() =>
                   append({
-                    storageCapacity: "",
-                    ram: "",
-                    color: "",
-                    price: "",
-                    salePrice: "",
+                    storageCapacity: "256 GB",
+                    ram: "8 GB",
+                    color: "Đen",
+                    price: "45000000",
+                    salePrice: "44000000",
+                    quantity: "1000",
+                    depot: 1,
                   })
                 }
                 block
