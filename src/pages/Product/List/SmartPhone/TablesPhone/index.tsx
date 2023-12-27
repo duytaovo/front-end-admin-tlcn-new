@@ -16,16 +16,7 @@ import { saveAs } from "file-saver";
 import { DownloadOutlined } from "@ant-design/icons";
 import "jspdf-autotable";
 import jspdf from "jspdf";
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 150,
-    },
-  },
-};
+
 const TablePhone: React.FC = () => {
   const { smartPhone } = useAppSelector((state) => state.smartPhone);
 
@@ -195,7 +186,7 @@ const TablePhone: React.FC = () => {
   };
 
   const minMaxPrices = getMinMaxPrices();
-
+  console.log(minMaxPrices);
   useEffect(() => {
     const body = {
       slug: "smartphone",

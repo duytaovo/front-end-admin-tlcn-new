@@ -5,11 +5,11 @@ import { Button } from "antd";
 
 const Tag = ({ productData, onClick }: any) => {
   const [price, setPrice] = useState(
-    productData?.productInfo?.lstProductTypeAndPrice[0]?.price,
+    productData?.productInfo?.lstProductTypeAndPrice[0].price,
   );
 
   const [salePrice, setSalePrice] = useState(
-    productData?.productInfo?.lstProductTypeAndPrice[0]?.salePrice,
+    productData?.productInfo?.lstProductTypeAndPrice[0].salePrice,
   );
 
   const [selectedRam, setSelectedRam] = useState<string | null>(null);
@@ -50,7 +50,7 @@ const Tag = ({ productData, onClick }: any) => {
     // Lấy danh sách loại RAM unique từ dữ liệu sản phẩm
     const uniqueRams: any = [
       ...new Set(
-        productData?.productInfo?.lstProductTypeAndPrice?.map(
+        productData?.productInfo?.lstProductTypeAndPrice.map(
           (item: any) => item.ram,
         ),
       ),
@@ -74,20 +74,20 @@ const Tag = ({ productData, onClick }: any) => {
   }, [selectedRam, productData]);
 
   useEffect(() => {
-    // Lấy danh sách loại RAM unique từ dữ liệu sản phẩm
+    // Lấy danh sách loại ROM unique từ dữ liệu sản phẩm
     const uniqueRoms: any = [
       ...new Set(
-        productData?.productInfo?.lstProductTypeAndPrice?.map(
+        productData?.productInfo?.lstProductTypeAndPrice.map(
           (item: any) => item.storageCapacity,
         ),
       ),
     ];
 
     if (!selectedRom && uniqueRoms.length > 0) {
-      // Nếu chưa chọn RAM, chọn RAM đầu tiên làm RAM mặc định
+      // Nếu chưa chọn ROM, chọn ROM đầu tiên làm ROM mặc định
       setSelectedRom(uniqueRoms[0]);
 
-      // Lấy danh sách màu sắc tương ứng với RAM đầu tiên
+      // Lấy danh sách màu sắc tương ứng với ROM đầu tiên
       const colorsForDefaultRom =
         productData?.productInfo?.lstProductTypeAndPrice
           .filter((item: any) => item.storageCapacity === uniqueRoms[0])
@@ -100,25 +100,37 @@ const Tag = ({ productData, onClick }: any) => {
     }
   }, [selectedRom, productData]);
 
-  useEffect(() => {
-    if (selectedRam !== null && selectedColor !== null) {
-      const selectedProduct =
-        productData?.productInfo?.lstProductTypeAndPrice.find(
-          (item: any) =>
-            item.ram === selectedRam && item.color === selectedColor,
-        );
+  // useEffect(() => {
+  //   if (selectedRam !== null && selectedColor !== null) {
+  //     const selectedProduct =
+  //       productData?.productInfo?.lstProductTypeAndPrice.find(
+  //         (item: any) =>
+  //           item.ram === selectedRam && item.color === selectedColor,
+  //       );
 
-      if (selectedProduct) {
-        setPrice(selectedProduct.price);
-        setSalePrice(selectedProduct.salePrice);
-        onClick &&
-          onClick({
-            price: selectedProduct.price,
-            salePrice: selectedProduct.salePrice,
-          });
-      }
-    }
-  }, [selectedRam, selectedColor, productData, onClick]);
+  //     // if (selectedProduct) {
+  //     //   setPrice(selectedProduct.price);
+  //     //   setSalePrice(selectedProduct.salePrice);
+  //     //   onClick &&
+  //     //     onClick({
+  //     //       price: selectedProduct.price,
+  //     //       salePrice: selectedProduct.salePrice,
+  //     //     });
+  //     // }
+  //   }
+  // }, [selectedRam, selectedColor, productData, onClick]);
+  const findTypeId = () => {
+    const selectedProduct =
+      productData?.productInfo?.lstProductTypeAndPrice.find(
+        (item: any) =>
+          item.ram === selectedRam &&
+          item.storageCapacity === selectedRom &&
+          item.color === selectedColor,
+      );
+
+    return selectedProduct?.typeId || null;
+  };
+  const typeId = findTypeId();
 
   useEffect(() => {
     if (selectedRom !== null && selectedColor !== null) {
@@ -130,36 +142,49 @@ const Tag = ({ productData, onClick }: any) => {
         );
 
       if (selectedProduct) {
-        setPrice(selectedProduct?.price);
-        setSalePrice(selectedProduct?.salePrice);
+        setPrice(selectedProduct.price);
+        setSalePrice(selectedProduct.salePrice);
         onClick &&
           onClick({
-            price: selectedProduct?.price,
-            salePrice: selectedProduct?.salePrice,
+            price: selectedProduct.price,
+            salePrice: selectedProduct.salePrice,
+            selectedRom,
+            selectedColor,
+            selectedRam,
+            typeId,
           });
       }
     }
-  }, [selectedRom, selectedColor, productData, onClick]);
+  }, [selectedRom, selectedColor, productData, onClick, selectedRam]);
 
   return (
     <div className="mb-4">
-      <div className="mt-8 flex items-center bg-gray-50 px-5 py-4">
-        <div className="text-gray-500 line-through">
-          ₫{formatCurrency(price)}
+      {salePrice > 0 && salePrice !== price ? (
+        <div className="mt-8 flex items-center bg-gray-50 px-5 py-4">
+          <div className="text-gray-500 line-through">
+            ₫{formatCurrency(price)}
+          </div>
+          <div className="ml-3 text-4xl font-medium text-mainColor">
+            ₫{formatCurrency(salePrice)}
+          </div>
+          <div className="ml-4 rounded-sm bg-orange-300 px-1 py-[2px] text-lg font-semibold uppercase text-black">
+            {rateSale(salePrice, price)} giảm
+          </div>
         </div>
-        <div className="ml-3 text-4xl font-medium text-mainColor">
-          ₫{formatCurrency(salePrice)}
+      ) : (
+        <div className="mt-8 flex items-center bg-gray-50 px-5 py-4">
+          <div className="ml-3 text-4xl font-medium text-mainColor">
+            ₫{formatCurrency(price)}
+          </div>
         </div>
-        <div className="ml-4 rounded-sm bg-orange-300 px-1 py-[2px] text-lg font-semibold uppercase text-black">
-          {rateSale(salePrice, price)} giảm
-        </div>
-      </div>
+      )}
+
       <div className="flex flex-wrap gap-4 mb-4">
         {[
           ...new Set(
-            productData?.productInfo?.lstProductTypeAndPrice.map(
-              (item: any) => item.ram,
-            ),
+            productData?.productInfo?.lstProductTypeAndPrice
+              .filter((item: any) => item.ram === selectedRam)
+              .map((item: any) => item.ram),
           ),
         ].map((ram: any, index) => {
           const active = ram === selectedRam;
@@ -171,7 +196,6 @@ const Tag = ({ productData, onClick }: any) => {
           return (
             <Button
               className={className}
-              // type={active ? "primary" : "default"}
               key={index}
               onClick={() => {
                 setSelectedRam(ram);
@@ -183,6 +207,7 @@ const Tag = ({ productData, onClick }: any) => {
           );
         })}
       </div>
+
       <div className="flex flex-wrap gap-4 mb-4">
         {[
           ...new Set(
@@ -213,7 +238,7 @@ const Tag = ({ productData, onClick }: any) => {
         })}
       </div>
 
-      <div className="flex flex-wrap gap-4 ">
+      {/* <div className="flex flex-wrap gap-4 ">
         {productData?.productInfo?.lstProductTypeAndPrice
           .filter((item: any) => item.ram === selectedRam)
           .map((product: any, index: number) => {
@@ -229,11 +254,36 @@ const Tag = ({ productData, onClick }: any) => {
                 // type={active ? "primary" : "default"}
                 key={index}
                 onClick={() => {
-                  setSelectedColor(product?.color);
+                  setSelectedColor(product.color);
                 }}
                 disabled={product.quantity === 0} // Ví dụ: Disable nút nếu hết hàng
               >
-                {product?.color}
+                {product.color}
+              </Button>
+            );
+          })}
+      </div> */}
+      <div className="flex flex-wrap gap-4 ">
+        {productData?.productInfo?.lstProductTypeAndPrice
+          .filter((item: any) => item.storageCapacity === selectedRom)
+          .map((product: any, index: number) => {
+            const active = product.color === selectedColor;
+            const className = clsx(
+              "border  px-10 py-4 text-xl rounded",
+              active && "text-blue-400 border-blue-400 ",
+            );
+
+            return (
+              <Button
+                className={className}
+                // type={active ? "primary" : "default"}
+                key={index}
+                onClick={() => {
+                  setSelectedColor(product.color);
+                }}
+                disabled={product.quantity === 0} // Ví dụ: Disable nút nếu hết hàng
+              >
+                {product.color}
               </Button>
             );
           })}
