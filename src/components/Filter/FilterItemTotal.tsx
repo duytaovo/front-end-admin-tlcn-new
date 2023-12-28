@@ -173,7 +173,7 @@ const FilterItemTotal = ({ data, handle, scroll }: Props) => {
                             title={btn?.id}
                             name={src?.title}
                           />
-                        ) : src.title === "Phương thức thanh toán" ? (
+                        ) : src.title === "Trạng thái thanh toán" ? (
                           <ButtonItem
                             nhucau={btn?.name}
                             title={btn?.id}

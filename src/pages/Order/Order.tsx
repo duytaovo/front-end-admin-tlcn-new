@@ -55,15 +55,23 @@ const data = [
   },
   {
     id: 2,
-    title: "Phương thức thanh toán",
+    title: "Trạng thái thanh toán",
     detail: [
       {
+        id: 0,
+        name: "Chưa thanh toán",
+      },
+      {
         id: 1,
-        name: "Thanh toán trực tiếp",
+        name: "Đang chờ thanh toán",
       },
       {
         id: 2,
-        name: "Thanh toán qua VNPay",
+        name: "Thanh toán thành công",
+      },
+      {
+        id: 3,
+        name: "Thanh toán thất bại",
       },
     ],
   },
@@ -136,7 +144,7 @@ const Order = ({ title }: { title?: string }) => {
   if (dataFilterLocal) {
     var {
       "Trạng thái đơn hàng": Trangthaidonhang,
-      "Phương thức thanh toán": Phuongthucthanhtoan,
+      "Trạng thái thanh toán": Phuongthucthanhtoan,
     } = dataFilterLocal;
   }
   const PhuongthucthanhtoanNumber: number[] = Phuongthucthanhtoan?.map(

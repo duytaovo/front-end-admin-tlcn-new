@@ -20,7 +20,7 @@ function ButtonItem(props: Props) {
         <span className={styles.text}>
           {props.name === "Nhu cầu" ||
           props.name === "Trạng thái đơn hàng" ||
-          props.name === "Phương thức thanh toán"
+          props.name === "Trạng thái thanh toán"
             ? props.nhucau
             : props.title}
         </span>
