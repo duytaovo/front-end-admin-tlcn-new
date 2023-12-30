@@ -83,7 +83,7 @@ const Order = ({ title }: { title?: string }) => {
       case "Ordered":
         return "text-blue-400 uppercase text-xl font-bold";
       case "Delivering":
-        return "text-blue-400";
+        return "text-blue-400 uppercase text-xl font-bold";
       case "Cancelled":
         return "text-red-400 uppercase text-xl font-bold";
       case "Confirmed":
@@ -417,11 +417,11 @@ const Order = ({ title }: { title?: string }) => {
                     <div className="flex flex-grow justify-between text-xl font-bold">
                       {stringStatus(_order.orderStatusString)}
                       {_order.paymentStatusString === "Payment success" ? (
-                        <span className="text-white text-xl bg-green-500 p-2 rounded-lg">
+                        <span className="text-white uppercase font-bold text-xl bg-green-500 p-2 rounded-lg">
                           Đã thanh toán
                         </span>
                       ) : (
-                        <span className="text-white text-xl bg-gray-500 p-2 rounded-lg">
+                        <span className="text-white uppercase font-bold text-xl bg-gray-500 p-2 rounded-lg">
                           Chưa thanh toán
                         </span>
                       )}

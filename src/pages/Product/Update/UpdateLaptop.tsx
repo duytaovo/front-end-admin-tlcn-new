@@ -47,7 +47,6 @@ interface FormData {
   characteristic: string;
   name: string;
   description: string;
-  design: string | undefined;
   dimension: string | undefined;
   mass: string | undefined;
   launchTime: string | undefined;
@@ -56,8 +55,6 @@ interface FormData {
   ram: string;
   storageCapacity: string;
   color: string;
-  price: string;
-  salePrice: string | undefined;
   monitor: string;
 }
 
@@ -76,14 +73,12 @@ const UpdateLaptop: React.FC = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-
   const {
     handleSubmit,
     formState: { errors },
     setError,
     register,
     setValue,
-    watch,
     control,
     getValues,
   } = useForm({
@@ -100,6 +95,7 @@ const UpdateLaptop: React.FC = () => {
   const { processor } = useAppSelector((state) => state.processor);
   const { character } = useAppSelector((state) => state.character);
   const { brand } = useAppSelector((state) => state.brand);
+  console.log(depot);
 
   const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
     {
@@ -108,6 +104,7 @@ const UpdateLaptop: React.FC = () => {
     },
   );
   const { laptopDetail } = useAppSelector((state) => state.laptop);
+
   useEffect(() => {
     dispatch(getCategorys({ pageSize: 100 }));
     dispatch(getCharacters({ pageSize: 100 }));
@@ -128,11 +125,11 @@ const UpdateLaptop: React.FC = () => {
 
   for (const image of imageArray) {
     const imageUrl = URL.createObjectURL(image);
-    imageUrls.push(imageUrl);
+    // imageUrls.push(imageUrl);
   }
+
   useEffect(() => {
     setImages(laptopDetail.productInfo.lstProductImageUrl);
-
     const productInfo = laptopDetail?.productInfo;
 
     if (
@@ -165,19 +162,29 @@ const UpdateLaptop: React.FC = () => {
         },
       );
     }
+    setValue("maximumRom", laptopDetail?.maximumRom.toString());
+    setValue("maximumRam", laptopDetail?.maximumRam.toString());
+    setValue("monitor", laptopDetail?.monitor.toString());
+    setValue("special", laptopDetail?.special.toString());
+    setValue("mass", laptopDetail?.productInfo?.mass.toString());
+    setValue("design", laptopDetail?.productInfo?.design?.toString());
+    setValue("name", laptopDetail?.productInfo?.name.toString());
+    setValue("accessories", laptopDetail?.productInfo?.accessories);
     setValue("operatingSystem", laptopDetail?.operatingSystem);
-    setValue("design", laptopDetail?.productInfo?.design);
+    // setValue("design", laptopDetail?.productInfo?.design);
     setValue("dimension", laptopDetail?.productInfo?.dimension);
-    setValue("launchTime", "2023");
+    setValue("launchTime", 2023);
     setValue("gateway", laptopDetail?.gateway);
-    setValue("ram", String(laptopDetail?.ramId));
-    setValue("imageUrl", laptopDetail?.productInfo?.lstProductImageUrl);
+    setValue("ramId", String(laptopDetail?.ramId));
+
     setValue("files", laptopDetail?.productInfo.lstProductImageUrl);
   }, [laptopDetail]);
 
   const onSubmit = handleSubmit(async (data) => {
+    console.log(data);
     let images = [];
-
+    showModal();
+    setIsSubmitting(true);
     if (file) {
       const form = new FormData();
       for (let i = 0; i < file.length; i++) {
@@ -200,13 +207,13 @@ const UpdateLaptop: React.FC = () => {
       romId: Number(data.romId),
       graphicsCardId: Number(data.graphicsCard),
       monitor: data.monitor,
-
+      operatingSystem: data.operatingSystem,
       productInfo: {
         brandId: Number(data.brand),
         categoryId: 2,
-        productId: null,
+        productId: Number(laptopDetail.productInfo.productId),
         characteristicId: Number(data.characteristic),
-        productCode: generateRandomString(10),
+        productCode: laptopDetail.productInfo.productCode,
         name: data.name,
         description: data.description,
         design: data.design,
@@ -215,28 +222,33 @@ const UpdateLaptop: React.FC = () => {
         launchTime: Number(data.launchTime),
         accessories: data.accessories,
         productStatus: 100,
-        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map((item) => ({
-          typeId: null,
-          ram: item?.ram,
-          storageCapacity: item?.storageCapacity,
-          color: item?.color,
-          price: Number(item?.price),
-          salePrice: Number(item?.salePrice),
-          quantity: Number(item?.quantity),
-          depotId: Number(item?.depot),
-        })),
+        lstProductTypeAndPrice: data?.lstProductTypeAndPrice?.map(
+          (item, index) => ({
+            typeId: Number(
+              laptopDetail?.productInfo?.lstProductTypeAndPrice[index]?.typeId,
+            ),
+            ram: item?.ram,
+            storageCapacity: item?.storageCapacity,
+            color: item?.color,
+            price: Number(item?.price),
+            salePrice:
+              (Number(item?.salePrice) > 0 && Number(item?.salePrice)) ||
+              Number(item?.price),
+            quantity: Number(item?.quantity),
+            depotId: Number(item?.depot),
+          }),
+        ),
         lstProductImageUrl: images || [],
       },
-      operatingSystem: data.operatingSystem,
     });
 
     try {
       setIsSubmitting(true);
       const res = await dispatch(updateLaptop({ id, body }));
       unwrapResult(res);
-      const d = res?.payload?.data;
-      if (d?.code !== 200) return toast.error(d?.message);
-      await toast.success("Cập nhật sp laptop thành công ");
+      // const d = res?.payload?.data;
+      // if (d?.code !== 200) return toast.error(d?.message);
+      await toast.success("Chỉnh sửa thành công ");
       await dispatch(getLaptop(""));
       await navigate(path.laptop);
     } catch (error: any) {
@@ -253,8 +265,10 @@ const UpdateLaptop: React.FC = () => {
       }
     } finally {
       setIsSubmitting(false);
+      handleOk();
     }
   });
+
   const onClickHuy = () => {
     const productInfo = laptopDetail?.productInfo;
 
@@ -288,34 +302,25 @@ const UpdateLaptop: React.FC = () => {
         },
       );
     }
-    setValue("accessories", laptopDetail?.productInfo?.accessories);
+    setValue("maximumRom", laptopDetail?.maximumRom.toString());
+    setValue("maximumRam", laptopDetail?.maximumRam.toString());
+    setValue("monitor", laptopDetail?.monitor.toString());
+    setValue("special", laptopDetail?.special.toString());
     setValue("mass", laptopDetail?.productInfo?.mass.toString());
-    setValue(
-      "color",
-      laptopDetail?.productInfo?.lstProductTypeAndPrice[0]?.color.toString(),
-    );
-    setValue("monitor", laptopDetail?.monitor);
-    setValue("description", laptopDetail?.productInfo?.description);
+    setValue("design", laptopDetail?.productInfo?.design?.toString());
+    setValue("name", laptopDetail?.productInfo?.name.toString());
     setValue("accessories", laptopDetail?.productInfo?.accessories);
-    setValue("brand", laptopDetail?.productInfo?.brandId.toString());
-    setValue(
-      "characteristic",
-      laptopDetail?.productInfo?.characteristicId.toString(),
-    );
-    setValue("name", laptopDetail?.productInfo?.name);
-    setValue(
-      "salePrice",
-      laptopDetail?.productInfo?.lstProductTypeAndPrice[0].salePrice.toString(),
-    );
-    setValue(
-      "price",
-      laptopDetail?.productInfo?.lstProductTypeAndPrice[0].price.toString(),
-    );
     setValue("operatingSystem", laptopDetail?.operatingSystem);
     setValue("design", laptopDetail?.productInfo?.design);
     setValue("dimension", laptopDetail?.productInfo?.dimension);
-    setValue("launchTime", "2023");
-    setValue("imageUrl", laptopDetail?.productInfo?.lstProductImageUrl);
+    setValue("launchTime", 2023);
+    setValue("gateway", laptopDetail?.gateway);
+    setValue("ram", String(laptopDetail?.ramId));
+    setValue(
+      "color",
+      laptopDetail?.productInfo.lstProductTypeAndPrice[0].color.toString(),
+    );
+    setValue("files", laptopDetail?.productInfo.lstProductImageUrl);
   };
   const handleChangeFile = (file?: File[]) => {
     setFile(file);
@@ -330,9 +335,9 @@ const UpdateLaptop: React.FC = () => {
       const selectedFile = (event.target as HTMLInputElement).files?.[0];
 
       if (selectedFile) {
-        const currentImages = getValues("imageUrl") || [];
+        const currentImages = getValues("files") || [];
         currentImages[index] = selectedFile;
-        setValue("imageUrl", currentImages);
+        setValue("files", currentImages);
 
         // Update the image preview immediately
         setImages((prevImages) => {
@@ -345,6 +350,7 @@ const UpdateLaptop: React.FC = () => {
 
     fileInput.click();
   };
+
   return (
     <div className="bg-white shadow ">
       <h2 className="font-bold m-4 text-2xl">Cập nhật sản phẩm laptop</h2>
@@ -365,7 +371,6 @@ const UpdateLaptop: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="brand"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={laptopDetail?.productInfo?.brandId}
             options={brand?.data?.data}
@@ -396,9 +401,8 @@ const UpdateLaptop: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="characteristic"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
-            defaultValue={6}
+            defaultValue={laptopDetail?.productInfo?.characteristicId}
             options={character?.data}
             register={register}
           >
@@ -415,11 +419,20 @@ const UpdateLaptop: React.FC = () => {
             name="name"
             register={register}
             type="text"
-            defaultValue={laptopDetail?.productInfo.name}
             className=""
             errorMessage={errors.name?.message}
           />
         </Form.Item>
+        {/* <Form.Item label="Thiết kế" name="design" rules={[{ required: true }]}>
+          <Input
+            name="design"
+            register={register}
+            type="text"
+            className=""
+            errorMessage={errors.design?.message}
+            placeholder="Nguyên khối"
+          />
+        </Form.Item> */}
         <Form.Item
           label="Kích thước"
           name="dimension"
@@ -430,7 +443,6 @@ const UpdateLaptop: React.FC = () => {
             register={register}
             type="text"
             className=""
-            defaultValue={laptopDetail?.productInfo.dimension}
             errorMessage={errors.dimension?.message}
             placeholder="Dài 159.9 mm - Ngang 76.7 mm - Dày 8.25 mm "
           />
@@ -441,7 +453,6 @@ const UpdateLaptop: React.FC = () => {
             register={register}
             type="number"
             className=""
-            defaultValue={laptopDetail?.productInfo.mass}
             errorMessage={errors.mass?.message}
             placeholder=" 1.51 "
           />
@@ -455,7 +466,6 @@ const UpdateLaptop: React.FC = () => {
             name="launchTime"
             register={register}
             type="number"
-            defaultValue={laptopDetail?.productInfo.launchTime}
             className=""
             errorMessage={errors.launchTime?.message}
             placeholder="2023"
@@ -471,7 +481,6 @@ const UpdateLaptop: React.FC = () => {
             register={register}
             type="text"
             className=""
-            defaultValue={laptopDetail?.productInfo.accessories}
             errorMessage={errors.accessories?.message}
             placeholder="Tai nghe, sạc"
           />
@@ -575,7 +584,6 @@ const UpdateLaptop: React.FC = () => {
                         name={`lstProductTypeAndPrice.${index}.color`}
                         key={index} // important to include key with field's id
                         register={register}
-                        defaultValue={item.color}
                         placeholder="Titan tự nhiên"
                       />
                     </Form.Item>
@@ -623,7 +631,6 @@ const UpdateLaptop: React.FC = () => {
             className=""
             errorMessage={errors.monitor?.message}
             placeholder="15.3 inch"
-            defaultValue={laptopDetail?.monitor}
           />
         </Form.Item>
 
@@ -635,7 +642,6 @@ const UpdateLaptop: React.FC = () => {
             className=""
             errorMessage={errors.gateway?.message}
             placeholder="MagSafe 3"
-            defaultValue={laptopDetail?.gateway}
           />
         </Form.Item>
         <Form.Item label="Tính năng đặc biệt" name="special">
@@ -644,7 +650,6 @@ const UpdateLaptop: React.FC = () => {
             register={register}
             type="text"
             className=""
-            defaultValue={laptopDetail?.special}
             errorMessage={errors.special?.message}
             placeholder="Bảo mật vân tay"
           />
@@ -655,7 +660,6 @@ const UpdateLaptop: React.FC = () => {
             register={register}
             type="text"
             className=""
-            defaultValue={laptopDetail?.maximumRam}
             errorMessage={errors.maximumRam?.message}
             placeholder="16GB"
           />
@@ -665,7 +669,6 @@ const UpdateLaptop: React.FC = () => {
             name="maximumRom"
             register={register}
             type="text"
-            defaultValue={laptopDetail?.maximumRom}
             errorMessage={errors.maximumRom?.message}
             placeholder="512GB"
           />
@@ -674,7 +677,6 @@ const UpdateLaptop: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="processor"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={laptopDetail?.processorId}
             options={processor?.data?.data}
@@ -687,9 +689,8 @@ const UpdateLaptop: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="ramId"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
-            defaultValue={2}
+            defaultValue={laptopDetail?.ramId}
             options={ram?.data?.data}
             register={register}
           >
@@ -700,7 +701,6 @@ const UpdateLaptop: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="romId"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={laptopDetail?.romId}
             options={rom?.data?.data}
@@ -713,7 +713,6 @@ const UpdateLaptop: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="graphicsCard"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={laptopDetail?.graphicsCardId}
             options={cardGraphic?.data?.data}

@@ -7,12 +7,8 @@ import { Pagination } from "antd";
 import * as ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import "jspdf-autotable";
-import {
-  getAdapter,
-  getProductsFilterAccess,
-} from "src/store/accessory/adapter";
+import { getAdapter } from "src/store/accessory/adapter";
 import { handleFilterStore } from "src/store/product/smartPhoneSlice";
-import FilterPhuKien from "src/components/FilterPhuKien";
 import { getSort } from "src/store/product/filterSlice";
 import { getBrands } from "src/store/brand/brandSlice";
 import { getCharacters } from "src/store/characteristic/characteristicSlice";

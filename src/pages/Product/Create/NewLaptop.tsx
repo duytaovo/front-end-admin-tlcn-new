@@ -50,9 +50,6 @@ interface FormData {
   productStatus: string | undefined;
   ram: string;
   storageCapacity: string;
-  color: string;
-  price: string;
-  salePrice: string | undefined;
   monitor: string;
 }
 
@@ -521,28 +518,28 @@ const NewLaptop: React.FC = () => {
           />
         </Form.Item>
         <Form.Item
-          label="Ram tối đa"
+          label="Ram tối đa (Nhập số)"
           name="maximumRam"
           rules={[{ required: true }]}
         >
           <Input
             name="maximumRam"
             register={register}
-            type="text"
+            type="number"
             className=""
             errorMessage={errors.maximumRam?.message}
             placeholder="16GB"
           />
         </Form.Item>
         <Form.Item
-          label="Rom tối đa"
+          label="Rom tối đa (Nhập số)"
           name="maximumRom"
           rules={[{ required: true }]}
         >
           <Input
             name="maximumRom"
             register={register}
-            type="text"
+            type="number"
             className=""
             errorMessage={errors.maximumRom?.message}
             placeholder="512GB"

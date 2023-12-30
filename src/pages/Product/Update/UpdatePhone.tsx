@@ -52,7 +52,6 @@ interface FormData {
   ram: string;
   storageCapacity: string;
   color: string;
-
   monitor: string;
 }
 
@@ -75,12 +74,10 @@ const UpdatePhone: React.FC = () => {
     handleSubmit,
     formState: { errors },
     setError,
-    reset,
     register,
     setValue,
     control,
     trigger,
-    watch,
     getValues,
   } = useForm({
     defaultValues: {
@@ -189,7 +186,6 @@ const UpdatePhone: React.FC = () => {
     setValue("name", smartPhoneDetail?.productInfo?.name);
     setValue("sim", smartPhoneDetail?.sim);
     setValue("rearCamera", smartPhoneDetail?.rearCamera);
-
     setValue("frontCamera", smartPhoneDetail?.frontCamera);
     setValue("operatingSystem", smartPhoneDetail?.operatingSystem);
     setValue("design", smartPhoneDetail?.productInfo?.design);
@@ -198,6 +194,7 @@ const UpdatePhone: React.FC = () => {
     setValue("launchTime", 2023);
     setValue("files", smartPhoneDetail?.productInfo.lstProductImageUrl);
   }, [smartPhoneDetail]);
+
   const onSubmit = handleSubmit(async (data) => {
     let images = [];
     showModal();
@@ -447,12 +444,10 @@ const UpdatePhone: React.FC = () => {
           <SelectCustom
             className={"flex-1 text-black"}
             id="characteristic"
-            // label="Hãng xe"
             placeholder="Vui lòng chọn"
             defaultValue={smartPhoneDetail?.productInfo?.characteristicId}
             options={character?.data}
             register={register}
-            isBrand={true}
           >
             {errors.characteristic?.message}
           </SelectCustom>
