@@ -134,7 +134,7 @@ const UserTable = () => {
     originData.push({
       // key: user?.data?.data[i].id,
       id: user?.data?.data[i].id,
-      stt: user?.data?.data[i].id,
+      stt: i + 1,
       address: user?.data?.data[i].address,
       role: user?.data?.data[i].level === 5 ? "ADMIN" : "USER",
       email: user?.data?.data[i].email,
