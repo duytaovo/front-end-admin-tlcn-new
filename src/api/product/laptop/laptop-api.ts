@@ -34,6 +34,12 @@ const laptopApi = {
       },
     );
   },
+  getProductByProductSlugId({ slug, id }: { slug: string; id: string }) {
+    return http.get(`/product/${slug}/${id}`);
+  },
+  getProductByProductSlug({ slug, params }: { slug: string; params: any }) {
+    return http.get(`/product/${slug}`, { params });
+  },
   getProductsFilterAccess({ body, params }: any) {
     return http.post(`/search/filter`, body, { params: params });
   },

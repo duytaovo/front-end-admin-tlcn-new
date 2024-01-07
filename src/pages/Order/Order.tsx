@@ -355,7 +355,7 @@ const Order = ({ title }: { title?: string }) => {
 
       <Table hoverable={true} className="bg-transparent">
         <Table.Head>
-          <Table.HeadCell> Mã đơn hàng </Table.HeadCell>
+          <Table.HeadCell>STT</Table.HeadCell>
           <Table.HeadCell>Sản phẩm</Table.HeadCell>
           <Table.HeadCell>Số lượng</Table.HeadCell>
           <Table.HeadCell>Giá</Table.HeadCell>

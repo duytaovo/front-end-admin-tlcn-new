@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 import LocalPoliceOutlinedIcon from "@mui/icons-material/LocalPoliceOutlined";
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -8,7 +7,7 @@ import FeedbackIcon from "@mui/icons-material/Feedback";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import StoreIcon from "@mui/icons-material/Store";
 import type { MenuProps } from "antd";
-import { Button, Menu } from "antd";
+import { Menu } from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { clearLS } from "src/utils/auth";
 import { useAppDispatch } from "src/hooks/useRedux";
@@ -46,7 +45,7 @@ const items: MenuItem[] = [
       getItem("Rom", "/rom"),
       getItem("Bàn phím", "/keyboard"),
       getItem("Processor", "/processor"),
-      getItem("Card đồ họa", "/cardGraphic"),
+      getItem("Card đồ họa", "/card-graphic"),
       getItem("Chuột máy tính", "/mouse"),
       getItem("Loa nghe nhạc", "/loudSpeaker"),
       getItem("Màn hình", "/monitor"),

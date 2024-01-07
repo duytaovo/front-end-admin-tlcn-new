@@ -4,7 +4,6 @@ import {
   ThunkDispatch,
   configureStore,
 } from "@reduxjs/toolkit";
-import appReducer from "src/app.slice";
 import userReducer from "./user/userSlice";
 import smartPhoneReducer from "./product/smartPhoneSlice";
 import categoryReducer from "./category/categorySlice";
@@ -34,7 +33,6 @@ import microphoneReducer from "./accessory/microphone";
 
 export const store = configureStore({
   reducer: {
-    loading: appReducer,
     user: userReducer,
     orders: orderReducer,
     comment: commentsReducer,

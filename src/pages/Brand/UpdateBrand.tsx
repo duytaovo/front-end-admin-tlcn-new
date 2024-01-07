@@ -12,7 +12,6 @@ import { ErrorResponse } from "src/types/utils.type";
 import { schemaBrand } from "src/utils/rules";
 import { getAvatarUrl, isAxiosUnprocessableEntityError } from "src/utils/utils";
 import {
-  addBrand,
   getBrands,
   getDetailbrand,
   updateBrand,

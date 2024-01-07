@@ -26,10 +26,7 @@ export const deleteAdapter = createAsyncThunk(
   "adapter/deleteAdapter",
   payloadCreator(adapterApi.deleteAdapter),
 );
-export const getProductsFilterAccess = createAsyncThunk(
-  "filter/getProductsFilterAccess",
-  payloadCreator(laptopApi.getProductsFilterAccess),
-);
+
 interface IProudct {
   adapter: any;
   adapterDetail: any;
@@ -49,9 +46,6 @@ const adapterlice = createSlice({
     });
     builder.addCase(getDetailAdapter.fulfilled, (state, { payload }) => {
       state.adapterDetail = payload.data?.data;
-    });
-    builder.addCase(getProductsFilterAccess.fulfilled, (state, { payload }) => {
-      state.adapter = payload.data;
     });
   },
 });

@@ -16,7 +16,8 @@ import { saveAs } from "file-saver";
 import { DownloadOutlined } from "@ant-design/icons";
 import "jspdf-autotable";
 import jspdf from "jspdf";
-
+import ButtonAdd from "@mui/material/Button";
+import Iconify from "src/components/iconify";
 const TablePhone: React.FC = () => {
   const { smartPhone } = useAppSelector((state) => state.smartPhone);
 
@@ -352,12 +353,20 @@ const TablePhone: React.FC = () => {
             </Button> */}
           </div>
         </div>
-        <Link
+        <ButtonAdd
+          onClick={() => navigate(path.smartPhoneNew)}
+          variant="contained"
+          color="inherit"
+          // startIcon={<Iconify icon="eva:plus-fill" />}
+        >
+          Thêm mới
+        </ButtonAdd>
+        {/* <Link
           to={path.smartPhoneNew}
           className="no-underline text-green-500 text-lg font-medium border-[1px] border-solid border-[green] p-3 rounded cursor-pointer"
         >
           Thêm mới
-        </Link>
+        </Link> */}
       </div>
       <FilterPhone handle={handle} brand={brand} characteristic={character} />
       {/* <QuickLinkPhone

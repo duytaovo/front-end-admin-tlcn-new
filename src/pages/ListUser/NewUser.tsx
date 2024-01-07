@@ -266,7 +266,7 @@ const FormDisabledDemo: React.FC = () => {
           </div>
         </Form.Item>
         <div className="flex justify-start">
-          <Form.Item label="" className="ml-[100px] mb-2">
+          <Form.Item label="" className="ml-[150px] mb-2">
             <Button className="w-[100px]" onClick={onSubmit}>
               {isSubmitting ? "Loading..." : "Lưu"}
             </Button>

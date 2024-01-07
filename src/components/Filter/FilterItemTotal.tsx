@@ -27,6 +27,7 @@ const FilterItemTotal = ({ data, handle, scroll }: Props) => {
   const dispatch = useAppDispatch();
   const location = useLocation();
   const { order } = useAppSelector((state) => state.orders);
+  const { productBySlug } = useAppSelector((state) => state.laptop);
 
   // Xử lý đóng mở nút
   const handleOpen = () => {
@@ -214,21 +215,21 @@ const FilterItemTotal = ({ data, handle, scroll }: Props) => {
             >
               Bỏ chọn
             </Link>
-            {/* <div className={styles.open} onClick={handleFilterLocal}>
-              Xem {productBySlug.data.totalElements} kết quả
-            </div> */}
+            <div className={styles.open} onClick={handleFilterLocal}>
+              Xem {productBySlug?.data?.totalElements} kết quả
+            </div>
           </div>
         ) : (
           <div className={styles.itemHiden} ref={itemHiden}>
             <Link
-              to={location.pathname}
+              to={location.pathname.substring(11)}
               className={styles.close}
               onClick={handleCancel}
             >
               Bỏ chọn
             </Link>
             <div className={styles.open} onClick={handleFilterLocal}>
-              Xem {order?.data?.totalElements} kết quả
+              Xem {productBySlug?.data?.totalElements} kết quả
             </div>
           </div>
         )}

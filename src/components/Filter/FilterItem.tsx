@@ -27,6 +27,7 @@ const FilterItem = ({ data, handle, scroll }: Props) => {
   //redux + logic
   const filter = useAppSelector((state) => state.smartPhone.filter.data); // Lấy tất cả
   const { smartPhone } = useAppSelector((state) => state.smartPhone); // Lấy tất cả
+  const { productBySlug } = useAppSelector((state) => state.laptop);
 
   const [arrayTemp, setArrayTemp] = useState([]); // Lấy giá trị trong một khung
   const dispatch = useAppDispatch();
@@ -268,21 +269,21 @@ const FilterItem = ({ data, handle, scroll }: Props) => {
             >
               Bỏ chọn
             </Link>
-            {/* <div className={styles.open} onClick={handleFilterLocal}>
-              Xem {productBySlug.data.totalElements} kết quả
-            </div> */}
+            <div className={styles.open} onClick={handleFilterLocal}>
+              Xem {productBySlug?.data?.totalElements} kết quả
+            </div>
           </div>
         ) : (
           <div className={styles.itemHiden} ref={itemHiden}>
             <Link
-              to={location.pathname}
+              to={location.pathname.substring(11)}
               className={styles.close}
               onClick={handleCancel}
             >
               Bỏ chọn
             </Link>
             <div className={styles.open} onClick={handleFilterLocal}>
-              Xem {order?.data?.totalElements} kết quả
+              Xem {productBySlug?.data?.totalElements} kết quả
             </div>
           </div>
         )}

@@ -195,7 +195,7 @@ const FormDisabledDemo: React.FC = () => {
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 14 }}
         layout="horizontal"
-        style={{ maxWidth: 800, padding: 4 }}
+        style={{ maxWidth: 600, padding: 4 }}
         autoComplete="off"
         noValidate
         onSubmitCapture={onSubmit}
@@ -306,7 +306,7 @@ const FormDisabledDemo: React.FC = () => {
           </div>
         </Form.Item>
         <div className="flex justify-start">
-          <Form.Item label="" className="ml-[100px] mb-2">
+          <Form.Item label="" className="ml-[150px] mb-2">
             <Button className="w-[100px]" onClick={onSubmit}>
               {isSubmitting ? "Loading..." : "Lưu"}
             </Button>

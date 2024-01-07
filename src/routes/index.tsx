@@ -22,6 +22,7 @@ import ListComputerPower from "src/pages/Product/List/ComputerPower/ListComputer
 import ListMainboard from "src/pages/Product/List/Mainboard/ListMainboard";
 import ListMicrophone from "src/pages/Product/List/Microphone/ListMicrophone";
 import ListMonitor from "src/pages/Product/List/Monitor/ListMonitor";
+import PhuKien from "src/pages/Product/List/PhuKien";
 import UpdateAdapter from "src/pages/Product/Update/UpdateAdapter";
 import UpdateBackupCharger from "src/pages/Product/Update/UpdateBackupCharger";
 import UpdateCardGraphic from "src/pages/Product/Update/UpdateCardGraphic";
@@ -32,6 +33,10 @@ import UpdateMonitor from "src/pages/Product/Update/UpdateMonitor";
 import UpdateProcessor from "src/pages/Product/Update/UpdateProcessor";
 import UpdateRam from "src/pages/Product/Update/UpdateRam";
 import UpdateRom from "src/pages/Product/Update/UpdateRom";
+import { BrandView } from "src/pages/brand-new/view";
+import BrandPage from "src/pages/brand-new/view/brand-view";
+import { AppView } from "src/pages/overview/view";
+import { UserView } from "src/pages/user/view";
 
 const MouseDetail = lazy(() => import("src/pages/Product/Detail/Mouse_Detail"));
 const KeyboardDetail = lazy(
@@ -142,7 +147,7 @@ const UpdateSmartWatch = lazy(
 export const routeMain = [
   {
     path: path.home,
-    Component: Home,
+    Component: AppView,
   },
 
   {
@@ -151,7 +156,7 @@ export const routeMain = [
   },
   {
     path: path.users,
-    Component: ListUser,
+    Component: UserView,
   },
   {
     path: path.products,
@@ -181,10 +186,10 @@ export const routeMain = [
     path: path.smartPhoneUpdate,
     Component: UpdatePhone,
   },
-  {
-    path: path.laptop,
-    Component: ListLaptop,
-  },
+  // {
+  //   path: path.laptop,
+  //   Component: ListLaptop,
+  // },
   {
     path: path.laptopNew,
     Component: NewLaptop,
@@ -211,7 +216,7 @@ export const routeMain = [
   },
   {
     path: path.brand,
-    Component: Brands,
+    Component: BrandView,
   },
   {
     path: path.brandDetail,
@@ -221,10 +226,10 @@ export const routeMain = [
     path: path.brandNew,
     Component: NewBrand,
   },
-  {
-    path: path.ram,
-    Component: Ram,
-  },
+  // {
+  //   path: path.ram,
+  //   Component: Ram,
+  // },
   {
     path: path.ramDetail,
     Component: RamDetail,
@@ -237,10 +242,10 @@ export const routeMain = [
     path: path.ramNew,
     Component: NewRam,
   },
-  {
-    path: path.rom,
-    Component: Rom,
-  },
+  // {
+  //   path: path.rom,
+  //   Component: Rom,
+  // },
   {
     path: path.romDetail,
     Component: RomDetail,
@@ -261,10 +266,10 @@ export const routeMain = [
     path: path.processorUpdate,
     Component: UpdateProcessor,
   },
-  {
-    path: path.processor,
-    Component: Processor,
-  },
+  // {
+  //   path: path.processor,
+  //   Component: Processor,
+  // },
   {
     path: path.processorDetail,
     Component: ProcessorDetail,
@@ -289,26 +294,10 @@ export const routeMain = [
     path: path.cardGrapNew,
     Component: NewCardGraphic,
   },
-  {
-    path: path.tablet,
-    Component: ListTablet,
-  },
-  {
-    path: path.tabletNew,
-    Component: NewTablet,
-  },
-  {
-    path: path.tabletDetail,
-    Component: TabletDetail,
-  },
-  {
-    path: path.tabletUpdate,
-    Component: UpdateTablet,
-  },
-  {
-    path: path.tablet,
-    Component: ListTablet,
-  },
+  // {
+  //   path: path.tablet,
+  //   Component: ListTablet,
+  // },
   {
     path: path.tabletNew,
     Component: NewTablet,
@@ -321,10 +310,23 @@ export const routeMain = [
     path: path.tabletUpdate,
     Component: UpdateTablet,
   },
+
   {
-    path: path.smartWatch,
-    Component: ListSmartWatch,
+    path: path.tabletNew,
+    Component: NewTablet,
   },
+  {
+    path: path.tabletDetail,
+    Component: TabletDetail,
+  },
+  {
+    path: path.tabletUpdate,
+    Component: UpdateTablet,
+  },
+  // {
+  //   path: path.smartWatch,
+  //   Component: ListSmartWatch,
+  // },
   {
     path: path.smartWatchNew,
     Component: NewSmartWatch,
@@ -337,10 +339,10 @@ export const routeMain = [
     path: path.smartWatchUpdate,
     Component: UpdateSmartWatch,
   },
-  {
-    path: path.mouse,
-    Component: ListMouse,
-  },
+  // {
+  //   path: path.mouse,
+  //   Component: ListMouse,
+  // },
   {
     path: path.mouseNew,
     Component: NewMouse,
@@ -369,10 +371,10 @@ export const routeMain = [
     path: path.loudSpeakerUpdate,
     Component: UpdateLoudSpeaker,
   },
-  {
-    path: path.keyboard,
-    Component: ListKeyboard,
-  },
+  // {
+  //   path: path.keyboard,
+  //   Component: ListKeyboard,
+  // },
   {
     path: path.keyboardNew,
     Component: NewKeyboard,
@@ -390,10 +392,10 @@ export const routeMain = [
     Component: TableFeedback,
   },
   /////////////////
-  {
-    path: path.monitor,
-    Component: ListMonitor,
-  },
+  // {
+  //   path: path.monitor,
+  //   Component: ListMonitor,
+  // },
   {
     path: path.monitorNew,
     Component: NewMonitor,
@@ -422,10 +424,10 @@ export const routeMain = [
     path: path.microPhoneUpdate,
     Component: UpdateMicrophone,
   },
-  {
-    path: path.mainBoard,
-    Component: ListMainboard,
-  },
+  // {
+  //   path: path.mainBoard,
+  //   Component: ListMainboard,
+  // },
   {
     path: path.mainBoardNew,
     Component: NewMainboard,
@@ -454,10 +456,10 @@ export const routeMain = [
     path: path.backupChargerUpdate,
     Component: UpdateBackupCharger,
   },
-  {
-    path: path.computerPower,
-    Component: ListComputerPower,
-  },
+  // {
+  //   path: path.computerPower,
+  //   Component: ListComputerPower,
+  // },
   {
     path: path.computerPowerNew,
     Component: NewComputerPower,
@@ -470,10 +472,10 @@ export const routeMain = [
     path: path.computerPowerUpdate,
     Component: UpdateComputerPower,
   },
-  {
-    path: path.adapter,
-    Component: ListAdapter,
-  },
+  // {
+  //   path: path.adapter,
+  //   Component: ListAdapter,
+  // },
   {
     path: path.adapterNew,
     Component: NewAdapter,
@@ -491,4 +493,60 @@ export const routeMain = [
     Component: NotFound,
   },
 ];
+const urls: string[] = [
+  "smartphone/detail/:productSlug",
+  "laptop/detail/:productSlug",
+  "tablet/detail/:productSlug",
+  "watch/detail/:productSlug",
+  "man-hinh-may-tinh/detail/:productSlug",
+  "may-tinh-de-ban/detail/:productSlug",
+  "accessory/detail/:productSlug",
+  "smartwatch/detail/:productSlug",
+  "ram/detail/:productSlug",
+  "rom/detail/:productSlug",
+  "processor/detail/:productSlug",
+  "graphics-card/detail/:productSlug",
+  "mouse/detail/:productSlug",
+  "loudspeaker/detail/:productSlug",
+  "adapter/detail/:productSlug",
+  "microphone/detail/:productSlug",
+  "keyboard/detail/:productSlug",
+  "radiator/detail/:productSlug",
+  "computer-case/detail/:productSlug",
+  "mainboard/detail/:productSlug",
+  "monitor/detail/:productSlug",
+  "computer-power/detail/:productSlug",
+];
+
+const urlsAccess: string[] = [
+  "/ram",
+  "/rom",
+  // "/card_graphic",
+  "/laptop",
+  "/smartwatch",
+  "/tablet",
+  "/processor",
+  "/graphics-card",
+  "/mouse",
+  // "/loudspeaker",
+  "/adapter",
+  // "/backup-charger",
+  // "/microphone",
+  "/radiator",
+  "/keyboard",
+  "/earphone",
+  "/mainboard",
+  "/computer-case",
+  "/monitor",
+  "/computer-power",
+];
+
+// export const productDetailRoutes = urls.map((url) => ({
+//   path: url,
+//   Component: ProductDetail,
+// }));
+export const accessRoutes = urlsAccess.map((url) => ({
+  path: url,
+  Component: PhuKien,
+}));
 

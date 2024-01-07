@@ -57,7 +57,7 @@ export default function ProductRam({ product }: Props) {
       title: "Sửa",
       callback: () => {
         navigate(
-          `${"/cardGraphic/detail/update"}/${generateNameId({
+          `${"/card_graphic/detail/update"}/${generateNameId({
             name: product.name,
             id: product.id.toString(),
           })}`,

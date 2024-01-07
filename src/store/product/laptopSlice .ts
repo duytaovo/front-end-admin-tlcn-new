@@ -30,10 +30,23 @@ export const getProductsFilterAccess = createAsyncThunk(
   "filter/getProductsFilterAccess",
   payloadCreator(laptopApi.getProductsFilterAccess),
 );
+
+export const getProductByProductSlug = createAsyncThunk(
+  "filter/getProductByProductSlugId",
+  payloadCreator(laptopApi.getProductByProductSlug),
+);
 interface IProudct {
   laptop: any;
   laptopDetail: LaptopDetail;
+  productBySlug: any;
 }
+const dataProductBySlug = {
+  data: [],
+  pageNumber: 0,
+  pageSize: 10,
+  totalElements: 1,
+  totalPages: 1,
+};
 const data = {
   id: 2,
   gateway: "",
@@ -86,6 +99,7 @@ const data = {
 const initialState: IProudct = {
   laptop: [],
   laptopDetail: data,
+  productBySlug: dataProductBySlug,
 };
 const Laptoplice = createSlice({
   name: "laptop",
@@ -98,8 +112,11 @@ const Laptoplice = createSlice({
     builder.addCase(getDetailLaptop.fulfilled, (state, { payload }) => {
       state.laptopDetail = payload.data.data;
     });
+    builder.addCase(getProductByProductSlug.fulfilled, (state, { payload }) => {
+      state.productBySlug = payload.data;
+    });
     builder.addCase(getProductsFilterAccess.fulfilled, (state, { payload }) => {
-      state.laptop = payload.data;
+      state.productBySlug = payload.data;
     });
   },
 });

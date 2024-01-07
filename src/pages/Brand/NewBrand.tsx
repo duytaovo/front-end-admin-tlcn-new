@@ -68,6 +68,7 @@ const NewBrand: React.FC = () => {
 
     setValueSlug(transformedArray);
   }, [categorySlug]);
+
   useEffect(() => {
     reset();
   }, []);
