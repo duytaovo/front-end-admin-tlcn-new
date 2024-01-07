@@ -128,14 +128,13 @@ export default function Nav({ openNav, onCloseNav }) {
       <Menu
         defaultSelectedKeys={["/"]}
         color="green"
-        className="text-green-500"
+        className="text-gray-700 text-2xl"
         defaultOpenKeys={["/products"]}
         mode="inline"
         theme="light"
         inlineCollapsed={collapsed}
         items={items}
         onClick={({ item, key, keyPath, domEvent }) => {
-          console.log(keyPath);
           if (keyPath[0] !== "product") {
             navigate(keyPath[0]);
             dispatch(handleFilterStore([]));
