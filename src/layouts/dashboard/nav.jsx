@@ -1,7 +1,7 @@
 import { Menu } from "antd";
 import PropTypes from "prop-types";
 import React, { useState, useEffect } from "react";
-
+import { useDispatch } from "react-redux";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Drawer from "@mui/material/Drawer";
@@ -16,8 +16,8 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 import LocalPoliceOutlinedIcon from "@mui/icons-material/LocalPoliceOutlined";
 // import ListItemButton from '@mui/material/ListItemButton';
-
-import { useNavigate } from "react-router-dom";
+import { handleFilterStore } from "src/store/product/smartPhoneSlice";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { usePathname } from "src/hooks/use-pathname";
 
@@ -79,17 +79,15 @@ export default function Nav({ openNav, onCloseNav }) {
   const pathname = usePathname();
   const [collapsed] = useState(false);
   const navigate = useNavigate();
-  // const location = useLocation();
-  // const dispatch = useDispatch();
-  // const toggleCollapsed = () => {
-  //   setCollapsed(!collapsed);
-  // };
-  // if (location.pathname === 'logout') {
-  //   if (confirm('Bạn có muốn thoát không?')) {
-  //     clearLS();
-  //     window.location.reload();
-  //   }
-  // }
+  const location = useLocation();
+  const dispatch = useDispatch();
+
+  if (location.pathname === "logout") {
+    if (confirm("Bạn có muốn thoát không?")) {
+      clearLS();
+      window.location.reload();
+    }
+  }
   const upLg = useResponsive("up", "lg");
 
   useEffect(() => {
@@ -98,7 +96,9 @@ export default function Nav({ openNav, onCloseNav }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
-
+  const onClick = (e) => {
+    console.log("click ", e);
+  };
   const renderAccount = (
     <Box
       sx={{
@@ -128,7 +128,7 @@ export default function Nav({ openNav, onCloseNav }) {
       <Menu
         defaultSelectedKeys={["/"]}
         color="green"
-        className="font-[500] text-left text-[#637381]"
+        className="text-green-500"
         defaultOpenKeys={["/products"]}
         mode="inline"
         theme="light"
@@ -136,12 +136,11 @@ export default function Nav({ openNav, onCloseNav }) {
         items={items}
         onClick={({ item, key, keyPath, domEvent }) => {
           console.log(keyPath);
-
           if (keyPath[0] !== "product") {
             navigate(keyPath[0]);
             dispatch(handleFilterStore([]));
           } else {
-            navigate(keyPath);
+            navigate(keyPath[1]);
             dispatch(handleFilterStore([]));
           }
         }}
@@ -207,45 +206,4 @@ Nav.propTypes = {
   openNav: PropTypes.bool,
   onCloseNav: PropTypes.func,
 };
-
-// ----------------------------------------------------------------------
-
-// function NavItem({ item }) {
-//   const pathname = usePathname();
-
-//   const active = item.path === pathname;
-
-//   return (
-//     <ListItemButton
-//       component={RouterLink}
-//       href={item.path}
-//       sx={{
-//         minHeight: 44,
-//         borderRadius: 0.75,
-//         typography: 'body2',
-//         color: 'text.secondary',
-//         textTransform: 'capitalize',
-//         fontWeight: 'fontWeightMedium',
-//         ...(active && {
-//           color: 'primary.main',
-//           fontWeight: 'fontWeightSemiBold',
-//           bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
-//           '&:hover': {
-//             bgcolor: (theme) => alpha(theme.palette.primary.main, 0.16),
-//           },
-//         }),
-//       }}
-//     >
-//       <Box component="span" sx={{ width: 24, height: 24, mr: 2 }}>
-//         {item.icon}
-//       </Box>
-
-//       <Box component="span">{item.title} </Box>
-//     </ListItemButton>
-//   );
-// }
-
-// NavItem.propTypes = {
-//   item: PropTypes.object,
-// };
 

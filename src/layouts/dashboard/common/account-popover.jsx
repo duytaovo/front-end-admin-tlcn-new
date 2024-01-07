@@ -8,6 +8,7 @@ import { alpha } from "@mui/material/styles";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
+import { clearLS } from "src/utils/auth";
 
 import { account } from "src/_mock/account";
 
@@ -108,7 +109,18 @@ export default function AccountPopover() {
           onClick={handleClose}
           sx={{ typography: "body2", color: "error.main", py: 1.5 }}
         >
-          Logout
+          <button
+            className=" px-2 text-left text-xl hover:text-mainColor"
+            onClick={() => {
+              if (confirm("Bạn có muốn thoát không?")) {
+                console.log("object");
+                clearLS();
+                window.location.reload();
+              }
+            }}
+          >
+            Đăng xuất
+          </button>
         </MenuItem>
       </Popover>
     </>
