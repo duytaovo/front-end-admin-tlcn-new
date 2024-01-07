@@ -2,7 +2,7 @@
 
 export const account = {
   displayName: "ADMIN",
-  email: "demo@minimals.cc",
+  email: "admin@gmail.com",
   photoURL: "/assets/images/avatars/avatar_25.jpg",
 };
 
